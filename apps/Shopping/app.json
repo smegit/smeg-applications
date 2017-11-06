@@ -235,6 +235,10 @@
         {
             "path": "app.js",
             "bundle": true
+        },
+        {
+            "path"      : "/resources/valence-debug.js",
+            "bootstrap" : true
         }
     ],
 
