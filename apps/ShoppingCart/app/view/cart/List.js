@@ -15,8 +15,6 @@ Ext.define('ShoppingCart.view.cart.List', {
         ftype : 'summary'
     }],
 
-    margin : '0 10px',
-
     cls : 'cart-list',
 
     overCls : 'cart-list-over',
@@ -34,6 +32,7 @@ Ext.define('ShoppingCart.view.cart.List', {
         items    : [
             {
                 text      : 'Item',
+                flex      : 1,
                 dataIndex : 'product_id'
             },
             {
@@ -43,8 +42,10 @@ Ext.define('ShoppingCart.view.cart.List', {
                 width     : 400
             }, {
                 text            : 'Quantity (Click to Change)',
+                width           : 160,
                 align           : 'right',
                 dataIndex       : 'quantity',
+                cls             : 'cart-qty-col',
                 editor          : {
                     xtype : 'numberfield'
                 },
@@ -55,15 +56,17 @@ Ext.define('ShoppingCart.view.cart.List', {
             },
             {
                 text      : 'Allocated',
+                flex      : 1,
                 align     : 'right',
                 dataIndex : 'allocated',
-                bind : {
+                bind      : {
                     hidden : '{hideAllocated}'
                 }
 
             },
             {
                 text      : 'Price',
+                flex      : 1,
                 align     : 'right',
                 dataIndex : 'price',
                 renderer  : function (value) {
@@ -73,6 +76,7 @@ Ext.define('ShoppingCart.view.cart.List', {
             },
             {
                 text            : 'Total',
+                flex            : 1,
                 align           : 'right',
                 dataIndex       : 'extended_price',
                 renderer        : function (value) {
@@ -85,15 +89,14 @@ Ext.define('ShoppingCart.view.cart.List', {
             }, {
                 text     : '',
                 action   : 'removecartitem',
-                flex     : 0,
-                width    : 50,
+                width    : 30,
+                align    : 'center',
                 renderer : function () {
                     return '<span class="vvicon-in-cell vvicon-cross" style="color:#B20000;"><span>';
                 }
             }
         ],
         defaults : {
-            flex         : 1,
             menuDisabled : true
         }
     }

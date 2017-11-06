@@ -1,5 +1,10 @@
 .cart-list {
   border: solid 1px #bbb;
+  .cart-qty-col{
+    .x-column-header-text{
+      margin-right : 0px!important;
+    }
+  }
 }
 
 .x-grid-row-summary .x-grid-cell {

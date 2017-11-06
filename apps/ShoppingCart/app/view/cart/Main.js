@@ -13,6 +13,13 @@ Ext.define('ShoppingCart.view.cart.Main', {
     bodyPadding   : '10 20',
     scrollable    : true,
     layout        : 'anchor',
+    defaults      : {
+        maxWidth : 1060,
+        style    : {
+            'margin-left'  : 'auto',
+            'margin-right' : 'auto'
+        }
+    },
     tbar          : {
         xtype  : 'toolbar',
         height : 50,
@@ -149,12 +156,10 @@ Ext.define('ShoppingCart.view.cart.Main', {
     buildItems : function (opts) {
         return [{
             xtype     : 'cartlist',
-            minHeight : 110,
-            margin    : '0 10'
+            minHeight : 110
         }, {
             xtype       : 'cartform',
-            cartOptions : opts,
-            margin      : '0 10'
+            cartOptions : opts
         }]
     }
 });
