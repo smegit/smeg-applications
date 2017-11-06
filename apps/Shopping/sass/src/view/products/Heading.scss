@@ -1,0 +1,22 @@
+@include extjs-toolbar-ui(
+  $ui : 'heading',
+  $background-color:#f1f2f3
+);
+
+.cart-size{
+  font-size:35px!important;
+  line-height:28px!important;
+  cursor:pointer;
+}
+.cart-num{
+  width:20px;
+  left:10px;
+  position:absolute;
+  top:-4px;
+  font-weight:600;
+  font-size:12px;
+  color:#333;
+  font-family:Arial;
+  text-align:center;
+  cursor:pointer;
+}

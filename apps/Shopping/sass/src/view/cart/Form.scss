@@ -1,0 +1,20 @@
+.cart-fieldset {
+  background-color: rgba(238, 238, 238, 0.7);
+}
+
+.x-form-trigger-wrap-invalid {
+  border-width : 2px !important;
+}
+
+.cart-refresh-reps{
+  width: 19px!important;
+  display: table-cell;
+  vertical-align: top;
+  cursor: pointer;
+  overflow: hidden;
+  background-repeat: no-repeat;
+  line-height: 24px!important;
+  font-size: 15px!important;
+  white-space: nowrap;
+  padding-left: 2px!important;
+}

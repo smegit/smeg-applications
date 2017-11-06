@@ -4,7 +4,8 @@
      */
     "apps": [
         "apps/Wrapper",
-        "apps/ShoppingCart"
+        "apps/ShoppingCart",
+        "apps/Shopping"
     ],
 
     /**
