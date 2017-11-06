@@ -7,7 +7,7 @@ Ext.define('Ext.overrides.classic.grid.column.Column', {
             grid                  = me.up('tablepanel'),
             store                 = grid.store,
             sorter                = me.getSorter(),
-            multiSortPluginActive = (!Ext.isEmpty(grid.getPlugin('gridmultisort'))) ? true : false;
+            multiSortPluginActive = (!Ext.isEmpty(grid.findPlugin('gridmultisort'))) ? true : false;
 
         // Maintain backward compatibility.
         // If the grid is NOT configured with multi column sorting, then specify "replace".
@@ -29,7 +29,7 @@ Ext.define('Ext.overrides.classic.grid.column.Column', {
             // because we are displaying them. First when a column sort is set if active sorts exist
             // add the new sort to the end not the begining of the sorts.
             //
-            var multiSortLimit = store.data.getMultiSortLimit(),
+            var multiSortLimit = (!Ext.isEmpty(store.multiSortLimit)) ? store.multiSortLimit : store.data.getMultiSortLimit(),
                 activeSorters  = store.getSorters(),
                 property       = me.getSortParam(),
                 sorter         = activeSorters.get(property),

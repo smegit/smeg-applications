@@ -28,7 +28,8 @@ Ext.define('Valence.login.view.login.LoginController', {
 
         vm.set({
             forgotPasswordText : Valence.lang.lit.forgotPassword,
-            connectionsText    : Valence.lang.lit.noConnections
+            connectionsText    : Valence.lang.lit.noConnections,
+            showForgotPassword : Valence.login.config.Settings.getShowForgotPassword()
         });
 
         if (Ext.isModern) {
@@ -155,12 +156,23 @@ Ext.define('Valence.login.view.login.LoginController', {
             rec = btn.rec,
             connName = rec.get('desc'),
             url = rec.get('url') + ':' + rec.get('port'),
-            loginPkgOpts = Valence.login.Processor.getOptions();
+            loginPkgOpts = Valence.login.Processor.getOptions(),
+            connStr = me.getConnectionStore(),
+            prevSel = connStr.findRecord('selected', true);
+
+        if (!Ext.isEmpty(prevSel)) {
+            prevSel.set({
+                selected : false
+            });
+        }
+        rec.set('selected',true);
+        connStr.sync();
 
         Valence.login.Processor.setOptions(Ext.apply(loginPkgOpts,{
             hostUrl : url
         }));
         Valence.login.Processor.setHostUrl(url);
+        me.fireEvent('changeconnection',url);
 
         if (vm.get('inConnectionEditMode')) {
             if (!Ext.isEmpty(rec)){
@@ -442,6 +454,11 @@ Ext.define('Valence.login.view.login.LoginController', {
 
         if (mobilePortal){
             Valence.login.Processor.setHostUrl(hostUrl);
+            Ext.Viewport.mask({
+                indicator : true,
+                xtype   : 'loadmask',
+                message : Valence.lang.lit.loading
+            });
         } else {
             if (Ext.isModern) {
                 Ext.Viewport.mask({
@@ -455,10 +472,6 @@ Ext.define('Valence.login.view.login.LoginController', {
         }
 
         if (!app || app.fireEvent('beforelogin', parms) !== false) {
-            // todo -- remove for production
-            //if (Ext.os.name !== 'iOS' && Ext.os.name !== 'Android' && hostUrl == 'http://192.168.75.14:6050'){
-            //    hostUrl = '';
-            //}
             url = hostUrl + '/valence/vvlogin.pgm';
 
             Ext.Ajax.request({
@@ -495,6 +508,12 @@ Ext.define('Valence.login.view.login.LoginController', {
                             data : d.envs
                         });
                         Valence.login.config.Runtime.setUser(user);
+
+                        // set the IBM i user....
+                        //
+                        if (d.ibmiUser){
+                            Valence.login.config.Runtime.setIbmiUser(d.ibmiUser);
+                        }
 
                         if (app) {
                             app.fireEvent('login', user, d.sid);
@@ -555,6 +574,15 @@ Ext.define('Valence.login.view.login.LoginController', {
                             }
                         } else if (sts === 'changepassword') {
                             if (app && app.fireEvent('beforeshowchangepassword') !== false){
+                                //clear sid from localStorage & sessionStorage
+                                //
+                                if (!Ext.isEmpty(localStorage)){
+                                    localStorage.removeItem('sid');
+                                }
+                                if (!Ext.isEmpty(sessionStorage)){
+                                    sessionStorage.removeItem('sid');
+                                }
+
                                 if (Valence.login.config.Runtime.getIsDesktop()) {
                                     view.el.down('.x-box-inner').addCls('vv-login-show-chg-password');
                                     Ext.widget('changepassword',{

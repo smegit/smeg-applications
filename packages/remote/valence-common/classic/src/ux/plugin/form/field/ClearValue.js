@@ -6,10 +6,11 @@ Ext.define('Valence.common.ux.plugin.form.field.ClearValue', {
         triggerKey : 'clear'
     },
 
-    pluginId   : 'clearvalue',
-    disabled   : false,
-    verbose    : false,
-    hideOnBlur : false,
+    pluginId       : 'clearvalue',
+    disabled       : false,
+    verbose        : false,
+    hideOnBlur     : false,
+    hideOnReadOnly : true,
 
     init : function (field) {
         if (!field.isFormField) {
@@ -94,10 +95,10 @@ Ext.define('Valence.common.ux.plugin.form.field.ClearValue', {
 
 
     onClickClearInput : function () {
-        var me  = this,
-            fld = me.getCmp(),
-            key = me.getTriggerKey(),
-            trigger =fld.triggers[key];
+        var me      = this,
+            fld     = me.getCmp(),
+            key     = me.getTriggerKey(),
+            trigger = fld.triggers[key];
 
         fld.setValue('');
         trigger.hide();
@@ -105,13 +106,13 @@ Ext.define('Valence.common.ux.plugin.form.field.ClearValue', {
     },
 
     onChange : function (cmp) {
-        var me  = this,
-            val = cmp.getValue(),
-            key = me.getTriggerKey(),
-            trigger =cmp.triggers[key];
+        var me      = this,
+            val     = cmp.getValue(),
+            key     = me.getTriggerKey(),
+            trigger = cmp.triggers[key];
 
-        if (cmp.hasFocus){
-            if (!me.disabled && !cmp.readOnly) {
+        if (cmp.hasFocus || !me.hideOnBlur) {
+            if (!me.disabled && (!cmp.readOnly || !me.hideOnReadOnly)) {
                 trigger[!Ext.isEmpty(val) ? 'show' : 'hide']();
             } else {
                 trigger.el['fadeOut']();
@@ -119,10 +120,10 @@ Ext.define('Valence.common.ux.plugin.form.field.ClearValue', {
         }
     },
 
-    onReset : function(cmp){
-        var me  = this,
-            key = me.getTriggerKey(),
-            trigger =cmp.triggers[key];
+    onReset : function (cmp) {
+        var me      = this,
+            key     = me.getTriggerKey(),
+            trigger = cmp.triggers[key];
 
         trigger.hide();
     },
@@ -150,8 +151,8 @@ Ext.define('Valence.common.ux.plugin.form.field.ClearValue', {
             val = cmp.getValue(),
             key = me.getTriggerKey();
 
-        if (!me.disabled && !cmp.readOnly) {
-            if (!Ext.isEmpty(val)){
+        if (!me.disabled && (!cmp.readOnly || !me.hideOnReadOnly)) {
+            if (!Ext.isEmpty(val)) {
                 cmp.triggers[key].el['fadeIn']();
             }
             //cmp.triggers[key].el[!Ext.isEmpty(val) ? 'fadeIn' : 'fadeOut']();
@@ -163,12 +164,13 @@ Ext.define('Valence.common.ux.plugin.form.field.ClearValue', {
     defineTrigger : function () {
         var me = this;
         return {
-            scope   : me,
-            weight  : 1, //place after existing triggers
-            hidden  : true,
-            cls     : 'vvicon-cancel-circle vv-icon-trigger-medium',
-            handler : me.onClickClearInput,
-            style   : 'display:none;'
+            scope    : me,
+            weight   : 1, //place after existing triggers
+            hidden   : true,
+            cls      : 'vvicon-cancel-circle vv-icon-trigger-medium',
+            handler  : me.onClickClearInput,
+            pluginId : 'clearvalue',
+            style    : 'display:none;'
         };
     }
 });

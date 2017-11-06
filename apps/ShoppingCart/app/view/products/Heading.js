@@ -1,7 +1,7 @@
 Ext.define('ShoppingCart.view.products.Heading', {
     extend   : 'Ext.toolbar.Toolbar',
     requires : [
-        'ShoppingCart.plugin.form.field.ClearValue'
+        'Valence.common.ux.plugin.form.field.ClearValue'
     ],
     xtype    : 'heading',
     ui       : 'heading',

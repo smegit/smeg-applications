@@ -15,10 +15,10 @@ Ext.define('Valence.common.view.filevalidator.Filevalidator', {
         width          : '100%'
     },
     bodyPadding   : '8 24',
-    initComponent : function () {
+    initComponent : function (){
         var me = this;
 
-        if (Ext.isEmpty(me.title)) {
+        if (Ext.isEmpty(me.title)){
             Ext.apply(me, {
                 title : Valence.lang.lit.addFile
             });
@@ -30,7 +30,7 @@ Ext.define('Valence.common.view.filevalidator.Filevalidator', {
         me.callParent(arguments);
     },
 
-    buildItems : function () {
+    buildItems : function (){
         var me = this;
         return [{
             xtype : 'hiddenfield',
@@ -47,19 +47,29 @@ Ext.define('Valence.common.view.filevalidator.Filevalidator', {
             maxLength        : 10,
             enforceMaxLength : true,
             allowBlank       : false,
-            fieldLabel       : Valence.lang.lit.file,
+            hidden           : false,
             bind             : {
-                value : '{filename}'
+                fieldLabel : '{fileFieldLabel}',
+                hidden     : '{isRemoteRequest}',
+                disabled   : '{isRemoteRequest}'
             },
             listeners        : {
-                specialkey : 'onSpecialkeyFile'
+                specialkey : 'onSpecialkeyFile',
+                show       : {
+                    delay : 200,
+                    fn    : function (cmp){
+                        cmp.focus();
+                    }
+                }
             }
         }, {
             xtype          : 'combo',
+            reference      : 'libfield',
             value          : '*LIBL',
             bind           : {
-                store  : '{Libraries}',
-                hidden : '{filevalidator_hideLibrary}'
+                store    : '{Libraries}',
+                hidden   : '{filevalidator_hideLibraryCombo}',
+                disabled : '{filevalidator_hideLibraryCombo}'
             },
             name           : 'lib',
             queryMode      : 'local',
@@ -70,6 +80,99 @@ Ext.define('Valence.common.view.filevalidator.Filevalidator', {
             triggerAction  : 'all',
             listeners      : {
                 specialkey : 'onSpecialkeyFile'
+            }
+        }, {
+            xtype                : 'combo',
+            name                 : 'remoteDb',
+            bind                 : {
+                store    : '{Databases}',
+                hidden   : '{!isRemoteRequest}',
+                disabled : '{disableRemoteDb}',
+                readOnly : '{locked}'
+            },
+            queryMode            : 'local',
+            displayField         : 'VVNAME',
+            valueField           : 'VVDBID',
+            forceSelection       : true,
+            fieldLabel           : Valence.lang.lit.remoteDbs,
+            allowBlank           : false,
+            triggerAction        : 'all',
+            hidden               : true,
+            disabled             : true,
+            hideBorderOnReadOnly : true,
+            listeners            : {
+                select : 'onRemoteDbSelected',
+                show   : {
+                    delay : 200,
+                    fn    : function (cmp){
+                        cmp.focus();
+                    }
+                }
+            }
+        }, {
+            xtype                : 'combo',
+            name                 : 'remoteSchema',
+            bind                 : {
+                store      : '{Schemas}',
+                hidden     : '{!showSchema}',
+                disabled   : '{disableSchema}',
+                fieldLabel : '{schemaFieldLabel}'
+            },
+            queryMode            : 'local',
+            displayField         : 'VVSCHEMA',
+            valueField           : 'VVSCHEMA',
+            forceSelection       : true,
+            allowBlank           : false,
+            triggerAction        : 'all',
+            hidden               : true,
+            disabled             : true,
+            hideBorderOnReadOnly : true,
+            listeners            : {
+                select : 'onRemoteSchemaSelect',
+                show   : {
+                    delay : 200,
+                    fn    : function (cmp){
+                        cmp.focus();
+                    }
+                }
+            }
+        }, {
+            xtype            : 'textfield',
+            name             : 'remoteTable',
+            reference        : 'tablefield',
+            emptyText        : Valence.lang.lit.caseSensitive,
+            preventMark      : true,
+            maxLength        : 30,
+            enforceMaxLength : true,
+            allowBlank       : false,
+            fieldLabel       : Valence.lang.lit.table,
+            hidden           : true,
+            disabled         : true,
+            bind             : {
+                disabled       : '{!showTable}',
+                hidden         : '{!showTable}',
+                emptyText      : '{tableEmptyText}',
+                forceUppercase : '{isRemote400}'
+            },
+            listeners        : {
+                specialkey : 'onSpecialkeyFile',
+                show       : {
+                    delay : 200,
+                    fn    : function (cmp){
+                        cmp.focus();
+                    }
+                }
+            }
+        }, {
+            xtype     : 'checkboxfield',
+            name      : 'remotedbchk',
+            boxLabel  : 'Remote Database',
+            checked   : false,
+            listeners : {
+                change : 'onRemoteDbChange'
+            },
+            bind      : {
+                hidden : '{hideRemoteDbCheckbox}'
             }
         }, {
             xtype    : 'button',

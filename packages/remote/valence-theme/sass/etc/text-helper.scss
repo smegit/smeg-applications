@@ -16,15 +16,26 @@
 .vv-text-secondary-dark{
   color:$secondary-dark-color;
 }
-
+.vv-text-fixed{
+  font-family:courier;
+  white-space:pre;
+  font-weight:400;
+}
+.vv-sub-title{
+  font-size:14px;
+}
+.vv-text-400{
+  font-weight:400!important;
+}
+.vv-text-500{
+  font-weight:500!important;
+}
 .font-size-19 {
   font-size: 19px!important;
 }
-
 .font-size-26 {
   font-size: 26px!important;
 }
-
 .font-red {
   color: $red!important;
 }

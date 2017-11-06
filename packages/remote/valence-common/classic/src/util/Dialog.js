@@ -73,6 +73,7 @@ Ext.define('Valence.common.util.Dialog', {
             focusButton = false,
             cfg         = {
                 ui          : 'dialog',
+                cls         : 'vv-common-dialog',
                 scrollable  : 'y',
                 autoWidth   : true,
                 minHeight   : minHeight,
@@ -107,7 +108,7 @@ Ext.define('Valence.common.util.Dialog', {
                 }
                 cfg.buttons = buttons;
             } else {
-                cfg.buttons = [];
+                cfg.buttons = null;
             }
 
             //if focus on a button is requested listen to after render

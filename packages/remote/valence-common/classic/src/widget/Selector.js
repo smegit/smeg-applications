@@ -31,7 +31,10 @@ Ext.define('Valence.common.widget.Selector',{
             scope           : me,
             afterrender     : me.onAfterRender,
             beforeitemclick : me.onBeforeItemClick,
-            selectionchange : me.onSelectionChangeList
+            selectionchange : {
+                buffer : 350,
+                fn     : me.onSelectionChangeList
+            }
         });
     },
 
@@ -131,6 +134,16 @@ Ext.define('Valence.common.widget.Selector',{
         return true;
     },
 
+    setAutoSelect : function(num){
+        var me = this;
+        if (num >= 0) {
+            if (me.store.getCount() > 0) {
+                me.getSelectionModel().select(num);
+            }
+            me.autoSelect = num;
+        }
+    },
+
     setValue : function(v){
         var me = this,
             vals = [],
@@ -178,14 +191,18 @@ Ext.define('Valence.common.widget.Selector',{
 
         if (!me.manualSet && me.deselectOnClick && me.selModel.isSelected(rec)){
             me.selModel.deselect(rec,true);
-            me.fireEvent('itemunclick',view,rec);
+            me.fireEvent('itemunclick',me,view,rec);
             return false;
         }
     },
 
     onSelectionChangeList : function(view, recs){
-        var me = this;
-        me.fireEvent('change', me, recs);
+        var me    = this,
+            value = recs[0].get(me.valueField);
+
+        me.publishState('value', value);
+
+        me.fireEvent('change', me, recs, value);
     },
 
     reset : function(){

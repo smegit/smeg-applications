@@ -1,11 +1,10 @@
 Ext.define('Ext.overrides.view.View', {
     override        : 'Ext.view.View',
-    emptyTextPlugin : true,
     initComponent   : function () {
         var me        = this,
             emptyText = me.emptyText;
 
-        if (me.emptyTextPlugin) {
+        if (me.emptyTextPlugin || Ext.isObject(emptyText)) {
             if (!emptyText) {
                 me.emptyText = Valence.common.util.Helper.buildEmptyText({
                     heading : Valence.lang.lit.noResults

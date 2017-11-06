@@ -16,7 +16,8 @@ Ext.define('Valence.common.ux.plugin.grid.Multisort', {
         hideWhenEmpty        : true,
         useColumnDescription : true,
         ui                   : 'default',
-        cls                  : null
+        cls                  : null,
+        removeSingleSort     : false
     },
     init     : function (grid) {
         var me              = this,
@@ -91,6 +92,9 @@ Ext.define('Valence.common.ux.plugin.grid.Multisort', {
             sortchange : me.onSortChangeGrid
         });
         me.setBoundCmp(grid);
+        setTimeout(function(){
+            me.onSortChangeGrid();
+        },750);
     },
 
     onClickBarItem : function (e, element) {
@@ -154,19 +158,33 @@ Ext.define('Valence.common.ux.plugin.grid.Multisort', {
             cmps    = bar.query('[removable]'),
             sorters = [];
 
-        for (var ii = 0; ii < cmps.length; ii++) {
-            sorters.push({
-                property  : cmps[ii].property,
-                direction : cmps[ii].direction
-            });
-        }
-
-        str.sort(sorters);
-        me.onSortChangeGrid();
-
-        //fire drop event
+        //for some reason if not wrapped in a timeout we were getting an error in the box reorderer.
         //
-        grid.fireEvent('multisortdropitem', grid, me);
+        setTimeout(function(){
+            for (var ii = 0; ii < cmps.length; ii++) {
+                sorters.push({
+                    property  : cmps[ii].property,
+                    direction : cmps[ii].direction
+                });
+            }
+
+            str.sort(sorters);
+
+            if (Ext.isEmpty(sorters)){
+                if (!Ext.isEmpty(grid)){
+                    grid.getView().refresh();
+                }
+                if (!Ext.isEmpty(str.reload) && typeof str.reload === 'function'){
+                    str.reload();
+                }
+            }
+
+            me.onSortChangeGrid();
+
+            //fire drop event
+            //
+            grid.fireEvent('multisortdropitem', grid, me);
+        },0);
     },
 
     onSortChangeGrid : function () {
@@ -202,7 +220,7 @@ Ext.define('Valence.common.ux.plugin.grid.Multisort', {
                 xtype     : 'component',
                 cls       : 'p-multisort-item',
                 margin    : '0 5 0 0',
-                html      : Ext.String.format((ii === 0) ? markup2 : markup, text, fm.lowercase(sorter.getDirection())),
+                html      : Ext.String.format((ii === 0 && !me.removeSingleSort) ? markup2 : markup, text, fm.lowercase(sorter.getDirection())),
                 removable : true,
                 property  : sorter.getProperty(),
                 direction : sorter.getDirection()
@@ -217,11 +235,13 @@ Ext.define('Valence.common.ux.plugin.grid.Multisort', {
                 bar.down('#sortText').show();
             }
         } else if (hideWhenEmpty) {
-            bar.el.fadeOut({
-                callback : function () {
-                    bar.hide();
-                }
-            });
+            if (!Ext.isEmpty(bar.el)){
+                bar.el.fadeOut({
+                    callback : function () {
+                        bar.hide();
+                    }
+                });
+            }
         }
         Ext.resumeLayouts(true);
     }

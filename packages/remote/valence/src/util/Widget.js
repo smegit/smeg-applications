@@ -13,7 +13,8 @@ Ext.define('Valence.util.Widget', {
         var options  = o || {},
             scope    = o.scope || window,
             callback = o.callback || null,
-            widget   = null;
+            widget   = null,
+            name     = null;
 
         if (!options.id) {
             return;
@@ -59,12 +60,13 @@ Ext.define('Valence.util.Widget', {
                     //
                     if (options.widgetConfig) {
                         config = Ext.apply(config, options.widgetConfig);
+                        name = options.widgetConfig.VVNAME || null;
                     }
 
-                    // apply the name and description to the config...
-                    //
                     Ext.apply(config,{
-                        VVNAME : Valence.util.Helper.decodeUTF16(d.VVNAME),
+                        VVNAME : name || Valence.util.Helper.decodeUTF16(d.VVNAME)
+                    });
+                    Ext.apply(config, {
                         VVDESC : Valence.util.Helper.decodeUTF16(d.VVDESC)
                     });
 

@@ -9,6 +9,7 @@
   100%{
     width: 5%;
     opacity : 0;
+    //display : none;
   }
 }
 
@@ -23,6 +24,7 @@
   100%{
     width: 5%;
     opacity : 0;
+    //display : none;
   }
 }
 
@@ -33,6 +35,7 @@
   100%{
     width: 5%;
     opacity : 0;
+    //display : none;
   }
 }
 
@@ -43,6 +46,7 @@
   100%{
     width: 5%;
     opacity : 0;
+    //display : none;
   }
 }
 
@@ -53,6 +57,7 @@
   }
   100%{
     width: 80%;
+    display : block;
   }
 }
 
@@ -63,6 +68,7 @@
   }
   100%{
     width: 80%;
+    display : block;
   }
 }
 
@@ -141,12 +147,17 @@
   .x-button-label {
     padding-left: 0 !important;
   }
+  .vv-appbar-search-field{
+    .x-input-el{
+      border: 0px;
+    }
+  }
 
   @media screen and (max-width:540px){
     padding: 10px 8px 10px 12px !important;
   }
   @media screen and (min-width:541px){
-      padding: 20px 24px !important;
+    padding: 20px 24px !important;
   }
 }
 

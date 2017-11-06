@@ -36,4 +36,8 @@
   right:20px!important;
   top:initial!important;
   left:initial!important;
+  &.isIE{
+    top:auto!important;
+    left:auto!important;
+  }
 }

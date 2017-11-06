@@ -73,7 +73,12 @@ Ext.define('Valence.common.util.Dialog', {
                 minWidth : minWidth,
                 maxWidth : 500,
                 title    : title,
-                autoDestroy : true
+                autoDestroy : true,
+                showAnimation : {
+                    type : 'fadeIn',
+                    duration : 100,
+                    easing : 'ease-out'
+                }
             }, cfgItems, toolbar,cmp;
 
         if (!buttons) {
@@ -117,6 +122,10 @@ Ext.define('Valence.common.util.Dialog', {
 
         cmp = Ext.Viewport.add(Ext.widget('sheet',cfg));
         me.setCmp(cmp);
+
+        if (!cmp.isVisible()) {
+            cmp.show();
+        }
 
         return cmp;
     },

@@ -239,7 +239,10 @@ Ext.define('Valence.common.widget.Appbar', {
                         me.setUI(me.oldUI);
                         me.fireEvent('blursearch', me);
                     },
-                    change     : me.onChangeFilter,
+                    change     : {
+                        buffer : 300,
+                        fn     : me.onChangeFilter
+                    },
                     clear      : me.onClearFilterTrigger,
                     specialkey : me.onSpecialKeyFilter,
                     scope      : me
@@ -282,9 +285,9 @@ Ext.define('Valence.common.widget.Appbar', {
         }
     },
 
-    getSearchComponent : function () {
+    getSearchComponents : function () {
         var me = this,
-            sc = me.searchComponent;
+            sc = me.getSearchComponent();
 
         if (!Ext.isEmpty(sc)) {
             if (!Ext.isArray(sc)) {
@@ -309,7 +312,7 @@ Ext.define('Valence.common.widget.Appbar', {
 
         // if this appbar has a "searchComponent"...then automatically perform the filtering...
         //
-        if (!Ext.isEmpty(me.getSearchComponent())) {
+        if (!Ext.isEmpty(me.getSearchComponents())) {
             me.performSearch(val, fld);
         }
     },
@@ -406,7 +409,7 @@ Ext.define('Valence.common.widget.Appbar', {
     performActionSearch : function (val) {
         var me                    = this,
             srchRegEx             = new RegExp(val, "i"),
-            cmps                  = me.getSearchComponent(),
+            cmps                  = me.getSearchComponents(),
             srchActStr            = me.getSearchActionStore(),
             maxLength             = me.getSearchActionsLength() || 3,
             results = [], filters = [], length,
@@ -491,7 +494,7 @@ Ext.define('Valence.common.widget.Appbar', {
 
     performSearch : function (val, fld, index) {
         var me  = this,
-            cmp = me.getSearchComponent(),
+            cmp = me.getSearchComponents(),
             str;
 
         if (Ext.isEmpty(index)) {
@@ -521,6 +524,9 @@ Ext.define('Valence.common.widget.Appbar', {
                 });
             }
 
+            if (typeof val === 'undefined'){
+                val = me.down('#filterfield').getValue();
+            }
             if (Ext.isFunction(cmp.showFilterBar)) { //todo add this in 5.1
                 cmp.showFilterBar(val, fld);
             }

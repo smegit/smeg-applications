@@ -61,7 +61,13 @@
   $text-color:$black-1-color,
   $text-font-weight:400
 );
-
+@include extjs-toolbar-ui(
+ $ui : 'lite-grey',
+ $background-color:$lite-grey,
+ $border-width:0,
+ $text-color:$black-1-color,
+ $text-font-weight:400
+);
 
 .x-toolbar-primary,.x-toolbar-primary-dark,.x-toolbar-primary-lite,.x-toolbar-secondary,.x-toolbar-secondary-dark,.x-toolbar-secondary-lite,.x-toolbar-background{
   .x-toolbar-text{

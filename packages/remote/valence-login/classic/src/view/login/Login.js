@@ -6,7 +6,9 @@ Ext.define('Valence.login.view.login.Login', {
         'Ext.form.Panel',
         'Ext.layout.container.VBox',
         'Valence.login.view.login.LoginModel',
-        'Valence.login.view.login.LoginController'
+        'Valence.login.view.login.LoginController',
+        'Valence.login.view.lock.Lock',
+        'Valence.login.view.changeenvironment.ChangeEnvironment'
     ],
     xtype         : 'login',
     viewModel     : {
@@ -19,8 +21,13 @@ Ext.define('Valence.login.view.login.Login', {
         align : 'middle'
     },
     basePortal    : true,
+    itemId        : 'login-outer',
     initComponent : function () {
         var me = this;
+
+        // suspend the layouts until the image is loaded...
+        //
+        Ext.suspendLayouts();
         Ext.apply(me, {
             items : me.buildItems()
         });
@@ -33,17 +40,38 @@ Ext.define('Valence.login.view.login.Login', {
     },
 
     buildItems : function () {
+        // originally had the image set via a binding but this causes
+        // the load event of the image to fire twice which didn't allow us
+        // to hook into the event properly
+        //   were having issues where the form was over the image
+        //
+        var me = this,
+            vm = me.getViewModel();
         return [{
-            xtype   : 'image',
-            bind    : {
-                src : '{image}'
-            },
-            cls     : 'vv-login-img'
+            xtype     : 'image',
+            src       : vm.get('image'),
+            cls       : 'vv-login-img',
+            listeners : {
+                load : {
+                    element : 'el',
+                    fn      : function (el) {
+                        Ext.resumeLayouts(true);
+                    }
+                },
+                error : {
+                    element : 'el',
+                    fn : function(){
+                        Ext.resumeLayouts(true);
+                    }
+                }
+            }
         }, {
             xtype     : 'form',
             reference : 'form',
             cls       : 'vv-login-form',
             bodyCls   : 'vv-login-form-body',
+            itemId    : 'login-form',
+            basePortal : true,
             defaults  : {
                 width          : '100%',
                 labelAlign     : 'top',
@@ -69,30 +97,30 @@ Ext.define('Valence.login.view.login.Login', {
                     }
                 }
             }, {
-                xtype         : 'textfield',
-                cls           : 'vv-login-pwd',
-                msgTarget     : 'under',
-                labelClsExtra : 'vv-login-pwd-lbl',
-                name          : 'password',
-                itemId        : 'password',
-                reference     : 'password',
+                xtype          : 'textfield',
+                cls            : 'vv-login-pwd',
+                msgTarget      : 'under',
+                labelClsExtra  : 'vv-login-pwd-lbl',
+                name           : 'password',
+                itemId         : 'password',
+                reference      : 'password',
                 validateOnBlur : false,
-                ui            : 'large',
-                fieldLabel    : Valence.lang.lit.password,
-                allowBlank    : false,
-                inputType     : 'password',
-                bind     : {
+                ui             : 'large',
+                fieldLabel     : Valence.lang.lit.password,
+                allowBlank     : false,
+                inputType      : 'password',
+                bind           : {
                     hidden   : '{forgotPasswordPrompt}',
                     disabled : '{forgotPasswordPrompt}',
                     value    : '{password}'
 
                 },
-                triggers      : {
+                triggers       : {
                     lock : {
                         cls : 'login-trigger vvicon-lock vv-login-user-password'
                     }
                 },
-                listeners     : {
+                listeners      : {
                     specialkey : 'onSpecialKeyPassword'
                 }
             }, {
@@ -117,7 +145,7 @@ Ext.define('Valence.login.view.login.Login', {
                 text     : Valence.lang.lit.sendPassword,
                 scale    : 'medium',
                 handler  : 'onSendPassword'
-            },{
+            }, {
                 xtype     : 'component',
                 cls       : 'vv-login-forgotpwd-cancel',
                 html      : Valence.lang.lit.cancel,
@@ -129,7 +157,7 @@ Ext.define('Valence.login.view.login.Login', {
                         click : 'onClickCancelForgotPassword'
                     }
                 }
-            },{
+            }, {
                 xtype     : 'component',
                 cls       : 'vv-login-select-lng',
                 itemId    : 'selectlng-btn',
@@ -146,7 +174,7 @@ Ext.define('Valence.login.view.login.Login', {
             cls       : 'vv-login-forgot-pwd',
             itemId    : 'forgotpwd-btn',
             bind      : {
-                hidden : '{!forgotPassword}',
+                hidden : '{!showForgotPassword}',
                 html   : '{forgotPasswordText}'
             },
             listeners : {
@@ -157,18 +185,18 @@ Ext.define('Valence.login.view.login.Login', {
         }];
     },
 
-    onAfterRender : function(cmp){
+    onAfterRender : function (cmp) {
         var me = this;
-        Ext.on('resize',me.onResizeBrowser,me);
+        Ext.on('resize', me.onResizeBrowser, me);
     },
 
-    onDestroy : function(){
+    onDestroy : function () {
         var me = this;
         Ext.un('resize', me.onResizeBrowser, me);
         me.callParent(arguments);
     },
 
-    onResizeBrowser : function(){
+    onResizeBrowser : function () {
         var me = this;
         me.updateLayout();
     }

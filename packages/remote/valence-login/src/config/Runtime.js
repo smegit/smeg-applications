@@ -2,23 +2,29 @@ Ext.define('Valence.login.config.Runtime', {
     singleton : true,
     config    : {
         activeWindows       : [],
-        allowChangePassword : false,
         appContainer        : 'canvas',
         autoLogin           : false,
         environment         : null,
         language            : null,
+        ibmiUser            : null,
         isConnected         : null,
         isMobile            : false,
         isDesktop           : false,
         isLocked            : false,
         isLoggingOut        : false,
+        isPending569Logout  : false,
+        isUpdateAvailable   : false,
         logoutTaskReset     : false,
         loginData           : null,
-        reloadApps          : false,
         namespace           : null,
+        partition           : null,
+        reloadApps          : false,
+        serialNumber        : null,
         theme               : null,
+        updateRelease       : null,
         urlParms            : Ext.getUrlParam(),
-        user                : null
+        user                : null,
+        userId              : null
     },
 
     constructor : function(){
@@ -39,7 +45,9 @@ Ext.define('Valence.login.config.Runtime', {
             masked;
         if (v === false) {
             if (Ext.isClassic) {
-                Ext.MessageBox.wait(Valence.lang.lit.reconnectBody, '<p style="font-size:11pt";>' + Valence.lang.lit.reconnectHeader + '</p>');
+                Ext.MessageBox.wait(Valence.lang.lit.reconnectBody,Valence.lang.lit.reconnectHeader,{
+                    text : ''
+                });
             } else {
                 Valence.login.config.Runtime.getApplication().fireEvent('disconnected');
                 Ext.Viewport.mask({
@@ -108,7 +116,18 @@ Ext.define('Valence.login.config.Runtime', {
             me.setAppContainer(o.layout);
         }
 
+        if (!Ext.isEmpty(o.vUser)){
+            me.setUserId(o.vUser);
+        }
+
         return o;
+    },
+
+    applyUpdateRelease : function(v){
+        var me = this;
+
+        me.setIsUpdateAvailable(!Ext.isEmpty(v));
+        return v;
     },
 
     getApplication : function(){

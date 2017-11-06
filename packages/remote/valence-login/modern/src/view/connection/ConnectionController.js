@@ -247,12 +247,13 @@ Ext.define('Valence.login.view.connection.ConnectionController', {
                         loginDisabled        : false,
                         hasConnection        : true,
                         inConnectionEditMode : false,
-                        connectionsText      : values.desc
+                        connectionsText      : connName
                     });
                     loginPkgOpts = Valence.login.Processor.getOptions();
                     Valence.login.Processor.setOptions(Ext.apply(loginPkgOpts,{
                         hostUrl : hostUrl
                     }));
+                    me.fireEvent('changeconnection',hostUrl);
                     Valence.login.Processor.setHostUrl(hostUrl);
                     Ext.Viewport.unmask();
                 },
@@ -279,7 +280,12 @@ Ext.define('Valence.login.view.connection.ConnectionController', {
             view  = me.getView(),
             login = view.up('login'),
             vm    = login.getViewModel(),
-            str   = Ext.getStore('Connections');
+            str   = Ext.getStore('Connections'),
+            hasConnection = false,
+            connRec = null,
+            connName = Valence.lang.lit.noConnections,
+            loginPkgOpts,
+            url;
 
         Valence.common.util.Dialog.show({
             title       : Valence.lang.lit.removeConnection,
@@ -295,11 +301,7 @@ Ext.define('Valence.login.view.connection.ConnectionController', {
                 if (btnText == 'yes') {
                     str.remove(vm.get('connRec'));
                     str.sync();
-                    vm.set({
-                        hasConnection   : false,
-                        connRec         : null,
-                        connectionsText : Valence.lang.lit.noConnections
-                    });
+
                     me.onTapTitle();
                     if (str.getCount() == 0) {
                         vm.set('loginDisabled', true);
@@ -313,7 +315,24 @@ Ext.define('Valence.login.view.connection.ConnectionController', {
                                 }]
                             });
                         }, 500);
+                    } else {
+                        connRec = str.getAt(0);
+                        connName = connRec.get('desc');
+                        hasConnection = true;
+                        url = rec.get('url') + ':' + rec.get('port');
+                        loginPkgOpts = Valence.login.Processor.getOptions();
+
+                        Valence.login.Processor.setOptions(Ext.apply(loginPkgOpts,{
+                            hostUrl : url
+                        }));
+                        Valence.login.Processor.setHostUrl(url);
+                        me.fireEvent('changeconnection',url);
                     }
+                    vm.set({
+                        hasConnection   : hasConnection,
+                        connRec         : connRec,
+                        connectionsText : connName
+                    });
                 }
             }
         })

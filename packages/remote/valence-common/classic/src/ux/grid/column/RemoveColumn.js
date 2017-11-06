@@ -3,6 +3,7 @@ Ext.define('Valence.common.ux.grid.column.RemoveColumn', {
     xtype        : 'removecolumn',
     width        : 40,
     dataIndex    : 'removeColumn',
+    align        : 'center',
     removeColumn : true,
     draggable    : false,
     sortable     : false,

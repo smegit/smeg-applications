@@ -10,6 +10,12 @@ Ext.define('Valence.common.widget.hsteps.HStepsController', {
         }
     },
 
+    onBeforeitemclickStep : function(cmp,rec,item,index,e){
+        var el = Ext.get(e.getTarget());
+
+        return el.hasCls('hs-step-circle') || !Ext.isEmpty(el.up('.hs-step-circle'));
+    },
+
     onBeforeselectStep : function (cmp, rec) {
         var me           = this,
             view         = me.getView(),
@@ -41,5 +47,13 @@ Ext.define('Valence.common.widget.hsteps.HStepsController', {
 
             me.fireViewEvent(event, rec, obj);
         }
+
+        // fire general "leavestep" event...
+        //
+        me.fireViewEvent('leavestep',currentSel);
+
+        // fire general "enterstep" event...
+        //
+        me.fireViewEvent('enterstep',rec);
     }
 });

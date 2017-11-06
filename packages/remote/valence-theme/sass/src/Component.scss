@@ -3,6 +3,10 @@
 .vv-overflow-x{
   overflow-x: auto!important;
 }
+.vv-trigger-icon{
+  font-size:24px!important;
+  line-height:30px!important;
+}
 .vv-empty-text-wrap {
   width: 101%;
   height: 101%;
@@ -58,4 +62,11 @@
       }
     }
   }
+}
+.vv-blur{
+  -webkit-filter: blur(2px);
+  -moz-filter: blur(2px);
+  -o-filter: blur(2px);
+  -ms-filter: blur(2px);
+  filter: blur(2px);
 }

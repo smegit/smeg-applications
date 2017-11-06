@@ -1,10 +1,17 @@
 .w-selector-wrap{
   font-weight: 500;
+  table-layout:auto;
+  div{
+    &:first-child{
+      border-left-width:1px;
+    }
+  }
 }
-.w-selector-item,.w-selector-item-sml{
+.w-selector-item,.w-selector-item-sml,.w-selector-item-med{
   padding:3px;
   display:table-cell;
   border:1px solid $black-3-color;
+  border-left-width:0;
   min-width:85px;
   text-align:center;
   @include transition(all 100ms ease-in);
@@ -14,9 +21,12 @@
   vertical-align:middle;
   height:100%;
 }
-.w-selector-item-sml{
+.w-selector-item-sml,w-selector-item-med{
   min-width:40px;
   padding:5px 2px;
+}
+.w-selector-item-med{
+  min-width:60px;
 }
 .w-selector-item-over{
   @include transition(all 100ms ease-in);
@@ -30,7 +40,7 @@
   color:$white-1-color!important;
 }
 .x-panel-background{
-  .w-selector-item,.w-selector-item-sml{
+  .w-selector-item,.w-selector-item-sml,.w-selector-med{
     background-color:#FFF;
   }
 }

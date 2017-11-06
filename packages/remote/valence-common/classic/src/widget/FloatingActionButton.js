@@ -33,6 +33,13 @@ Ext.define('Valence.common.widget.FloatingActionButton', {
         if (!Ext.isEmpty(me.position)) {
             me.cls = me.positionPrefix + me.position;
         }
+
+        //check if IE and add additional class
+        //
+        if (!Ext.isEmpty(Ext.isIE) && Ext.isIE){
+            me.cls += ' isIE';
+        }
+
         if (me.subAction){
             me.cls += ' x-btn-floating-action-sub';
         }
@@ -56,6 +63,10 @@ Ext.define('Valence.common.widget.FloatingActionButton', {
         var me = this;
         if (!Ext.isEmpty(me.el)) {
             me.el.removeCls('x-btn-scale-in');
+        }
+
+        if (!me.subAction){
+            me.callParent(arguments);
         }
     },
     applyOffsets   : function () {

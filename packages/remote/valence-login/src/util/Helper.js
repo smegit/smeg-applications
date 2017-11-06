@@ -32,7 +32,9 @@ Ext.define('Valence.login.util.Helper', {
                 } else {
                     // override to default theme...
                     //
-                    value = value['default'];
+                    if (value.hasOwnProperty('default')){
+                        value = value['default'];
+                    }
                 }
             }
         }

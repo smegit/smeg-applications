@@ -16,12 +16,17 @@ Ext.define('Valence.common.widget.DockedSearch', {
          * @cfg {Ext.data.Store} store
          * The store to automatically filter
          */
-        store  : null,
+        store             : null,
         /**
          * @cfg {Array} fields
          * The fields to filter on
          */
-        fields : null
+        fields            : null,
+        /**
+         * @cfg {Object} searchFieldConfig
+         * Config object that will be applied to the search field
+         */
+        searchFieldConfig : null
     },
 
     /**
@@ -44,27 +49,37 @@ Ext.define('Valence.common.widget.DockedSearch', {
     },
 
     buildItems : function () {
-        var me = this;
-        return [{
-            xtype       : 'textfield',
-            itemId      : 'dockedSearchField',
-            emptyText   : Valence.lang.lit.search,
-            formItemCls : 'vv-form-item-full-width',
-            plugins     : [{
-                ptype : 'formfieldclearvalue'
-            }],
-            listeners   : {
-                scope  : me,
-                change : me.onChangeSearch
-            }
-        }]
+        var me                = this,
+            searchFieldConfig = me.getSearchFieldConfig(),
+            item              = {
+                xtype       : 'textfield',
+                itemId      : 'dockedSearchField',
+                emptyText   : Valence.lang.lit.search,
+                formItemCls : 'vv-form-item-full-width',
+                plugins     : [{
+                    ptype : 'formfieldclearvalue'
+                }],
+                listeners   : {
+                    scope  : me,
+                    change : {
+                        buffer : 300,
+                        fn     : me.onChangeSearch
+                    }
+                }
+            };
+
+        if (!Ext.isEmpty(searchFieldConfig)) {
+            item = Ext.apply(searchFieldConfig, item);
+        }
+
+        return [item];
     },
-    
-    getSearchValue : function(){
-        var me = this,
+
+    getSearchValue : function () {
+        var me  = this,
             fld = me.down('#dockedSearchField');
-        
-        if (!Ext.isEmpty(fld)){
+
+        if (!Ext.isEmpty(fld)) {
             return fld.getValue();
         }
         return '';
@@ -73,12 +88,21 @@ Ext.define('Valence.common.widget.DockedSearch', {
     onChangeSearch : function (fld, value) {
         var me     = this,
             store  = me.getStore(),
-            fields = me.getFields();
-        
+            fields = me.getFields(),
+            grid   = me.up('grid'),
+            gridView;
+
+        if (!Ext.isEmpty(grid)) {
+            gridView = grid.getView();
+        }
+
         //if store and fields are provided automatically process the input
         //
         if (!Ext.isEmpty(store) && !Ext.isEmpty(fields)) {
             Valence.util.Helper.processTypedInputFilter(store, fields, value, 'dockedsearch');
+            if (!Ext.isEmpty(gridView)) {
+                gridView.refresh();
+            }
         } else {
             //since store and or fields were not provided assume the typed input will
             // be processed manually

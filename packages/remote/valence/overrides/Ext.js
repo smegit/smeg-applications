@@ -2,6 +2,14 @@
 //@define Valence.Wrapper
 Ext.ns('Valence.Wrapper');
 
+//this is only used so command will pull in this override
+//
+if (Ext && Ext.versions != undefined) {
+    Ext.define('Valence.overrides.Ext', {
+        override: 'ValencePlaceHolder'
+    });
+}
+
 //add the get url param and get framework methods to Ext
 //
 Ext.apply(Ext, {
@@ -57,7 +65,7 @@ Ext.apply(Ext, {
 
 Ext.define('Valence.Ajax',{
 //<if packageBuild=false>
-    requires : ['Ext.Ajax','Valence.device.Access'],
+    requires : ['Ext.Ajax','Valence.mobile.Access'],
 //</if>
     singleton   : true,
     constructor : function(){
@@ -84,9 +92,10 @@ Ext.define('Valence.Ajax',{
             frameworkVersion = framework.version,
             isTouch          = (framework.framework === 'Touch') ? true : false,
             sid              = Valence.util.Helper.getSid(),
-            env              = Valence.util.Helper.getEnvironmentId();
+            env              = Valence.util.Helper.getEnvironmentId(),
+            appId            = Ext.getUrlParam('app');
 
-        if (Valence.device.Access.isNativePortal()){
+        if (Valence.mobile.Access.isNativePortal()){
             env = null;
         }
 
@@ -102,9 +111,13 @@ Ext.define('Valence.Ajax',{
             }
             if (!options.isUpload  && !options.omitPortalCredentials) {
                 Ext.apply(options.params,{
-                    sid : sid,
-                    app : Ext.getUrlParam('app')
+                    sid : sid
                 });
+                if (!Ext.isEmpty(appId)){
+                    Ext.apply(options.params,{
+                        app : appId
+                    });
+                }
                 if (!Ext.isEmpty(env)){
                     Ext.apply(options.params,{
                         env : env
@@ -117,9 +130,13 @@ Ext.define('Valence.Ajax',{
             }
             if (!options.isUpload  && !options.omitPortalCredentials) {
                 Ext.apply(me.extraParams,{
-                    sid : sid,
-                    app : Ext.getUrlParam('app')
+                    sid : sid
                 });
+                if (!Ext.isEmpty(appId)){
+                    Ext.apply(me.extraParams,{
+                        app : appId
+                    });
+                }
                 if (!Ext.isEmpty(env)){
                     Ext.apply(me.extraParams,{
                         env : env
@@ -135,7 +152,7 @@ Ext.define('Valence.Ajax',{
         //
         if (me.vvPgmRegEx.test(options.url)){
             if (options.url.indexOf('/valence/') === -1){
-                if (Ext.util.Format.substr(options.url,0,1) !== '/'){
+                if (options.url.substring(0, 1) !== '/'){
                     options.url = '/valence/' + options.url;
                 }
             }
@@ -145,9 +162,9 @@ Ext.define('Valence.Ajax',{
     onRequestAjaxException : function(conn,r,opts){
         if (!opts.vvSkip569 && r.status === 569){
             var d           = Ext.decode(r.responseText),
-                title       = Valence.lang.lit[d.hdr],
-                body        = Valence.lang.lit[d.body],
-                action      = d.action || null,
+                title       = (d) ? Valence.lang.lit[d.hdr] : null,
+                body        = (d) ? Valence.lang.lit[d.body] : null,
+                action      = (d) ? d.action : null,
                 isPortalApp = (!Ext.isEmpty(parent.Portal)),
                 showMessage = function(title, msg, portalApp){
                     var msgObj = (isPortalApp) ? parent.Ext.Msg : Ext.Msg;
@@ -169,20 +186,39 @@ Ext.define('Valence.Ajax',{
                             }
                         }
                     });
+                },
+                processVars = function(){
+                    if (d.var1) {
+                        body = body.replace('VAR1',Valence.util.Helper.decodeUTF16(d.var1));
+                    }
+                    if (d.var2) {
+                        body = body.replace('VAR2',Valence.util.Helper.decodeUTF16(d.var2));
+                    }
+                    if (d.var3) {
+                        body = body.replace('VAR3',Valence.util.Helper.decodeUTF16(d.var3));
+                    }
+
+                    if (d.vvid){
+                        body += '<p style="margin-top:16px;">' + Valence.lang.lit.errorLogId + ' <span style="font-weight: 500;opacity: 0.7;">' + d.vvid + '</span></p>';
+                    }
+                };
+
+            // if "d" is null then this may be a binary ajax request...
+            //
+            if (Ext.isEmpty(d)){
+                var blob = new Blob([r.responseBytes], {type : r.getResponseHeader('Content-Type')}),
+                    reader = new window.FileReader();
+
+                reader.readAsText(blob);
+                reader.onloadend = function () {
+                    d      = Ext.decode(reader.result);
+                    title  = Valence.lang.lit[d.hdr];
+                    body   = Valence.lang.lit[d.body];
+                    action = d.action;
+                    processVars();
                 }
-
-            if (d.var1) {
-                body = body.replace('VAR1',Valence.util.Helper.decodeUTF16(d.var1));
-            }
-            if (d.var2) {
-                body = body.replace('VAR2',Valence.util.Helper.decodeUTF16(d.var2));
-            }
-            if (d.var3) {
-                body = body.replace('VAR3',Valence.util.Helper.decodeUTF16(d.var3));
-            }
-
-            if (d.vvid){
-                body += '<p style="margin-top:16px;">' + Valence.lang.lit.errorLogId + ' <span style="font-weight: 500;opacity: 0.7;">' + d.vvid + '</span></p>';
+            } else {
+                processVars();
             }
 
             // suspend portal polling and show a message explaining the exception...
@@ -204,6 +240,9 @@ Ext.define('Valence.Ajax',{
 
                 if (portalApp){
                     portalApp.fireEvent('suspendpolling');
+                    if (action === 'LOGOUT'){
+                        portalApp.fireEvent('pending569logout');
+                    }
                 }
 
                 if (locked){

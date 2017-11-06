@@ -42,6 +42,13 @@ Ext.define('Ext.overrides.classic.window.Window', {
         }
     },
 
+    onEsc : function (cmp, e) {
+        if (!Ext.isEmpty(e) && typeof e.stopEvent === 'function') {
+            e.stopEvent();
+        }
+        this.close();
+    },
+
     onShowWindown : function () {
         var me = this,
             el = me.getEl();

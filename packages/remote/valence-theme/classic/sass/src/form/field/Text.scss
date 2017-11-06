@@ -9,3 +9,17 @@
   cursor: pointer;
   vertical-align:middle;
 }
+.vv-icon-trigger-small {
+  font-size:16px !important;
+  line-height:16px !important;
+  background-color:$white-1-color;
+  color:$black-2-color;
+  cursor: pointer;
+  vertical-align:middle;
+}
+@include extjs-text-field-ui(
+  $ui:'large',
+  $ui-font-size:18px,
+  $ui-height:44px,
+  $ui-invalid-border-color:$form-text-field-invalid-border-color
+);

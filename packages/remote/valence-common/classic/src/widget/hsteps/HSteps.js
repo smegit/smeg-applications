@@ -52,6 +52,7 @@ Ext.define('Valence.common.widget.hsteps.HSteps', {
         }
     ],
     listeners : {
+        beforeitemclick : 'onBeforeitemclickStep',
         beforeselect    : 'onBeforeselectStep',
         afterrender     : {
             delay : 200,

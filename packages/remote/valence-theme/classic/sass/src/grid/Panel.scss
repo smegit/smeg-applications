@@ -1,13 +1,53 @@
 @include extjs-panel-ui(
-  $ui : 'slim'
+        $ui : 'slim'
 );
+.x-panel-slim,.x-panel-slim-framed{
+  .x-pivot-grid{
+    .x-column-header-inner,.x-grid-cell-inner{
+      padding:6px 4px;
+    }
+    .x-column-header-align-right .x-column-header-text{
+      margin-right:4px;
+    }
+  }
+  .x-panel-header{
+    padding:8px;
+    .x-panel-header-title{
+      color: $black-1-color;
+      font-size: 16px;
+      font-weight: 400;
+    }
+  }
+}
+.x-panel-slim-framed{
+  border:1px solid rgba(0,0,0,.19);
+  .x-panel-header{
+    border-bottom:1px solid rgba(0,0,0,.19);
+  }
+  .x-group-header{
+    .x-column-header-inner{
+      padding: 13px 6px;
+    }
+  }
+}
 
-.x-panel-slim.x-grid{
+.x-panel-slim.x-grid,.x-panel-slim-framed.x-grid{
+  .x-grid-item{
+    line-height: 18px;
+  }
   .x-column-header-inner,.x-grid-cell-inner{
-    padding:8px 4px;
+    padding:6px 4px;
   }
   .x-column-header-align-right .x-column-header-text{
     margin-right:4px;
+  }
+  .x-paging-toolbar{
+    padding: 2px 0 2px 4px;
+  }
+  .x-group-header{
+    .x-column-header-inner{
+      padding: 13px 6px;
+    }
   }
 }
 

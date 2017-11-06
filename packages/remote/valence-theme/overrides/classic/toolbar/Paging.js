@@ -1,6 +1,7 @@
 Ext.define('Ext.overrides.classic.toolbar.Paging', {
     override       : 'Ext.toolbar.Paging',
     enableDownload : true,
+    cls            : 'x-toolbar-default x-paging-toolbar',
     getPagingItems : function () {
         var me             = this,
             lit            = Valence.lang.lit,

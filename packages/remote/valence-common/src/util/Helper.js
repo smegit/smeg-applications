@@ -35,31 +35,31 @@ Ext.define('Valence.common.util.Helper', {
 
         //check for hide image
         //
-        if (!Ext.isEmpty(emptyText.hideImage) && emptyText.hideImage){
+        if (!Ext.isEmpty(emptyText.hideImage) && emptyText.hideImage) {
             imageAdditionalStyle = 'display:none;'
         }
 
-        if (Ext.isEmpty(emptyText.iconCls)){
+        if (Ext.isEmpty(emptyText.iconCls)) {
             emptyText.iconCls = 'vvicon-cloud';
         }
 
         tpl = new Ext.XTemplate(
             '<div class="vv-empty-text-wrap">',
-                '<div class="vv-empty-text-cnt">',
-                    '<div style="' + imageAdditionalStyle + '"><span class="vvicon {iconCls}"></div>',
-                    '<div class="vv-empty-text">',
-                        '{heading}',
-                    '</div>',
-                    '<tpl if="subText">',
-                        '<div class="vv-empty-subtext">',
-                            '<tpl if="events.length == 0">',
-                                '{subText}',
-                            '<tpl else>',
-                            '{[this.buildSubText(values)]}',
-                            '</tpl>',
-                        '</div>',
-                    '</tpl>',
-                '</div>',
+            '<div class="vv-empty-text-cnt">',
+            '<div style="' + imageAdditionalStyle + '"><span class="vvicon {iconCls}"></div>',
+            '<div class="vv-empty-text">',
+            '{heading}',
+            '</div>',
+            '<tpl if="subText">',
+            '<div class="vv-empty-subtext">',
+            '<tpl if="events.length == 0">',
+            '{subText}',
+            '<tpl else>',
+            '{[this.buildSubText(values)]}',
+            '</tpl>',
+            '</div>',
+            '</tpl>',
+            '</div>',
             '</div>',
             {
                 buildSubText : function (vals) {
@@ -97,19 +97,23 @@ Ext.define('Valence.common.util.Helper', {
             mask = me.loadMaskMC.get(el.id);
 
         if (mask) {
-            if (Ext.isClassic){
+            if (Ext.isClassic) {
                 mask.el.fadeOut({
-                    callback : function(){
-                        me.loadMaskMC.remove(mask);
-                        mask.destroy();
+                    callback : function () {
+                        if (!Ext.isEmpty(mask)) {
+                            me.loadMaskMC.remove(mask);
+                            mask.destroy();
+                        }
                     }
                 });
             } else {
                 mask.element.hide();
-                setTimeout(function(){
-                    me.loadMaskMC.remove(mask);
-                    mask.destroy();
-                },300);
+                setTimeout(function () {
+                    if (!Ext.isEmpty(mask)) {
+                        me.loadMaskMC.remove(mask);
+                        mask.destroy();
+                    }
+                }, 300);
             }
 
         }
@@ -140,23 +144,23 @@ Ext.define('Valence.common.util.Helper', {
      *
      */
 
-    download : function(parms){
+    download                  : function (parms) {
         var url = '/valence/vvcall.pgm',
             sid = localStorage.getItem('sid'),
             src;
 
-        if (!Ext.isEmpty(parms.url)){
+        if (!Ext.isEmpty(parms.url)) {
             url = parms.url;
         }
-        if (!Ext.isEmpty(parms.sid)){
+        if (!Ext.isEmpty(parms.sid)) {
             sid = parms.sid;
         }
-        if (Ext.isEmpty(parms.omitPortalCredentials)){
-            src = url + '?sid=' + sid + '&app='+Ext.getUrlParam('app');
+        if (Ext.isEmpty(parms.omitPortalCredentials)) {
+            src = url + '?sid=' + sid + '&app=' + Ext.getUrlParam('app');
         } else {
             src = url + '?vv=true';
         }
-        Ext.iterate(parms,function(key,value){
+        Ext.iterate(parms, function (key, value) {
             src += '&' + key + '=' + encodeURI(value);
         });
 
@@ -175,7 +179,7 @@ Ext.define('Valence.common.util.Helper', {
             vTxt = '';
         if (!Ext.isEmpty(d.MSG)) {
             eMsg = Valence.lang.lit[d.MSG];
-            if (Ext.isEmpty(eMsg)){
+            if (Ext.isEmpty(eMsg)) {
                 return d.MSG;
             }
             if (eMsg.indexOf('VAR1') !== -1) {
@@ -294,82 +298,217 @@ Ext.define('Valence.common.util.Helper', {
         }
     },
 
-    getLit                    : function(o){
-        var isObj = Ext.isObject(o),
-            lit   = !isObj ? o : o.lit,
+    getLit             : function (o) {
+        var isObj      = Ext.isObject(o),
+            lit        = !isObj ? o : o.lit,
+            skipDecode = false,
             text;
 
-        if (lit){
+        if (lit) {
             text = Valence.lang.lit[lit];
-
-            if (text && isObj && o.var1){
-                text = text.replace('VAR1', Valence.util.Helper.decodeUTF16(o.var1 + ''));
+            if (isObj && !Ext.isEmpty(o.skipDecode) && o.skipDecode) {
+                skipDecode = true;
             }
-            if (text && isObj && o.var2){
-                text = text.replace('VAR2', Valence.util.Helper.decodeUTF16(o.var2 + ''));
+            if (text && isObj && o.var1) {
+                if (skipDecode) {
+                    text = text.replace('VAR1', o.var1);
+                } else {
+                    text = text.replace('VAR1', Valence.util.Helper.decodeUTF16(o.var1 + ''));
+                }
             }
-            if (text && isObj && o.var3){
-                text = text.replace('VAR3', Valence.util.Helper.decodeUTF16(o.var3 + ''));
+            if (text && isObj && o.var2) {
+                if (skipDecode) {
+                    text = text.replace('VAR2', o.var2);
+                } else {
+                    text = text.replace('VAR2', Valence.util.Helper.decodeUTF16(o.var2 + ''));
+                }
+            }
+            if (text && isObj && o.var3) {
+                if (skipDecode) {
+                    text = text.replace('VAR3', o.var3);
+                } else {
+                    text = text.replace('VAR3', Valence.util.Helper.decodeUTF16(o.var3 + ''));
+                }
             }
         } else {
-            if (!Ext.isEmpty(o.msg)){
+            if (!Ext.isEmpty(o.msg)) {
                 text = o.msg;
-            } else if (!Ext.isEmpty(o.MSG)){
+            } else if (!Ext.isEmpty(o.MSG)) {
                 text = o.MSG;
             }
         }
         return text;
     },
-    loadMask                  : function (o) {
-        var me   = this,
-            obj  = Ext.isObject(o) ? o : {text : o},
-            text = obj.text,
-            type = obj.type || 'rect',
-            el   = obj.renderTo || Ext.getBody(),
-            cmp;
+    /**
+     * getOpenFieldLength - utility to get the true length of a db2 open field type "Japan"
+     * @param value
+     * @param maxLength
+     * @returns object with the actual length and
+     *  if maxLength is passed and its over the maxLength the value is should be. "enforceMaxLength"
+     */
+    getOpenFieldValueInfo : function (value, maxLength) {
+        var length = 0,
+            maxValue;
 
-        // ensure a mask does not already exist for this el...
-        //
-        if (Ext.isEmpty(me.loadMaskMC.get(el.id))){
-            if (Ext.isClassic){
-                cmp = Ext.create('Valence.common.widget.Loadmask', {
-                    text     : text || '&nbsp;',
-                    renderTo : el,
-                    type     : type
-                });
-            } else {
-                cmp = Ext.create('Valence.common.widget.Loadmask', {
-                    data     : {
-                        text     : text || '&nbsp;'
-                    },
-                    renderTo : el,
-                    type     : type
-                });
+        if (!Ext.isEmpty(value) && Ext.isString(value)) {
+            var singleByte     = true,
+                currentLength  = 0,
+                checkMaxLength = function (index, applying) {
+                    if (Ext.isEmpty(maxValue) && !Ext.isEmpty(maxLength)) {
+                        if (currentLength + applying > maxLength) {
+                            maxValue = value.substring(0, index);
+                        }
+                    }
+                },
+                _byte;
+
+            length = value.length;
+
+            // loop through string one character at a time
+            //    count dbcs char as 2 and sbcs as 1 and also account for shift-in and shift-out
+            //
+            for (var ii = 0; ii < value.length; ii++) {
+                _byte = value.charCodeAt(ii);
+
+                if (!((_byte <= 0x007F) || (_byte >= 0xFF61 && _byte <= 0xFF9F))) {
+                    if (singleByte) {
+                        checkMaxLength(ii, 4);
+                        currentLength += 4;
+                        length += 3;
+                        singleByte = false;
+                    } else {
+                        checkMaxLength(ii, 2);
+                        currentLength += 2;
+                        length++;
+                    }
+                } else {
+                    singleByte = true;
+                    checkMaxLength(ii, 1);
+                    currentLength++;
+                }
             }
-
-
-            me.loadMaskMC.add(el.id,cmp);
         }
+        return {
+            length   : length,
+            maxValue : maxValue
+        };
     },
-    showBgTransition : function(o){
-        var me      = this,
-            obj     = o || {},
-            pos     = obj.position || [1,1],
-            style   = obj.style || {},
-            scale   = (Ext.getBody().getWidth()/20) + 50,
-            text    = 'scale(' + scale + ')',
+    loadMask           : function (o) {
+        var me         = this,
+            obj        = Ext.isObject(o) ? o : {text : o},
+            text       = obj.text,
+            type       = obj.type || 'rect',
+            el         = obj.renderTo || Ext.getBody(),
+            activeMask = me.loadMaskMC.get(el.id),
             cmp;
 
-        cmp = Ext.widget('widget_background',{
-            renderTo : Ext.getBody()
+        //if a mask already exists remove it
+        //
+        if (!Ext.isEmpty(activeMask)) {
+            activeMask.destroy();
+        }
+
+        if (Ext.isClassic) {
+            cmp = Ext.create('Valence.common.widget.Loadmask', {
+                text     : text || '&nbsp;',
+                renderTo : el,
+                type     : type
+            });
+        } else {
+            cmp = Ext.create('Valence.common.widget.Loadmask', {
+                data     : {
+                    text : text || '&nbsp;'
+                },
+                renderTo : el,
+                type     : type
+            });
+        }
+
+        me.loadMaskMC.add(el.id, cmp);
+    },
+    /**
+     * scaleBetween - returns the scale for a set of numbers in an array. Pass the array of numbers and the min/max scale values.
+     *
+     * @param array - Array of numbers that you would like to get a scale on.
+     * @param scaledMin - Scale minimum value
+     * @param scaledMax - Scale maximum value
+     */
+    scaleBetween       : function (array, scaledMin, scaledMax) {
+        var max = Math.max.apply(Math, array),
+            min = Math.min.apply(Math, array);
+
+        return array.map(function (num) {
+            var scale = (scaledMax - scaledMin) * (num - min) / (max - min) + scaledMin;
+            if (!isNaN(scale)) {
+                if ((scale - Math.floor(scale)) !== 0) {
+                    return parseFloat(scale.toFixed(1));
+                }
+            }
+            return (!isNaN(scale)) ? scale : scaledMin;
         });
-        cmp.el.setStyle(Ext.apply(style,{
+    },
+    showBgTransition   : function (o) {
+        var me    = this,
+            obj   = o || {},
+            pos   = obj.position || [1, 1],
+            style = obj.style || {},
+            scale = (Ext.getBody().getWidth() / 20) + 50,
+            text  = 'scale(' + scale + ')',
+            bgCfg = {
+                renderTo : Ext.getBody()
+            },
+            cmp;
+
+        if (Ext.isModern) {
+            Ext.apply(bgCfg, {
+                top  : pos[1],
+                left : pos[0]
+            });
+        }
+
+        cmp = Ext.widget('widget_background', bgCfg);
+
+        cmp.el.setStyle(Ext.apply(style, {
             'transform'         : text,
             '-webkit-transform' : text,
             '-ms-transform'     : text
         }));
-        cmp.showAt(pos);
+
+        if (Ext.isClassic) {
+            cmp.showAt(pos);
+        }
+
         return cmp;
+    },
+
+    showMessageStrip : function (o) {
+        var me        = this,
+            el        = o.el || o.cmp.el,
+            ui        = o.ui || 'error',
+            text      = o.text,
+            autoHide  = (!Ext.isEmpty(o.autoHide)) ? o.autoHide : true,
+            hideDelay = o.hideDelay || 3000;
+
+        if (text && el) {
+            var errEl = el.down('.vv-msg-strip') || Ext.DomHelper.insertFirst(el, {
+                tag : 'div',
+                cls : 'vv-msg-strip vv-msg-strip-' + ui
+            }, true);
+
+            errEl.update(text);
+            setTimeout(function () {
+                errEl.addCls('vv-msg-strip-show');
+
+                if (autoHide) {
+                    setTimeout(function () {
+                        errEl.removeCls('vv-msg-strip-show');
+                        setTimeout(function () {
+                            errEl.destroy();
+                        }, 300);
+                    }, hideDelay);
+                }
+            }, 50);
+        }
     },
 
     uppercaseFirstCharOnly : function (v) {

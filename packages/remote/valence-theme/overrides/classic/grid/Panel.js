@@ -14,21 +14,24 @@ Ext.define('Ext.overrides.classic.grid.Panel', {
     initComponent : function () {
         var me         = this,
             viewConfig = me.viewConfig,
-            emptyText,emptyTextPlugin;
+            emptyText, emptyTextPlugin;
 
         if (Ext.isEmpty(viewConfig)) {
             me.viewConfig = {
-                emptyText      : Valence.common.util.Helper.buildEmptyText(Valence.lang.lit.noResults),
-                deferEmptyText : false
+                emptyText       : Valence.lang.lit.noResults,
+                emptyTextPlugin : false,
+                deferEmptyText  : false
             };
         } else {
             emptyTextPlugin = viewConfig.emptyTextPlugin;
-            if (!Ext.isDefined(emptyTextPlugin) || emptyTextPlugin){
+            if (emptyTextPlugin) {
                 emptyText = viewConfig.emptyText;
                 if (Ext.isObject(emptyText)) {
                     viewConfig.emptyText      = Valence.common.util.Helper.buildEmptyText(emptyText);
                     viewConfig.deferEmptyText = false;
                 }
+            } else {
+                viewConfig.emptyTextPlugin = false;
             }
         }
 
@@ -92,7 +95,7 @@ Ext.define('Ext.overrides.classic.grid.Panel', {
     setTitle : function (title) {
         var me       = this,
             orgTitle = me.getOrgTitle();
-        
+
         if (me.countInTitle && title) {
             if (title !== orgTitle) {
                 me.setOrgTitle(title);
@@ -105,9 +108,14 @@ Ext.define('Ext.overrides.classic.grid.Panel', {
     },
 
     onDatachangedGrid : function (str) {
-        var me  = this,
-            cnt = str.getCount();
+        var me            = this,
+            hasTotalCount = (typeof str.getTotalCount === "function"),
+            cnt           = (hasTotalCount) ? str.getTotalCount() : str.getCount(),
+            storeCount    = str.getCount();
 
+        if (!Ext.isEmpty(storeCount) && str.isFiltered()){
+            cnt = storeCount;
+        }
 
         //auto focus first row
         //
@@ -115,7 +123,7 @@ Ext.define('Ext.overrides.classic.grid.Panel', {
             var appBarFilterField = Ext.ComponentQuery.query('widget_appbar #filterfield')[0],
                 filterHasFocus    = (!Ext.isEmpty(appBarFilterField)) ? appBarFilterField.hasFocus : false;
 
-            if (!filterHasFocus){
+            if (!filterHasFocus) {
                 var view = me.getView();
                 if (cnt > 0 && view.isVisible()) {
                     setTimeout(function () {

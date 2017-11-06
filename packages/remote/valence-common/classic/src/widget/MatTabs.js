@@ -48,16 +48,16 @@ Ext.define('Valence.common.widget.MatTabs', {
     },
 
     onActivateTab : function (tab) {
-        if (Ext.isEmpty(tab) || Ext.isEmpty(tab.el)) {
+        var me = this,
+            box;
+
+        if (Ext.isEmpty(tab) || Ext.isEmpty(tab.el) || me.isHidden() || !me.isVisible()) {
             return;
         }
 
-        var me  = this,
-            box = tab.el.getBox();
+        box = tab.el.getBox();
 
-        if (box.y < 0) {
-            Ext.Function.defer(me.onActivateTab, 50, me, [tab]);
-        } else {
+        if (box.y >= 0){
             me.activeEl.animate({
                 duration : 300,
                 to       : {
@@ -113,7 +113,7 @@ Ext.define('Valence.common.widget.MatTabs', {
         var me        = this,
             activeTab = me.getActiveTab(),
             box;
-        if (tab === activeTab.tab) {
+        if (!Ext.isEmpty(activeTab) && tab === activeTab.tab) {
             box = tab.el.getBox();
             me.activeEl.animate({
                 duration : 300,

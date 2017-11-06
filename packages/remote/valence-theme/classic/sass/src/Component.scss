@@ -1,7 +1,16 @@
 .vv-empty-text-wrap {
   .vv-empty-text-cnt {
-    .vv-empty-text{
+    .vv-empty-text {
       font-size: 1.7vw;
     }
+  }
+}
+
+.vv-element-mask-no-spinner {
+  background-color: $white-2-color !important;
+  .x-mask-msg-text {
+    background: transparent !important;
+    padding: 5px !important;
+    font-weight: 500 !important;
   }
 }

@@ -67,7 +67,8 @@ Ext.define('Valence.common.util.PickerList', {
                 minWidth      : minWidth,
                 maxWidth      : 500,
                 maxHeight     : maxHeight,
-                title         : title
+                title         : title,
+                showAnimation : false
             }, cancel    = {
                 xtype  : 'toolbar',
                 docked : 'bottom',
@@ -176,6 +177,7 @@ Ext.define('Valence.common.util.PickerList', {
 
         cmp = Ext.Viewport.add(Ext.widget('sheet', cfg));
         me.setCmp(cmp);
+        cmp.show();
 
         return cmp;
     },
@@ -185,6 +187,15 @@ Ext.define('Valence.common.util.PickerList', {
             scope    = me.getScope(),
             subLists = me.getSubLists(),
             picker   = me.getCmp(),
+            cleanUp  = function(){
+                if (me.getSubMenu()) {
+                    picker.down('#toptlbr').destroy();
+                }
+
+                picker.down('#cncltlbr').destroy();
+
+                picker.destroy();
+            },
             cmp, animation, cardIndex, card;
 
         if (me.getSubMenu() && rec.get('menu')) {
@@ -199,18 +210,14 @@ Ext.define('Valence.common.util.PickerList', {
             return;
         }
 
-        if (me.getSubMenu()) {
-            picker.down('#toptlbr').destroy();
-        }
-
-        picker.down('#cncltlbr').destroy();
-
-        picker.destroy();
-
         if (fnc) {
             Ext.callback(fnc, scope, [list, me.getDisplayField() === 'field1' ? rec.get('field1') : rec]);
             me.setFnc(null);
             me.setScope(this);
+
+            cleanUp();
+        } else {
+            cleanUp();
         }
     },
 

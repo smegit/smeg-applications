@@ -15,7 +15,9 @@
     border:none;
     padding:0;
     .x-btn-inner-default-toolbar-large{
-      color:inherit;
+      //NavDrawer sass was changing color when creating a menu button in iAdmin
+      //
+      color:inherit !important;
       font-size:20px;
       line-height:24px;
       padding:0;
@@ -39,7 +41,7 @@
 }
 
 .x-toolbar-primary,.x-toolbar-primary-dark,.x-toolbar-secondary,.x-toolbar-secondary-dark,.x-toolbar-secondary-lite{
-  .x-btn-icon-el,.x-btn-inner,.appbar-title,.x-form-text-wrap{
+  .x-btn-icon-el,.x-btn-inner,.appbar-title,.x-form-text-wrap,.x-form-checkbox,.x-form-item-label{
     color:$white-1-color;
     input{
       color:$white-1-color;

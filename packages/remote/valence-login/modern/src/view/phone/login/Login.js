@@ -30,8 +30,8 @@ Ext.define('Valence.login.view.phone.login.Login', {
 
             handler : 'onClickConnection',
             bind    : {
-                html : '{connectionsText}',
-                cls  : '{connectionsCls}',
+                html   : '{connectionsText}',
+                cls    : '{connectionsCls}',
                 hidden : '{!mobilePortal}'
             }
         }, {
@@ -59,25 +59,31 @@ Ext.define('Valence.login.view.phone.login.Login', {
                 },
                 scrollable : 'y',
                 items      : [{
-                    xtype      : 'textfield',
-                    cls        : 'vv-login-user',
-                    labelCls   : 'vv-login-user-lbl',
-                    label      : Valence.lang.lit.userName,
-                    allowBlank : false,
-                    reference  : 'user',
-                    name       : 'user',
-                    bind       : {
+                    xtype          : 'textfield',
+                    cls            : 'vv-login-user',
+                    labelCls       : 'vv-login-user-lbl',
+                    label          : Valence.lang.lit.userName,
+                    allowBlank     : false,
+                    autoCapitalize : false,
+                    autoComplete   : false,
+                    autoCorrect    : false,
+                    reference      : 'user',
+                    name           : 'user',
+                    bind           : {
                         value : '{username}'
                     }
                 }, {
-                    xtype      : 'passwordfield',
-                    cls        : 'vv-login-pwd',
-                    labelCls   : 'vv-login-pwd-lbl',
-                    reference  : 'password',
-                    name       : 'password',
-                    label      : Valence.lang.lit.password,
-                    allowBlank : false,
-                    bind       : {
+                    xtype          : 'passwordfield',
+                    cls            : 'vv-login-pwd',
+                    labelCls       : 'vv-login-pwd-lbl',
+                    reference      : 'password',
+                    name           : 'password',
+                    label          : Valence.lang.lit.password,
+                    autoCapitalize : false,
+                    autoComplete   : false,
+                    autoCorrect    : false,
+                    allowBlank     : false,
+                    bind           : {
                         disabled : '{loginDisabled}',
                         hidden   : '{forgotPasswordPrompt}'
                     }
@@ -133,7 +139,7 @@ Ext.define('Valence.login.view.phone.login.Login', {
                     hidden  : !Valence.login.config.Settings.getMultiLingual(),
                     bind    : {
                         disabled : '{loginDisabled}',
-                        hidden   : '{forgotPasswordPrompt}'
+                        hidden   : '{!showLanguageSelection}'
                     },
                     text    : 'English',
                     handler : 'onClickSelectLanguage'
@@ -153,7 +159,7 @@ Ext.define('Valence.login.view.phone.login.Login', {
                     ui      : 'transparent-action-valence-blue',
                     bind    : {
                         disabled : '{loginDisabled}',
-                        hidden   : '{forgotPasswordPrompt}'
+                        hidden   : '{!showForgotPassword}'
                     },
                     text    : Valence.lang.lit.forgotPassword,
                     handler : 'onClickForgotPassword'

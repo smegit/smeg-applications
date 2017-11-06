@@ -6,12 +6,8 @@
   .x-panel-body{
     border-radius:0 0 2px 2px;
   }
-}
-.x-panel-header {
-  .x-btn-icon-el {
-    line-height: 18px !important;
-    font-size: 18px !important;
-    padding: 0 5px;
+  .x-tool-img{
+    color:$black-1-color;
   }
 }
 @include extjs-panel-ui(
@@ -31,13 +27,18 @@
   $ui-header-glyph-color:$white-1-color
 );
 
-.x-panel-background{
-  background-color:$bg-color;
-  .x-title-text{
-    color:$black-1-color;
+.x-panel-background,.x-panel-background-framed {
+  background-color: $bg-color;
+  .x-title-text {
+    color: $black-1-color;
   }
-  >.x-toolbar-default{
-    background-color:$bg-color;
+  >.x-toolbar-default {
+    background-color: $bg-color;
+  }
+  >.x-panel-bodyWrap {
+    >.x-toolbar-default {
+      background-color: $bg-color;
+    }
   }
   >.x-toolbar-docked-bottom{
     border-width:1px!important;
@@ -52,4 +53,7 @@
   .x-panel-header{
     border:none;
   }
+}
+.x-panel-background-framed,.x-panel-white-framed{
+  border:1px solid $black-4-color;
 }

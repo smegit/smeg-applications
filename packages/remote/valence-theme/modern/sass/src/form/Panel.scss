@@ -1,18 +1,29 @@
 .x-form-background-phone {
+  margin-bottom : 10px;
   .x-form-inner {
     background-color: $bg-color;
   }
   .x-field {
     border-bottom : none;
+    margin: 0px 8px;
+  }
+  .vv-field-invalid {
+    .x-component-outer {
+      border: 1px solid $secondary-dark-color !important;
+    }
   }
   .x-form-fieldset-inner {
     border: none;
   }
-  .x-form-label,.x-component-outer {
-    background-color : $bg-color;
+  .x-label-align-top,.x-label-align-left {
+    .x-form-label {
+      background-color : $bg-color;
+    }
   }
-  .x-field-readonly, .x-field-input {
-    border-bottom : 3px solid $bg-color!important;
+  .x-label-align-left {
+    .x-form-label,.x-component-outer {
+      height: 28px;
+    }
   }
 }
 
@@ -38,5 +49,22 @@
   .x-form-inner {
     background-color: $bg-color;
     padding: 8px;
+  }
+  .x-field {
+    margin-bottom : 10px;
+    border-bottom : none;
+  }
+
+  .vv-field-invalid {
+    .x-component-outer {
+      border: 1px solid $secondary-dark-color !important;
+    }
+  }
+  .x-form-fieldset-inner {
+    border: none;
+  }
+  .x-form-label,.x-component-outer {
+    background-color : $bg-color;
+    height: 32px;
   }
 }

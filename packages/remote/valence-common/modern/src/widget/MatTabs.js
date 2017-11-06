@@ -32,19 +32,22 @@ Ext.define('Valence.common.widget.MatTabs', {
 
     },
     onTabChange : function(cmp,activeItem){
-        var me       = this,
-            tab      = activeItem.tab,
-            box      = tab.el.getBox(),
-            position = cmp.getTabBarPosition();
+        var me  = this,
+            tab = activeItem.tab;
 
-        me.activeEl.applyStyles({
-            width : box.width + 'px'
-        });
+        if (!Ext.isEmpty(tab) && !Ext.isEmpty(tab.el)) {
+            var box      = tab.el.getBox(),
+                position = cmp.getTabBarPosition();
 
-        if (position === 'bottom'){
-            me.activeEl.setXY([box.left,box.top-4]);
-        } else if (position === 'top'){
-            me.activeEl.setXY([box.left,box.bottom+2]);
+            me.activeEl.applyStyles({
+                width : box.width + 'px'
+            });
+
+            if (position === 'bottom') {
+                me.activeEl.setXY([box.left, box.top - 4]);
+            } else if (position === 'top') {
+                me.activeEl.setXY([box.left, box.bottom + 2]);
+            }
         }
     },
     destroy : function () {

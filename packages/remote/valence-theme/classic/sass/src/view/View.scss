@@ -1,26 +1,9 @@
 .x-view-item-focused{
   outline:none!important;
 }
-
-/* ----------- empty text classes ------------- */
-//.x-grid-empty,.x-dataview,.dataview,.x-component {
-//  .vv-empty-text-wrap{
-//    text-align:center;
-//    padding-top:35px;
-//    display:inline-block;
-//    text-align:left;
-//    .vv-empty-text{
-//      font-size:18px;
-//      color:#222;
-//    }
-//    .vv-empty-subtext{
-//      font-size:13px;
-//      color:#222;
-//      font-weight:300;
-//      padding-top:20px;
-//    }
-//  }
-//}
+.x-keyboard-mode .x-view-item-focused{
+  outline:none!important;
+}
 
 .dataview {
   text-align:left !important;

@@ -1,0 +1,19 @@
+.vv-msg-strip-error {
+  color: $red;
+  text-align: center;
+  background-color: $bg-color;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  @include transition(all .3s);
+  font-weight: 400;
+}
+.vv-msg-strip-info {
+  @extend .vv-msg-strip-error;
+  color: $black-1-color;
+}
+
+.vv-msg-strip-show {
+  padding: 8px;
+  height: 32px;
+}

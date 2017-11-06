@@ -1,10 +1,7 @@
 /**
  * @class Valence.util.App
- * Valence JavaScript methods for use in the Valence portal. For Valence 3.2 and above,
- * these methods replace the methods in class Valence.tab
- *
+ * Various methods to work with apps in the Portal.
  */
-
 Ext.define('Valence.util.App', {
     singleton : true,
     /**
@@ -23,7 +20,7 @@ Ext.define('Valence.util.App', {
     close     : function (appId) {
         var me = this;
 
-        if (!Valence.device.Access.isNativePortal()) {
+        if (!Valence.mobile.Access.isNativePortal()) {
             var appRecord = me.getRunningApp(appId);
 
             if (!Ext.isEmpty(appRecord)) {
@@ -50,7 +47,7 @@ Ext.define('Valence.util.App', {
                     app : appId
                 });
             }
-            Valence.device.Access.initiate(config);
+            Valence.mobile.Access.initiate(config);
         }
     },
 
@@ -84,7 +81,7 @@ Ext.define('Valence.util.App', {
                 //first check via key
                 //
                 var record = store.findRecord('key', id, 0, false, true, true);
-                if (Ext.isEmpty(record)){
+                if (Ext.isEmpty(record)) {
                     //check via appId
                     //
                     record = store.findRecord('appId', id, 0, false, true, true);
@@ -114,21 +111,30 @@ Ext.define('Valence.util.App', {
 
     /**
      * @method isRunning
-     * Check if an application is currently running in the portal
      *
-     * @param {Number} appId
-     *
-     * ##Example -
-     *
-     * The following code snippet will close application id 1234
+     * ## Check if an application is currently running in the desktop portal:
      *
      *     Valence.util.App.isRunning(1234);
      *
+     * ## Check if an application is currently running in the mobile portal:
+     *
+     *   You need to pass an object that contains a callback method.
+     *
+     *     Valence.util.App.isRunning({
+     *         app      : 1234,
+     *         callback : function(response){
+     *             if (response){
+     *                 Ext.Msg.alert('Is running');
+     *             } else {
+     *                 Ext.Msg.alert('Is not running');
+     *             }
+     *         }
+     *     });
      */
     isRunning : function (appId) {
         var me = this;
 
-        if (!Valence.device.Access.isNativePortal()) {
+        if (!Valence.mobile.Access.isNativePortal()) {
             var appRecord = me.getRunningApp(appId);
             if (!Ext.isEmpty(appRecord)) {
                 return true;
@@ -144,7 +150,7 @@ Ext.define('Valence.util.App', {
                 method          : 'isLaunched'
             };
             Ext.apply(config, appId);
-            Valence.device.Access.initiate(config);
+            Valence.mobile.Access.initiate(config);
         }
     },
 
@@ -157,22 +163,24 @@ Ext.define('Valence.util.App', {
      * - `app`  The app Id
      * - `params`  The parameters to be passed in url format to the called app.
      * - `forceNew`  boolean (optional) Force the creation of a new app instance, regardless if the app is already open.
+     * - `closable`  boolean (optional) If false the user wont be able to close this app in the portal.
      *
      */
     launch : function (obj) {
         var me              = this,
             appId           = obj.app || null,
             forceNew        = obj.forceNew || false,
-            additionalParms = obj.params || null;
+            additionalParms = obj.params || null,
+            closable        = (!Ext.isEmpty(obj.closable) && Ext.isBoolean(obj.closable)) ? obj.closable : null;
 
         if (!Ext.isEmpty(appId)) {
-            if (!Valence.device.Access.isNativePortal()) {
+            if (!Valence.mobile.Access.isNativePortal()) {
                 var appRecord = me.getAvailableApp(appId);
 
                 if (!Ext.isEmpty(appRecord)) {
                     var portal = me.getDesktopPortal();
                     if (!Ext.isEmpty(portal)) {
-                        portal.util.Helper.launchApp(appRecord, additionalParms, forceNew);
+                        portal.util.Helper.launchApp(appRecord, additionalParms, forceNew, closable);
                         return;
                     }
                 }
@@ -184,11 +192,88 @@ Ext.define('Valence.util.App', {
                     requestId         : 'app',
                     method            : 'launch'
                 });
-                Valence.device.Access.initiate(config);
+                Valence.mobile.Access.initiate(config);
                 return;
             }
         }
         return false;
+    },
+
+    /**
+     * @method print
+     * Print the application - this will generate a cleaner print than the default browser print
+     */
+    print : function () {
+        var me           = this,
+            destroyFrame = function () {
+                var printFrame = Ext.ComponentQuery.query('uxiframe#vv-print-frame')[0];
+
+                if (!Ext.isEmpty(printFrame)) {
+                    printFrame.destroy();
+                    printFrame = null;
+                }
+            },
+            loadFrame    = function (screenShot) {
+                if (!Ext.isEmpty(Ext.ux.IFrame)){
+                    Ext.create('Ext.ux.IFrame', {
+                        itemId    : 'vv-print-frame',
+                        height    : '100%',
+                        width     : '100%',
+                        renderTo  : Ext.getBody(),
+                        style     : {
+                            display    : 'none',
+                            visibility : 'hidden'
+                        },
+                        src       : '/resources/printScreen.html',
+                        listeners : {
+                            single : true,
+                            load   : function (cmp) {
+                                var frameWindow = cmp.getWin(),
+                                    imageTag    = frameWindow.document.getElementById('screenshot');
+
+                                //load the screenshot
+                                //
+                                imageTag.setAttribute('src', screenShot);
+                                frameWindow.print();
+
+                                setTimeout(function () {
+                                    destroyFrame();
+                                }, 5000);
+                            }
+                        }
+                    });
+                } else {
+                    Ext.global.console.error('Valence.util.App.print requires Ext.ux.IFrame');
+                }
+            };
+
+        if (!Ext.isEmpty(html2canvas)) {
+            html2canvas(document.body, {
+                onrendered : function (canvas) {
+                    if (!Valence.mobile.Access.isNativePortal()) {
+                        loadFrame(canvas.toDataURL());
+                    } else {
+                        Valence.mobile.Print.content({
+                            scope    : me,
+                            content  : '<!DOCTYPE html><html><body><img src="' + canvas.toDataURL() + '" alt="Screenshot" width="100%" height="100%"></body></html>',
+                            callback : function (response) {
+                                if (Ext.isEmpty(response)) {
+                                    return;
+                                }
+                                if (!response.available) {
+                                    Valence.common.util.Dialog.show({
+                                        msg     : Valence.lang.lit.printerUnavailable,
+                                        buttons : ['->', {
+                                            text : Valence.lang.lit.ok
+                                        }]
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
     },
 
     /**
@@ -200,11 +285,11 @@ Ext.define('Valence.util.App', {
      * - `app`  The app Id or key
      *
      */
-    setActive : function(obj) {
+    setActive : function (obj) {
         var me    = this,
             appId = obj.app || obj.appId || obj;
 
-        if (!Valence.device.Access.isNativePortal()) {
+        if (!Valence.mobile.Access.isNativePortal()) {
             var appRecord = me.getRunningApp(appId);
 
             if (!Ext.isEmpty(appRecord)) {
@@ -228,7 +313,7 @@ Ext.define('Valence.util.App', {
                     app : obj
                 });
             }
-            Valence.device.Access.initiate(config);
+            Valence.mobile.Access.initiate(config);
         }
     },
 
@@ -255,25 +340,25 @@ Ext.define('Valence.util.App', {
      *
      * {@img app_setPromptBeforeClose.png before close Prompt}
      */
-    setPromptBeforeClose : function(key, obj, active){
+    setPromptBeforeClose : function (key, obj, active) {
         var me = this;
 
-        if (!Valence.device.Access.isNativePortal()) {
-            if (Ext.isEmpty(active)){
+        if (!Valence.mobile.Access.isNativePortal()) {
+            if (Ext.isEmpty(active)) {
                 active = true;
             }
 
             //if key is not passed in pull it from the url
             //
-            if (!Ext.isString(key)){
+            if (!Ext.isString(key)) {
                 key = Ext.getUrlParam('key');
             }
 
-            if (!Ext.isEmpty(key)){
+            if (!Ext.isEmpty(key)) {
                 //get the app record
                 //
                 var appRecord = me.getRunningApp(key);
-                if (!Ext.isEmpty(appRecord)){
+                if (!Ext.isEmpty(appRecord)) {
                     var portal = me.getDesktopPortal();
                     if (!Ext.isEmpty(portal)) {
                         //notify the portal to set prompt before close

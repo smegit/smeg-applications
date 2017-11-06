@@ -1,10 +1,15 @@
 Ext.define('Valence.common.util.Format', {
     singleton             : true,
     durationTextSinceDate : function (v, format, returnedUnits, numbersOnly) {
+        var currentSystemDate;
+        if (Ext.isObject(v)){
+            currentSystemDate = v.systemStamp;
+            v = v.stamp;
+        }
         var me     = this,
             f      = format || 'Y-m-d-H.i.s.u',
-            tsDate = Ext.Date.parse(v, f),
-            now    = new Date(),
+            tsDate = (!Ext.isDate(v)) ? Ext.Date.parse(v, f) : v,
+            now    = (Ext.isEmpty(currentSystemDate)) ? new Date() : currentSystemDate,
             minute = 60,
             hour   = 3600,
             day    = 86400,
@@ -17,7 +22,7 @@ Ext.define('Valence.common.util.Format', {
         }
         if (Ext.isEmpty(returnedUnits)) {
             if (diff < minute) {
-                return Valence.lang.lit.secondsAgo;
+                formatArgs = me.getDurationText(Valence.lang.lit.secondsAgo, diff, 1);
             } else if (diff < hour) {
                 formatArgs = me.getDurationText(Valence.lang.lit.minutesAgo, diff, minute);
             } else if (diff < day) {

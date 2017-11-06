@@ -11,10 +11,18 @@
   $ui-header-border-color:$black-4-color,
   $ui-body-background-color:$bg-color
 );
+/* white ui */
+@include extjs-window-ui(
+        $ui : 'white',
+        $ui-header-background-color:$white-1-color,
+        $ui-body-background-color:$white-1-color,
+        $ui-header-border-color:$white-1-color,
+        $ui-body-background-color:$white-1-color
+);
 
 @include extjs-window-ui(
   $ui : 'dialog',
-  $ui-border-radius:2px,
+  $ui-border-radius:2,
   $ui-border-width:0,
   $ui-inner-border-width:0,
   $ui-header-inner-border-width:0,
@@ -49,5 +57,10 @@
         color:$white-1-color;
       }
     }
+  }
+}
+.x-window-background{
+  >.x-toolbar{
+    background-color:$bg-color;
   }
 }

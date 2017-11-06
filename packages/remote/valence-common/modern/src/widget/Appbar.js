@@ -14,6 +14,8 @@ Ext.define('Valence.common.widget.Appbar', {
 
     cls : 'x-toolbar-appbar',
 
+    height : 64,
+
     config : {
         fireFilterEvtOnly : false,
         inSearchMode : false,
@@ -27,18 +29,30 @@ Ext.define('Valence.common.widget.Appbar', {
         ui : '{appBarUI}'
     },
 
+    endItems : [],
+
     initialize : function () {
         var me = this;
         me.callParent(arguments);
         me.add({
-            xtype : 'button',
-            bind  : {
+            iconCls : 'x-fa fa-caret-left',
+            itemId  : 'backbutton',
+            hidden  : true,
+            bind    : {
+                hidden : '{!appBarBackIcon}'
+            },
+            scope   : me,
+            handler : me.onTapBack
+        });
+        me.add({
+            xtype  : 'button',
+            itemId : 'appbartitlebtn',
+            bind   : {
                 text      : '{appBarTitleText}',
                 iconAlign : '{appBarTitleIconAlign}',
-                iconCls   : '{appBarTitleIconCls}',
-                hidden    : '{appBarMblSearch}'
+                iconCls   : '{appBarTitleIconCls}'
             },
-            cls   : Ext.os.is.Phone ? 'appbar-title appbar-title-phone' : 'appbar-title',
+            cls    : Ext.os.is.Phone ? 'appbar-title appbar-title-phone' : 'appbar-title',
 
             event     : 'titletap',
             listeners : {
@@ -49,41 +63,47 @@ Ext.define('Valence.common.widget.Appbar', {
         me.add('->');
         me.add({
             xtype     : 'textfield',
-            cls       : 'vv-appbar-filter-modern',
+            itemId    : 'appbarfilterfield',
+            cls       : 'vv-appbar-search-field',
             reference : 'filterfield',
+            hidden    : true,
+            width     : (Ext.platformTags.phone) ? '70%' : '42%',
             listeners : {
+                action : me.onActionFilter,
                 change : me.onChangeFilter,
                 scope  : me
             },
             bind      : {
-                value : '{appBarMblSearchValue}',
-                cls : '{appBarMblSearchCls}'
+                value : '{appBarMblSearchValue}'
             }
         });
         me.add({
-            xtype : 'button',
-
-            cls       : 'vv-appbar-filter-btn-modern',
-            width     : 40,
-            event     : 'filtertap',
-            bind      : {
-                iconCls : '{appBarMblSearchIconCls}',
-                hidden  : '{appBarMblSearchIcon}'
-
+            xtype      : 'button',
+            itemId     : 'appbarsearchbutton',
+            cls        : 'vv-appbar-filter-btn-modern',
+            width      : 50,
+            searchMode : false,
+            iconCls    : 'vvicon-search2',
+            bind       : {
+                hidden : '{!appBarMblSearch}'
             },
-            listeners : {
-                tap   : me.onTapCmp,
+            listeners  : {
+                tap   : me.onTapSearch,
+                hide  : me.onHideSearch,
                 scope : me
             }
         });
+        if (!Ext.isEmpty(me.endItems)) {
+            me.add(me.endItems);
+        }
     },
 
-    getSearchComponent : function(){
+    getSearchComponent : function () {
         var me = this,
             sc = me.callParent(arguments);
 
-        if (!Ext.isEmpty(sc)){
-            if (!Ext.isArray(sc)){
+        if (!Ext.isEmpty(sc)) {
+            if (!Ext.isArray(sc)) {
                 return [sc];
             }
         }
@@ -97,9 +117,44 @@ Ext.define('Valence.common.widget.Appbar', {
 
         // if this appbar has a "searchComponent"...then automatically perform the filtering...
         //
-        if (!Ext.isEmpty(me.getSearchComponent())){
+        if (!Ext.isEmpty(me.getSearchComponent())) {
             me.performSearch(val);
         }
+    },
+
+    onHideSearch : function () {
+        var me           = this,
+            searchField  = me.down('#appbarfilterfield'),
+            searchButton = me.down('#appbarsearchbutton');
+
+        if (!Ext.isEmpty(searchField) && searchField.isVisible()) {
+            me.onTapSearch(searchButton);
+        }
+    },
+
+    onTapBack : function (btn) {
+        var me           = this,
+            backBtn      = btn || me.down('#backbutton'),
+            searchField  = me.down('#appbarfilterfield'),
+            searchButton = me.down('#appbarsearchbutton');
+
+        if (!Ext.isEmpty(searchField) && searchField.isVisible()) {
+            searchField.hide();
+            searchField.element.animate({
+                type      : 'slideOut',
+                direction : 'right'
+            });
+        }
+
+        if (!Ext.isEmpty(searchButton)) {
+            searchButton.setIconCls('vvicon-search2');
+        }
+
+        if (Ext.os.is.Phone) {
+            me.down('#appbartitlebtn').setHidden(false);
+        }
+
+        me.fireEvent('back', me, backBtn);
     },
 
     onTapCmp : function (cmp, item) {
@@ -141,7 +196,42 @@ Ext.define('Valence.common.widget.Appbar', {
         //},300);
     },
 
-    buildFilterCtrl : function() {
+    onTapSearch : function (btn) {
+        var me          = this,
+            searchMode  = !btn.searchMode,
+            searchField = me.down('#appbarfilterfield');
+
+        if (!searchMode) {
+            searchField.disable();
+
+            me.fireEvent('filtertap', btn);
+            btn.setIconCls('vvicon-search2');
+
+            searchField.hide({
+                type      : 'slideOut',
+                direction : 'right'
+            });
+        } else {
+            searchField.enable();
+
+            btn.setIconCls('vvicon-checkmark3');
+            searchField.show({
+                type      : 'slideIn',
+                direction : 'left'
+            });
+            setTimeout(function () {
+                searchField.focus();
+            }, 600);
+        }
+
+        if (Ext.os.is.Phone) {
+            me.down('#appbartitlebtn').setHidden(searchMode);
+        }
+
+        btn.searchMode = searchMode;
+    },
+
+    buildFilterCtrl : function () {
         return new Ext.XTemplate(
             '<tpl for="cmp">',
                 '<div class="filter-cont">',
@@ -150,26 +240,34 @@ Ext.define('Valence.common.widget.Appbar', {
             '</tpl>');
     },
 
-    performSearch : function (val,index) {
+    onActionFilter : function () {
+        var me           = this,
+            searchButton = me.down('#appbarsearchbutton');
+        if (!Ext.isEmpty(searchButton)) {
+            me.onTapSearch(searchButton);
+        }
+    },
+
+    performSearch : function (val, index) {
         var me  = this,
             cmp = me.getSearchComponent(),
-            str,view;
+            str, view;
 
-        if (Ext.isEmpty(index)){
+        if (Ext.isEmpty(index)) {
             index = 0;
         }
         cmp = cmp[index];
 
-        if (Ext.isString(cmp)){
+        if (Ext.isString(cmp)) {
             view = Ext.ComponentQuery.query('app-main')[0];
-            cmp = view.lookupReference(cmp);
+            cmp  = view.lookupReference(cmp);
         }
 
         str = Ext.isFunction(cmp.getStore) ? cmp.getStore() : null;
 
         // maybe this is a store...
         //
-        if (Ext.isFunction(cmp.filterBy)){
+        if (Ext.isFunction(cmp.filterBy)) {
             str = cmp;
         }
 
@@ -183,8 +281,8 @@ Ext.define('Valence.common.widget.Appbar', {
         var srchRegEx = new RegExp(val, "i"),
             srchFlds  = cmp.appBarSearchFields;
 
-        if (!srchFlds){
-            srchFlds = str.getModel().getFields().map(function(fld){
+        if (!srchFlds) {
+            srchFlds = str.getModel().getFields().map(function (fld) {
                 return fld.name;
             });
         }
@@ -205,8 +303,8 @@ Ext.define('Valence.common.widget.Appbar', {
         }
     },
 
-    //onClickFilterCntrl : function(){
-    //    console.log('click');
-    //}
+//onClickFilterCntrl : function(){
+//    console.log('click');
+//}
 
 });

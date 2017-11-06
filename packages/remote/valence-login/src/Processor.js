@@ -14,9 +14,6 @@ Ext.define('Valence.login.Processor', {
         'Valence.login.util.Helper',
         'Valence.login.store.Connections',
         'Valence.login.store.Login_Environments',
-        //<if classic>
-        'Valence.login.view.lock.Lock',
-        //</if>
         'Valence.login.view.login.Login',
         //'Valence.login.view.phone.login.Login',
         //'Valence.login.view.phone.connection.Connection',
@@ -33,17 +30,20 @@ Ext.define('Valence.login.Processor', {
         callback          : null,
         connectionName    : null,
         customSid         : '',
+        featureCode       : null,
         forcePrompt       : false,
         forgotPassword    : true,
         hook              : '',
         hostUrl           : '',
         image             : null,
+        isLicensedProduct : false,
         isRunningInPortal : false,
         language          : '',
         namespace         : '',
         mode              : 'desktop',
         options           : {},
         password          : null,
+        productGroup      : 0,
         renderTo          : null,
         scope             : null,
         sid               : null,
@@ -72,6 +72,10 @@ Ext.define('Valence.login.Processor', {
         //
         me.setBypassLogin(false);
 
+        if (!Ext.isEmpty(o.appId)){
+            me.setAppId(o.appId);
+        }
+
         if (o.callback) {
             me.setCallback(o.callback);
         }
@@ -93,6 +97,13 @@ Ext.define('Valence.login.Processor', {
         }
         if (o.username) {
             me.setUsername(o.username);
+        } else if (Ext.isEmpty(me.getUsername())){
+            //check last login user via local storage
+            //
+            var lastLoginUser = localStorage.getItem('lastLoginUser');
+            if (!Ext.isEmpty(lastLoginUser)){
+                me.setUsername(lastLoginUser);
+            }
         }
 
         if (Ext.isEmpty(o.hostUrl)) {
@@ -100,7 +111,7 @@ Ext.define('Valence.login.Processor', {
                 window.location.protocol +
                 "//" +
                 window.location.hostname +
-                (window.location.port ? ':' + window.location.port: '');
+                (window.location.port ? ':' + window.location.port : '');
         }
         me.setHostUrl(o.hostUrl);
 
@@ -122,19 +133,31 @@ Ext.define('Valence.login.Processor', {
             me.setThemePath(o.themePath);
         }
 
+        if (!Ext.isEmpty(o.isLicensedProduct)){
+            me.setIsLicensedProduct(o.isLicensedProduct);
+        }
+
+        if (!Ext.isEmpty(o.productGroup)){
+            me.setProductGroup(o.productGroup);
+        }
+
+        if (!Ext.isEmpty(o.featureCode)){
+            me.setFeatureCode(o.featureCode);
+        }
+
         return o;
     },
 
-    checkHookForImage : function(){
-        var me    = this,
-            hook  = (!Ext.isEmpty(Valence) && !Ext.isEmpty(Valence.Hook)) ? Valence.Hook : null,
+    checkHookForImage : function () {
+        var me   = this,
+            hook = (!Ext.isEmpty(Valence) && !Ext.isEmpty(Valence.Hook)) ? Valence.Hook : null,
             value;
 
-        if (!Ext.isEmpty(hook) && !Ext.isEmpty(hook.ui) && !Ext.isEmpty(hook.ui.loginLogoUrl)){
+        if (!Ext.isEmpty(hook) && !Ext.isEmpty(hook.ui) && !Ext.isEmpty(hook.ui.loginLogoUrl)) {
             var theme = me.getTheme(),
                 value = hook.ui.loginLogoUrl;
 
-            if (value){
+            if (value) {
                 // check for theme...
                 //
                 if (!Ext.isEmpty(value[theme])) {
@@ -147,7 +170,7 @@ Ext.define('Valence.login.Processor', {
             }
         }
 
-        if (!Ext.isEmpty(value)){
+        if (!Ext.isEmpty(value)) {
             me.setImage(value);
         }
     },
@@ -216,13 +239,33 @@ Ext.define('Valence.login.Processor', {
             autoLogout    : true,
             manageIframes : false
         });
+
+        //setup history
+        //
+        Ext.util.History.add('login');
+
+        //if the user is hitting the back button and is logged in then just go forward back to main
+        //
+        window.onpopstate = function (event) {
+            if (document.location.hash === '#login') {
+                if (Valence.login.config.Runtime.getIsConnected()) {
+                    setTimeout(function () {
+                        Ext.util.History.forward();
+                    }, 0);
+                }
+                return false;
+            }
+        };
+
         me.setOptions(o);
         me.processUrl()
             .then(me.processConnections)
             .then(me.processHook)
             .then(me.processSid)
+            .then(Ext.bind(me.processAutoLogin, me))
             .then(me.processToken)
             .then(me.processSettings)
+            .then(me.processStandaloneV03)
             .then(me.processLanguage)
             .then(me.processLocale)
             .then(me.processTheme)
@@ -233,7 +276,9 @@ Ext.define('Valence.login.Processor', {
             .then(me.processUnload)
             .then(me.processCallback)
             .then(me.processAppTasks)
-            .then(null, me.processFailure);
+            .then(function () {
+                Ext.util.History.add('main');
+            }, me.processFailure);
     },
 
     isPortal : function () {
@@ -268,8 +313,8 @@ Ext.define('Valence.login.Processor', {
             cb       = me.getCallback(),
             scope    = me.getScope() || content.scope;
 
-        if (cb) {
-            if (Ext.isModern){
+        if (cb && !content.stopCallback) {
+            if (Ext.isModern) {
                 Ext.Viewport.unmask();
             }
             Ext.callback(cb, scope);
@@ -278,13 +323,13 @@ Ext.define('Valence.login.Processor', {
         return deferred.promise;
     },
 
-    processConnections: function(content) {
-        var me = content.scope,
+    processConnections : function (content) {
+        var me       = content.scope,
             deferred = Ext.create('Ext.Deferred'),
-            cfg, rec, store,cmp,hostUrl,url,port,desc,updateUrl;
+            cfg, rec, store, cmp, hostUrl, url, port, desc, updateUrl;
 
         if (me.getNamespace() == 'Portal' && Ext.isModern && (Ext.os.name == 'iOS' || Ext.os.name == 'Android')) {
-            updateUrl = function(recs,ops,success){
+            updateUrl = function (recs, ops, success) {
                 if (!success || store.getCount() == 0) {
                     // todo -- uncomment and remove if for production
                     //
@@ -296,7 +341,7 @@ Ext.define('Valence.login.Processor', {
                     cfg = {
                         xtype      : 'connection',
                         fullScreen : true,
-                        viewModel : {
+                        viewModel  : {
                             data : {
                                 // needs to be set to hide the remove button
                                 //
@@ -304,40 +349,40 @@ Ext.define('Valence.login.Processor', {
                             }
                         },
                         listeners  : {
-                            connectionadded : function (cmp, vals) {
+                            connectionadded    : function (cmp, vals) {
                                 hostUrl = vals.url + ':' + vals.port;
                                 Ext.Ajax.request({
-                                    url : hostUrl + '/valence/vvlogin.pgm',
+                                    url     : hostUrl + '/valence/vvlogin.pgm',
                                     params  : {
                                         action : 'getSettings'
                                     },
-                                    success : function(){
+                                    success : function () {
                                         cmp.destroy();
                                         store.add(vals);
                                         store.sync();
                                         Ext.Viewport.mask({
                                             indicator : true,
-                                            xtype   : 'loadmask',
-                                            message : Valence.lang.lit.loading
+                                            xtype     : 'loadmask',
+                                            message   : Valence.lang.lit.loading
                                         });
                                         deferred.resolve(content);
-                                        me.setOptions(Ext.apply(me.getOptions(),{hostUrl : hostUrl}));
+                                        me.setOptions(Ext.apply(me.getOptions(), {hostUrl : hostUrl}));
                                         me.setHostUrl(hostUrl);
                                     },
-                                    failure : function(){
+                                    failure : function () {
                                         Valence.common.util.Dialog.show({
-                                            title : Valence.lang.lit.invalidConnection,
-                                            msg : 'Cannot connect to ' + vals.desc,
-                                            buttons : ['->',{
+                                            title   : Valence.lang.lit.invalidConnection,
+                                            msg     : 'Cannot connect to ' + vals.desc,
+                                            buttons : ['->', {
                                                 text : Valence.lang.lit.ok
                                             }]
                                         });
                                     }
                                 });
                             },
-                            connectionfromlink : function(){
+                            connectionfromlink : function () {
                                 rec = store.findRecord('selected', true);
-                                if (Ext.isEmpty(rec)&& store.getCount()>0) {
+                                if (Ext.isEmpty(rec) && store.getCount() > 0) {
                                     rec = store.getAt(0);
                                     rec.set('selected', true);
                                     rec.commit();
@@ -345,17 +390,17 @@ Ext.define('Valence.login.Processor', {
                                 }
                                 hostUrl = rec.get('url') + ":" + rec.get('port');
 
-                                me.setOptions(Ext.apply(me.getOptions(),{hostUrl : hostUrl}));
+                                me.setOptions(Ext.apply(me.getOptions(), {hostUrl : hostUrl}));
                                 me.setHostUrl(hostUrl);
                                 cmp.destroy();
                                 Ext.Viewport.mask({
                                     indicator : true,
-                                    xtype   : 'loadmask',
-                                    message : Valence.lang.lit.loading
+                                    xtype     : 'loadmask',
+                                    message   : Valence.lang.lit.loading
                                 });
                                 deferred.resolve(content);
                             },
-                            scope : me
+                            scope              : me
                         }
                     };
                     cmp = Ext.Viewport.add(cfg);
@@ -370,34 +415,35 @@ Ext.define('Valence.login.Processor', {
                     desc = rec.get('desc');
                     Ext.Viewport.mask({
                         indicator : true,
-                        xtype   : 'loadmask',
-                        message : 'Checking ' + desc
+                        xtype     : 'loadmask',
+                        message   : 'Checking ' + desc
                     });
                     hostUrl = rec.get('url') + ':' + rec.get('port');
                     me.setHostUrl(hostUrl);
-                    me.setOptions(Ext.apply(me.getOptions(),{hostUrl : hostUrl}));
+                    me.setOptions(Ext.apply(me.getOptions(), {hostUrl : hostUrl}));
                     Ext.Ajax.request({
-                        url : hostUrl + '/valence/vvlogin.pgm',
+                        url     : hostUrl + '/valence/vvlogin.pgm',
                         params  : {
                             action : 'getSettings'
                         },
-                        success : function(){
-                            Ext.Viewport.mask({
-                                indicator : true,
-                                xtype   : 'loadmask',
-                                message : Valence.lang.lit.loading
-                            });
-                            deferred.resolve(content);
-                        },
-                        failure : function(){
-                            me.setHostUrl('');
-                            rec.set('invalid',true);
-                            rec.commit();
+                        success : function () {
+                            rec.set('invalid', false);
                             store.sync();
                             Ext.Viewport.mask({
                                 indicator : true,
-                                xtype   : 'loadmask',
-                                message : Valence.lang.lit.loading
+                                xtype     : 'loadmask',
+                                message   : Valence.lang.lit.loading
+                            });
+                            deferred.resolve(content);
+                        },
+                        failure : function () {
+                            me.setHostUrl('');
+                            rec.set('invalid', true);
+                            store.sync();
+                            Ext.Viewport.mask({
+                                indicator : true,
+                                xtype     : 'loadmask',
+                                message   : Valence.lang.lit.loading
                             });
                             deferred.resolve(content);
                         }
@@ -407,21 +453,21 @@ Ext.define('Valence.login.Processor', {
             Valence.login.config.Settings.setLockConnections(localStorage.getItem('vvlocked') == 'true');
             Ext.Viewport.mask({
                 indicator : true,
-                xtype   : 'loadmask',
-                message : Valence.lang.lit.loading
+                xtype     : 'loadmask',
+                message   : Valence.lang.lit.loading
             });
             store = Ext.getStore('Connections');
-            if (Ext.isEmpty(store)){
+            if (Ext.isEmpty(store)) {
                 store = Ext.create('Valence.login.store.Connections');
             }
             if (!store.isLoaded()) {
                 store.load({
-                    callback : function(recs,operation,success){
-                        updateUrl(recs,operation,success);
+                    callback : function (recs, operation, success) {
+                        updateUrl(recs, operation, success);
                     }
                 });
             } else {
-                updateUrl(null,null,true);
+                updateUrl(null, null, true);
             }
 
         } else {
@@ -442,9 +488,16 @@ Ext.define('Valence.login.Processor', {
         if (content.processTheme) {
             me.processTheme(content);
         }
-        if (content.executeCallback) {
-            if (cb) {
-                Ext.callback(cb, scope);
+        if (content.processSettings){
+            me.processSettings(content)
+                .then(function(content){
+                    if (content.executeCallback){
+                        me.processCallback(content);
+                    }
+                });
+        } else {
+            if (content.executeCallback){
+                me.processCallback(content);
             }
         }
         if (!content.controlledError) {
@@ -483,7 +536,7 @@ Ext.define('Valence.login.Processor', {
             hook += '_vc=' + cacheBust;
             hook = me.getHostUrl() + hook;
             me.scripts.push(hook);
-        } else if (Valence.login.config.Runtime.getIsDesktop()){
+        } else if (Valence.login.config.Runtime.getIsDesktop()) {
             hook = me.getHostUrl() + '/resources/desktop/Hook.js?_vc=' + cacheBust;
             me.scripts.push(hook);
         }
@@ -549,6 +602,123 @@ Ext.define('Valence.login.Processor', {
         return deferred.promise;
     },
 
+    /**
+     * processAutoLogin - will attempt a login if reuse sid is false and we have a user/password
+     *  that is either passed in the query params or manually set on the Processor. This was added
+     *  for customer that wants the automatically login until the user actually performs a logout
+     */
+    processAutoLogin : function (content) {
+        var me       = this,
+            deferred = Ext.create('Ext.Deferred'),
+            user     = me.getUsername(),
+            pwd      = me.getPassword();
+
+        if ((Ext.isEmpty(content.reuseSid) || !content.reuseSid) && !Ext.isEmpty(user) && !Ext.isEmpty(pwd) && !me.getForcePrompt()) {
+            //since we have a user/password attempt to login without showing the login view
+            //
+            var me           = this,
+                appId        = me.getAppId(),
+                app          = Valence.login.config.Runtime.getApplication(),
+                hostUrl      = me.getHostUrl(),
+                mobilePortal = me.getNamespace() == 'Portal' && Ext.isModern && (Ext.os.name == 'iOS' || Ext.os.name == 'Android'),
+                url,
+                parms        = {
+                    action   : 'login',
+                    lng      : me.getLanguage(),
+                    display  : me.getMode(),
+                    version  : me.getVersion(),
+                    forceEnv : Valence.login.config.Runtime.getUrlParms().environment
+                };
+
+            // encode the user/password values...
+            //
+            Ext.apply(parms, {
+                user     : Valence.util.Helper.encodeUTF16(user),
+                password : Valence.util.Helper.encodeUTF16(pwd)
+            });
+
+            //if appId exists then pass it to validate authorization
+            //
+            if (!Ext.isEmpty(appId)) {
+                Ext.apply(parms, {
+                    validateAppId : appId
+                });
+            }
+
+            if (mobilePortal) {
+                Valence.login.Processor.setHostUrl(hostUrl);
+            }
+
+            if (!app || app.fireEvent('beforelogin', parms) !== false) {
+                url = hostUrl + '/valence/vvlogin.pgm';
+
+                Ext.Ajax.request({
+                    url     : url,
+                    params  : parms,
+                    scope   : me,
+                    success : function (r) {
+                        var d = Ext.decode(r.responseText);
+                        if (d.success) {
+                            // login was successful...
+                            //   - set the sid in localStorage
+                            //   - set the env in sessionStorage (if desktop)
+                            //   - create and load the "Environments" store
+                            //   - set the user runtime value
+                            //   - decode applicable fields
+                            //   - fire off an application and view level event
+                            //
+                            localStorage.setItem('sid', d.sid);
+
+                            // for backward compatibility (pre Valence 5) set the sessionStorage as well...
+                            //
+                            sessionStorage.setItem('sid', d.sid);
+
+                            if (Valence.login.config.Runtime.getIsDesktop()) {
+                                sessionStorage.setItem('env', d.env);
+                            }
+                            Ext.create('Valence.login.store.Login_Environments', {
+                                data : d.envs
+                            });
+                            Valence.login.config.Runtime.setUser(user);
+
+                            me.setBypassLogin(d.success);
+                            me.setLanguage(d.defaultLanguage);
+                            me.setVersion(d.version);
+
+                            // set the IBM i user....
+                            //
+                            if (d.ibmiUser) {
+                                Valence.login.config.Runtime.setIbmiUser(d.ibmiUser);
+                            }
+
+                            if (app) {
+                                app.fireEvent('login', user, d.sid);
+                                app.fireEvent('environmentset', user, d.env);
+                            }
+
+                            d.firstname = Valence.util.Helper.decodeUTF16(d.firstname);
+                            d.lastname  = Valence.util.Helper.decodeUTF16(d.lastname);
+
+                            deferred.resolve(Ext.apply(content, d, {
+                                reuseSid : true,
+                                sid      : d.sid
+                            }));
+                        } else {
+                            deferred.resolve(content);
+                        }
+                    },
+                    failure : function () {
+                        deferred.resolve(content);
+                    }
+                });
+            }
+        } else {
+            deferred.resolve(content);
+        }
+
+        return deferred.promise;
+    },
+
     processLock : function () {
         var me = this,
             cfg, cmp;
@@ -599,21 +769,32 @@ Ext.define('Valence.login.Processor', {
     },
 
     processSettings : function (content) {
-        var me       = content.scope,
-            deferred = Ext.create('Ext.Deferred'),
-            app      = Valence.login.config.Runtime.getApplication();
+        var me          = content.scope,
+            deferred    = Ext.create('Ext.Deferred'),
+            app         = Valence.login.config.Runtime.getApplication(),
+            featureCode = me.getFeatureCode(),
+            params      = {
+                action       : 'getSettings',
+                mode         : me.getMode(),
+                customSid    : me.getCustomSid(),
+                forcePrompt  : me.getForcePrompt(),
+                productGroup : me.getProductGroup()
+            };
+
+        if (!Ext.isEmpty(featureCode)){
+            Ext.apply(params,{
+                featureCode : featureCode
+            });
+        }
 
         Ext.Ajax.request({
             url     : me.getHostUrl() + '/valence/vvlogin.pgm',
-            params  : {
-                action      : 'getSettings',
-                mode        : me.getMode(),
-                customSid   : me.getCustomSid(),
-                forcePrompt : me.getForcePrompt()
-            },
+            params  : params,
+            scope   : me,
             success : function (r) {
                 var d        = Ext.decode(r.responseText),
                     settings = Valence.login.config.Settings;
+                settings.setDatabase(d.database);
                 settings.setBrowserTitle(Valence.util.Helper.decodeUTF16(d.browserTitle));
                 settings.setDateFormat(d.dateFormat);
                 settings.setDefaultLanguage(d.defaultLanguage);
@@ -625,19 +806,24 @@ Ext.define('Valence.login.Processor', {
                 settings.setMaxAutoStartApps(d.maxAutoStart);
                 settings.setMenuTextMode(d.usrEnvMode);
                 settings.setMultiLingual(d.multilingual);
-                settings.setPasswordReset(d.pwdResetAllowed);
+                settings.setShowChangePassword(d.pwdChangeAllowed);
+                settings.setShowForgotPassword(d.pwdResetAllowed);
                 settings.setPathVariables(d.pathVar);
                 settings.setPollInterval(d.pollInterval);
                 settings.setSetUserCookie(d.usrCookie);
                 settings.setWelcomePage(d.welcomePage);
                 settings.setVersion(d.version);
+                settings.setTourDisabled(d.tourDisabled);
+                settings.setStandaloneV03(d.standaloneV03);
+                Valence.login.config.Runtime.setSerialNumber(d.serialNbr);
+                Valence.login.config.Runtime.setPartition(d.partition);
                 if (!me.getVersion()) {
                     me.setVersion(d.version);
                 }
 
-                // only set the title if this is the Portal...
+                // set title...
                 //
-                if (me.isPortal() && d.browserTitle) {
+                if (!Ext.isEmpty(d.browserTitle)) {
                     document.title = Valence.util.Helper.decodeUTF16(d.browserTitle);
                 }
 
@@ -650,8 +836,7 @@ Ext.define('Valence.login.Processor', {
                 if (d.sid) {
                     me.setBypassLogin(true);
 
-                    // do nothing with this sid as we do not want to overwrite localStorage with this...
-                    //
+                    sessionStorage.setItem('sid',d.sid);
 
                     // set the user...
                     //
@@ -661,6 +846,12 @@ Ext.define('Valence.login.Processor', {
 
                         d.firstname = Valence.util.Helper.decodeUTF16(d.firstname);
                         d.lastname  = Valence.util.Helper.decodeUTF16(d.lastname);
+                    }
+
+                    // set the IBM i user....
+                    //
+                    if (d.ibmiUser) {
+                        Valence.login.config.Runtime.setIbmiUser(d.ibmiUser);
                     }
 
                     //  create the environments store...
@@ -693,13 +884,37 @@ Ext.define('Valence.login.Processor', {
                     Ext.apply(content, d);
                 }
 
+                // alert user if this is a licensed product and 30 or less days of functionality are remaining...
+                //
+                if (me.getIsLicensedProduct()){
+                    if (d.isLicensed){
+                        if (!Ext.isEmpty(d.daysRemaining) && d.daysRemaining <= 30){
+                            Valence.common.util.Snackbar.show({
+                                duration : 7500,
+                                text     : (d.isTrial) ? Valence.lang.lit.keyTrial.replace('VAR1',d.daysRemaining) : Valence.lang.lit.keyLicensedTemp.replace('VAR1',d.daysRemaining)
+                            });
+                        }
+                    } else {
+                        Ext.apply(content,{
+                            controlledError : true
+                        });
+                        Valence.common.util.Dialog.show({
+                            title     : Valence.lang.lit.enterpriseLicenseKeyRequiredTitle,
+                            msg       : Valence.lang.lit.enterpriseLicenseKeyRequiredBody,
+                            noButtons : true,
+                            minWidth  : 350
+                        });
+                        deferred.reject(content);
+                        return;
+                    }
+                }
                 deferred.resolve(content);
             },
-            failure : function(){
+            failure : function () {
                 Ext.log({
                     msg : 'Valence login processor: call to getSettings failure'
                 });
-                if (Ext.os.name == 'iOS' || Ext.os.name == 'Android'){
+                if (Ext.os.name == 'iOS' || Ext.os.name == 'Android') {
                     deferred.resolve(content);
                 } else {
                     deferred.reject();
@@ -715,15 +930,17 @@ Ext.define('Valence.login.Processor', {
             deferred = Ext.create('Ext.Deferred'),
             sid      = me.getSid(),
             app      = Valence.login.config.Runtime.getApplication(),
-            appId;
+            appId    = me.getAppId();
 
-        //if not the portal check for app id in url and set it for passing 
+        //if not the portal check for app id in url and set it for passing
         // to login / is valid session for validation
         //
         if (!me.isPortal()) {
-            appId = Ext.getUrlParam('app');
-            if (!Ext.isEmpty(appId)){
-                me.setAppId(appId);
+            if (Ext.isEmpty(appId)){
+                appId = Ext.getUrlParam('app');
+                if (!Ext.isEmpty(appId)) {
+                    me.setAppId(appId);
+                }
             }
         }
 
@@ -732,15 +949,15 @@ Ext.define('Valence.login.Processor', {
         //  else
         //    verify that the sid is valid
         //
-        if (Ext.isEmpty(sid) || me.getBypassReuseSid()) {
+        if (Ext.isEmpty(sid) || me.getBypassReuseSid() || me.getForcePrompt()) {
             deferred.resolve(content);
         } else {
             var params = {
                 action : 'isValidSession'
             };
 
-            if (!Ext.isEmpty(appId)){
-                Ext.apply(params,{
+            if (!Ext.isEmpty(appId)) {
+                Ext.apply(params, {
                     validateAppId : appId
                 });
             }
@@ -750,9 +967,9 @@ Ext.define('Valence.login.Processor', {
                 params  : params,
                 scope   : me,
                 success : function (r) {
-                    var d       = Ext.decode(r.responseText);
-                    if (d.success){
-                        d.loginId   = Valence.util.Helper.decodeUTF16(d.loginId);
+                    var d = Ext.decode(r.responseText);
+                    if (d.success) {
+                        d.loginId = Valence.util.Helper.decodeUTF16(d.loginId);
                         Ext.create('Valence.login.store.Login_Environments', {
                             data : d.envs
                         });
@@ -781,6 +998,12 @@ Ext.define('Valence.login.Processor', {
                         d.firstname = Valence.util.Helper.decodeUTF16(d.firstname);
                         d.lastname  = Valence.util.Helper.decodeUTF16(d.lastname);
 
+                        // set the IBM i user....
+                        //
+                        if (d.ibmiUser) {
+                            Valence.login.config.Runtime.setIbmiUser(d.ibmiUser);
+                        }
+
                         // for backward compatibility (pre Valence 5) set the sessionStorage as well...
                         //
                         sessionStorage.setItem('sid', d.sid);
@@ -789,8 +1012,15 @@ Ext.define('Valence.login.Processor', {
                             reuseSid : true,
                             sid      : sid
                         }));
+
+                        //fire the login event
+                        //
+                        var app = Valence.login.config.Runtime.getApplication();
+                        if (app) {
+                            app.fireEvent('login');
+                        }
                     } else {
-                        if (!Ext.isEmpty(d.lit)){
+                        if (!Ext.isEmpty(d.lit)) {
                             Valence.login.util.Helper.showImageDialog(Valence.common.util.Helper.getLit(d), me.getImage());
                             deferred.reject();
                         } else {
@@ -816,6 +1046,27 @@ Ext.define('Valence.login.Processor', {
                     }
                 }
             });
+        }
+
+        return deferred.promise;
+    },
+
+    processStandaloneV03 : function (content) {
+        var me        = content.scope,
+            deferred  = Ext.create('Ext.Deferred'),
+            cacheBust = new Date().getTime(),
+            hook      = me.getHostUrl() + '/resources/desktop/HookV03.js?_vc=' + cacheBust,
+            scripts   = [hook];
+
+        if (Valence.login.config.Settings.getStandaloneV03()) {
+            Valence.util.Helper.execScriptFiles({
+                urls     : scripts,
+                callback : function () {
+                    deferred.resolve(content);
+                }
+            });
+        } else {
+            deferred.resolve(content);
         }
 
         return deferred.promise;
@@ -870,10 +1121,10 @@ Ext.define('Valence.login.Processor', {
             link.href = '/resources/' + mode + '/themes/css/Portal/overrides.css?_vc=' + cacheBust;
             head.appendChild(link);
 
-            if (!me.isPortal()) {
+            if (!me.isPortal() && !Ext.isEmpty(Ext.isClassic) && Ext.isClassic) {
                 // setup an event listener so this app will know when the Portal theme has been changed...
                 //
-                Valence.util.Helper.addEventListener('themechanged',Valence.util.Helper.swapTheme);
+                Valence.util.Helper.addEventListener('themechanged', Valence.util.Helper.swapTheme);
             }
         }
 
@@ -912,6 +1163,8 @@ Ext.define('Valence.login.Processor', {
                 var app = Valence.login.config.Runtime.getApplication();
 
                 if (app) {
+                    me.getAppUmbrella().onLogout(false);
+
                     app.fireEvent('logout');
                 } else {
                     //todo what is this for since it should just fire the event logout and app umbrella takes care of it
@@ -941,7 +1194,9 @@ Ext.define('Valence.login.Processor', {
             };
 
             window.onbeforeunload = function (evt) {
-                if (!Valence.login.config.Runtime.getIsLoggingOut() && Valence.login.config.Runtime.getUser() && Valence.login.config.Runtime.getUrlParms().portal !== 'false') {
+                var rt = Valence.login.config.Runtime;
+
+                if (!rt.getIsLoggingOut() && rt.getUser() && rt.getUrlParms().portal !== 'false' && rt.getIsConnected() && !rt.getIsPending569Logout()) {
                     return Valence.lang.lit.valencePortal;
                 }
             };
@@ -958,7 +1213,7 @@ Ext.define('Valence.login.Processor', {
             sid      = (!Ext.isEmpty(parms.sid)) ? parms.sid : localStorage.getItem('sid');
 
         me.setCustomSid(!Ext.isEmpty(parms.customSid) ? parms.customSid : '');
-        me.setForcePrompt(!Ext.isEmpty(parms.forcePrompt) ? parms.forcePrompt : false);
+        me.setForcePrompt(!Ext.isEmpty(parms.forcePrompt) ? (parms.forcePrompt === 'true') : false);
         me.setLanguage(!Ext.isEmpty(parms.lang) ? parms.lang : '');
         me.setIsRunningInPortal(!Ext.isEmpty(parms.sid) ? true : false);
         me.setSid(sid);
@@ -991,19 +1246,21 @@ Ext.define('Valence.login.Processor', {
                 executeCallback : true,
                 processLocale   : true,
                 processTheme    : true,
+                processSettings : me.getIsLicensedProduct(),
                 controlledError : true
+            });
+        } else {
+            // if a customSid was passed...bypass the processSid check...
+            //
+            if (!Ext.isEmpty(me.getCustomSid())) {
+                me.setBypassReuseSid(true);
+            }
+            deferred.resolve({
+                scope : me,
+                theme : parms.theme || null
             });
         }
 
-        // if a customSid was passed...bypass the processSid check...
-        //
-        if (!Ext.isEmpty(me.getCustomSid())) {
-            me.setBypassReuseSid(true);
-        }
-        deferred.resolve({
-            scope : me,
-            theme : parms.theme || null
-        });
         return deferred.promise;
     },
 
@@ -1062,16 +1319,16 @@ Ext.define('Valence.login.Processor', {
                             }
                         }
 
-                        if (Ext.isModern){
-                            if (me.isPortal()){
+                        if (Ext.isModern) {
+                            if (me.isPortal()) {
                                 // To handle switching connections
                                 //
-                                me.setOptions(Ext.apply(me.getOptions(),{hostUrl : me.getHostUrl()}));
+                                me.setOptions(Ext.apply(me.getOptions(), {hostUrl : me.getHostUrl()}));
                             }
                             Ext.Viewport.mask({
                                 indicator : true,
-                                xtype   : 'loadmask',
-                                message : Valence.lang.lit.loading
+                                xtype     : 'loadmask',
+                                message   : Valence.lang.lit.loading
                             });
                         }
                         deferred.resolve(Ext.apply(content, o));
@@ -1084,12 +1341,12 @@ Ext.define('Valence.login.Processor', {
                 cmp          = Ext.widget('login', cfg);
             } else {
                 cmp = Ext.Viewport.add(cfg);
-                setTimeout(function(){
+                setTimeout(function () {
                     Ext.Viewport.unmask();
                     if (!Ext.isEmpty(navigator.splashscreen)) {
                         navigator.splashscreen.hide();
                     }
-                },300);
+                }, 300);
             }
 
             setTimeout(function () {

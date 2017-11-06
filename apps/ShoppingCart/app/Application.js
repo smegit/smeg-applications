@@ -4,6 +4,7 @@ Ext.define('ShoppingCart.Application', {
     name: 'ShoppingCart',
 
     requires : [
+        'Valence.login.Processor',
         'ShoppingCart.util.Helper',
         'ShoppingCart.view.main.Main',
         'Valence.common.util.Helper'

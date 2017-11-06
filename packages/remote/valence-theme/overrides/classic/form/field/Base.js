@@ -1,19 +1,34 @@
 Ext.define('Ext.overrides.classic.form.field.Base', {
-    override       : 'Ext.form.field.Base',
-    getSubmitData: function() {
-        var me = this,
+    override             : 'Ext.form.field.Base',
+    hideBorderOnReadOnly : false,
+    initComponent        : function(){
+        var me = this;
+
+        me.callParent(arguments);
+
+        if (me.hideBorderOnReadOnly && me.readOnly){
+            me.on({
+                scope       : me,
+                afterrender : function(){
+                    me.setReadOnly(true);
+                }
+            });
+        }
+    },
+    getSubmitData        : function () {
+        var me   = this,
             data = null,
             val;
         if (!me.disabled && me.submitValue) {
             val = me.getSubmitValue();
             if (val !== null) {
-                data = {};
+                data               = {};
                 data[me.getName()] = (!me.graphic) ? val : Valence.util.Helper.encodeUTF16(val);
             }
         }
         return data;
     },
-    reset: function(){
+    reset                : function () {
         var me = this;
 
         me.beforeReset();
@@ -24,6 +39,18 @@ Ext.define('Ext.overrides.classic.form.field.Base', {
 
         // adding "reset" event....
         //
-        me.fireEvent('reset',me);
+        me.fireEvent('reset', me);
+    },
+    setReadOnly : function(readOnly){
+        var me      = this;
+
+        if (me.hideBorderOnReadOnly && me.el){
+            if (readOnly){
+                me.el.addCls('vv-readonly')
+            } else {
+                me.el.removeCls('vv-readonly')
+            }
+        }
+        me.callParent(arguments);
     }
 });

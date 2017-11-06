@@ -6,9 +6,12 @@ Ext.define('Ext.overrides.classic.container.Container', {
 
         if(!Ext.isEmpty(me.plugins)){
             if (Ext.Array.indexOf(me.plugins, 'viewport') !== -1 || !Ext.isEmpty(me.getPlugin('viewport'))){
-                if (Ext.isEmpty(me.minWidth)){
+                //apply the min width if this is the applications viewport and it doesn't already have a min width defined
+                // Also, check the component doesn't have applyVpMinWidth = false. If it does dont apply min width.
+                //
+                if (Ext.isEmpty(me.minWidth) && (Ext.isEmpty(me.applyVpMinWidth) || me.applyVpMinWidth)){
                     Ext.apply(me,{
-                        minWidth   : 1280
+                        minWidth   : 900
                     });
                     
                     if (!Ext.isIE && Ext.isEmpty(me.scrollable)){

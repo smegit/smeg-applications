@@ -26,7 +26,8 @@ Ext.define('Valence.common.util.Snackbar',{
             ],
             listeners : {
                 scope  : me,
-                render : me.onRenderCmp
+                render : me.onRenderCmp,
+                painted : me.onRenderCmp
             }
         });
     },

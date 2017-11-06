@@ -31,6 +31,74 @@ $inner-border-color-focus-pressed: transparent,
 $inner-border-color-disabled: transparent
 );
 @include extjs-button-small-ui(
+    $ui: 'light',
+    $border-color: $black-4-color,
+    $border-color-over: $black-4-color,
+    $border-color-focus: $black-4-color,
+    $border-color-pressed: $black-4-color,
+    $border-color-focus-over: $black-4-color,
+    $border-color-focus-pressed: $black-4-color,
+    $border-color-disabled: $black-4-color,
+    $background-color: $bg-color,
+    $background-color-over: darken($black-4-color,3%),
+    $background-color-focus: $black-4-color,
+    $background-color-pressed: $black-4-color,
+    $background-color-focus-over: $black-4-color,
+    $background-color-focus-pressed: $black-4-color,
+    $background-color-disabled: $black-4-color,
+    $background-gradient-over: 'none',
+    $color: $black-1-color,
+    $color-over: $black-1-color,
+    $color-focus: $black-1-color,
+    $color-pressed: $black-1-color,
+    $color-focus-over: $black-1-color,
+    $color-focus-pressed: $black-1-color,
+    $color-disabled: lighten($color, 20%),
+    $inner-border-color: transparent,
+    $inner-border-color-over: transparent,
+    $inner-border-color-focus: transparent,
+    $inner-border-color-pressed: transparent,
+    $inner-border-color-focus-over: transparent,
+    $inner-border-color-focus-pressed: transparent,
+    $inner-border-color-disabled: transparent,
+    $arrow-glyph-color:$black-2-color
+);
+@include extjs-button-small-ui(
+    $ui: 'white',
+    $border-color: $black-4-color,
+    $border-color-over: $black-4-color,
+    $border-color-focus: $black-4-color,
+    $border-color-pressed: $black-4-color,
+    $border-color-focus-over: $black-4-color,
+    $border-color-focus-pressed: $black-4-color,
+    $border-color-disabled: $black-4-color,
+    $background-color: #fff,
+    $background-color-over: darken(#fff,3%),
+    $background-color-focus: #fff,
+    $background-color-pressed: #fff,
+    $background-color-focus-over: #fff,
+    $background-color-focus-pressed: #fff,
+    $background-color-disabled: #fff,
+    $background-gradient-over: 'none',
+    $color: $black-1-color,
+    $color-over: $black-1-color,
+    $color-focus: $black-1-color,
+    $color-pressed: $black-1-color,
+    $color-focus-over: $black-1-color,
+    $color-focus-pressed: $black-1-color,
+    $color-disabled: lighten($color, 20%),
+    $inner-border-color: transparent,
+    $inner-border-color-over: transparent,
+    $inner-border-color-focus: transparent,
+    $inner-border-color-pressed: transparent,
+    $inner-border-color-focus-over: transparent,
+    $inner-border-color-focus-pressed: transparent,
+    $inner-border-color-disabled: transparent,
+    $arrow-glyph-color:$black-2-color
+);
+
+
+@include extjs-button-small-ui(
 $ui: 'transparent-action',
 $border-color: transparent,
 $border-color-over: transparent,
@@ -213,16 +281,68 @@ $background-color: $primary-color
 $ui: 'primary',
 $background-color: $primary-color
 );
+@include extjs-button-toolbar-small-ui(
+        $ui: 'secondary',
+        $background-color: $secondary-color,
+        $border-color: $secondary-color
+);
+@include extjs-button-toolbar-medium-ui(
+        $ui: 'secondary',
+        $background-color: $secondary-color,
+        $border-color: $secondary-color
+);
+@include extjs-button-small-ui(
+        $ui: 'secondary',
+        $background-color: $secondary-color,
+        $border-color: $secondary-color
+);
+@include extjs-button-medium-ui(
+        $ui: 'secondary',
+        $background-color: $secondary-color,
+        $border-color: $secondary-color
+);
+@include extjs-button-medium-ui(
+$ui: 'bg',
+$background-color: $bg-color,
+$border-color:$black-4-color,
+$color:$black-1-color
+);
+@include extjs-button-small-ui(
+        $ui: 'bg',
+        $background-color: $bg-color,
+        $border-color:$black-4-color,
+        $color:$black-1-color
+);
 
 .x-btn {
-  @include transition(all .3s);
+  @include transition(box-shadow .3s);
 }
 
-.x-btn-over.depth-1 {
+.x-btn-over.depth-1.depth-init {
   @extend .depth-2;
+}
+.x-btn-over.depth-on-hover{
+  @extend .depth-1;
 }
 
 .x-btn-disabled {
   opacity: 0.3;
+}
+.x-btn.x-btn-light-small,.x-btn-white-small,.x-btn-default-small,.x-btn-default-toolbar-small,.x-btn-transparent-small,.x-btn-transparent-action-small,.x-btn-transparent-action-blue-small{
+    .x-btn-icon-el{
+        font-size:18px;
+        line-height:17px;
+    }
+}
+.x-btn.x-btn-default-small,.x-btn.x-btn-default-medium{
+    .x-btn-icon-el{
+        color:#fff;
+    }
+}
+.x-btn.x-btn-default-medium,.x-btn-default-toolbar-medium,.x-btn-transparent-medium,.x-btn-transparent-action-medium,.x-btn-transparent-action-blue-medium{
+    .x-btn-icon-el{
+        font-size:22px;
+        line-height:21px;
+    }
 }
 

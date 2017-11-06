@@ -21,11 +21,19 @@
   width:100%!important;
   @extend .x-form-item;
   .x-form-trigger-wrap{
+    border-top-width:0!important;
     border-width:0 0 1px 0;
     border-color:$black-4-color!important;
   }
   input,.x-form-trigger{
     background-color:$bg-color;
+  }
+}
+.x-header{
+  .vv-form-item-full-width{
+    .x-form-trigger-wrap{
+      border-top-width: 1px;
+    }
   }
 }
 .x-window{

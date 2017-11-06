@@ -17,7 +17,8 @@ Ext.define('Valence.login.view.login.LoginModel', {
         loginValidation      : true,
         loginValidationText : Valence.lang.lit.canNotBeBlank,
         loginDisabled        : false,
-        mobilePortal         : false
+        mobilePortal         : false,
+        showForgotPassword   : false
     },
     formulas : {
         connectionRequired       : function (get) {
@@ -25,6 +26,23 @@ Ext.define('Valence.login.view.login.LoginModel', {
             // being set after the viewmodel is created
             //
             return Valence.login.Processor.isPortal() && get('mode') !== 'desktop' && (Ext.os.name == 'iOS' || Ext.os.name == 'Android');
+        },
+        showForgotPassword       : function (get) {
+            var fpp = get('forgotPasswordPrompt');
+            if (fpp){
+                return false;
+            } else {
+                return Valence.login.config.Settings.getShowForgotPassword();
+            }
+        },
+        showLanguageSelection    : function (get) {
+            if (!Valence.login.config.Settings.getMultiLingual()){
+                return false;
+            }
+            if (get('forgotPasswordPrompt')){
+                return false;
+            }
+            return true;
         },
         showNoConnection         : function (get) {
             return get('connectionRequired') && !get('hasConnection');

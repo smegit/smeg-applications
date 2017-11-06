@@ -1,18 +1,15 @@
-Ext.define('Valence.login.AppUmbrella',{
-    extend         : 'Ext.app.Controller',
-    requires       : [
-        'Valence.common.util.Snackbar',
-        // <if classic>
-        'Valence.login.view.changeenvironment.ChangeEnvironment'
-        // </if>
+Ext.define('Valence.login.AppUmbrella', {
+    extend   : 'Ext.app.Controller',
+    requires : [
+        'Valence.common.util.Snackbar'
     ],
 
-    init   : function(options){
+    init : function (options) {
         var me = this;
 
-        Ext.apply(me,options);
+        Ext.apply(me, options);
 
-        if (me.manageIframes){
+        if (me.manageIframes) {
             me.control({
                 'uxiframe' : {
                     load          : me.onIframeLoad,
@@ -24,17 +21,19 @@ Ext.define('Valence.login.AppUmbrella',{
         me.listen({
             controller : {
                 '*' : {
+                    changeconnection : me.onChangeConnection,
                     changeenvironment : me.onChangeEnvironment,
                     changepassword    : me.onChangePassword,
                     lock              : me.onLock,
                     logout            : me.onLogout,
+                    pending569logout  : me.onPending569Logout,
                     resumelock        : me.onResumeLock,
                     resumepolling     : me.onResumePolling,
                     suspendlock       : me.onSuspendLock,
                     suspendpolling    : me.onSuspendPolling
                 }
             },
-            component : {
+            component  : {
                 'component[basePortal]' : {
                     render : me.onRenderBasePortalComponent
                 }
@@ -44,12 +43,12 @@ Ext.define('Valence.login.AppUmbrella',{
         me.runtime  = Valence.login.config.Runtime;
     },
 
-    initTasks : function(){
+    initTasks : function () {
         var me = this;
 
         // polling...
         //
-        if (me.poll){
+        if (me.poll) {
             me.pollRunner = Ext.TaskManager.start({
                 scope    : me,
                 run      : me.pollServer,
@@ -59,32 +58,32 @@ Ext.define('Valence.login.AppUmbrella',{
 
         // automatic inactivity lock...
         //
-        if (me.autoLock){
-            if (me.settings.getLockTimeout() !== 0){
-                me.lockTask = new Ext.util.DelayedTask(me.onLock,me);
+        if (me.autoLock) {
+            if (me.settings.getLockTimeout() !== 0) {
+                me.lockTask = new Ext.util.DelayedTask(me.onLock, me);
                 me.lockTask.delay(me.settings.getLockTimeout());
             }
         }
 
         // automatic inactivity logout...
         //
-        if (me.autoLogout){
-            if (me.settings.getSessionTimeout() !== 0){
-                me.logoutTask = new Ext.util.DelayedTask(me.sessionTimeout,me);
+        if (me.autoLogout) {
+            if (me.settings.getSessionTimeout() !== 0) {
+                me.logoutTask = new Ext.util.DelayedTask(me.sessionTimeout, me);
                 me.logoutTask.delay(me.settings.getSessionTimeout());
             }
         }
     },
 
-    onAttemptUnlockSuccess : function(r){
+    onAttemptUnlockSuccess : function (r) {
         var me   = this,
             lock = Ext.ComponentQuery.query('lock')[0],
             d    = Ext.decode(r.responseText);
 
-        if (d.success){
+        if (d.success) {
             lock.destroy();
             me.runtime.setIsLocked(false);
-            if (!Ext.isEmpty(me.lockTask)){
+            if (!Ext.isEmpty(me.lockTask)) {
                 me.lockTask.delay(me.settings.getLockTimeout());
             }
         } else {
@@ -92,11 +91,16 @@ Ext.define('Valence.login.AppUmbrella',{
         }
     },
 
-    onChangeEnvironment : function(){
-        var me        = this,
-            app       = Valence.login.config.Runtime.getApplication();
+    onChangeConnection : function(url){
+        var me = this;
+        me.hostUrl = url;
+    },
+
+    onChangeEnvironment : function () {
+        var me  = this,
+            app = Valence.login.config.Runtime.getApplication();
         if (Valence.login.config.Runtime.getIsDesktop()) {
-            Ext.widget('changeenvironment',{
+            Ext.widget('changeenvironment', {
                 closeAppsMsg : me.settings.getCloseAppsOnEnvironmentChange(),
                 listeners    : {
                     scope     : me,
@@ -104,13 +108,13 @@ Ext.define('Valence.login.AppUmbrella',{
                     itemclick : me.onItemclickEnvironment
                 }
             }).show();
-            if (app){
+            if (app) {
                 app.fireEvent('showchangeenvironment');
             }
         }
     },
 
-    onChangePassword    : function(target){
+    onChangePassword : function (target) {
         var me  = this,
             app = Valence.login.config.Runtime.getApplication();
         if (app && app.fireEvent('beforeshowchangepassword') !== false) {
@@ -146,42 +150,42 @@ Ext.define('Valence.login.AppUmbrella',{
     //    });
     //},
 
-    onDestroyChangeEnvironment : function(){
+    onDestroyChangeEnvironment : function () {
         var me  = this,
             app = Valence.login.config.Runtime.getApplication();
 
-        if (app){
+        if (app) {
             app.fireEvent('hidechangeenvironment');
         }
     },
 
-    onIframeBeforeDestroy : function(frame){
+    onIframeBeforeDestroy : function (frame) {
         // if the frame has a "session" value then it was a 5250 web session...do some cleanup...
         //
         var doc     = frame.getDoc(),
             session = (doc) ? doc.getElementsByName('session')[0] : null;
 
-        if (!Ext.isEmpty(session)){
+        if (!Ext.isEmpty(session)) {
             Ext.Ajax.request({
                 url : '/webaccess/iWAActiveSessions?action=stop&session=' + session.getAttribute('value')
             });
         }
     },
 
-    onIframeLoad : function(frame){
+    onIframeLoad : function (frame) {
         var me = this,
             d  = frame.getDoc();
 
-        if (d){
-            if (Ext.isIE8){
-                d.attachEvent('click',Ext.bind(me.resetTimers,me));
+        if (d) {
+            if (Ext.isIE8) {
+                d.attachEvent('click', Ext.bind(me.resetTimers, me));
             } else {
-                d.addEventListener('click',Ext.bind(me.resetTimers,me));
+                d.addEventListener('click', Ext.bind(me.resetTimers, me));
             }
         }
     },
 
-    onItemclickEnvironment : function(view,rec){
+    onItemclickEnvironment : function (view, rec) {
         var me          = this,
             closeApps   = me.settings.getCloseAppsOnEnvironmentChange(),
             current     = rec.get('current'),
@@ -191,7 +195,7 @@ Ext.define('Valence.login.AppUmbrella',{
                 text : Valence.lang.lit.yourEnvChanged
             }, appIds;
 
-        if (!current && app && app.fireEvent('beforeenvironmentset',me.runtime.getUser(),rec.get('envId')) !== false){
+        if (!current && app && app.fireEvent('beforeenvironmentset', me.runtime.getUser(), rec.get('envId')) !== false) {
             Ext.ComponentQuery.query('changeenvironment')[0].el.mask(Valence.lang.lit.settingEnvironment);
             Ext.Ajax.request({
                 omitPortalCredentials : true,
@@ -262,16 +266,16 @@ Ext.define('Valence.login.AppUmbrella',{
         }
     },
 
-    onLock : function(){
+    onLock : function () {
         var me  = this,
             app = Valence.login.config.Runtime.getApplication();
 
         me.onSuspendLock();
 
-        if (!me.runtime.getIsLocked()){
+        if (!me.runtime.getIsLocked()) {
 
-            if (app){
-                if (app.fireEvent('beforelock') === false){
+            if (app) {
+                if (app.fireEvent('beforelock') === false) {
                     return;
                 }
             }
@@ -286,63 +290,66 @@ Ext.define('Valence.login.AppUmbrella',{
         }
     },
 
-    onLockSuccess : function(r){
+    onLockSuccess : function (r) {
         var me  = this,
             d   = Ext.decode(r.responseText),
             app = Valence.login.config.Runtime.getApplication();
 
-        if (d.success){
+        if (d.success) {
             me.runtime.setIsLocked(true);
-            if (app){
+            if (app) {
                 app.fireEvent('locked');
             }
             Valence.login.Processor.processLock();
         }
     },
 
-    onLogout : function(){
+    onLogout : function (anim) {
         var me             = this,
             frames         = Ext.ComponentQuery.query('uxiframe[app]'),
             user           = me.runtime.getUser(),
             parms          = {
                 action : 'logout'
             },
+            anim = (Ext.isBoolean(anim) && anim === false) ? false : true,
             app            = Valence.login.config.Runtime.getApplication(),
-            completeLogout = Ext.bind(function(){
-                var processLogout = Ext.bind(me.processLogout,me),
+            completeLogout = Ext.bind(function () {
+                var processLogout = Ext.bind(me.processLogout, me),
                     anim;
 
-                if (localStorage.getItem('sid') === me.runtime.getLoginData().sid){
+                if (localStorage.getItem('sid') === me.runtime.getLoginData().sid) {
                     localStorage.removeItem('sid');
                 }
-                if (Valence.login.config.Runtime.getIsDesktop()){
+                if (Valence.login.config.Runtime.getIsDesktop()) {
                     sessionStorage.removeItem('env');
                 }
-                if (app){
-                    console.log('loggedout');
-                    app.fireEvent('loggedout',user);
+                if (app) {
+                    app.fireEvent('loggedout', user);
                 }
-                console.log('logout');
 
-                Ext.Function.defer(function(){
-                    anim = {
-                        duration : 100,
-                        easing : 'easeOut',
-                        opacity : 0.15,
-                        callback : function(){
-                            processLogout();
+                if (anim){
+                    Ext.Function.defer(function () {
+                        anim = {
+                            duration : 100,
+                            easing   : 'easeOut',
+                            opacity  : 0.15,
+                            callback : function () {
+                                processLogout();
+                            }
+                        };
+                        if (Ext.isClassic) {
+                            Ext.get(document.body).fadeOut(anim);
+                        } else {
+                            Ext.get(document.body).animate(anim);
                         }
-                    };
-                    if (Ext.isClassic){
-                        Ext.get(document.body).fadeOut(anim);
-                    } else {
-                        Ext.get(document.body).animate(anim);
-                    }
 
-                },150);
-            },me),request;
+                    }, 150);
+                } else {
+                    processLogout();
+                }
+            }, me), request;
 
-        if (me.runtime.getIsLoggingOut() ||  (app && app.fireEvent('beforelogout',user,parms) === false)){
+        if (me.runtime.getIsLoggingOut() || (app && app.fireEvent('beforelogout', user, parms) === false)) {
             return;
         }
 
@@ -350,32 +357,33 @@ Ext.define('Valence.login.AppUmbrella',{
 
         //only peform the needed actions if running in the portal
         //
-        if (Valence.login.Processor.getNamespace() === 'Portal'){
+        if (Valence.login.Processor.getNamespace() === 'Portal') {
             // save any running apps to sessionstorage if desktop...
             //
             if (Valence.login.config.Runtime.getIsDesktop()) {
                 var runningStr = Ext.getStore('RunningApps'),
                     apps       = [];
-                runningStr.each(function(r){
+                runningStr.each(function (r) {
                     apps.push(r.get('appId'));
                 });
-                sessionStorage.setItem('valence-last-running-apps',apps);
+                sessionStorage.setItem('valence-last-running-apps', apps);
             }
 
             // kill all iframes...
             //
-            for (var ii=0; ii<frames.length;ii++){
-                frames[ii].destroy();
+            for (var ii = 0; ii < frames.length; ii++) {
+                frames[ii].fireEvent('beforedestroy', frames[ii]);
+                frames[ii].fireEvent('destroy', frames[ii]);
             }
 
             // kill all windows...
             //
             var openWindows = me.runtime.getActiveWindows();
-            if (openWindows){
-                for (ii=0; ii<openWindows.length; ii++){
+            if (openWindows) {
+                for (ii = 0; ii < openWindows.length; ii++) {
                     try {
                         openWindows[ii].close();
-                    } catch(err) {
+                    } catch (err) {
                         //do nothing
                     }
                 }
@@ -384,9 +392,9 @@ Ext.define('Valence.login.AppUmbrella',{
             if (Ext.isModern) {
                 Ext.Viewport.mask({
                     indicator : true,
-                    xtype   : 'loadmask',
-                    message : Valence.lang.lit.loading,
-                    zIndex : 1000
+                    xtype     : 'loadmask',
+                    message   : Valence.lang.lit.loading,
+                    zIndex    : 1000
                 });
             }
         }
@@ -402,22 +410,24 @@ Ext.define('Valence.login.AppUmbrella',{
                 url     : me.hostUrl + '/valence/vvvport.pgm',
                 params  : parms,
                 scope   : me,
-                async   : false,
-                success : completeLogout,
-                failure : completeLogout
+                async   : false
             });
+            completeLogout();
         } catch (e) {
             completeLogout();
         }
     },
 
+    onPending569Logout : function(){
+        Valence.login.config.Runtime.setIsPending569Logout(true);
+    },
 
-    onRenderBasePortalComponent : function(cmp){
+    onRenderBasePortalComponent : function (cmp) {
         var me  = this,
             app = Valence.login.config.Runtime.getApplication();
 
-        if (app){
-            app.fireEvent('componentrender',cmp);
+        if (app) {
+            app.fireEvent('componentrender', cmp);
         }
     },
 
@@ -438,7 +448,7 @@ Ext.define('Valence.login.AppUmbrella',{
     //    }
     //},
 
-    pollServer : function(){
+    pollServer : function () {
         var me         = this,
             timerReset = me.runtime.getLogoutTaskReset(),
             app        = Valence.login.config.Runtime.getApplication(),
@@ -447,134 +457,152 @@ Ext.define('Valence.login.AppUmbrella',{
                 timerReset : timerReset
             };
 
-        if (timerReset){
+        if (timerReset) {
             //if we are telling the backend that activity has occured
             // on the front-end then reset the flag in runtime for the next poll
             //
             me.runtime.setLogoutTaskReset(false);
         }
 
-        if (app){
-            app.fireEvent('beforepoll',p);
+        if (app) {
+            app.fireEvent('beforepoll', p);
         }
         Ext.Ajax.request({
             url     : me.hostUrl + '/valence/vvvport.pgm',
             params  : p,
             scope   : me,
             success : me.pollServerSuccess,
-            failure: function(conn) {
+            failure : function (conn) {
                 // status "569" is reserved for Valence...
                 //   this condition will be handled by another process (see Ajax.js in Valence package)
                 //
-                if (conn.status !== 569){
+                if (conn.status !== 569) {
                     me.runtime.setIsConnected(false);
                 }
             }
         });
     },
 
-    pollServerSuccess : function(r){
+    pollServerSuccess : function (r) {
         var me  = this,
             d   = Ext.decode(r.responseText),
             app = Valence.login.config.Runtime.getApplication();
 
-        if (app){
-            app.fireEvent('poll',d);
+        if (app) {
+            app.fireEvent('poll', d);
         }
         switch (d.status) {
             case 'ok':
                 me.runtime.setIsConnected(true);
                 break;
             case '*NOSESSION':
-                if (!Ext.isEmpty(me.lockTask)){
+                if (!Ext.isEmpty(me.lockTask)) {
                     me.lockTask.cancel();
                 }
-                if (!me.runtime.getIsLoggingOut()){
+                if (!me.runtime.getIsLoggingOut()) {
                     Valence.common.util.Dialog.show({
                         title   : Valence.lang.msg.sessionEndHeader,
                         msg     : Valence.lang.msg.sessionEndBody,
-                        buttons : ['->',{
+                        buttons : ['->', {
                             text : Valence.lang.lit.ok
                         }],
                         scope   : me,
-                        handler      : me.onLogout
+                        handler : me.onLogout
                     });
                 }
                 break;
             case 'RELOAD':
-                var str = Ext.getStore('Apps');
-                if (str){
-                    str.load();
+                var catStr = Ext.getStore('Categories');
+                if (catStr){
+                    catStr.load({
+                        callback : function(){
+                            var appStr = Ext.getStore('Apps');
+                            if (appStr){
+                                appStr.load();
+                            }
+                        }
+                    });
                 }
                 break;
         }
     },
 
-    processLogout : function(){
-        var params       = Ext.getUrlParam(),
-            removeParams = ['password','customSid'],
-            addToSearch  = function(prop,val){
-                if (!Ext.isEmpty(search)){
-                    search += '&';
+    processLogout : function () {
+        var newUrl       = window.location.href,
+            removeParam  = function removeQueryStringParameter(key, url) {
+                if (!url) url = window.location.href;
+
+                var hashParts = url.split('#'),
+                    regex     = new RegExp("([?&])" + key + "=.*?(&|#|$)", "i");
+
+                if (hashParts[0].match(regex)) {
+                    //REMOVE KEY AND VALUE
+                    url = hashParts[0].replace(regex, '$1');
+
+                    //REMOVE TRAILING ? OR &
+                    url = url.replace(/([?&])$/, '');
+
+                    //ADD HASH
+                    if (typeof hashParts[1] !== 'undefined' && hashParts[1] !== null)
+                        url += '#' + hashParts[1];
                 }
-                search += prop + '=' + val;
+
+                return url;
             },
-            search = '';
+            removeParams = ['password', 'customSid'];
 
-        //some parameters may need to be removed...
-        //
-        if (!Ext.Object.isEmpty(params)){
-
-            Ext.iterate(params,function(prop,val){
-                if (Ext.Array.indexOf(removeParams,prop) === -1){
-                    addToSearch(prop,val);
-                }
-            });
+        for (var ii=0; ii<removeParams.length; ii++){
+            newUrl = removeParam(removeParams[ii], newUrl);
         }
-        location.search=search;
+
+        location.href = newUrl;
+
+        Ext.util.History.add('login');
+
+        window.location.reload();
     },
 
-    resetTimers : function(){
+    resetTimers : function () {
         var me = this;
 
-        if (!Ext.isEmpty(me.lockTask)){
+        if (!Ext.isEmpty(me.lockTask)) {
             me.lockTask.delay(me.settings.getLockTimeout());
         }
-        if (me.logoutTask){
+        if (me.logoutTask) {
             me.runtime.setLogoutTaskReset(true);
             me.logoutTask.delay(me.settings.getSessionTimeout());
         }
     },
 
-    onResumeLock : function(){
+    onResumeLock : function () {
         var me = this;
-        if (!Ext.isEmpty(me.lockTask)){
+        if (!Ext.isEmpty(me.lockTask)) {
             me.lockTask.delay(me.settings.getLockTimeout());
         }
     },
 
-    onResumePolling : function(){
+    onResumePolling : function () {
         var me = this;
-        if (me.pollRunner){
+        if (me.pollRunner) {
             Ext.TaskManager.start(me.pollRunner);
         }
     },
 
-    sessionTimeout : function(){
+    sessionTimeout : function () {
         var me = this;
         me.onLogout();
     },
 
-    onSuspendLock : function(){
+    onSuspendLock : function () {
         var me = this;
-        if (!Ext.isEmpty(me.lockTask)){
+        if (!Ext.isEmpty(me.lockTask)) {
             me.lockTask.cancel();
         }
     },
 
-    onSuspendPolling : function(){
+    onSuspendPolling : function () {
         var me = this;
-        if (me.pollRunner){
+        if (me.pollRunner) {
             Ext.TaskManager.stop(me.pollRunner);
         }
     }
