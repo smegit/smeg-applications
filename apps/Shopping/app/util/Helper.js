@@ -2,7 +2,7 @@ Ext.define('Shopping.util.Helper', {
     singleton : true,
     printCart : function (o) {
         var me   = this,
-            src  = o.src || 'print-cart.html',
+            src  = o.src || 'resources/print-cart.html',
             body = Ext.getBody(),
             win;
 
