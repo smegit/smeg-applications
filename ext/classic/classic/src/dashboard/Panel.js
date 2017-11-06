@@ -82,6 +82,25 @@ Ext.define('Ext.dashboard.Panel', {
         }
     },
 
+    doCollapseExpand: function(flags) {
+        // Ensure the layout caused by expand or collapse does not propagate
+        // to the whole dashboard. The dashboard layout is automatically
+        // updated after the operation.
+        this._expandCollapseRoot = this._isLayoutRoot;
+        this._isLayoutRoot = true;
+        this.callParent(arguments);
+    },
+
+    afterExpand: function() {
+        this._isLayoutRoot = this._expandCollapseRoot;
+        this.callParent(arguments);
+    },
+
+    afterCollapse: function() {
+        this._isLayoutRoot = this._expandCollapseRoot;
+        this.callParent(arguments);
+    },
+
     getLoadMask: function () {
         var me = this,
             loadMask = me.rendered && me.loadMask,
@@ -139,18 +158,14 @@ Ext.define('Ext.dashboard.Panel', {
         }
     },
 
-    /** 
-     * @private
-     */
+    /** @private */
     setBox: function (box) {
         // The resizer calls setBox which would set our left/top coordinates but
         // that is a BAD thing in a column layout which relies on flow!
         this.setSize(box.width, box.height);
     },
 
-    /**
-     * @private
-     */
+    /** @private */
     getState : function() {
         var me = this,
             state = me.callParent() || {};

@@ -181,6 +181,10 @@ Ext.define('Ext.util.TaskRunner', {
      * @param {Object[]} [task.args] An array of arguments to be passed to the function
      * specified by `run`. If not specified, the current invocation count is passed.
      *
+     * @param {Boolean} [task.addCountToArgs=false] True to add the current invocation count as 
+     * one of the arguments of args. 
+     * Note: This only takes effect when args is specified.
+     *
      * @param {Object} [task.scope] The scope (`this` reference) in which to execute the
      * `run` function. Defaults to the task config object.
      *
@@ -225,19 +229,41 @@ Ext.define('Ext.util.TaskRunner', {
 
     /**
      * Stops an existing running task.
-     * @param {Object} task The task to stop
+     * @param {Object} task The task to stop.
+     * @param {Boolean} andRemove Pass `true` to also remove the task from the queue.
      * @return {Object} The task
      */
-    stop: function(task) {
+    stop: function(task, andRemove) {
+        var me = this,
+            tasks = me.tasks,
+            pendingCount = 0,
+            i;
+
         // NOTE: we don't attempt to remove the task from me.tasks at this point because
         // this could be called from inside a task which would then corrupt the state of
         // the loop in onTick
         if (!task.stopped) {
             task.stopped = true;
+            task.pending = false;
 
             if (task.onStop) {
                 task.onStop.call(task.scope || task, task);
             }
+        }
+        if (andRemove) {
+            Ext.Array.remove(tasks, task);
+        }
+
+        // If there are now no pending tasks
+        // we shhuld stop the timer.
+        for (i = 0; !pendingCount && i < tasks.length; i++) {
+            if (!tasks[i].stopped) {
+                pendingCount++;
+            }
+        }
+        if (!pendingCount) {
+            clearTimeout(me.timerId);
+            me.timerId = null;
         }
 
         return task;
@@ -245,10 +271,16 @@ Ext.define('Ext.util.TaskRunner', {
 
     /**
      * Stops all tasks that are currently running.
+     * @param {Boolean} andRemove Pass `true` to also remove the tasks from the queue.
      */
-    stopAll: function() {
+    stopAll: function(andRemove) {
+        var me = this;
+
         // onTick will take care of cleaning up the mess after this point...
-        Ext.each(this.tasks, this.stop, this);
+        // must use reverse in case a task is removed.
+        Ext.each(this.tasks, function(task) {
+            me.stop(task, andRemove);
+        }, null, true);
     },
 
     //-------------------------------------------------------------------------
@@ -268,7 +300,7 @@ Ext.define('Ext.util.TaskRunner', {
             nextExpires = 1e99,
             len = tasks.length,
             globalEvents = Ext.GlobalEvents,
-            expires, newTasks, i, task, rt, remove;
+            expires, newTasks, i, task, rt, remove, args;
 
         me.timerId = null;
         me.firing = true; // ensure we don't startTimer during this loop...
@@ -293,15 +325,23 @@ Ext.define('Ext.util.TaskRunner', {
                         fireIdleEvent = me.fireIdleEvent;
                     }
                     
+                    task.taskRunCount++;
+
+                    if (task.args) {
+                        args = task.addCountToArgs ? task.args.concat([task.taskRunCount]) : task.args;
+                    } else {
+                        args = [task.taskRunCount];
+                    }
+
                     // We want the exceptions not to get caught while unit testing
                     //<debug>
                     if (me.disableTryCatch) {
-                        rt = task.run.apply(task.scope || task, task.args || [++task.taskRunCount]);
+                        rt = task.run.apply(task.scope || task, args);
                     }
                     else {
                     //</debug>
                         try {
-                            rt = task.run.apply(task.scope || task, task.args || [++task.taskRunCount]);
+                            rt = task.run.apply(task.scope || task, args);
                         }
                         catch (taskError) {
                             try {
@@ -325,7 +365,7 @@ Ext.define('Ext.util.TaskRunner', {
                     //</debug>
                     
                     task.taskRunTime = now;
-                    
+
                     if (rt === false || task.taskRunCount === task.repeat) {
                         me.stop(task);
                         remove = true;
@@ -469,8 +509,12 @@ function () {
         /**
          * Stops this task.
          */
-        stop: function () {
-            this.manager.stop(this);
+        stop: function (andRemove) {
+            this.manager.stop(this, andRemove);
+        },
+
+        destroy: function() {
+            this.stop(true)
         }
     });
 

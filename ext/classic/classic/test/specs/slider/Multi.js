@@ -1,7 +1,7 @@
+/* global expect, Ext, spyOn, xdescribe, jasmine */
+
 describe("Ext.slider.Multi", function() {
-    var expectAria = jasmine.expectAriaAttr,
-        slider,
-        createSlider;
+    var slider, createSlider;
 
     beforeEach(function() {
         createSlider = function(config) {
@@ -57,7 +57,7 @@ describe("Ext.slider.Multi", function() {
             });
             
             it("should set aria-orientation attribute", function() {
-                expectAria(slider, 'aria-orientation', 'horizontal');
+                expect(slider).toHaveAttr('aria-orientation', 'horizontal');
             });
         });
         
@@ -76,7 +76,7 @@ describe("Ext.slider.Multi", function() {
             });
             
             it("should set aria-orientation attribute", function() {
-                expectAria(slider, 'aria-orientation', 'vertical');
+                expect(slider).toHaveAttr('aria-orientation', 'vertical');
             });
         });
 
@@ -122,15 +122,15 @@ describe("Ext.slider.Multi", function() {
             });
             
             it("should set aria-valuemin", function() {
-                expectAria(slider, 'aria-valuemin', '0');
+                expect(slider).toHaveAttr('aria-valuemin', '0');
             });
             
             it("should set aria-valuemax", function() {
-                expectAria(slider, 'aria-valuemax', '100');
+                expect(slider).toHaveAttr('aria-valuemax', '100');
             });
             
             it("should set aria-valuenow", function() {
-                expectAria(slider, 'aria-valuenow', '42');
+                expect(slider).toHaveAttr('aria-valuenow', '42');
             });
         });
     });
@@ -740,8 +740,7 @@ describe("Ext.slider.Multi", function() {
                 slider.setValue(0, 10);
                 expect(fired).toBe(2);
             });
-            
-        })
+        });
     });
     
     describe("setMinValue/setMaxValue", function(){
@@ -812,7 +811,7 @@ describe("Ext.slider.Multi", function() {
                 createSlider();
                 slider.setMinValue(42);
                 
-                expectAria(slider, 'aria-valuemin', '42');
+                expect(slider).toHaveAttr('aria-valuemin', '42');
             });
         });
         
@@ -879,7 +878,7 @@ describe("Ext.slider.Multi", function() {
                 createSlider();
                 slider.setMaxValue(42);
                 
-                expectAria(slider, 'aria-valuemax', '42');
+                expect(slider).toHaveAttr('aria-valuemax', '42');
             });
         });
     });
@@ -892,7 +891,7 @@ describe("Ext.slider.Multi", function() {
                 maxValue: 100
             });
             slider.setValue([100,100]);
-            jasmine.fireMouseEvent(slider.el, 'click', 0, 0);
+            jasmine.fireMouseEvent(slider.el, 'click', Math.max(slider.el.getX(), 1), 0);
             waitsFor(function() {
                 return slider.getValue(0) === 0;
             }, "Slider value incorrect");

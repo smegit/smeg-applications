@@ -1,3 +1,5 @@
+/* global Ext, expect */
+
 describe('Ext.chart.series.Series', function() {
 
     var proto = Ext.chart.series.Series.prototype,
@@ -19,6 +21,67 @@ describe('Ext.chart.series.Series', function() {
     afterEach(function() {
         // Undo the overrides.
         Ext.data.ProxyStore.prototype.load = proxyStoreLoad;
+    });
+
+    describe('label', function () {
+        var chart, seriesSprite, performLayoutSpy;
+
+        afterEach(function() {
+            Ext.destroy(chart);
+        });
+
+        it('should allow for dynamic updates of the "field" config', function () {
+            chart = Ext.create({
+                xtype: 'polar',
+                animation: false,
+                renderTo: document.body,
+                width: 400,
+                height: 400,
+                theme: 'green',
+                store: {
+                    fields: ['name', 'data1'],
+                    data: [{
+                        name: 'metric one',
+                        name2: 'metric 1',
+                        data1: 14
+                    }, {
+                        name: 'metric two',
+                        name2: 'metric 2',
+                        data1: 16
+                    }]
+                },
+                series: {
+                    id: 'mySeries',
+                    type: 'pie',
+                    highlight: true,
+                    angleField: 'data1',
+                    label: {
+                        field: 'name',
+                        display: 'rotate'
+                    },
+                    donut: 30
+                }
+            });
+            seriesSprite = chart.getSeries()[0].getSprites()[0];
+            performLayoutSpy = spyOn(chart, 'performLayout').andCallThrough();
+
+            waitsForSpy(performLayoutSpy, "initial layout to finish");
+
+            runs(function () {
+                var series = chart.get('mySeries'),
+                    label = series.getLabel();
+
+                expect(label.get(0).text).toBe('metric one');
+                expect(label.get(1).text).toBe('metric two');
+
+                series.setLabel({
+                    field: 'name2'
+                });
+
+                expect(label.get(0).text).toBe('metric 1');
+                expect(label.get(1).text).toBe('metric 2');
+            });
+        });
     });
 
     describe('resolveListenerScope', function () {

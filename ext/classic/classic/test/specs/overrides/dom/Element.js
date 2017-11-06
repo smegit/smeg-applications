@@ -535,12 +535,12 @@ describe('Ext.overrides.dom.Element', function() {
                 createSuite('select', { tag: 'select', cn: [{ tag: 'option', value: 'foo' }] });
                 createSuite('textarea', { tag: 'textarea' });
                 
-                // There are various failures in IE9-11 that we don't care enough
+                // There are various failures in IE9-11 and Edge that we don't care enough
                 // to clean up because <embed> and <object> are rarely used.
                 // And we don't even dare running these suites in IE8 because
                 // rendering these will result in uncleanable DOM nodes that break
                 // all subsequent test specs.
-                if (!Ext.isIE) {
+                if (!Ext.isIE && !Ext.isEdge) {
                     createSuite('embed', {
                         tag: 'embed',
                         height: 100,
@@ -1798,7 +1798,7 @@ describe('Ext.overrides.dom.Element', function() {
                         props = props.join('');
                         
                         if (styleSheet.insertRule) {
-                            styleSheet.insertRule(selector + '{' + props + '}', 1);
+                            styleSheet.insertRule(selector + '{' + props + '}', styleSheet.cssRules.length);
                         } else {
                             // IE8
                             styleSheet.addRule(selector, props);

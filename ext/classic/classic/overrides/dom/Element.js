@@ -173,86 +173,6 @@ Ext.define('Ext.overrides.dom.Element', (function() {
         },
 
         /**
-         * Sets up event handlers to add and remove a css class when the mouse is down and then up on this element (a click effect)
-         * @param {String} className The class to add
-         * @param {Function} [testFn] A test function to execute before adding the class. The passed parameter
-         * will be the Element instance. If this functions returns false, the class will not be added.
-         * @param {Object} [scope] The scope to execute the testFn in.
-         * @return {Ext.dom.Element} this
-         */
-        addClsOnClick: function(className, testFn, scope) {
-            var me = this,
-                dom = me.dom,
-                hasTest = Ext.isFunction(testFn);
-                
-            me.on("mousedown", function() {
-                if (hasTest && testFn.call(scope || me, me) === false) {
-                    return false;
-                }
-                Ext.fly(dom).addCls(className);
-                var d = Ext.getDoc(),
-                    fn = function() {
-                        Ext.fly(dom).removeCls(className);
-                        d.removeListener("mouseup", fn);
-                    };
-                d.on("mouseup", fn);
-            });
-            return me;
-        },
-
-        /**
-         * Sets up event handlers to add and remove a css class when this element has the focus
-         * @param {String} className The class to add
-         * @param {Function} [testFn] A test function to execute before adding the class. The passed parameter
-         * will be the Element instance. If this functions returns false, the class will not be added.
-         * @param {Object} [scope] The scope to execute the testFn in.
-         * @return {Ext.dom.Element} this
-         */
-        addClsOnFocus: function(className, testFn, scope) {
-            var me = this,
-                dom = me.dom,
-                hasTest = Ext.isFunction(testFn);
-                
-            me.on("focus", function() {
-                if (hasTest && testFn.call(scope || me, me) === false) {
-                    return false;
-                }
-                Ext.fly(dom).addCls(className);
-            });
-            me.on("blur", function() {
-                Ext.fly(dom).removeCls(className);
-            });
-            return me;
-        },
-
-        /**
-         * Sets up event handlers to add and remove a css class when the mouse is over this element
-         * @param {String} className The class to add
-         * @param {Function} [testFn] A test function to execute before adding the class. The passed parameter
-         * will be the Element instance. If this functions returns false, the class will not be added.
-         * @param {Object} [scope] The scope to execute the testFn in.
-         * @return {Ext.dom.Element} this
-         */
-        addClsOnOver: function(className, testFn, scope) {
-            var me = this,
-                dom = me.dom,
-                hasTest = Ext.isFunction(testFn);
-                
-            me.hover(
-                function() {
-                    if (hasTest && testFn.call(scope || me, me) === false) {
-                        return;
-                    }
-                    Ext.fly(dom).addCls(className);
-                },
-                function() {
-                    Ext.fly(dom).removeCls(className);
-                }
-            );
-            return me;
-        },
-
-        /**
          * Convenience method for constructing a KeyMap
          * @param {String/Number/Number[]/Object} key Either a string with the keys to listen for, the numeric key code,
          * array of key codes or an object with the following options:
@@ -647,11 +567,15 @@ Ext.define('Ext.overrides.dom.Element', (function() {
         destroy: function() {
             var me = this,
                 dom = me.dom,
-                data = me.getData(),
+                data = me.getData(true),
                 maskEl, maskMsg;
 
-            if (dom && me.isAnimate) {
-                me.stopAnimation();
+            if (dom) {
+                if (me.isAnimate) {
+                    me.stopAnimation();
+                }
+                
+                me.removeAnchor();
             }
 
             me.callParent();
@@ -726,19 +650,23 @@ Ext.define('Ext.overrides.dom.Element', (function() {
          */
         fadeIn: function(o) {
             var me = this,
-                dom = me.dom;
+                dom = me.dom,
+                animFly = new Ext.dom.Fly();
                 
             me.animate(Ext.apply({}, o, {
                 opacity: 1,
                 internalListeners: {
-                    beforeanimate: function(anim){
+                    beforeanimate: function(anim) {
+                        // Reattach to the DOM in case the caller animated a Fly
+                        // in which case the dom reference will have changed by now.
+                        animFly.attach(dom);
+
                         // restore any visibility/display that may have 
                         // been applied by a fadeout animation
-                        var el = Ext.fly(dom, '_anim');
-                        if (el.isStyle('display', 'none')) {
-                            el.setDisplayed('');
+                        if (animFly.isStyle('display', 'none')) {
+                            animFly.setDisplayed('');
                         } else {
-                            el.show();
+                            animFly.show();
                         } 
                     }
                 }
@@ -771,18 +699,25 @@ Ext.define('Ext.overrides.dom.Element', (function() {
          */
         fadeOut: function(o) {
             var me = this,
-                dom = me.dom;
+                dom = me.dom,
+                animFly = new Ext.dom.Fly();
                 
             o = Ext.apply({
                 opacity: 0,
                 internalListeners: {
-                    afteranimate: function(anim){
-                        if (dom && anim.to.opacity === 0) {
-                            var el = Ext.fly(dom, '_anim');
+                    afteranimate: function(anim) {
+                        if (anim.to.opacity === 0) {
+                            // Reattach to the DOM in case the caller animated a Fly
+                            // in which case the dom reference will have changed by now.
+                            animFly.attach(dom);
+
+                            // Reattach to the DOM in case the caller animated a Fly
+                            // in which case the dom reference will have changed by now.
+                            animFly.attach(dom);
                             if (o.useDisplay) {
-                                el.setDisplayed(false);
+                                animFly.setDisplayed(false);
                             } else {
-                                el.hide();
+                                animFly.hide();
                             }
                         }         
                     }
@@ -829,6 +764,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
         frame: function(color, count, obj){
             var me = this,
                 dom = me.dom,
+                animFly = new Ext.dom.Fly(),
                 beforeAnim;
 
             color = color || '#C3DAF9';
@@ -836,16 +772,18 @@ Ext.define('Ext.overrides.dom.Element', (function() {
             obj = obj || {};
 
             beforeAnim = function() {
-                var el = Ext.fly(dom, '_anim'),
-                    animScope = this,
+                var animScope = this,
                     box,
                     proxy, proxyAnim;
-                    
-                el.show();
-                box = el.getBox();
+
+                // Reattach to the DOM in case the caller animated a Fly
+                // in which case the dom reference will have changed by now.
+                animFly.attach(dom);
+                animFly.show();
+                box = animFly.getBox();
                 proxy = Ext.getBody().createChild({
                     role: 'presentation',
-                    id: el.dom.id + '-anim-proxy',
+                    id: animFly.dom.id + '-anim-proxy',
                     style: {
                         position : 'absolute',
                         'pointer-events': 'none',
@@ -946,7 +884,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
 
         /**
          * Gets an object with all CSS positioning properties. Useful along with
-         * #setPostioning to get snapshot before performing an update and then restoring
+         * `setPositioning` to get snapshot before performing an update and then restoring
          * the element.
          * @param {Boolean} [autoPx=false] true to return pixel values for "auto" styles.
          * @return {Object}
@@ -990,18 +928,23 @@ Ext.define('Ext.overrides.dom.Element', (function() {
         ghost: function(anchor, obj) {
             var me = this,
                 dom = me.dom,
+                animFly = new Ext.dom.Fly(),
                 beforeAnim;
 
             anchor = anchor || "b";
             beforeAnim = function() {
-                var el = Ext.fly(dom, '_anim'),
-                    width = el.getWidth(),
-                    height = el.getHeight(),
-                    xy = el.getXY(),
-                    position = el.getPositioning(),
+                // Reattach to the DOM in case the caller animated a Fly
+                // in which case the dom reference will have changed by now.
+                animFly.attach(dom);
+
+                var width = animFly.getWidth(),
+                    height = animFly.getHeight(),
+                    xy = animFly.getXY(),
+                    position = animFly.getPositioning(),
                     to = {
                         opacity: 0
                     };
+
                 switch (anchor) {
                     case 't':
                         to.y = xy[1] - height;
@@ -1034,11 +977,14 @@ Ext.define('Ext.overrides.dom.Element', (function() {
                 }
                 this.to = to;
                 this.on('afteranimate', function () {
-                    var el = Ext.fly(dom, '_anim');
-                    if (el) {
-                        el.hide();
-                        el.clearOpacity();
-                        el.setPositioning(position);
+                    // Reattach to the DOM in case the caller animated a Fly
+                    // in which case the dom reference will have changed by now.
+                    animFly.attach(dom);
+
+                    if (animFly) {
+                        animFly.hide();
+                        animFly.clearOpacity();
+                        animFly.setPositioning(position);
                     }
                 });
             };
@@ -1099,6 +1045,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
             var me = this,
                 dom = me.dom,
                 from = {},
+                animFly = new Ext.dom.Fly(),
                 restore, to, attr, lns, event, fn;
 
             o = o || {};
@@ -1117,10 +1064,13 @@ Ext.define('Ext.overrides.dom.Element', (function() {
             // Don't apply directly on lns, since we reference it in our own callbacks below
             o.listeners = Ext.apply(Ext.apply({}, lns), {
                 beforeanimate: function() {
+                    // Reattach to the DOM in case the caller animated a Fly
+                    // in which case the dom reference will have changed by now.
+                    animFly.attach(dom);
+                    
                     restore = dom.style[attr];
-                    var el = Ext.fly(dom, '_anim');
-                    el.clearOpacity();
-                    el.show();
+                    animFly.clearOpacity();
+                    animFly.show();
 
                     event = lns.beforeanimate;
                     if (event) {
@@ -1463,44 +1413,6 @@ Ext.define('Ext.overrides.dom.Element', (function() {
         },
 
         /**
-         * Monitors this Element for the mouse leaving. Calls the function after the specified delay only if
-         * the mouse was not moved back into the Element within the delay. If the mouse *was* moved
-         * back in, the function is not called.
-         * @param {Number} delay The delay **in milliseconds** to wait for possible mouse re-entry before calling the handler function.
-         * @param {Function} handler The function to call if the mouse remains outside of this Element for the specified time.
-         * @param {Object} [scope] The scope (`this` reference) in which the handler function executes. Defaults to this Element.
-         * @return {Object} The listeners object which was added to this element so that monitoring can be stopped. Example usage:
-         *
-         *     // Hide the menu if the mouse moves out for 250ms or more
-         *     this.mouseLeaveMonitor = this.menuEl.monitorMouseLeave(250, this.hideMenu, this);
-         *
-         *     ...
-         *     // Remove mouseleave monitor on menu destroy
-         *     this.menuEl.un(this.mouseLeaveMonitor);
-         *
-         */
-        monitorMouseLeave: function(delay, handler, scope) {
-            var me = this,
-                timer,
-                listeners = {
-                    mouseleave: function(e) {
-                        //<feature legacyBrowser>
-                        if (Ext.isIE9m) {
-                            e.enableIEAsync();
-                        }
-                        //</feature>
-                        timer = Ext.defer(handler, delay, scope || me, [e]);
-                    },
-                    mouseenter: function() {
-                        clearTimeout(timer);
-                    }
-                };
-
-            me.on(listeners);
-            return listeners;
-        },
-
-        /**
          * Fades the element out while slowly expanding it in all directions. When the effect is completed, the element will
          * be hidden (visibility = 'hidden') but block elements will still take up space in the document. Usage:
          *
@@ -1520,6 +1432,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
         puff: function(obj) {
             var me = this,
                 dom = me.dom,
+                animFly = new Ext.dom.Fly(),
                 beforeAnim,
                 box = me.getBox(),
                 originalStyles = me.getStyle(['width', 'height', 'left', 'right', 'top', 'bottom', 'position', 'z-index', 'font-size', 'opacity'], true);
@@ -1531,10 +1444,12 @@ Ext.define('Ext.overrides.dom.Element', (function() {
             });
 
             beforeAnim = function() {
-                var el = Ext.fly(dom, '_anim');
+                // Reattach to the DOM in case the caller animated a Fly
+                // in which case the dom reference will have changed by now.
+                animFly.attach(dom);
                 
-                el.clearOpacity();
-                el.show();
+                animFly.clearOpacity();
+                animFly.show();
                 this.to = {
                     width: box.width * 2,
                     height: box.height * 2,
@@ -1544,16 +1459,17 @@ Ext.define('Ext.overrides.dom.Element', (function() {
                     fontSize: '200%'
                 };
                 this.on('afteranimate',function() {
-                    var el = Ext.fly(dom, '_anim');
-                    if (el) {
-                        if (obj.useDisplay) {
-                            el.setDisplayed(false);
-                        } else {
-                            el.hide();
-                        }
-                        el.setStyle(originalStyles);
-                        Ext.callback(obj.callback, obj.scope);
+                    // Reattach to the DOM in case the caller animated a Fly
+                    // in which case the dom reference will have changed by now.
+                    animFly.attach(dom);
+
+                    if (obj.useDisplay) {
+                        animFly.setDisplayed(false);
+                    } else {
+                        animFly.hide();
                     }
+                    animFly.setStyle(originalStyles);
+                    Ext.callback(obj.callback, obj.scope);
                 });
             };
 
@@ -1802,7 +1718,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
         },
 
         /**
-         * Set positioning with an object returned by #getPositioning.
+         * Set positioning with an object returned by `getPositioning`.
          * @param {Object} posCfg
          * @return {Ext.dom.Element} this
          */
@@ -1914,6 +1830,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
         setVisible: function(visible, animate) {
             var me = this,
                 dom = me.dom,
+                animFly,
                 visMode = getVisMode(me);
 
             // hideMode string override
@@ -1963,12 +1880,13 @@ Ext.define('Ext.overrides.dom.Element', (function() {
                         easing: 'ease-in'
                     };
                 }
+                animFly = new Ext.dom.Fly(),
                 me.animate(Ext.applyIf({
                     callback: function() {
                         if (!visible) {
                             
                             // Grab the dom again, since the reference may have changed if we use fly
-                            Ext.fly(dom).setVisible(false).setOpacity(1);
+                            animFly.attach(dom).setVisible(false).setOpacity(1);
                         }
                     },
                     to: {
@@ -2094,6 +2012,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
             var me = this,
                 dom = me.dom,
                 elStyle = dom.style,
+                animFly = new Ext.dom.Fly(),
                 beforeAnim,
                 wrapAnim,
                 restoreScroll,
@@ -2103,44 +2022,47 @@ Ext.define('Ext.overrides.dom.Element', (function() {
             obj = obj || {};
 
             beforeAnim = function() {
+                // Reattach to the DOM in case the caller animated a Fly
+                // in which case the dom reference will have changed by now.
+                animFly.attach(dom);
+
                 var animScope = this,
                     listeners = obj.listeners,
-                    el = Ext.fly(dom, '_anim'),
                     box, originalStyles, anim, wrap;
 
                 if (!slideOut) {
-                    el.fixDisplay();
+                    animFly.fixDisplay();
                 }
 
-                box = el.getBox();
-                if ((anchor == 't' || anchor == 'b') && box.height === 0) {
+                box = animFly.getBox();
+                if ((anchor === 't' || anchor === 'b') && box.height === 0) {
                     box.height = dom.scrollHeight;
                 }
-                else if ((anchor == 'l' || anchor == 'r') && box.width === 0) {
+                else if ((anchor === 'l' || anchor === 'r') && box.width === 0) {
                     box.width = dom.scrollWidth;
                 }
 
-                originalStyles = el.getStyle(['width', 'height', 'left', 'right', 'top', 'bottom', 'position', 'z-index'], true);
-                el.setSize(box.width, box.height);
+                originalStyles = animFly.getStyle(['width', 'height', 'left', 'right', 'top', 'bottom', 'position', 'z-index'], true);
+                animFly.setSize(box.width, box.height);
 
                 // Cache all descendants' scrollTop & scrollLeft values if configured to preserve scroll.
                 if (obj.preserveScroll) {
-                    restoreScroll = el.cacheScrollValues();
+                    restoreScroll = animFly.cacheScrollValues();
                 }
 
-                wrap = el.wrap({
+                wrap = animFly.wrap({
                     role: 'presentation',
-                    id: Ext.id() + '-anim-wrap-for-' + el.dom.id,
+                    id: Ext.id() + '-anim-wrap-for-' + dom.id,
                     style: {
                         visibility: slideOut ? 'visible' : 'hidden'
                     }
                 });
                 wrapDomParentNode = wrap.dom.parentNode;
-                wrap.setPositioning(el.getPositioning());
+                wrap.setPositioning(animFly.getPositioning());
                 if (wrap.isStyle('position', 'static')) {
                     wrap.position('relative');
                 }
-                el.clearPositioning('auto');
+                animFly.clearPositioning('auto');
                 wrap.clip();
 
                 // The wrap will have reset all descendant scrollTops. Restore them if we cached them.
@@ -2151,7 +2073,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
                 // This element is temporarily positioned absolute within its wrapper.
                 // Restore to its default, CSS-inherited visibility setting.
                 // We cannot explicitly poke visibility:visible into its style because that overrides the visibility of the wrap.
-                el.setStyle({
+                animFly.setStyle({
                     visibility: '',
                     position: 'absolute'
                 });
@@ -2294,21 +2216,23 @@ Ext.define('Ext.overrides.dom.Element', (function() {
 
                 // In the absence of a callback, this listener MUST be added first
                 wrapAnim.on('afteranimate', function() {
-                    var el = Ext.fly(dom, '_anim');
+                    // Reattach to the DOM in case the caller animated a Fly
+                    // in which case the dom reference will have changed by now.
+                    animFly.attach(dom);
                     
-                    el.setStyle(originalStyles);
+                    animFly.setStyle(originalStyles);
                     if (slideOut) {
                         if (obj.useDisplay) {
-                            el.setDisplayed(false);
+                            animFly.setDisplayed(false);
                         } else {
-                            el.hide();
+                            animFly.hide();
                         }
                     }
                     if (wrap.dom) {
                         if (wrap.dom.parentNode) {
-                            wrap.dom.parentNode.insertBefore(el.dom, wrap.dom);
+                            wrap.dom.parentNode.insertBefore(dom, wrap.dom);
                         } else {
-                            wrapDomParentNode.appendChild(el.dom);
+                            wrapDomParentNode.appendChild(dom);
                         }
                         wrap.destroy();
                     }
@@ -2455,6 +2379,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
         switchOff: function(options) {
             var me = this,
                 dom = me.dom,
+                animFly = new Ext.dom.Fly(),
                 beforeAnim;
 
             options = Ext.applyIf(options || {}, {
@@ -2465,15 +2390,18 @@ Ext.define('Ext.overrides.dom.Element', (function() {
             });
 
             beforeAnim = function() {
-                var el = Ext.fly(dom, '_anim'),
-                    animScope = this,
-                    size = el.getSize(),
-                    xy = el.getXY(),
+                // Reattach to the DOM in case the caller animated a Fly
+                // in which case the dom reference will have changed by now.
+                animFly.attach(dom);
+                    
+                var animScope = this,
+                    size = animFly.getSize(),
+                    xy = animFly.getXY(),
                     keyframe, position;
                     
-                el.clearOpacity();
-                el.clip();
-                position = el.getPositioning();
+                animFly.clearOpacity();
+                animFly.clip();
+                position = animFly.getPositioning();
 
                 keyframe = new Ext.fx.Animator({
                     target: dom,
@@ -2494,15 +2422,18 @@ Ext.define('Ext.overrides.dom.Element', (function() {
                     }
                 });
                 keyframe.on('afteranimate', function() {
-                    var el = Ext.fly(dom, '_anim');
+                    // Reattach to the DOM in case the caller animated a Fly
+                    // in which case the dom reference will have changed by now.
+                    animFly.attach(dom);
+                    
                     if (options.useDisplay) {
-                        el.setDisplayed(false);
+                        animFly.setDisplayed(false);
                     } else {
-                        el.hide();
+                        animFly.hide();
                     }
-                    el.clearOpacity();
-                    el.setPositioning(position);
-                    el.setSize(size);
+                    animFly.clearOpacity();
+                    animFly.setPositioning(position);
+                    animFly.setSize(size);
                     // kill the no-op element animation created below
                     animScope.end();
                 });
@@ -3490,7 +3421,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
                     }
                     catch (xcpt) {
                         ex = xcpt;
-                    };
+                    }
                     
                     // Ok so now we have this situation when we tried to focus
                     // the first time but did not succeed. Let's try again but
@@ -3528,25 +3459,6 @@ Ext.define('Ext.overrides.dom.Element', (function() {
          * and {@link Ext.LoadMask LoadMasks}
          */
         useShims: false,
-
-        /**
-         * @private
-         * Returns an HTML div element into which {@link Ext.container.Container#method-remove removed} components
-         * are placed so that their DOM elements are not garbage collected as detached Dom trees.
-         * @return {Ext.dom.Element}
-         * @member Ext
-         */
-        getDetachedBody: function () {
-            var detachedEl = Ext.detachedBodyEl;
-
-            if (!detachedEl) {
-                detachedEl = DOC.createElement('div');
-                Ext.detachedBodyEl = detachedEl = new Ext.dom.Fly(detachedEl);
-                detachedEl.isDetachedBody = true;
-            }
-
-            return detachedEl;
-        },
 
         getElementById: function (id) {
             var el = DOC.getElementById(id),
@@ -3691,8 +3603,6 @@ Ext.define('Ext.overrides.dom.Element', (function() {
 
     Ext.onInternalReady(function () {
         var transparentRe = /^(?:transparent|(?:rgba[(](?:\s*\d+\s*[,]){3}\s*0\s*[)]))$/i,
-            bodyCls = [],
-            //htmlCls = [],
             origSetWidth = proto.setWidth,
             origSetHeight = proto.setHeight,
             origSetSize = proto.setSize,
@@ -3841,7 +3751,8 @@ Ext.define('Ext.overrides.dom.Element', (function() {
         Ext.getDoc().on('selectstart', function(ev, dom) {
             var selectableCls = Element.selectableCls,
                 unselectableCls = Element.unselectableCls,
-                tagName = dom && dom.tagName;
+                tagName = dom && dom.tagName,
+                el = new Ext.dom.Fly();
 
             tagName = tagName && tagName.toLowerCase();
 
@@ -3854,7 +3765,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
 
             // Walk up the DOM checking the nodes. This may be 'slow' but selectstart events don't fire very often
             while (dom && dom.nodeType === 1 && dom !== DOC.documentElement) {
-                var el = Ext.fly(dom);
+                el.attach(dom);
 
                 // If the node has the class x-selectable then stop looking, the text selection is allowed
                 if (el.hasCls(selectableCls)) {
@@ -3876,7 +3787,8 @@ Ext.define('Ext.overrides.dom.Element', (function() {
             return transparentRe.test(value) ? 'transparent' : value;
         }
 
-        /*
+        /**
+         * @method makeSelectionRestoreFn
          * Helper function to create the function that will restore the selection.
          */
         function makeSelectionRestoreFn (activeEl, start, end) {
@@ -3887,6 +3799,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
         }
 
         /**
+         * @method getRightMarginFixCleaner
          * Creates a function to call to clean up problems with the work-around for the
          * WebKit RightMargin bug. The work-around is to add "display: 'inline-block'" to
          * the element before calling getComputedStyle and then to restore its original
@@ -4030,89 +3943,8 @@ Ext.define('Ext.overrides.dom.Element', (function() {
          * to the elements of root-level containers instead.
          */
         if (!Ext.scopeCss) {
-            bodyCls.push(Ext.baseCSSPrefix + 'body');
+            Ext.getBody().addCls(Ext.baseCSSPrefix + 'body');
         }
 
-        if (supports.Touch) {
-            bodyCls.push(Ext.baseCSSPrefix + 'touch');
-        }
-
-        if (Ext.isIE && Ext.isIE9m) {
-            bodyCls.push(Ext.baseCSSPrefix + 'ie',
-                         Ext.baseCSSPrefix + 'ie9m');
-
-            // very often CSS needs to do checks like "IE7+" or "IE6 or 7". To help
-            // reduce the clutter (since CSS/SCSS cannot do these tests), we add some
-            // additional classes:
-            //
-            //      x-ie7p      : IE7+      :  7 <= ieVer
-            //      x-ie7m      : IE7-      :  ieVer <= 7
-            //      x-ie8p      : IE8+      :  8 <= ieVer
-            //      x-ie8m      : IE8-      :  ieVer <= 8
-            //      x-ie9p      : IE9+      :  9 <= ieVer
-            //      x-ie78      : IE7 or 8  :  7 <= ieVer <= 8
-            //
-            bodyCls.push(Ext.baseCSSPrefix + 'ie8p');
-
-            if (Ext.isIE8) {
-                bodyCls.push(Ext.baseCSSPrefix + 'ie8');
-            } else {
-                bodyCls.push(Ext.baseCSSPrefix + 'ie9',
-                             Ext.baseCSSPrefix + 'ie9p');
-            }
-
-            if (Ext.isIE8m) {
-                bodyCls.push(Ext.baseCSSPrefix + 'ie8m');
-            }
-        }
-
-        if (Ext.isIE10) {
-            bodyCls.push(Ext.baseCSSPrefix + 'ie10');
-        }
-
-        if (Ext.isIE10p) {
-            bodyCls.push(Ext.baseCSSPrefix + 'ie10p');
-        }
-
-        if (Ext.isIE11) {
-            bodyCls.push(Ext.baseCSSPrefix + 'ie11');
-        }
-
-        if (Ext.isGecko) {
-            bodyCls.push(Ext.baseCSSPrefix + 'gecko');
-        }
-        if (Ext.isOpera) {
-            bodyCls.push(Ext.baseCSSPrefix + 'opera');
-        }
-        if (Ext.isOpera12m) {
-            bodyCls.push(Ext.baseCSSPrefix + 'opera12m');
-        }
-        if (Ext.isWebKit) {
-            bodyCls.push(Ext.baseCSSPrefix + 'webkit');
-        }
-        if (Ext.isSafari) {
-            bodyCls.push(Ext.baseCSSPrefix + 'safari');
-        }
-        if (Ext.isChrome) {
-            bodyCls.push(Ext.baseCSSPrefix + 'chrome');
-        }
-        if (Ext.isMac) {
-            bodyCls.push(Ext.baseCSSPrefix + 'mac');
-        }
-        if (Ext.isLinux) {
-            bodyCls.push(Ext.baseCSSPrefix + 'linux');
-        }
-        if (!supports.CSS3BorderRadius) {
-            bodyCls.push(Ext.baseCSSPrefix + 'nbr');
-        }
-        if (!supports.CSS3LinearGradient) {
-            bodyCls.push(Ext.baseCSSPrefix + 'nlg');
-        }
-        if (supports.Touch) {
-            bodyCls.push(Ext.baseCSSPrefix + 'touch');
-        }
-        //Ext.fly(document.documentElement).addCls(htmlCls);
-
-        Ext.getBody().addCls(bodyCls);
     }, null, { priority: 1500 }); // onReady
 });

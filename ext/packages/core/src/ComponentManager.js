@@ -248,7 +248,7 @@ Ext.define('Ext.ComponentManager', {
                 }
             }
         }
-        if (toComponent && !toComponent.destroyed) {
+        if (toComponent && !(toComponent.destroyed || toComponent.destroying)) {
             if (toComponent.handleFocusEvent) {
                 toComponent.handleFocusEvent(e);
             }
@@ -334,6 +334,7 @@ Ext.define('Ext.ComponentManager', {
         5: {
             methods: {
                 /**
+                 * @method isRegistered
                  * Checks if an item is registered.
                  * @param {String} component The mnemonic string by which the class may be looked up.
                  * @return {Boolean} Whether the type is registered.
@@ -342,6 +343,7 @@ Ext.define('Ext.ComponentManager', {
                 isRegistered: null,
 
                 /**
+                 * @method registerType
                  * Registers a new item constructor, keyed by a type key.
                  * @param {String} type The mnemonic string by which the class may be looked up.
                  * @param {Function} cls The new instance class.

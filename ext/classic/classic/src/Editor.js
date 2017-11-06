@@ -340,9 +340,10 @@ Ext.define('Ext.Editor', {
      * Starts the editing process and shows the editor.
      * @param {String/HTMLElement/Ext.dom.Element} el The element to edit
      * @param {String} value (optional) A value to initialize the editor with. If a value is not provided, it defaults
-      * to the innerHTML of el.
+     * to the innerHTML of el.
+     * @param doFocus (private)
      */
-    startEdit: function(el, value, /* private: false means don't focus*/ doFocus) {
+    startEdit: function(el, value, doFocus) {
         var me = this,
             field = me.field,
             dom, ownerCt, renderTo;
@@ -356,6 +357,11 @@ Ext.define('Ext.Editor', {
         }
 
         if (me.fireEvent('beforestartedit', me, me.boundEl, value) !== false) {
+            if (me.context) {
+                // Grab the value again, may have changed in beforestartedit
+                value = me.context.value;
+            }
+
             // If NOT configured with a renderTo, render to the ownerCt's element
             // Being floating, we do not need to use the actual layout's target.
             // Indeed, it's better if we do not so that we do not interfere with layout's child management.
@@ -531,7 +537,7 @@ Ext.define('Ext.Editor', {
         }
     },
 
-    beforeDestroy: function () {
+    doDestroy: function() {
         var me = this,
             task = me.specialKeyTask;
 
@@ -539,7 +545,8 @@ Ext.define('Ext.Editor', {
             task.cancel();
         }
 
-        me.specialKeyTask = me.field = me.boundEl = Ext.destroy(me.field);
-        me.callParent(arguments);
+        Ext.destroy(me.field);
+        
+        me.callParent();
     }
 });

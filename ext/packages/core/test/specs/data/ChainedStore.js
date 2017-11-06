@@ -96,11 +96,7 @@ describe("Ext.data.ChainedStore", function() {
         MockAjaxManager.removeMethods();
         Ext.data.Model.schema.clear();
         Ext.undefine('spec.User');
-        if (source) {
-            source.destroy();
-        }
-        store.destroy();
-        User = source = store = null;
+        User = source = store = Ext.destroy(source, store);
         Ext.data.Model.schema.clear(true);
     });
     
@@ -811,6 +807,37 @@ describe("Ext.data.ChainedStore", function() {
                     
                     expect(dataChangedSpy).toHaveBeenCalled();
                     expect(dataChangedSpy.mostRecentCall.args[0]).toBe(store);
+                });
+
+                it("should forward on beforeload/load events when the source is chained", function() {
+                    createStore();
+
+                    var readSpy = spyOn(User.getProxy(), 'read').andCallThrough();
+
+                    var beforeLoadSpy = jasmine.createSpy(),
+                        loadSpy = jasmine.createSpy(),
+                        child = new Ext.data.ChainedStore({
+                            source: store,
+                            listeners: {
+                                beforeload: beforeLoadSpy,
+                                load: loadSpy
+                            }
+                        });
+
+                    source.load();
+                    expect(beforeLoadSpy.callCount).toBe(1);
+                    expect(beforeLoadSpy.mostRecentCall.args[0]).toBe(child);
+                    expect(beforeLoadSpy.mostRecentCall.args[1]).toBe(readSpy.mostRecentCall.args[0]);
+
+                    completeWithData([abeRaw, tommyRaw, edRaw, aaronRaw]);
+                    expect(loadSpy.callCount).toBe(1);
+
+                    expect(loadSpy.mostRecentCall.args[0]).toBe(child);
+                    expect(loadSpy.mostRecentCall.args[1]).toEqual([source.getAt(0), source.getAt(1), source.getAt(2), source.getAt(3)]);
+                    expect(loadSpy.mostRecentCall.args[2]).toBe(true);
+                    expect(loadSpy.mostRecentCall.args[3]).toBe(readSpy.mostRecentCall.args[0]);
+
+                    child.destroy();
                 });
             });
         });
@@ -1723,6 +1750,33 @@ describe("Ext.data.ChainedStore", function() {
             // Downstream store must pass on the idchanged event.
             expect(spy.callCount).toBe(1);
             expect(spy.mostRecentCall.args).toEqual([store, rec, 1, 'foobar']);
+        });
+
+        it("should maintain synchronization with source store when observers are added", function () {
+            source = new Ext.data.Store({
+                fields: ['id', 'name'],
+                data: [{
+                    id: 1,
+                    name: 'foo'
+                }]
+            });
+
+            createStore();
+
+            var spy = spyOnEvent(store, 'remove');
+
+            source.on('remove', function () {
+                // the initialization of the collectionkey will call addObserver() in the underlying collection
+                // if this happens while we're in the middle of notify(), chained store will be left out
+                source.setExtraKeys({
+                    byFoo: {property: 'name', root: ''}
+                });
+            });
+            // remove the last record
+            source.removeAt(0);
+            // if all went as planned, the chained store's collection should have been notified of the removal as well
+            expect(store.getCount()).toBe(0);
+            expect(spy).toHaveBeenCalled();
         });
     });
 });

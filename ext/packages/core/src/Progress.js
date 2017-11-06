@@ -40,8 +40,8 @@
  *
  */
 Ext.define('Ext.Progress', {
-    extend: 'Ext.Widget',
-    xtype: [ 'progress', 'progressbarwidget' ],
+    extend: 'Ext.Gadget',
+    xtype: ['progress', 'progressbarwidget'],
     alternateClassName: 'Ext.ProgressBarWidget',
 
     mixins: [
@@ -71,9 +71,7 @@ Ext.define('Ext.Progress', {
 
         textCls: Ext.baseCSSPrefix + 'progress-text',
 
-        cls: null,
-
-        ui: null
+        cls: null
     },
 
     template: [{
@@ -87,16 +85,7 @@ Ext.define('Ext.Progress', {
 
     defaultBindProperty: 'value',
 
-    updateWidth: function(width, oldWidth) {
-        var me = this;
-
-        me.callParent([width, oldWidth]);
-        width -= me.element.getBorderWidth('lr');
-        me.backgroundEl.setWidth(width);
-        me.textEl.setWidth(width);
-    },
-
-    updateCls: function(cls, oldCls) {
+    updateCls: function (cls, oldCls) {
         var el = this.element;
 
         if (oldCls) {
@@ -108,7 +97,7 @@ Ext.define('Ext.Progress', {
         }
     },
 
-    updateUi: function(ui, oldUi) {
+    updateUi: function (ui, oldUi) {
         var element = this.element,
             barEl = this.barEl,
             baseCls = this.getBaseCls() + '-';
@@ -122,7 +111,7 @@ Ext.define('Ext.Progress', {
         barEl.addCls(baseCls + 'bar-' + ui);
     },
 
-    updateBaseCls: function(baseCls, oldBaseCls) {
+    updateBaseCls: function (baseCls, oldBaseCls) {
         //<debug>
         if (oldBaseCls) {
             Ext.raise('You cannot configure baseCls - use a subclass');
@@ -132,14 +121,13 @@ Ext.define('Ext.Progress', {
         this.barEl.addCls(baseCls + '-bar');
     },
 
-    updateTextCls: function(textCls) {
+    updateTextCls: function (textCls) {
         this.backgroundEl.addCls(textCls + ' ' + textCls + '-back');
         this.textEl.addCls(textCls);
     },
 
-    updateValue: function(value, oldValue) {
+    updateValue: function (value, oldValue) {
         var me = this,
-            barEl = me.barEl,
             textTpl = me.getTextTpl();
 
         if (textTpl) {
@@ -148,9 +136,9 @@ Ext.define('Ext.Progress', {
                 percent: Math.round(value * 100)
             }));
         }
-        if (me.getAnimate()) {
-            barEl.stopAnimation();
-            barEl.animate(Ext.apply({
+        if (!me.isConfiguring && me.getAnimate()) {
+            me.stopBarAnimation();
+            me.startBarAnimation(Ext.apply({
                 from: {
                     width: (oldValue * 100) + '%'
                 },
@@ -159,12 +147,22 @@ Ext.define('Ext.Progress', {
                 }
             }, me.animate));
         } else {
-            barEl.setStyle('width', (value * 100) + '%');
+            me.barEl.setStyle('width', (value * 100) + '%');
         }
     },
 
-    updateText: function(text) {
+    updateText: function (text) {
         this.backgroundEl.setHtml(text);
         this.textEl.setHtml(text);
+    },
+
+    doDestroy: function() {
+        this.stopBarAnimation();
+        this.callParent();
+    },
+
+    privates: {
+        startBarAnimation: Ext.privateFn,
+        stopBarAnimation: Ext.privateFn
     }
 });

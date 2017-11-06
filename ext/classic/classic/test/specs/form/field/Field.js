@@ -1,5 +1,8 @@
+/* global expect, jasmine, it, spyOn */
+
 describe('Ext.form.field.Field', function () {
-    var ajaxRequestCfg, ct, action, form;
+    var itNotTouch = jasmine.supportsTouch ? xit : it,
+        ajaxRequestCfg, ct, action, form;
 
     function makeContainer(items) {
         ct = new Ext.container.Container({
@@ -25,6 +28,65 @@ describe('Ext.form.field.Field', function () {
     afterEach(function () {
         Ext.destroy(ct, action, form);
         ct = action = form = ajaxRequestCfg = null;
+    });
+
+    describe("quicktips/validation", function() {
+        var tf, errorDom, tip;
+
+        function createForm(required, cfg) {
+            // we're creating textields for testing, but any type that supports validation will do.
+            form = Ext.create('Ext.form.Panel', Ext.apply({
+                renderTo: Ext.getBody(),
+                width: 400,
+                height: 200,
+                items: [
+                    {
+                        xtype: 'textfield',
+                        fieldLabel: 'tf',
+                        msgTarget: 'side',
+                        allowBlank: !!!required
+                    },
+                    {
+                        xtype: 'textfield',
+                        fieldLabel: 'dummy'
+                    }
+                ]
+            }, cfg || {}));
+            tf = form.down('textfield');
+            errorDom = tf.errorEl.dom;
+        }
+        
+        afterEach(function() {
+            tip = Ext.destroy(tip);
+        });
+
+        it("should create a validation error icon to the right of the field", function() {
+            createForm(); 
+            //debugger
+            tf.validate();
+            expect(tf.errorEl.dom.firstChild).toBeNull();
+            tf.allowBlank = false;
+            tf.validate();
+            expect(tf.errorEl.dom.firstChild).not.toBeNull();
+        });
+
+        itNotTouch("should show a quicktip if mouse over the invalid icon", function() {
+            createForm(true, {
+                title: 'quicktip'
+            });
+            tf.validate();
+     
+            tip = Ext.form.Labelable.tip;
+            expect(tip.hidden).toBe(true);
+            jasmine.fireMouseEvent(errorDom, 'mouseover');
+            waitsFor(function() {
+                return tip.hidden === false;
+            });
+            runs(function() {
+                expect(tip.hidden).toBe(false);
+                tip.hide();
+            });
+        });
     });
 
     describe("data binding", function() {
@@ -81,7 +143,7 @@ describe('Ext.form.field.Field', function () {
                 makeField({
                     renderTo: Ext.getBody(),
                     bind: '{theValue}'
-                })
+                });
                 field.getErrors = function() {
                     return [];
                 };
@@ -94,7 +156,7 @@ describe('Ext.form.field.Field', function () {
                 makeField({
                     renderTo: Ext.getBody(),
                     bind: '{theValue}'
-                })
+                });
                 field.getErrors = function() {
                     var v = this.getValue();
                     return v === 'abc' ? ['Invalid'] : [];
@@ -212,7 +274,7 @@ describe('Ext.form.field.Field', function () {
                         result.push('Fail');
                         return result;
                     }
-                })
+                });
                 field.setValue('');
                 expect(field.getErrors()).toEqual(['Must be present', 'Fail']);
             });

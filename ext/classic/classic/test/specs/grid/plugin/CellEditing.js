@@ -5,7 +5,30 @@ describe('Ext.grid.plugin.CellEditing', function () {
         TAB = 9,
         synchronousLoad = true,
         proxyStoreLoad = Ext.data.ProxyStore.prototype.load,
-        loadStore;
+        loadStore = function() {
+            proxyStoreLoad.apply(this, arguments);
+            if (synchronousLoad) {
+                this.flushLoad.apply(this, arguments);
+            }
+            return this;
+        };
+
+    function spyOnEvent(object, eventName, fn) {
+        var obj = {
+            fn: fn || Ext.emptyFn
+        },
+        spy = spyOn(obj, 'fn');
+
+        object.addListener(eventName, obj.fn);
+        return spy;
+    }
+
+    function findCell(rowIdx, cellIdx) {
+        return grid.getView().getCellInclusive({
+            row: rowIdx,
+            column: cellIdx
+        }, true);
+    }
 
     function makeGrid(pluginCfg, gridCfg, storeCfg, locked) {
         store = new Ext.data.Store(Ext.apply({
@@ -60,13 +83,7 @@ describe('Ext.grid.plugin.CellEditing', function () {
 
     beforeEach(function() {
         // Override so that we can control asynchronous loading
-        loadStore = Ext.data.ProxyStore.prototype.load = function() {
-            proxyStoreLoad.apply(this, arguments);
-            if (synchronousLoad) {
-                this.flushLoad.apply(this, arguments);
-            }
-            return this;
-        };
+        Ext.data.ProxyStore.prototype.load = loadStore;
 
         MockAjaxManager.addMethods();
     });
@@ -82,6 +99,26 @@ describe('Ext.grid.plugin.CellEditing', function () {
     function tearDown() {
         store = plugin = grid = view = record = column = field = Ext.destroy(grid);
     }
+
+    describe("Events", function() {
+        it("it should fire cellactivate event", function() {
+            makeGrid(
+                {clicksToEdit: 1}, 
+                { 
+                    width: 600
+                });
+            var spy = spyOnEvent(grid, 'cellactivate'),
+                cell = findCell(0, 0),
+                ed;
+           
+            jasmine.fireMouseEvent(cell, 'click');
+            ed = plugin.getActiveEditor();
+            triggerEditorKey(ed.field.inputEl, TAB);
+            ed = plugin.getActiveEditor();
+            triggerEditorKey(ed.field.inputEl, TAB);
+            expect(spy.callCount).toBe(3);
+        });
+    });
 
     describe('finding the cell editing plugin in a locking grid', function() {
         beforeEach(function() {
@@ -338,7 +375,7 @@ describe('Ext.grid.plugin.CellEditing', function () {
                 var i, len;
 
                 if (arguments.length === 1) {
-                    if (typeof rec == 'number') {
+                    if (typeof rec === 'number') {
                         rec = store.getAt(rec);
                     }
                     expect(selModel.isSelected(rec)).toBe(true);
@@ -353,49 +390,52 @@ describe('Ext.grid.plugin.CellEditing', function () {
                 selModel = null;
             });
 
-            function selectRange(eventName) {
-                describe('MULTI, on event: ' + eventName, function () {
-                    beforeEach(function () {
-                        makeGrid({
-                            clicksToEdit: eventName === 'click' ? 1: 2
-                        }, {
-                            selModel: {
-                                type: 'rowmodel',
-                                mode: 'MULTI'
-                            }
+            // No SHIFT+touch on tablets, and this test uses shiftKey: true
+            if (!jasmine.supportsTouch) {
+                function selectRange(eventName) {
+                    describe('MULTI, on event: ' + eventName, function () {
+                        beforeEach(function () {
+                            makeGrid({
+                                clicksToEdit: eventName === 'click' ? 1: 2
+                            }, {
+                                selModel: {
+                                    type: 'rowmodel',
+                                    mode: 'MULTI'
+                                }
+                            });
+
+                            selModel = grid.selModel;
                         });
 
-                        selModel = grid.selModel;
-                    });
+                        it('should select a range if we have a selection start point and shift is pressed', function () {
+                            fireEvent(0, eventName);
+                            fireEvent(3, eventName, true);
+                            expectSelected(0, 1, 2, 3);
+                        });
 
-                    it('should select a range if we have a selection start point and shift is pressed', function () {
-                        fireEvent(0, eventName);
-                        fireEvent(3, eventName, true);
-                        expectSelected(0, 1, 2, 3);
-                    });
+                        it('should maintain selection with a complex sequence', function() {
+                            fireEvent(0, eventName);
+                            expectSelected(0);
+                            fireEvent(2, eventName, true);
+                            expectSelected(0, 1, 2);
+                            fireEvent(3, eventName);
+                            expectSelected(3);
+                            fireEvent(1, eventName, true);
+                            expectSelected(1, 2, 3);
 
-                    it('should maintain selection with a complex sequence', function() {
-                        fireEvent(0, eventName);
-                        expectSelected(0);
-                        fireEvent(2, eventName, true);
-                        expectSelected(0, 1, 2);
-                        fireEvent(3, eventName);
-                        expectSelected(3);
-                        fireEvent(1, eventName, true);
-                        expectSelected(1, 2, 3);
-
-                        fireEvent(2, eventName);
-                        expectSelected(2);
-                        fireEvent(0, eventName, true);
-                        expectSelected(0, 1, 2);
-                        fireEvent(3, eventName, true);
-                        expectSelected(2, 3);
+                            fireEvent(2, eventName);
+                            expectSelected(2);
+                            fireEvent(0, eventName, true);
+                            expectSelected(0, 1, 2);
+                            fireEvent(3, eventName, true);
+                            expectSelected(2, 3);
+                        });
                     });
-                });
+                }
+
+                selectRange('click');
+                selectRange('dblclick');
             }
-
-            selectRange('click');
-            selectRange('dblclick');
         });
     });
 
@@ -887,12 +927,12 @@ describe('Ext.grid.plugin.CellEditing', function () {
             });
 
             // Note: I'm disabling this for IE (and new IE!) b/c certain versions (esp. 10 & 11) could not distinguish
-            // between single- and double-click.
-            if (!Ext.isIE && !Ext.isEdge) {
+            // between single- and double-click. Double taps on touch devices also invoke tap handlers.
+            if (!Ext.isIE && !Ext.isEdge && !jasmine.supportsTouch && !Ext.isSafari7) {
                 it('should not begin editing when double-clicked', function () {
                     record = grid.store.getAt(0);
                     node = grid.view.getNodeByRecord(record);
-                    jasmine.fireMouseEvent(Ext.fly(node).down('.x-grid-cell'), 'dblclick');
+                    jasmine.doFireMouseEvent(Ext.fly(node).down('.x-grid-cell'), 'dblclick');
 
                     // We expect nothing to happen
                     waits(50);
@@ -1018,32 +1058,37 @@ describe('Ext.grid.plugin.CellEditing', function () {
                 expect(plugin.activeEditor.setPosition).not.toHaveBeenCalled();
             });
 
-            it('should not reposition when within a draggable container', function () {
-                // See EXTJS-15532.
+            describe('within a draggable container', function() {
                 var win;
 
-                tearDown();
-
-                makeGrid(null, {
-                    renderTo: null
+                afterEach(function() {
+                    win = Ext.destroy(win);
                 });
 
-                win = new Ext.window.Window({
-                    items: grid
-                }).show();
+                it('should not reposition when within a draggable container', function () {
+                    // See EXTJS-15532.
+                    tearDown();
 
-                startEdit();
+                    makeGrid(null, {
+                        renderTo: null
+                    });
 
-                spyOn(plugin.activeEditor, 'setPosition');
+                    win = new Ext.window.Window({
+                        items: grid
+                    });
+                    win.show();
 
-                jasmine.fireMouseEvent(win.el.dom, 'mousedown');
-                jasmine.fireMouseEvent(win.el.dom, 'mousemove', win.x, win.y);
-                jasmine.fireMouseEvent(win.el.dom, 'mousemove', (win.x - 100), (win.y - 100));
-                jasmine.fireMouseEvent(win.el.dom, 'mouseup', 400);
+                    startEdit();
 
-                expect(plugin.activeEditor.setPosition).not.toHaveBeenCalled();
+                    spyOn(plugin.activeEditor, 'setPosition');
 
-                win.destroy();
+                    jasmine.fireMouseEvent(win.el.dom, 'mousedown');
+                    jasmine.fireMouseEvent(win.el.dom, 'mousemove', win.x, win.y);
+                    jasmine.fireMouseEvent(win.el.dom, 'mousemove', (win.x - 100), (win.y - 100));
+                    jasmine.fireMouseEvent(win.el.dom, 'mouseup', 400);
+
+                    expect(plugin.activeEditor.setPosition).not.toHaveBeenCalled();
+                });
             });
         });
 
@@ -1347,7 +1392,7 @@ describe('Ext.grid.plugin.CellEditing', function () {
         // I could not get the following spec to pass in the following browsers, although the test case does work.
         // The dom.select() method in FF seems to be asynchronous (possibly for Opera as well), and IE 11 and Edge always
         // returned an empty string for the text selection even though it claims to support window.getSelection().
-        ((Ext.isGecko || Ext.isOpera || Ext.isIE11 || Ext.isEdge) ? xit : it)('should select the text in the cell when initiating an edit', function () {
+        ((Ext.isGecko || Ext.isOpera || Ext.isIE11 || Ext.isEdge || jasmine.supportsTouch) ? xit : it)('should select the text in the cell when initiating an edit', function () {
             // See EXTJS-12364.
             var node;
 
@@ -1417,7 +1462,7 @@ describe('Ext.grid.plugin.CellEditing', function () {
             startEdit(0, 1);
             waitsFor(function() {
                 ed = plugin.activeEditor;
-                return !!ed;
+                return ed.editing;
             }, 'editing to start at cell(0, 1)');
             runs(function() {
                 context = plugin.context;

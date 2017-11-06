@@ -59,6 +59,7 @@ Ext.define('Ext.form.field.TextArea', {
             '<tpl if="tabIdx != null"> tabindex="{tabIdx}"</tpl>',
             ' class="{fieldCls} {typeCls} {typeCls}-{ui} {inputCls}" ',
             '<tpl if="fieldStyle"> style="{fieldStyle}"</tpl>',
+            '<tpl foreach="ariaElAttributes"> {$}="{.}"</tpl>',
             '<tpl foreach="inputElAriaAttributes"> {$}="{.}"</tpl>',
             ' autocomplete="off">\n',
             '<tpl if="value">{[Ext.util.Format.htmlEncode(values.value)]}</tpl>',
@@ -256,6 +257,7 @@ Ext.define('Ext.form.field.TextArea', {
 
             height = Math.min(Math.max(height, me.growMin), me.growMax);
 
+            inputEl.setStyle('overflow-y', height >= me.growMax ? 'auto' : 'hidden');
             me.bodyEl.setHeight(height);
 
             me.updateLayout();
@@ -264,12 +266,13 @@ Ext.define('Ext.form.field.TextArea', {
         }
     },
 
-    beforeDestroy: function(){
+    doDestroy: function() {
         var task = this.pasteTask;
+        
         if (task) {
             task.cancel();
-            this.pasteTask = null;
         }    
+        
         this.callParent();
     }
 });

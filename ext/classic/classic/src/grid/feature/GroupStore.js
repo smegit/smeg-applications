@@ -396,7 +396,9 @@ Ext.define('Ext.grid.feature.GroupStore', {
                 metaGroup = groupingFeature.getMetaGroup(record);
 
                 if (modifiedFieldNames && Ext.Array.contains(modifiedFieldNames, groupingFeature.getGroupField())) {
-                    return me.onDataChanged();
+                    me.onDataChanged();
+                    delete record.group;
+                    return;
                 }
 
                 // Fire an update event on the collapsed metaGroup placeholder record
@@ -459,9 +461,10 @@ Ext.define('Ext.grid.feature.GroupStore', {
         var me = this;
 
         me.bindStore(null);
-        Ext.destroyMembers(me, 'data', 'groupingFeature');
+        Ext.destroy(me.data);
+        
+        me.groupingFeature = null;
 
         me.callParent();
     }
 });
-

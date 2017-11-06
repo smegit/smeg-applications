@@ -108,18 +108,19 @@ Ext.define('Ext.tab.Panel', {
     },
 
     initialize: function() {
-        this.callParent();
+        var me = this;
+        me.callParent();
 
-        this.on({
+        me.on({
             beforeactivetabchange: 'doTabChange',
             delegate: '> tabbar',
-            scope   : this
+            scope   : me
         });
 
-        this.on({
+        me.on({
             disabledchange: 'onItemDisabledChange',
             delegate: '> component',
-            scope   : this
+            scope   : me
         });
     },
 
@@ -135,11 +136,14 @@ Ext.define('Ext.tab.Panel', {
     /**
      * Updates the Ui for this component and the {@link #tabBar}.
      */
-    updateUi: function(newUi, oldUi) {
-        this.callParent(arguments);
+    updateUi: function(ui, oldUi) {
+        var bar;
 
-        if (this.initialized) {
-            this.getTabBar().setUi(newUi);
+        this.callParent([ui, oldUi]);
+
+        bar = this.getTabBar();
+        if (this.initialized && bar) {
+            bar.setUi(newUi);
         }
     },
 
@@ -219,10 +223,16 @@ Ext.define('Ext.tab.Panel', {
      * Adds the new {@link Ext.tab.Bar} instance into this container.
      * @private
      */
-    updateTabBar: function(newTabBar) {
-        if (newTabBar) {
-            this.add(newTabBar);
-            this.setTabBarPosition(newTabBar.getDocked());
+    updateTabBar: function(tabBar, oldTabBar) {
+        var me = this;
+
+        if (oldTabBar && me.removingTabBar === undefined) {
+            me.remove(oldTabBar, true);
+        }
+
+        if (tabBar) {
+            me.add(tabBar);
+            me.setTabBarPosition(tabBar.getDocked());
         }
     },
 
@@ -317,9 +327,25 @@ Ext.define('Ext.tab.Panel', {
     },
 
     // @private
-    onItemRemove: function(item, index) {
-        this.getTabBar().remove(item.tab, this.getAutoDestroy());
+    onItemRemove: function(item, index, destroying) {
+        var me = this,
+            tabBar = me.getTabBar(),
+            clearBar;
 
-        this.callParent(arguments);
+        if (item === tabBar) {
+            clearBar = me.removingTabBar === undefined;
+        } else if (tabBar) {
+            tabBar.remove(item.tab, true);
+        }
+
+        me.callParent([item, index, destroying]);
+
+        if (clearBar) {
+            // Important to remove this after callParent so the layout can
+            // process before we destroy it.
+            me.removingTabBar = destroying;
+            me.setTabBar(null);
+            delete me.removingTabBar;
+        }
     }
 });

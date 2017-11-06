@@ -7,7 +7,7 @@ Ext.define('Ext.viewport.Android', {
 
     config: {
         translatable: {
-            translationMethod: 'csstransform'
+            type: 'csstransform'
         }
     },
 
@@ -250,7 +250,7 @@ Ext.define('Ext.viewport.Android', {
                 this.scrollToTop();
                 return true;
             }
-        })
+        });
     }
 
     if (version.gtEq('4')) {

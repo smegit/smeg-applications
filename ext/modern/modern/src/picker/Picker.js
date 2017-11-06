@@ -256,22 +256,24 @@ Ext.define('Ext.picker.Picker', {
         }
     },
 
+    floated: true,
+
     initialize: function() {
         var me = this,
             clsPrefix = Ext.baseCSSPrefix,
             innerElement = this.innerElement;
 
         //insert the mask, and the picker bar
-        this.mask = innerElement.insertFirst({
+        me.mask = innerElement.insertFirst({
             cls: clsPrefix + 'picker-mask'
         });
 
-        this.bar = this.mask.createChild({
+        me.bar = me.mask.createChild({
             cls: clsPrefix + 'picker-bar'
         });
 
         me.on({
-            scope   : this,
+            scope   : me,
             delegate: 'pickerslot',
             slotpick: 'onSlotPick'
         });
@@ -571,11 +573,11 @@ Ext.define('Ext.picker.Picker', {
         return this.getValue();
     },
 
-    destroy: function() {
+    doDestroy: function() {
         var me = this;
 
-        me.callParent();
         me.mask = me.bar = Ext.destroy(me.mask, me.bar);
+        
+        me.callParent();
     }
 });
-

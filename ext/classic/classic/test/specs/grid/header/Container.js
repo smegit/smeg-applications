@@ -42,76 +42,46 @@ describe('Ext.grid.header.Container', function () {
     });
 
     describe('column menu showing', function() {
-        it('should show the menu on trigger click', function() {
+        it('should show the menu on trigger click on mouse platforms and longpress on touch platforms', function() {
             var col,
-                menu;
+                menu,
+                showSpy;
+
+            createGrid({}, {
+                renderTo: Ext.getBody()
+            });
+
+            col = grid.columns[0];
+            menu = col.getRootHeaderCt().getMenu();
+            showSpy = spyOnEvent(menu, 'show');
+
+            // Fire the real events depending on platform capabilities
+            if (jasmine.supportsTouch) {
+                Ext.testHelper.touchStart(col.el.dom);
+            } else {
+                jasmine.doFireMouseEvent(col.titleEl, 'mouseover', null, null, null, false, false, false, document.body);
+                jasmine.doFireMouseEvent(col.triggerEl.dom, 'click');
+            }
+
+            waitsForSpy(showSpy);
 
             runs(function() {
-                createGrid({}, {
-                    renderTo: Ext.getBody()
-                });
-
-                col = grid.columns[0];
-                col.triggerEl.show();
-                jasmine.fireMouseEvent(col.triggerEl.dom, 'click');
-
-                menu = col.activeMenu;
                 expect(menu.isVisible()).toBe(true);
                 expect(menu.containsFocus).toBeFalsy();
 
-                jasmine.fireMouseEvent(col.triggerEl.dom, 'mousedown');
+                jasmine.fireMouseEvent(col.titleEl, 'mousedown');
                 expect(menu.isVisible()).toBe(false);
-
+            });
+            
+            waitsForFocus(col);
+            
+            runs(function() {
                 // Opening the menu with down arrow focuses it
-                col.el.focus();
                 jasmine.fireKeyEvent(col.el.dom, 'keydown', Ext.event.Event.DOWN);
             });
-            waitsFor(function() {
-                return menu.isVisible() && menu.containsFocus;
-            });
+
+            waitsForFocus(menu);
         });
-        
-        if (Ext.supports.TouchEvents) {
-            it('should show the menu on trigger mousedown+mouseup', function() {
-                var col,
-                    menu;
-
-                createGrid({}, {
-                    renderTo: Ext.getBody()
-                });
-
-                col = grid.columns[0];
-                col.triggerEl.show();
-                jasmine.fireMouseEvent(col.triggerEl.dom, 'mousedown');
-                jasmine.fireMouseEvent(col.triggerEl.dom, 'mouseup');
-
-                menu = col.activeMenu;
-
-                // Should have shown the header menu
-                expect(menu && menu.isVisible()).toBe(true);
-            });
-            it('should show the menu on trigger touchstart+touchend', function() {
-                var col,
-                    menu,
-                    x, y;
-
-                createGrid({}, {
-                    renderTo: Ext.getBody()
-                });
-
-                col = grid.columns[0];
-                col.triggerEl.show();
-                x = col.triggerEl.getX() + col.triggerEl.getWidth() / 2;
-                y = col.triggerEl.getY() + col.triggerEl.getHeight() / 2;
-                jasmine.fireTouchEvent(col.triggerEl.dom, 'touchstart', [{ pageX: x, pageY: y }]);
-                jasmine.fireTouchEvent(col.triggerEl.dom, 'touchend', [{ pageX: x, pageY: y }]);
-
-                menu = col.activeMenu;
-
-                // Should have shown the header menu
-                expect(menu && menu.isVisible()).toBe(true);
-            });
-        }
     });
 
     describe('columnManager delegations', function () {
@@ -334,17 +304,20 @@ describe('Ext.grid.header.Container', function () {
                 emailItem;
 
             // Open the header menu and mouseover the "Columns" item.
-            col.triggerEl.show();
-            jasmine.fireMouseEvent(col.triggerEl.dom, 'click');
-            menu = col.activeMenu;
-            colItem = menu.child('#columnItem');
-            jasmine.fireMouseEvent(colItem.el.dom, 'mouseover');
+            Ext.testHelper.showHeaderMenu(col);
+            
+            runs(function() {
+                menu = col.activeMenu;
+                colItem = menu.child('#columnItem');
+                jasmine.fireMouseEvent(colItem.el.dom, 'mouseover');
+                jasmine.fireMouseEvent(colItem.el.dom, 'click');
+            });
 
             // Wait for the column show/hide menu to appear
             waitsFor(function() {
                 colMenu = colItem.menu;
                 return colMenu && colMenu.isVisible();
-            });
+            }, 'column hiding menu to show');
             
             // Hide the "Name" column, leaving only the "Email" column visible
             runs(function() {
@@ -357,15 +330,15 @@ describe('Ext.grid.header.Container', function () {
             // hide menu check item must be disabled.
             waitsFor(function() {
                 return emailItem.disabled;
-            });
+            }, 'last column hiding item to be disabled');
         });
     });
     
     describe("reconfiguring parent grid", function() {
-        it("should enable tabIndex on its el after adding columns", function() {
+        it("should enable tabIndex on its tab guards after adding columns", function() {
             createGrid({}, { columns: [] });
             
-            jasmine.expectNoAriaAttr(grid.headerCt.el, 'tabIndex');
+            expect(grid.headerCt.el).not.toHaveAttr('tabIndex');
             
             grid.reconfigure(null, [
                 { header: 'Name',  dataIndex: 'name', width: 100 },
@@ -373,17 +346,63 @@ describe('Ext.grid.header.Container', function () {
                 { header: 'Phone', dataIndex: 'phone', flex: 1, hidden: true }
             ]);
             
-            jasmine.expectAriaAttr(grid.headerCt.el, 'tabIndex', '0');
+            expect(grid.headerCt.tabGuardBeforeEl).toHaveAttr('tabIndex', '0');
+            expect(grid.headerCt.tabGuardAfterEl).toHaveAttr('tabIndex', '0');
         });
         
-        it("should disable tabIndex on its el after removing all columns", function() {
+        it("should disable tabIndex on its tab guards after removing all columns", function() {
             createGrid();
             
-            jasmine.expectAriaAttr(grid.headerCt.el, 'tabIndex', '0');
+            expect(grid.headerCt.tabGuardBeforeEl).toHaveAttr('tabIndex', '0');
+            expect(grid.headerCt.tabGuardAfterEl).toHaveAttr('tabIndex', '0');
             
             grid.reconfigure(null, []);
             
-            jasmine.expectNoAriaAttr(grid.headerCt.el, 'tabIndex');
+            expect(grid.headerCt.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+            expect(grid.headerCt.tabGuardAfterEl).not.toHaveAttr('tabIndex');
+        });
+    });
+
+    describe('grid panel', function(){
+        it('should be notified when adding a column header', function(){
+            createGrid({}, { columns: [] });
+
+            grid.headerCt.insert(0, [
+                { header: 'Name',  dataIndex: 'name', width: 100 },
+                { header: 'Email', dataIndex: 'email', flex: 1 },
+                { header: 'Phone', dataIndex: 'phone', flex: 1 }
+            ]);
+
+            var view = grid.getView(),
+                c0_0 = view.getCellByPosition({row:0,column:0}, true),
+                c0_1 = view.getCellByPosition({row:0,column:1}, true),
+                c0_2 = view.getCellByPosition({row:0,column:2}, true);
+
+            expect(c0_0).not.toBe(false);
+            expect(c0_1).not.toBe(false);
+            expect(c0_2).not.toBe(false);
+
+        });
+
+        // EXTJS-21400
+        it('should be notified when adding a group header', function(){
+            createGrid({}, { columns: [] });
+
+            grid.headerCt.insert(0, {header: 'test', columns: [
+                { header: 'Name',  dataIndex: 'name', width: 100 },
+                { header: 'Email', dataIndex: 'email', flex: 1 },
+                { header: 'Phone', dataIndex: 'phone', flex: 1 }
+            ]});
+
+            var view = grid.getView(),
+                c0_0 = view.getCellByPosition({row:0,column:0}, true),
+                c0_1 = view.getCellByPosition({row:0,column:1}, true),
+                c0_2 = view.getCellByPosition({row:0,column:2}, true);
+
+            expect(c0_0).not.toBe(false);
+            expect(c0_1).not.toBe(false);
+            expect(c0_2).not.toBe(false);
+
         });
     });
 });

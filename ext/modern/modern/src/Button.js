@@ -1,9 +1,7 @@
 /**
- * A simple class to display a button.
- *
- * There are various different styles of Button you can create by using the {@link #icon},
- * {@link #iconCls}, {@link #iconAlign}, {@link #ui}, and {@link #text}
- * configurations.
+ * This class provides a push button with several presentation options. There are various
+ * different styles of Button you can create by using the {@link #icon}, {@link #iconCls},
+ * {@link #iconAlign}, {@link #ui}, and {@link #text} configurations.
  *
  * ## Simple Button
  *
@@ -206,7 +204,7 @@ Ext.define('Ext.Button', {
 
     cachedConfig: {
         /**
-         * @cfg {String} pressingCls
+         * @cfg {String} pressedCls
          * The CSS class to add to the Button when it is {@link #pressed}.
          * @accessor
          */
@@ -234,6 +232,14 @@ Ext.define('Ext.Button', {
          * @accessor
          */
         hasBadgeCls: Ext.baseCSSPrefix + 'hasbadge',
+
+        /**
+         * @cfg {String} hasLabelCls
+         * The CSS class to add to the Button if it has text inside its label
+         * @private
+         * @accessor
+         */
+        hasLabelCls: Ext.baseCSSPrefix + 'haslabel',
 
         /**
          * @cfg {String} labelCls
@@ -383,7 +389,7 @@ Ext.define('Ext.Button', {
          */
 
         /**
-         * @cfg
+         * @cfg baseCls
          * @inheritdoc
          */
         baseCls: Ext.baseCSSPrefix + 'button',
@@ -424,7 +430,10 @@ Ext.define('Ext.Button', {
         },
         {
             tag: 'span',
-            className: Ext.baseCSSPrefix + 'button-icon',
+            classList: [
+                Ext.baseCSSPrefix + 'button-icon',
+                Ext.baseCSSPrefix + 'font-icon'
+            ],
             reference: 'iconElement'
         },
         {
@@ -496,6 +505,7 @@ Ext.define('Ext.Button', {
                 textElement.hide();
             }
 
+            this.toggleCls(this.getHasLabelCls(), !!text);
             this.refreshIconAlign();
         }
     },
@@ -668,41 +678,6 @@ Ext.define('Ext.Button', {
         this.setScope(scope);
     },
 
-    /**
-     * We override this to check for '{ui}-back'. This is because if you have a UI of back, you need to actually add two class names.
-     * The ui class, and the back class:
-     *
-     * `ui: 'action-back'` would turn into:
-     *
-     * `class="x-button-action x-button-back"`
-     *
-     * But `ui: 'action'` would turn into:
-     *
-     * `class="x-button-action"`
-     *
-     * So we just split it up into an array and add both of them as a UI, when it has `back`.
-     * @private
-     */
-    applyUi: function(config) {
-        if (config && Ext.isString(config)) {
-            var array  = config.split('-');
-            if (array && (array[1] == "back" || array[1] == "forward")) {
-                return array;
-            }
-        }
-
-        return config;
-    },
-
-    getUi: function() {
-        //Now that the UI can sometimes be an array, we need to check if it an array and return the proper value.
-        var ui = this._ui;
-        if (Ext.isArray(ui)) {
-            return ui.join('-');
-        }
-        return ui;
-    },
-
     applyPressedDelay: function(delay) {
         if (Ext.isNumber(delay)) {
             return delay;
@@ -786,7 +761,7 @@ Ext.define('Ext.Button', {
         }
     },
 
-    destroy: function() {
+    doDestroy: function() {
         if (this.hasOwnProperty('pressedTimeout')) {
             clearTimeout(this.pressedTimeout);
         }

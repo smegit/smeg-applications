@@ -95,15 +95,10 @@ Ext.define('Ext.LoadMask', {
     cls: Ext.baseCSSPrefix + 'mask',
     componentCls: Ext.baseCSSPrefix + 'border-box',
     
-    ariaRole: 'status',
+    ariaRole: 'progressbar',
     focusable: true,
     tabIndex: 0,
     
-    autoEl: {
-        tag: 'div',
-        role: 'status'
-    },
-
     childEls: [
         'msgWrapEl',
         'msgEl',
@@ -111,17 +106,17 @@ Ext.define('Ext.LoadMask', {
     ],
 
     renderTpl: [
-        '<div id="{id}-msgWrapEl" data-ref="msgWrapEl" class="{[values.$comp.msgWrapCls]}">',
+        '<div id="{id}-msgWrapEl" data-ref="msgWrapEl" class="{[values.$comp.msgWrapCls]}" role="presentation">',
             '<div id="{id}-msgEl" data-ref="msgEl" class="{[values.$comp.msgCls]} ',
-                Ext.baseCSSPrefix, 'mask-msg-inner {childElCls}">',
+                Ext.baseCSSPrefix, 'mask-msg-inner {childElCls}" role="presentation">',
                 '<div id="{id}-msgTextEl" data-ref="msgTextEl" class="',
                     Ext.baseCSSPrefix, 'mask-msg-text',
-                    '{childElCls}">{msg}</div>',
+                    '{childElCls}" role="presentation">{msg}</div>',
             '</div>',
         '</div>'
     ],
 
-    maskOnDisable : false,
+    maskOnDisable: false,
     
     /**
      * @private
@@ -132,7 +127,7 @@ Ext.define('Ext.LoadMask', {
      * Creates new LoadMask.
      * @param {Object} [config] The config object.
      */
-    constructor : function(config) {
+    constructor: function(config) {
         var me = this,
             comp;
 
@@ -373,7 +368,7 @@ Ext.define('Ext.LoadMask', {
                 if (!me.isElement && target.floating) {
                     zIndex = target.el.getZIndex();
                     if (!isNaN(zIndex)) {
-                        me.onOwnerToFront(target, zIndex);   
+                        me.onOwnerToFront(target, zIndex);
                     }
                 }
                 me.el.setSize(boxTarget.getSize()).alignTo(boxTarget, 'tl-tl');
@@ -387,8 +382,9 @@ Ext.define('Ext.LoadMask', {
     /**
      * Changes the data store bound to this LoadMask.
      * @param {Ext.data.Store} store The store to bind to this LoadMask
+     * @param [initial]
      */
-    bindStore : function(store, initial) {
+    bindStore: function(store, initial) {
         var me = this;
 
         // If the server returns a failure, and the proxy fires an exception instead of
@@ -440,7 +436,7 @@ Ext.define('Ext.LoadMask', {
         return result;
     },
 
-    onDisable : function() {
+    onDisable: function() {
         this.callParent(arguments);
         if (this.loading) {
             this.onLoad();
@@ -462,7 +458,7 @@ Ext.define('Ext.LoadMask', {
     /**
      * @private
      */
-    onBeforeLoad : function() {
+    onBeforeLoad: function() {
         var me = this,
             owner = me.getOwner(),
             origin;
@@ -504,7 +500,8 @@ Ext.define('Ext.LoadMask', {
     hide: function() {
         var me = this,
             ownerCt = me.ownerCt;
-        
+
+        me.target.removeCls(Ext.baseCSSPrefix + "masked");
         // Element support to be deprecated
         if (me.isElement) {
             ownerCt.unmask();
@@ -515,8 +512,7 @@ Ext.define('Ext.LoadMask', {
         
         // Could be already nulled while destroying
         if (ownerCt) {
-            ownerCt.enableTabbing();
-            ownerCt.setMasked(false);
+            ownerCt.updateMaskState(false, me);
         }
         
         delete me.showNext;
@@ -527,11 +523,11 @@ Ext.define('Ext.LoadMask', {
     show: function() {
         var me = this;
 
+        me.target.addCls(Ext.baseCSSPrefix + "masked");
         // Element support to be deprecated
         if (me.isElement) {
             me.ownerCt.mask(this.useMsg ? this.msg : '', this.msgCls);
             me.fireEvent('show', this);
-            
             return;
         }
 
@@ -544,9 +540,8 @@ Ext.define('Ext.LoadMask', {
 
         me.loading = true;
         me.callParent(arguments);
-
-        ownerCt.disableTabbing();
-        ownerCt.setMasked(true);
+        
+        ownerCt.updateMaskState(true, me);
         
         // Owner's disabled tabbing will also make the mask
         // untabbable since it is rendered within the target
@@ -575,7 +570,9 @@ Ext.define('Ext.LoadMask', {
 
             if (me.useMsg) {
                 me.msgTextEl.setHtml(me.msg);
-            } else {
+                me.ariaEl.dom.setAttribute('aria-valuetext', me.msg);
+            }
+            else {
                 // Only the mask is visible if useMsg is false
                 me.msgWrapEl.hide();
             }
@@ -600,21 +597,18 @@ Ext.define('Ext.LoadMask', {
     /**
      * @private
      */
-    onLoad : function() {
+    onLoad: function() {
         this.loading = false;
         this.hide();
     },
 
-    beforeDestroy: function() {
+    doDestroy: function() {
+        var me = this;
+
         // We don't have a real ownerCt, so clear it out here to prevent
         // spurious warnings when we are destroyed
-        this.ownerCt = null;
-        this.bindStore(null);
-        this.callParent();
-    },
-
-    onDestroy: function() {
-        var me = this;
+        me.ownerCt = null;
+        me.bindStore(null);
 
         if (me.isElement) {
             me.ownerCt.unmask();

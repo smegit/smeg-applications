@@ -1,11 +1,11 @@
+/* global jasmine, expect, Ext, spyOn, MockAjaxManager */
+
 // TODO: Add specs for locked grid and removing stores from other parts of the app.
 // TODO: Add specs for making sure that new filters replace existing filters with same dataIndex.
 // TODO: Add specs for addFilter(), making sure that only one filter store is ever created per dataIndex.
 describe("Ext.grid.filters.Filters", function () {
     var grid, tree, store, filtersPlugin, data,
-        synchronousLoad = false,
-        storeFlushLoad,
-        storeLoad;
+        synchronousLoad = false;
 
     function completeWithData(theData) {
         Ext.Ajax.mockComplete({
@@ -29,6 +29,22 @@ describe("Ext.grid.filters.Filters", function () {
             fields: ['name', 'email', 'phone', 'age', 'dob'],
             data: data
         }, storeCfg));
+        Ext.override(store, {
+            load: function() {
+                this.callParent(arguments);
+                if (synchronousLoad) {
+                    this.flushLoad.apply(this, arguments);
+                }
+                return this;
+            },
+
+            flushLoad: function() {
+                if (!this.destroyed) {
+                    this.flushCallCount = (this.flushCallCount || 0) + 1;
+                    this.callParent();
+                }
+            }
+        });
 
         // Note: lower the updateBuffer (defaults to 500ms) which is what determines the delay between onStateChange
         // being called and reload, which removes/adds store filters and sends a request for remote filtering.
@@ -84,6 +100,22 @@ describe("Ext.grid.filters.Filters", function () {
                 }]
             }
         }, storeCfg));
+        Ext.override(store, {
+            load: function() {
+                this.callParent(arguments);
+                if (synchronousLoad) {
+                    this.flushLoad.apply(this, arguments);
+                }
+                return this;
+            },
+
+            flushLoad: function() {
+                if (!this.destroyed) {
+                    this.flushCallCount = (this.flushCallCount || 0) + 1;
+                    this.callParent();
+                }
+            }
+        });
 
         tree = new Ext.tree.Panel(Ext.apply({
             columns: [{
@@ -107,25 +139,6 @@ describe("Ext.grid.filters.Filters", function () {
     }
 
     beforeEach(function() {
-        storeFlushLoad = Ext.data.Store.prototype.flushLoad;
-        storeLoad = Ext.data.Store.prototype.load;
-        Ext.data.Store.override({
-            load: function() {
-                this.callParent(arguments);
-                if (synchronousLoad) {
-                    this.flushLoad.apply(this, arguments);
-                }
-                return this;
-            },
-
-            flushLoad: function() {
-                if (!this.destroyed) {
-                    this.flushCallCount = (this.flushCallCount || 0) + 1;
-                    this.callParent();
-                }
-            }
-        });
-
         MockAjaxManager.addMethods();
         data = [
             { name: 'Jimmy Page', email: 'jimmy@page.com', phone: '555-111-1224', age: 69, dob: new Date('1/22/1944')},
@@ -140,10 +153,6 @@ describe("Ext.grid.filters.Filters", function () {
     });
 
     afterEach(function () {
-        // Undo the overrides.
-        Ext.data.Store.prototype.load = storeLoad;
-        Ext.data.Store.prototype.flushLoad = storeFlushLoad;
-
         MockAjaxManager.removeMethods();
         grid = tree = filtersPlugin = Ext.destroy(grid, tree);
         store = Ext.destroy(store);
@@ -765,7 +774,7 @@ describe("Ext.grid.filters.Filters", function () {
                 });
 
                 it("should not load the store again when expanding the headerCt menu", function() {
-                    var spy = jasmine.createSpy();
+                    var spy = jasmine.createSpy(), col, menu;
 
                     createGrid({
                         remoteFilter: true,
@@ -792,12 +801,17 @@ describe("Ext.grid.filters.Filters", function () {
                         ]
                     });
                     completeWithData();
+                    col = grid.columnManager.getColumns()[0];
+
                     store.on('load', spy);
-                    jasmine.fireMouseEvent(grid.columnManager.getColumns()[0].triggerEl.dom, 'click');
-                    completeWithData();
-                    
-                    expect(spy.callCount).toBe(0);
-                    expect(store.filters.length).toBe(1);
+
+                    Ext.testHelper.showHeaderMenu(col);
+
+                    runs(function() {
+                        completeWithData();
+                        expect(spy.callCount).toBe(0);
+                        expect(store.filters.length).toBe(1);
+                    });
                 });
 
                 it("should send filter data in the params for any active filter", function () {
@@ -1061,7 +1075,9 @@ describe("Ext.grid.filters.Filters", function () {
                 // to load at the next tick. The autoLoad, and the addition
                 // of the filter both required a load be scheduled.
                 expect(store.hasPendingLoad()).toBe(true);
-                expect(proto.flushLoad).not.toHaveBeenCalled();
+
+                // The createGrid function explicitly flushes an loads.
+                expect(proto.flushLoad.callCount).toBe(1);
             });
             // Note that for all specs it ignores the store config in favor of the default panel config.
             it("should not send multiple requests", function () {
@@ -1357,45 +1373,54 @@ describe("Ext.grid.filters.Filters", function () {
 
                 it("should remove the reference to the old menu on the Filters menuItem", function () {
                     // See EXTJS-13717.
-                    var column = grid.columnManager.getColumns()[0];
+                    var column = grid.columnManager.getColumns()[0],
+                        menu;
 
-                    jasmine.fireMouseEvent(column[column.clickTargetName].dom, 'mouseover');
-                    jasmine.fireMouseEvent(column.triggerEl.dom, 'click');
+                    Ext.testHelper.showHeaderMenu(column);
+                    
+                    runs(function() {
+                        menu = column.activeMenu;
+                        // Showing the menu will have the filters plugin create the column filter menu.
+                        expect(menu.items.getByKey('filters').menu).toBeDefined();
 
-                    // Showing the menu will have the filters plugin create the column filter menu.
-                    expect(grid.headerCt.menu.items.getByKey('filters').menu).toBeDefined();
+                        grid.headerCt.menu.hide();
 
-                    grid.headerCt.menu.hide();
+                        // Replacing the existing filter will destroy the old filter and should remove
+                        // all references bound to it, and it's ownerCmp (the 'filters' menuItem) should
+                        // null out its reference to the column filter menu.
+                        filtersPlugin.addFilter({dataIndex: 'name', value: 'alex'});
 
-                    // Replacing the existing filter will destroy the old filter and should remove
-                    // all references bound to it, and it's ownerCmp (the 'filters' menuItem) should
-                    // null out its reference to the column filter menu.
-                    filtersPlugin.addFilter({dataIndex: 'name', value: 'alex'});
-
-                    expect(grid.headerCt.menu.items.getByKey('filters').menu).toBeNull();
+                        expect(menu.items.getByKey('filters').menu).toBeNull();
+                    });
                 });
 
                 it("should replace the reference to the old menu with the new menu", function () {
                     // See EXTJS-13717.
                     var column = grid.columnManager.getColumns()[0],
-                        menuItem, oldMenu, newMenu;
+                        menu, menuItem, oldMenu, newMenu;
 
-                    jasmine.fireMouseEvent(column.triggerEl.dom, 'click');
+                    Ext.testHelper.showHeaderMenu(column);
 
-                    menuItem = grid.headerCt.menu.items.getByKey('filters');
-                    oldMenu = menuItem.menu;
+                    runs(function() {
+                        menu = column.activeMenu;
+                        menuItem = menu.items.getByKey('filters');
+                        oldMenu = menuItem.menu;
 
-                    grid.headerCt.menu.hide();
+                        grid.headerCt.menu.hide();
 
-                    // Replace...
-                    filtersPlugin.addFilter({dataIndex: 'name', value: 'alex'});
-
+                        // Replace...
+                        filtersPlugin.addFilter({dataIndex: 'name', value: 'alex'});
+                    });
+                    
                     // ...and show to trigger the plugin to create the new column filter menu.
-                    jasmine.fireMouseEvent(column.triggerEl.dom, 'click');
-                    newMenu = menuItem.menu;
+                    Ext.testHelper.showHeaderMenu(column);
 
-                    expect(newMenu).not.toBe(oldMenu);
-                    expect(newMenu).toBe(column.filter.menu);
+                    runs(function() {
+                        newMenu = menuItem.menu;
+
+                        expect(newMenu).not.toBe(oldMenu);
+                        expect(newMenu).toBe(column.filter.menu);
+                    });
                 });
             });
 
@@ -3008,13 +3033,28 @@ describe("Ext.grid.filters.Filters", function () {
         });
 
         it("should create the 'Filters' menuItem", function () {
-            jasmine.fireMouseEvent(grid.columnManager.getColumns()[0].triggerEl.dom, 'click');
-            expect(grid.headerCt.menu.items.getByKey('filters')).toBeDefined();
+            var column = grid.columnManager.getColumns()[0];
+
+            Ext.testHelper.showHeaderMenu(column);
+
+            runs(function() {
+                expect(column.getRootHeaderCt().getMenu().items.getByKey('filters')).toBeDefined();
+            });
         });
 
         it("should create the column filter menu", function () {
-            jasmine.fireMouseEvent(grid.columnManager.getColumns()[0].triggerEl.dom, 'click');
-            expect(grid.headerCt.menu.items.getByKey('filters').menu).toBeDefined();
+            var column = grid.columnManager.getColumns()[0],
+                menu;
+
+            Ext.testHelper.showHeaderMenu(column);
+
+            waitsFor(function() {
+                menu = column.activeMenu;
+                return menu && menu.isVisible();
+            });
+            runs(function() {
+                expect(grid.headerCt.menu.items.getByKey('filters').menu).toBeDefined();
+            });
         });
     });
 
@@ -3031,12 +3071,15 @@ describe("Ext.grid.filters.Filters", function () {
                     { header: 'Email',  dataIndex: 'email', width: 100 }
                 ]
             });
+            var column = grid.columnManager.getColumns()[0];
 
-            jasmine.fireMouseEvent(grid.columnManager.getColumns()[0].triggerEl.dom, 'click');
+            Ext.testHelper.showHeaderMenu(column);
 
-            expect(filtersPlugin.sep).toBeDefined();
-            // next to last item should be a menu separator, and it should be filters.sep
-            expect(grid.headerCt.menu.items.getAt(4).id).toEqual(filtersPlugin.sep.id);
+            runs(function() {
+                expect(filtersPlugin.sep).toBeDefined();
+                // next to last item should be a menu separator, and it should be filters.sep
+                expect(grid.headerCt.menu.items.getAt(4).id).toEqual(filtersPlugin.sep.id);
+            });
         });
 
         it("should not add menu separator if no other menu items exist", function () {
@@ -3046,16 +3089,20 @@ describe("Ext.grid.filters.Filters", function () {
                 columns: [
                     { header: 'Name',  dataIndex: 'name', width: 100,
                         filter: {
-                            type: 'string',
+                            type: 'string'
                         }
                     }
                 ]
             });
+            var column = grid.columnManager.getColumns()[0];
 
-            jasmine.fireMouseEvent(grid.columnManager.getColumns()[0].triggerEl.dom, 'click');
-            expect(filtersPlugin.sep).not.toBeDefined();
-            // first item should be the filters item
-            expect(grid.headerCt.menu.items.getAt(0).itemId).toBe('filters');
+            Ext.testHelper.showHeaderMenu(column);
+
+            runs(function() {
+                expect(filtersPlugin.sep).not.toBeDefined();
+                // first item should be the filters item
+                expect(grid.headerCt.menu.items.getAt(0).itemId).toBe('filters');
+            });
         });
     });
 
@@ -3118,7 +3165,7 @@ describe("Ext.grid.filters.Filters", function () {
     });
 
     describe("reconfigure", function () {
-        var newStore, column;
+        var newStore, column, menu;
 
         beforeEach(function () {
             newStore = new Ext.data.Store({
@@ -3148,23 +3195,23 @@ describe("Ext.grid.filters.Filters", function () {
                                 filter: true
                             }]
                         });
+                        column = grid.columnManager.getColumns()[0],
 
-                        column = grid.columnManager.getColumns()[0];
+                        Ext.testHelper.showHeaderMenu(column);
+                        runs(function() {
+                            // Showing the menu will have the filters plugin create the column filter menu.
+                            expect(grid.headerCt.menu.items.getByKey('filters').menu).toBeDefined();
 
-                        jasmine.fireMouseEvent(column.triggerEl.dom, 'click');
+                            // Now, let's reconfigure.
+                            grid.reconfigure(null, []);
 
-                        // Showing the menu will have the filters plugin create the column filter menu.
-                        expect(grid.headerCt.menu.items.getByKey('filters').menu).toBeDefined();
-
-                        // Now, let's reconfigure.
-                        grid.reconfigure(null, []);
-
-                        expect(grid.headerCt.menu.items.getByKey('filters').menu).toBe(null);
+                            expect(grid.headerCt.menu.items.getByKey('filters').menu).toBe(null);
+                        });
                     });
 
                     it("should work for locking grids", function () {
                         var lockedGrid, lockedHeader, normalGrid, normalHeader, filterMenuItem,
-                            lockedHeaderMenu, normalHeaderMenu;
+                            lockedHeaderMenu, normalHeaderMenu, column;
 
                         createGrid(null, {
                             columns: [{
@@ -3184,24 +3231,29 @@ describe("Ext.grid.filters.Filters", function () {
 
                         // Show the menu for each headerCt.
                         column = lockedGrid.columnManager.getColumns()[0];
-                        jasmine.fireMouseEvent(column.triggerEl.dom, 'click');
-                        column = normalGrid.columnManager.getColumns()[0];
-                        jasmine.fireMouseEvent(column.triggerEl.dom, 'click');
+                        Ext.testHelper.showHeaderMenu(column);
 
-                        filterMenuItem = filtersPlugin.filterMenuItem;
-                        lockedHeaderMenu = lockedHeader.menu;
-                        normalHeaderMenu = normalHeader.menu;
+                        runs(function() {
+                            column = normalGrid.columnManager.getColumns()[0];
+                            Ext.testHelper.showHeaderMenu(column);
+                        });
 
-                        // Showing the menu will have the filters plugin create the column filter menu.
-                        // The Filters plugin should now have a reference to each Filters menu item.
-                        expect(filterMenuItem[lockedGrid.id].menu).toBe(lockedHeaderMenu.down('#filters').menu);
-                        expect(filterMenuItem[normalGrid.id].menu).toBe(normalHeaderMenu.down('#filters').menu);
+                        runs(function() {
+                            filterMenuItem = filtersPlugin.filterMenuItem;
+                            lockedHeaderMenu = lockedHeader.menu;
+                            normalHeaderMenu = normalHeader.menu;
 
-                        // Now, let's reconfigure.
-                        grid.reconfigure(null, []);
+                            // Showing the menu will have the filters plugin create the column filter menu.
+                            // The Filters plugin should now have a reference to each Filters menu item.
+                            expect(filterMenuItem[lockedGrid.id].menu).toBe(lockedHeaderMenu.down('#filters').menu);
+                            expect(filterMenuItem[normalGrid.id].menu).toBe(normalHeaderMenu.down('#filters').menu);
 
-                        expect(lockedHeaderMenu.items.getByKey('filters').menu).toBe(null);
-                        expect(normalHeaderMenu.items.getByKey('filters').menu).toBe(null);
+                            // Now, let's reconfigure.
+                            grid.reconfigure(null, []);
+
+                            expect(lockedHeaderMenu.items.getByKey('filters').menu).toBe(null);
+                            expect(normalHeaderMenu.items.getByKey('filters').menu).toBe(null);
+                        });
                     });
 
                     it("should work with nested columns", function() {
@@ -3224,13 +3276,14 @@ describe("Ext.grid.filters.Filters", function () {
                         createGrid(null, {
                             columns: columns
                         });
-
+                        
                         grid.reconfigure(store, columns);
 
                         column = grid.getColumnManager().getColumns()[1];
-                        jasmine.fireMouseEvent(column.triggerEl.dom, 'click');
-
-                        expect(filtersPlugin.filterMenuItem[grid.id].menu).toBeDefined();
+                        Ext.testHelper.showHeaderMenu(column);
+                        runs(function() {
+                            expect(filtersPlugin.filterMenuItem[grid.id].menu).toBeDefined();
+                        });
                     });
                 });
             });
@@ -3355,6 +3408,7 @@ describe("Ext.grid.filters.Filters", function () {
                 });
             });
         });
+
 
         describe("columns", function () {
             function runSpecs(locked) {

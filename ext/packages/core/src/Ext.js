@@ -31,11 +31,8 @@
  * A lower-level technique that does not use the `Ext.app.Application` architecture is
  * {@link Ext#onReady Ext.onReady}.
  *
- * For more information about how to use the Ext classes, see:
- *
- * - <a href="http://www.sencha.com/learn/">The Learning Center</a>
- * - <a href="http://www.sencha.com/learn/Ext_FAQ">The FAQ</a>
- * - <a href="http://www.sencha.com/forum/">The forums</a>
+ * You can also discuss concepts and issues with others on the
+ * <a href="http://www.sencha.com/forum/">Sencha Forums</a>.
  *
  * @singleton
  */
@@ -91,6 +88,10 @@ var Ext = Ext || {}; // jshint ignore:line
     emptyFn.$nullFn = identityFn.$nullFn = emptyFn.$emptyFn = identityFn.$identityFn =
         privateFn.$nullFn = true;
     privateFn.$privacy = 'framework';
+    
+    // We also want to prevent these functions from being cleaned up on destroy
+    emptyFn.$noClearOnDestroy = identityFn.$noClearOnDestroy = true;
+    privateFn.$noClearOnDestroy = true;
 
     // These are emptyFn's in core and are redefined only in Ext JS (we use this syntax
     // so Cmd does not detect them):
@@ -107,7 +108,6 @@ var Ext = Ext || {}; // jshint ignore:line
     Ext.enumerables = enumerables;
 
     /**
-     * @method apply
      * Copies all the properties of `config` to the specified `object`. There are two levels
      * of defaulting supported:
      * 
@@ -871,9 +871,10 @@ var Ext = Ext || {}; // jshint ignore:line
          * see {@link Ext.data.Model#copy Model.copy}.
          *
          * @param {Object} item The variable to clone
+         * @param {Boolean} [cloneDom=true] `true` to clone DOM nodes.
          * @return {Object} clone
          */
-        clone: function(item) {
+        clone: function(item, cloneDom) {
             if (item === null || item === undefined) {
                 return item;
             }
@@ -881,7 +882,7 @@ var Ext = Ext || {}; // jshint ignore:line
             // DOM nodes
             // TODO proxy this to Ext.Element.clone to handle automatic id attribute changing
             // recursively
-            if (item.nodeType && item.cloneNode) {
+            if (cloneDom !== false && item.nodeType && item.cloneNode) {
                 return item.cloneNode(true);
             }
 
@@ -900,7 +901,7 @@ var Ext = Ext || {}; // jshint ignore:line
                 clone = [];
 
                 while (i--) {
-                    clone[i] = Ext.clone(item[i]);
+                    clone[i] = Ext.clone(item[i], cloneDom);
                 }
             }
             // Object
@@ -908,7 +909,7 @@ var Ext = Ext || {}; // jshint ignore:line
                 clone = {};
 
                 for (key in item) {
-                    clone[key] = Ext.clone(item[key]);
+                    clone[key] = Ext.clone(item[key], cloneDom);
                 }
 
                 if (enumerables) {

@@ -121,15 +121,8 @@ Ext.define('Ext.list.Tree', {
         this.publishState('selection', this.getSelection());
     },
 
-    beforeLayout: function () {
-        // Only called in classic, ignored in modern
-        this.syncIconSize();
-    },
-
     destroy: function () {
         var me = this;
-
-        me.destroying = true;  // normally set in callParent
 
         me.unfloatAll(); 
         me.activeFloater = null;
@@ -215,10 +208,14 @@ Ext.define('Ext.list.Tree', {
             root;
 
         if (oldStore) {
-            if (oldStore.getAutoDestroy()) {
-                oldStore.destroy();
-            } else {
-                me.storeListeners.destroy();
+            // Store could be already destroyed upstream
+            if (!oldStore.destroyed) {
+                if (oldStore.getAutoDestroy()) {
+                    oldStore.destroy();
+                }
+                else {
+                    me.storeListeners.destroy();
+                }
             }
             me.removeRoot();
             me.storeListeners = null;
@@ -228,6 +225,7 @@ Ext.define('Ext.list.Tree', {
             me.storeListeners = store.on({
                 destroyable: true,
                 scope: me,
+                filterchange: 'onFilterChange',
                 nodeappend: 'onNodeAppend',
                 nodecollapse: 'onNodeCollapse',
                 nodeexpand: 'onNodeExpand',
@@ -272,8 +270,9 @@ Ext.define('Ext.list.Tree', {
     },
 
     updateUi: function (ui, oldValue) {
-        var el = this.element,
-            uiPrefix = this.uiPrefix;
+        var me = this,
+            el = me.element,
+            uiPrefix = me.uiPrefix;
 
         if (oldValue) {
             el.removeCls(uiPrefix + oldValue);
@@ -283,8 +282,8 @@ Ext.define('Ext.list.Tree', {
         }
 
         // Ensure that the cached iconSize is read from the style.
-        delete this.iconSize;
-        this.syncIconSize();
+        delete me.iconSize;
+        me.syncIconSize();
     },
 
     /**
@@ -354,11 +353,11 @@ Ext.define('Ext.list.Tree', {
             if (parent.isRootListItem) {
                 toolEl = item.getToolElement();
                 if (toolEl) {
-                    previousSibling = node.previousSibling;
+                    previousSibling = me.findVisiblePreviousSibling(node);
                     if (!previousSibling) {
                         toolsElement.insertFirst(toolEl);
                     } else {
-                        previousSibling = me.getItem(node.previousSibling);
+                        previousSibling = me.getItem(previousSibling);
                         toolEl.insertAfter(previousSibling.getToolElement());
                     }
                     toolEl.dom.setAttribute('data-recordId', node.internalId);
@@ -392,6 +391,17 @@ Ext.define('Ext.list.Tree', {
             me.itemMap[root.internalId] = item;
         },
 
+        findVisiblePreviousSibling: function(node) {
+            var sibling = node.previousSibling;
+            while (sibling) {
+                if (sibling.data.visible) {
+                    return sibling;
+                }
+                sibling = sibling.previousSibling;
+            }
+            return null;
+        },
+
         floatItem: function(item, byHover) {
             var me = this,
                 floater;
@@ -400,6 +410,14 @@ Ext.define('Ext.list.Tree', {
                 return;
             }
 
+           	// Cancel any mouseout timer,
+            if (me.toolMouseListeners) {
+                me.toolMouseListeners.destroy();
+                me.floaterMouseListeners.destroy();
+
+                me.floaterMouseListeners = me.toolMouseListeners = null;
+            }
+            
             me.unfloatAll();
 
             me.activeFloater = floater = item;
@@ -408,12 +426,10 @@ Ext.define('Ext.list.Tree', {
             item.setFloated(true);
 
             if (byHover) {
-                item.getToolElement().on('mouseleave', 'checkForMouseLeave', me);
-                floater.element.on({
-                    scope: me,
-                    mouseleave: 'checkForMouseLeave',
-                    mouseover: 'onMouseOver'
-                });
+                // monitorMouseLeave allows straying out for the specified short time
+                me.toolMouseListeners = item.getToolElement().monitorMouseLeave(300, me.checkForMouseLeave, me);
+                me.floaterMouseListeners = (item.floater || item).el.monitorMouseLeave(300, me.checkForMouseLeave, me);
+                floater.element.on('mouseover', 'onMouseOver', me);
             } else {
                 Ext.on('mousedown', 'checkForOutsideClick', me);
             }
@@ -461,6 +477,12 @@ Ext.define('Ext.list.Tree', {
                     this.unfloatAll();
                 }
             }
+        },
+
+        onFilterChange: function(store) {
+            // Because the tree can use bottom up or top down filtering, don't try and figure out
+            // what changed here, just do a global refresh
+            this.onRootChange(store.getRoot());
         },
 
         /**
@@ -585,13 +607,16 @@ Ext.define('Ext.list.Tree', {
          * @private
          */
         onRootChange: function (root) {
-            this.removeRoot();
+            var me = this;
+
+            me.removeRoot();
 
             if (root) {
-                this.createRootItem(root);
+                me.createRootItem(root);
             }
 
-            this.updateLayout();
+            me.updateLayout();
+            me.fireEvent('refresh', me);
         },
 
         /**
@@ -687,12 +712,13 @@ Ext.define('Ext.list.Tree', {
                 me.activeFloater = null;
 
                 if (me.floatedByHover) {
-                    floater.getToolElement().un('mouseleave', 'checkForMouseLeave', me);
-                    floater.element.un({
-                        scope: me,
-                        mouseleave: 'checkForMouseLeave',
-                        mouseover: 'onMouseOver'
-                    });
+                    if (me.toolMouseListeners) {
+                        me.toolMouseListeners.destroy();
+                        me.floaterMouseListeners.destroy();
+
+                        me.floaterMouseListeners = me.toolMouseListeners = null;
+                    }
+                    floater.element.un('mouseover', 'onMouseOver', me);
                 } else {
                     Ext.un('mousedown', 'checkForOutsideClick', me);
                 }

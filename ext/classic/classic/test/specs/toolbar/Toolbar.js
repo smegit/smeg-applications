@@ -1,7 +1,5 @@
 describe("Ext.toolbar.Toolbar", function(){
-    var expectAria = jasmine.expectAriaAttr,
-        expectNoAria = jasmine.expectNoAriaAttr,
-        toolbar;
+    var toolbar;
 
     function createToolbar(cfg) {
         toolbar = new Ext.toolbar.Toolbar(Ext.apply({
@@ -129,6 +127,39 @@ describe("Ext.toolbar.Toolbar", function(){
                 expect(menufield.getValue()).toBe(true);
                 
                 expect(menufield.getValue()).toBe(barfield.getValue());
+            });
+
+            it('should be able to check and uncheck Checkboxes', function() {
+                var menu, barfield, menufield;
+                createToolbar({
+                    enableOverflow: true,
+                    width: 100,
+                    defaults: {
+                        xtype: 'checkbox'
+                    },
+                    items : [{
+                        boxLabel : 'Foo'
+                    },{
+                        boxLabel : 'Bar'
+                    },{
+                        boxLabel : 'Test'
+                    },{
+                        boxLabel: 'Sencha'
+                    }]
+                });
+                menu = toolbar.layout.overflowHandler.menu;
+                menu.show();
+
+                barfield = toolbar.down('checkbox[boxLabel=Sencha]');
+                menufield = barfield.overflowClone;
+
+                jasmine.fireMouseEvent(menufield.el, 'click');
+
+                expect(menufield.getValue()).toBe(true);
+
+                jasmine.fireMouseEvent(menufield.el, 'click');
+
+                expect(menufield.getValue()).toBe(false);
             });
         });
     });
@@ -273,7 +304,8 @@ describe("Ext.toolbar.Toolbar", function(){
                 }]
             });
             
-            expectAria(toolbar, 'tabIndex', '0');
+            expect(toolbar.tabGuardBeforeEl).toHaveAttr('tabIndex', '0');
+            expect(toolbar.tabGuardAfterEl).toHaveAttr('tabIndex', '0');
         });
         
         it("should be off with input fields", function() {
@@ -285,7 +317,8 @@ describe("Ext.toolbar.Toolbar", function(){
                 }]
             });
             
-            expectNoAria(toolbar, 'tabIndex');
+            expect(toolbar.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+            expect(toolbar.tabGuardAfterEl).not.toHaveAttr('tabIndex');
         });
         
         it("should be off with sliders", function() {
@@ -297,7 +330,8 @@ describe("Ext.toolbar.Toolbar", function(){
                 }]
             });
             
-            expectNoAria(toolbar, 'tabIndex');
+            expect(toolbar.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+            expect(toolbar.tabGuardAfterEl).not.toHaveAttr('tabIndex');
         });
     });
     
@@ -309,7 +343,7 @@ describe("Ext.toolbar.Toolbar", function(){
                 }]
             });
             
-            expectAria(toolbar, 'role', 'toolbar');
+            expect(toolbar).toHaveAttr('role', 'toolbar');
         });
         
         it("should have group role with input fields", function() {
@@ -321,7 +355,7 @@ describe("Ext.toolbar.Toolbar", function(){
                 }]
             });
             
-            expectAria(toolbar, 'role', 'group');
+            expect(toolbar).toHaveAttr('role', 'group');
         });
         
         it("should have group role with sliders", function() {
@@ -333,7 +367,7 @@ describe("Ext.toolbar.Toolbar", function(){
                 }]
             });
             
-            expectAria(toolbar, 'role', 'group');
+            expect(toolbar).toHaveAttr('role', 'group');
         });
     });
 });

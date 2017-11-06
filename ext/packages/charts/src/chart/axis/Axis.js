@@ -320,7 +320,7 @@ Ext.define('Ext.chart.axis.Axis', {
         /**
          * @private
          * @cfg {Number} rotation
-         * Rotation of the polar axis.
+         * Rotation of the polar axis in radians.
          * WARNING: Meant to be set automatically by chart. Do not set it manually.
          */
         rotation: null,
@@ -629,6 +629,23 @@ Ext.define('Ext.chart.axis.Axis', {
             }
         }
     },
+    
+    updateMinorTickSteps: function (minorTickSteps) {
+        var me = this,
+            sprites = me.getSprites(),
+            axisSprite = sprites && sprites[0],
+            surface;
+
+        if (axisSprite) {
+            axisSprite.setAttributes({
+                minorTicks: !!minorTickSteps
+            });
+            surface = me.getSurface();
+            if (!me.isConfiguring && surface) {
+                surface.renderFrame();
+            }
+        }
+    },
 
     /**
      * @private
@@ -708,7 +725,9 @@ Ext.define('Ext.chart.axis.Axis', {
     },
 
     updateChart: function (newChart, oldChart) {
-        var me = this, surface;
+        var me = this,
+            surface;
+
         if (oldChart) {
             oldChart.unregister(me);
             oldChart.un('serieschange', me.onSeriesChange, me);
@@ -791,13 +810,16 @@ Ext.define('Ext.chart.axis.Axis', {
     onSeriesChange: function (chart) {
         var me = this,
             series = chart.getSeries(),
-            getAxisMethod = 'get' + me.getDirection() + 'Axis',
-            boundSeries = [], i, ln = series.length,
-            linkedTo, masterAxis;
+            boundSeries = [],
+            linkedTo, masterAxis, getAxisMethod,
+            i, ln;
 
-        for (i = 0; i < ln; i++) {
-            if (this === series[i][getAxisMethod]()) {
-                boundSeries.push(series[i]);
+        if (series) {
+            getAxisMethod = 'get' + me.getDirection() + 'Axis';
+            for (i = 0, ln = series.length; i < ln; i++) {
+                if (this === series[i][getAxisMethod]()) {
+                    boundSeries.push(series[i]);
+                }
             }
         }
 
@@ -819,7 +841,10 @@ Ext.define('Ext.chart.axis.Axis', {
             master[action]('rangechange', 'onMasterAxisRangeChange', slave);
         }
         if (me.masterAxis) {
-            link('un', me, me.masterAxis);
+            if (!me.masterAxis.destroyed) {
+                link('un', me, me.masterAxis);
+            }
+            
             me.masterAxis = null;
         }
         if (masterAxis) {
@@ -965,7 +990,7 @@ Ext.define('Ext.chart.axis.Axis', {
 
                 attr.min = me.range[0];
                 attr.max = me.range[1];
-                delete context.majorTicks;
+                context.majorTicks = null;
                 layout.calculateLayout(context);
                 majorTicks = context.majorTicks;
                 segmenter.adjustByMajorUnit(majorTicks.step, majorTicks.unit.scale, me.range);
@@ -987,7 +1012,7 @@ Ext.define('Ext.chart.axis.Axis', {
      * @private
      */
     clearRange: function () {
-        delete this.hasClearRangePending;
+        this.hasClearRangePending = null;
         this.range = null;
     },
 
@@ -1038,7 +1063,7 @@ Ext.define('Ext.chart.axis.Axis', {
             position = me.getPosition(),
             initialConfig = me.getInitialConfig(),
             defaultConfig = me.defaultConfig,
-            configs = me.getConfigurator().configs,
+            configs = me.self.getConfigurator().configs,
             genericAxisTheme = axisTheme.defaults,
             specificAxisTheme = axisTheme[position],
             themeOnlyIfConfigured = me.themeOnlyIfConfigured,
@@ -1157,6 +1182,25 @@ Ext.define('Ext.chart.axis.Axis', {
         }
 
         return me.sprites;
+    },
+
+    /**
+     * @private
+     */
+    performLayout: function () {
+        if (this.isConfiguring) {
+            return;
+        }
+        var me = this,
+            sprites = me.getSprites(),
+            surface = me.getSurface(),
+            chart = me.getChart(),
+            sprite = sprites && sprites.length && sprites[0];
+
+        if (chart && surface && sprite) {
+            sprite.callUpdater(null, 'layout'); // recalculate axis ticks
+            chart.scheduleLayout();
+        }
     },
 
     updateTitleSprite: function () {

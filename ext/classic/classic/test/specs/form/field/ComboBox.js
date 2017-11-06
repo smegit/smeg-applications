@@ -3,24 +3,17 @@
 describe("Ext.form.field.ComboBox", function() {
     var component, store, CBTestModel,
         itNotIE = Ext.isIE ? xit : it,
-        itNotIE8 = Ext.isIE8 ? xit : it,
+        itNotIE9m = Ext.isIE9m ? xit : it,
         synchronousLoad = true,
-        storeLoad = Ext.data.Store.prototype.load,
-        storeFlushLoad = Ext.data.Store.prototype.flushLoad,
-        loadStore;
-    
-    function expectAria(attr, value) {
-        jasmine.expectAriaAttr(component, attr, value);
-    }
-
-    function spyOnEvent(object, eventName, fn) {
-        var obj = {
-            fn: fn || Ext.emptyFn
-        },
-        spy = spyOn(obj, "fn");
-        object.addListener(eventName, obj.fn);
-        return spy;
-    }
+        storeLoad = Ext.data.ProxyStore.prototype.load,
+        storeFlushLoad = Ext.data.ProxyStore.prototype.flushLoad,
+        loadStore = function() {
+            storeLoad.apply(this, arguments);
+            if (synchronousLoad) {
+                this.flushLoad.apply(this, arguments);
+            }
+            return this;
+        };
 
     // There's no simple way to simulate user typing, so going
     // to reach in too far here to call this method. Not ideal, but
@@ -89,13 +82,7 @@ describe("Ext.form.field.ComboBox", function() {
 
     beforeEach(function() {
         // Override so that we can control asynchronous loading
-        loadStore = Ext.data.Store.prototype.load = function() {
-            storeLoad.apply(this, arguments);
-            if (synchronousLoad) {
-                this.flushLoad.apply(this, arguments);
-            }
-            return this;
-        };
+        Ext.data.ProxyStore.prototype.load = loadStore;
 
         CBTestModel = Ext.define(null, {
             extend: 'Ext.data.Model',
@@ -137,7 +124,6 @@ describe("Ext.form.field.ComboBox", function() {
         if (store) {
             store.destroy();
         }
-
         Ext.undefine('spec.MyStore');
         component = store = null;
     });
@@ -146,7 +132,7 @@ describe("Ext.form.field.ComboBox", function() {
         var found;
         theStore = theStore || store;
         theStore.each(function(rec) {
-            if (rec.get('val') === value) {
+            if (rec.get(component.valueField) === value) {
                 found = rec;
                 return false;
             }
@@ -166,10 +152,10 @@ describe("Ext.form.field.ComboBox", function() {
         it("should respect the checkChangeBuffer when typing a value", function() {
             makeComponent({
                 renderTo: Ext.getBody(),
-                checkChangeBuffer: 500,
+                checkChangeBuffer: 1000,
                 forceSelection: false
             });
-            var spy = jasmine.createSpy();
+            var spy = jasmine.createSpy('change listener');
             component.on('change', spy);
             runType('t');
             waits(100);
@@ -178,16 +164,11 @@ describe("Ext.form.field.ComboBox", function() {
             runType('tex');
             waits(100);
             runType('text');
-            waits(100);
-            runs(function() {
-                expect(spy).not.toHaveBeenCalled();
-            });
             waits(200);
             runs(function() {
                 expect(spy).not.toHaveBeenCalled();
             });
-            // Give some leeway with the timer
-            waits(400);
+            waitsForSpy(spy);
             runs(function() {
                 expect(spy.callCount).toBe(1);
                 expect(spy.mostRecentCall.args[1]).toBe('text');
@@ -198,11 +179,11 @@ describe("Ext.form.field.ComboBox", function() {
         it("should respect checkChangeBuffer when deleting values", function() {
             makeComponent({
                 renderTo: Ext.getBody(),
-                checkChangeBuffer: 500,
+                checkChangeBuffer: 1000,
                 forceSelection: false,
                 value: 'text'
             });
-            var spy = jasmine.createSpy();
+            var spy = jasmine.createSpy('change listener');
             component.on('change', spy);
             runType('tex', true);
             waits(100);
@@ -213,18 +194,12 @@ describe("Ext.form.field.ComboBox", function() {
             runType('t', true);
             waits(100);
             runType('', true);
-            waits(100);
+            waits(200);
             runs(function() {
                 expect(spy).not.toHaveBeenCalled();
             });
-            waits(300);
+            waitsForSpy(spy);
             runs(function() {
-                expect(spy).not.toHaveBeenCalled();
-            });
-            // Give some leeway with the timer
-            waits(300);
-            runs(function() {
-                expect(spy.callCount).toBe(1);
                 expect(spy.mostRecentCall.args[1]).toBeNull();
                 expect(spy.mostRecentCall.args[2]).toBe('text');
             });
@@ -375,11 +350,17 @@ describe("Ext.form.field.ComboBox", function() {
                 });
                 
                 it("should have combobox role", function() {
-                    expectAria('role', 'combobox');
+                    expect(component).toHaveAttr('role', 'combobox');
                 });
                 
                 it("should have aria-autocomplete", function() {
-                    expectAria('aria-autocomplete', 'list');
+                    expect(component).toHaveAttr('aria-autocomplete', 'list');
+                });
+                
+                it("should have aria-owns", function() {
+                    var id = component.id;
+                    
+                    expect(component).toHaveAttr('aria-owns', id + '-inputEl ' + id + '-picker-listEl');
                 });
             });
         });
@@ -514,8 +495,7 @@ describe("Ext.form.field.ComboBox", function() {
             expect(component.picker.selModel.getSelection()[0].get('val')).toEqual(component.value);
         });
         it("should initialize a BoundListKeyNav on the BoundList", function() {
-            expect(component.keyNav).toBeDefined();
-            expect(component.keyNav instanceof Ext.util.KeyNav).toBe(true);
+            expect(component.keyMap).toBeDefined();
             expect(component.getPicker().getNavigationModel() instanceof Ext.view.BoundListKeyNav).toBe(true);
         });
         it("should enable the BoundListKeyNav", function() {
@@ -524,8 +504,10 @@ describe("Ext.form.field.ComboBox", function() {
             });
         });
         
-        it("should set aria-owns", function() {
-            expectAria('aria-owns', component.picker.listEl.id);
+        it("should set aria-activedescendant", function() {
+            var node = Ext.get(component.picker.highlightedItem);
+            
+            expect(component).toHaveAttr('aria-activedescendant', node.id);
         });
     });
 
@@ -792,21 +774,17 @@ describe("Ext.form.field.ComboBox", function() {
                         }
                     });
                     doTyping('a');                    
-                    waitsFor(function() {
-                        return spy.callCount === 1;
-                    }, 'first change event');
+                    waitsForSpy(spy, 'first change event');
                     runs(function() {
+                        spy.reset();
                         doTyping('', true);
                     });
-                    waitsFor(function() {
-                        return spy.callCount === 2;
-                    }, 'second change event');
+                    waitsForSpy(spy, 'second change event');
                     runs(function() {
+                        spy.reset();
                         doTyping('a');
                     });
-                    waitsFor(function() {
-                        return spy.callCount === 3;
-                    }, 'third change event');
+                    waitsForSpy(spy, 'third change event');
                 });
             });
         });
@@ -1086,21 +1064,43 @@ describe("Ext.form.field.ComboBox", function() {
                 expect(component.getRawValue()).toBe('text 2');
                 expect(component.isExpanded).toBe(false);
             });
+
+            it("should create the correct filter after clearing a cached value with a store filter", function() {
+                makeComponent({
+                    renderTo: Ext.getBody(),
+                    valueField: 'val',
+                    displayField: 'text',
+                    queryMode: 'local'
+                });
+                store.addFilter(new Ext.util.Filter({
+                    property: 'val',
+                    value: 'foo',
+                    anyMatch: true
+                }));
+
+                doTyping('f');
+                doTyping('', true);
+                doTyping('v');
+                doTyping('', true);
+                doTyping('v');
+                
+                expect(component.isExpanded).toBe(false);
+                expect(store.getCount()).toBe(0);
+            });
         });
     });
 
-    describe('growToLongestValue', function () {
+    describe("growToLongestValue", function () {
         var bodyEl,
-            inputEl,
             beforeWidth,
             afterWidth,
             shortText = 'foo',
             longText = 'this text is veeeeeeeeeeeeeeeeeeeeeeeeeeeery long',
             longestText = 'this text is much, much, much, much, much, much, much, much, much much, much, much, much, much, much, much, much too long';
 
-        describe('when true', function () {
-            describe('adding a value to store', function () {
-                it('should not grow when a longer record is added to store when not set to grow', function () {
+        describe("when true", function () {
+            describe("adding a value to store", function () {
+                it("should not grow when a longer record is added to store when not set to grow", function () {
                     makeComponent({
                         grow: false,
                         growToLongestValue: true,
@@ -1116,7 +1116,7 @@ describe("Ext.form.field.ComboBox", function() {
                     expect(beforeWidth).toEqual(afterWidth);
                 });
 
-                it('should grow when a longer record is added to store', function () {
+                it("should grow when a longer record is added to store", function () {
                     makeComponent({
                         grow: true,
                         growToLongestValue: true,
@@ -1132,7 +1132,7 @@ describe("Ext.form.field.ComboBox", function() {
                     expect(afterWidth).toBeGreaterThan(beforeWidth);
                 });
 
-                it('should not grow when a shorter record is added to store', function () {
+                it("should not grow when a shorter record is added to store", function () {
                     makeComponent({
                         grow: true,
                         growToLongestValue: true,
@@ -1148,7 +1148,7 @@ describe("Ext.form.field.ComboBox", function() {
                     expect(beforeWidth).toEqual(afterWidth);
                 });
 
-                it('should grow when growToLongestValue is set', function () {
+                it("should grow when growToLongestValue is set", function () {
                     makeComponent({
                         grow: true,
                         growToLongestValue: true,
@@ -1180,7 +1180,7 @@ describe("Ext.form.field.ComboBox", function() {
                     expect(beforeWidth).toEqual(afterWidth);
                 });
 
-                it('should not grow larger than growMax when growMax is exceeded', function () {
+                it("should not grow larger than growMax when growMax is exceeded", function () {
                     makeComponent({
                         grow: true,
                         growMax: 200,
@@ -1609,6 +1609,55 @@ describe("Ext.form.field.ComboBox", function() {
 
             expect(component.picker.getScrollable().scrollIntoView).toHaveBeenCalled();
         });
+        
+        it("should select first item when autoSelectLast == false", function() {
+            makeComponent({
+                autoSelectLast: false,
+                queryMode: 'local',
+                displayField: 'val',
+                renderTo: Ext.getBody()
+            });
+            
+            component.expand();
+            component.setValue('value 32');
+            
+            spyOn(component.picker.getNavigationModel(), 'setPosition').andCallThrough();
+
+            component.expand();
+            component.doAutoSelect();
+
+            expect(component.picker.getNavigationModel().setPosition).toHaveBeenCalled();
+            
+            var firstNode = component.picker.getNode(0);
+            
+            expect(Ext.fly(firstNode).hasCls('x-boundlist-item-over')).toBe(true);
+        });
+
+        it("should autoSelect if you type an blur", function() {
+            makeComponent({
+                autoSelectLast: false,
+                queryMode: 'local',
+                value: 'value 32',
+                renderTo: Ext.getBody()
+            });
+            component.expand();
+            jasmine.focusAndWait(component);
+
+            runs(function() {
+                doTyping('text 34');
+            });
+
+            jasmine.blurAndWait(component);
+
+            waitsFor(function() {
+                return !component.hasFocus;
+            });
+
+            runs(function() {
+                component.expand();
+                expect(component.picker.getSelectionModel().lastSelected.get('val')).toBe('value 34');
+            });
+        });
     });
 
     describe("doRawQuery method", function() {
@@ -1738,9 +1787,14 @@ describe("Ext.form.field.ComboBox", function() {
             });
         });
         it("should not respond to special keys", function() {
+            component.inputEl.dom.value = 'foob';
+
+            // Wait for async textinput event to fire on platforms where it fires.
+            // It's not universally supported so we cannot use waitsFor
+            waits(100);
+
             runs(function() {
                 spyOn(component, 'doQuery');
-                component.inputEl.dom.value = 'foob';
                 jasmine.fireKeyEvent(component.inputEl.dom, 'keyup', Ext.event.Event.DOWN);
             });
             waits(10);
@@ -1749,9 +1803,14 @@ describe("Ext.form.field.ComboBox", function() {
             });
         });
         it("should respond to backspace", function() {
+            component.inputEl.dom.value = 'foob';
+
+            // Wait for async textinput event to fire on platforms where it fires.
+            // It's not universally supported so we cannot use waitsFor
+            waits(100);
+
             runs(function() {
                 spyOn(component, 'doQuery');
-                component.inputEl.dom.value = 'foob';
                 jasmine.fireKeyEvent(component.inputEl.dom, 'keyup', Ext.event.Event.BACKSPACE);
             });
             waitsFor(function() {
@@ -1759,9 +1818,14 @@ describe("Ext.form.field.ComboBox", function() {
             }, 'query not executed');
         });
         it("should respond to delete", function() {
+            component.inputEl.dom.value = 'foob';
+
+            // Wait for async textinput event to fire on platforms where it fires.
+            // It's not universally supported so we cannot use waitsFor
+            waits(100);
+
             runs(function() {
                 spyOn(component, 'doQuery');
-                component.inputEl.dom.value = 'foob';
                 jasmine.fireKeyEvent(component.inputEl.dom, 'keyup', Ext.event.Event.DELETE);
             });
             waitsFor(function() {
@@ -1775,10 +1839,12 @@ describe("Ext.form.field.ComboBox", function() {
             // Expand the picker
             component.inputEl.dom.focus();
             jasmine.fireKeyEvent(component.inputEl, 'keydown', Ext.event.Event.DOWN);
-            var selModel = component.picker.getSelectionModel();
+            var selModel = component.picker.getSelectionModel(),
+                hideSpy;
 
             // Picker should be visible
             expect(component.picker.isVisible()).toBe(true);
+            hideSpy = spyOnEvent(component.picker, 'hide');
 
             // But with no selection
             expect(selModel.getSelection().length).toBe(0);
@@ -1788,9 +1854,7 @@ describe("Ext.form.field.ComboBox", function() {
             jasmine.fireKeyEvent(component.inputEl, 'keydown', Ext.event.Event.TAB);
 
             // We must wait until after the browser's TAB handling has blurred the field, and therefore hidden the picker
-            waitsFor(function() {
-                return component.picker.isVisible() === false;
-            });
+            waitsForSpy(hideSpy, 'hide', 'picker to hide');
             runs(function() {
 
                 // First record should be selected
@@ -1832,30 +1896,74 @@ describe("Ext.form.field.ComboBox", function() {
                 expandSpy = collapseSpy = null;
             });
             
-            beforeEach(function() {
-                pressKey('down');
+            describe("expand", function() {
+                it("should expand on down arrow", function() {
+                    pressKey('down');
+                    
+                    waitForSpy(expandSpy, 'expand');
+                    
+                    runs(function() {
+                        expect(component.isExpanded).toBe(true);
+                    });
+                });
                 
-                waitForSpy(expandSpy, 'expand', 1000);
+                it("should expand on alt-down arrow", function() {
+                    pressKey('down', { alt: true });
+                    
+                    waitForSpy(expandSpy, 'expand');
+                    
+                    runs(function() {
+                        expect(component.isExpanded).toBe(true);
+                    });
+                });
             });
             
-            describe("expand/collapse", function() {
-                it("should expand on down arrow", function() {
-                    expect(component.isExpanded).toBe(true);
+            describe("collapse", function() {
+                beforeEach(function() {
+                    pressKey('down');
+                    
+                    waitForSpy(expandSpy, 'expand');
                 });
                 
                 it("should collapse on Esc", function() {
                     pressKey('esc');
                     
-                    waitForSpy(collapseSpy, 'collapse', 1000);
+                    waitForSpy(collapseSpy, 'collapse');
                     
                     runs(function() {
                         expect(component.isExpanded).toBe(false);
+                    });
+                });
+                
+                it("should collapse on Alt-Up arrow", function() {
+                    pressKey('up', { alt: true });
+                    
+                    waitForSpy(collapseSpy, 'collapse');
+                    
+                    runs(function() {
+                        expect(component.isExpanded).toBe(false);
+                    });
+                });
+                
+                it("should remove aria-activedescendant", function() {
+                    pressKey('esc');
+                    
+                    waitForSpy(collapseSpy, 'collapse');
+                    
+                    runs(function() {
+                        expect(component).not.toHaveAttr('aria-activedescendant');
                     });
                 });
             });
             
             describe("arrow keys", function() {
                 describe("down arrow", function() {
+                    beforeEach(function() {
+                        pressKey('down');
+                        
+                        waitForSpy(expandSpy, 'expand');
+                    });
+                    
                     describe("initial", function() {
                         it("should select first item", function() {
                             expectItem('text 1');
@@ -1865,7 +1973,7 @@ describe("Ext.form.field.ComboBox", function() {
                             var item = component.picker.getNode(0);
                         
                             // aria-activedescendant is set on the inputEl!
-                            expectAria('aria-activedescendant', item.id);
+                            expect(component).toHaveAttr('aria-activedescendant', item.id);
                         });
                     });
                     
@@ -1883,13 +1991,43 @@ describe("Ext.form.field.ComboBox", function() {
                         it("should set aria-activedescendant to 2nd item", function() {
                             var item = component.picker.getNode(1);
                             
-                            expectAria('aria-activedescendant', item.id);
+                            expect(component).toHaveAttr('aria-activedescendant', item.id);
+                        });
+                    });
+                });
+                
+                describe("alt-down arrow", function() {
+                    beforeEach(function() {
+                        pressKey('down', { alt: true });
+                        
+                        waitForSpy(expandSpy, 'expand', 1000);
+                    });
+                    
+                    describe("initial", function() {
+                        it("should not highlight items after expanding", function() {
+                            expect(component.picker.highlightedItem).not.toBeDefined();
+                        });
+                    });
+                    
+                    describe("subsequent", function() {
+                        beforeEach(function() {
+                            pressKey('down', { alt: true });
+                            
+                            waitAWhile();
+                        });
+                        
+                        it("should not highlight items on subsequent alt-down arrow key", function() {
+                            expect(component.picker.highlightedItem).not.toBeDefined();
                         });
                     });
                 });
                 
                 describe("up arrow", function() {
                     beforeEach(function() {
+                        pressKey('down');
+                        
+                        waitForSpy(expandSpy, 'expand', 1000);
+                        
                         pressKey('down');
                         pressKey('down');
                         pressKey('down');
@@ -1903,7 +2041,40 @@ describe("Ext.form.field.ComboBox", function() {
                     it("should set aria-activedescendant to 3rd item", function() {
                         var item = component.picker.getNode(2);
                         
-                        expectAria('aria-activedescendant', item.id);
+                        expect(component).toHaveAttr('aria-activedescendant', item.id);
+                    });
+                });
+                
+                describe("alt-up arrow", function() {
+                    beforeEach(function() {
+                        pressKey('down', { alt: true });
+                        
+                        waitForSpy(expandSpy, 'expand', 1000);
+                    });
+                    
+                    describe("initial", function() {
+                        beforeEach(function() {
+                            pressKey('up', { alt: true });
+                            
+                            waitAWhile();
+                        });
+                        
+                        it("should not highlight items", function() {
+                            expect(component.picker.highlightedItem).not.toBeDefined();
+                        });
+                        
+                        // This should operate on the closed picker
+                        describe("subsequent", function() {
+                            beforeEach(function() {
+                                pressKey('up', { alt: true });
+                                
+                                waitAWhile();
+                            });
+                            
+                            it("should not highlight items either", function() {
+                                expect(component.picker.highlightedItem).not.toBeDefined();
+                            });
+                        });
                     });
                 });
             });
@@ -1923,13 +2094,15 @@ describe("Ext.form.field.ComboBox", function() {
         it('should select the value upon tab with multiSelect', function() {
             var sm,
                 selected,
-                rawVal = '';
+                rawVal = '',
+                hideSpy;
 
             // Expand the picker
             jasmine.fireKeyEvent(component.inputEl, 'keydown', Ext.event.Event.DOWN);
 
             // Picker should be visible
             expect(component.picker.isVisible()).toBe(true);
+            hideSpy = spyOnEvent(component.picker, 'hide');
             sm = component.picker.selModel;
 
             // But with no selection
@@ -1959,9 +2132,7 @@ describe("Ext.form.field.ComboBox", function() {
             jasmine.fireKeyEvent(component.inputEl, 'keydown', Ext.event.Event.TAB);
 
             // Wait for the browser's TAB handling to complete and the picker to hide
-            waitsFor(function() {
-                return component.picker.isVisible() === false;
-            });
+            waitsForSpy(hideSpy, 'picker to hide');
             runs(function() {
                 selected = sm.getSelection();
 
@@ -2076,6 +2247,31 @@ describe("Ext.form.field.ComboBox", function() {
                         expect(component.getValue()).toBeNull();
                     });
                 });
+
+                itNotIE9m("should not clear the combobox with custom displayTpl on blur after setValue", function() {
+                    component.destroy();
+                    makeComponent({
+                        displayField: 'text',
+                        valueField: 'val',
+                        forceSelection: true,
+                        queryMode: 'local',
+                        renderTo: Ext.getBody(),
+                        displayTpl: '<tpl for=".">Id= {val} - {text}</tpl>'
+                    });
+                    jasmine.focusAndWait(component, null, 'component to focus for the first time');
+                    runs(function() {
+                        component.setValue('value 2');
+                    });
+                    jasmine.blurAndWait(component, null, 'component to blur for the first time');
+
+                    jasmine.focusAndWait(component, null, 'component to focus for the second time');
+
+                    jasmine.blurAndWait(component, null, 'component to blur for the second time');
+
+                    runs(function() {
+                        expect(component.inputEl.dom.value).not.toBe('');
+                    });
+                });
             });
 
             describe("with a current value", function() {
@@ -2170,7 +2366,8 @@ describe("Ext.form.field.ComboBox", function() {
                         });
                     });
                     
-                    itNotIE8('should not clear the combobox custom displayTpl and calling setValue on blur', function() {
+                    itNotIE9m('should not clear the combobox custom displayTpl and calling setValue on blur', function() {
+
                         makeWithValue('value 1',{
                             displayTpl: '<tpl for=".">Id= {val} - {text}</tpl>'
                         });
@@ -2429,21 +2626,15 @@ describe("Ext.form.field.ComboBox", function() {
                         queryMode: 'remote',
                         renderTo: Ext.getBody()
                     });
-                    component.focus();
-                    waitsFor(function() {
-                        return component.hasFocus;
-                    }, "Never focused");
+                    jasmine.focusAndWait(component);
                     runs(function() {
                         // Simulate user typing
                         component.setRawValue('foobar');
                         component.doRawQuery();
                         // Collapse to prevent focus issues
                         component.collapse();
-                        component.blur();
                     });
-                    waitsFor(function() {
-                        return !component.hasFocus;
-                    }, "Never blurred");
+                    jasmine.blurAndWait(component);
                     runs(function() {
                         Ext.Ajax.mockComplete({
                             status: 200,
@@ -2489,20 +2680,14 @@ describe("Ext.form.field.ComboBox", function() {
                     queryMode: 'remote',
                     renderTo: Ext.getBody()
                 });
-                component.focus();
-                waitsFor(function() {
-                    return component.hasFocus;
-                }, 'Waiting for field focus');
+                jasmine.focusAndWait(component);
                 runs(function() {
                     // Simulate user typing
                     component.setRawValue('foobar');
                     component.doRawQuery();
                     component.collapse();
-                    component.blur();
                 });
-                waitsFor(function() {
-                    return !component.hasFocus;
-                }, 'Waiting for field blur');
+                jasmine.blurAndWait(component);
                 runs(function() {
                     completeWithData();
                     expect(component.getValue()).toBeNull();
@@ -2527,7 +2712,7 @@ describe("Ext.form.field.ComboBox", function() {
                     queryMode: 'remote',
                     renderTo: Ext.getBody()
                 });
-                
+
                 component.setRawValue('foobar');
                 component.doQuery('foobar');
                 completeWithData();
@@ -2778,7 +2963,7 @@ describe("Ext.form.field.ComboBox", function() {
                 component = new Ext.form.field.ComboBox({
                     transform: 'mySelect'
                 });
-                expect(Ext.getDom('mySelect') == null).toBe(true);
+                expect(Ext.getDom('mySelect')).toBeNull();
                 expect(component.rendered).toBe(true);
             });
         
@@ -2787,7 +2972,7 @@ describe("Ext.form.field.ComboBox", function() {
                 component = new Ext.form.field.ComboBox({
                     transform: sel
                 });
-                expect(Ext.getDom('mySelect') == null).toBe(true);
+                expect(Ext.getDom('mySelect')).toBeNull();
                 expect(component.rendered).toBe(true);
             });
         
@@ -2796,7 +2981,7 @@ describe("Ext.form.field.ComboBox", function() {
                 component = new Ext.form.field.ComboBox({
                     transform: Ext.get(sel)
                 });
-                expect(Ext.getDom('mySelect') == null).toBe(true);
+                expect(Ext.getDom('mySelect')).toBeNull();
                 expect(component.rendered).toBe(true);
             });
         });
@@ -3068,6 +3253,27 @@ describe("Ext.form.field.ComboBox", function() {
                 displayField: 'text'
             }, cfg));
         }
+
+        describe("specialkey", function() {
+            beforeEach(function(){
+                makeEventCombo({
+                    listeners: {
+                        specialkey: spy
+                    }
+                });
+            });
+
+            it("should fire specialkey when collapsed", function() {
+                jasmine.fireKeyEvent(component.inputEl, 'keydown', Ext.event.Event.ENTER);
+                expect(spy).toHaveBeenCalled();
+            });
+
+            it("should fire specialkey when expanded", function() {
+                component.expand();
+                jasmine.fireKeyEvent(component.inputEl, 'keydown', Ext.event.Event.ENTER);
+                expect(spy).toHaveBeenCalled();
+            });
+        });
 
         describe("change", function() {
             function expectArgs(newVal, oldVal) {
@@ -3908,7 +4114,7 @@ describe("Ext.form.field.ComboBox", function() {
                 });
                 afterEach(function() {
                     synchronousLoad = true;
-                    Ext.data.Store.prototype.flushLoad = storeFlushLoad;
+                    Ext.data.ProxyStore.prototype.flushLoad = storeFlushLoad;
                 });
                 
                 it("should not trigger a load", function() {
@@ -3933,9 +4139,7 @@ describe("Ext.form.field.ComboBox", function() {
                 it("should update the display value when the store loads", function() {
                     component.setValue(1);
                     // Wait for autoLoad
-                    waitsFor(function() {
-                        return flushLoadSpy.callCount > 0;
-                    });
+                    waitsForSpy(flushLoadSpy);
                     runs(function() {
                         completeWithData();
                         expect(component.getRawValue()).toBe('Foo');
@@ -4248,7 +4452,6 @@ describe("Ext.form.field.ComboBox", function() {
                                 { dataIndex: 'price', text: 'Price' }
                             ],
                             store: new Ext.data.ArrayStore({
-                                storeId: 'baz',
                                 fields: [
                                     {name: 'company'},
                                     {name: 'price', type: 'float'}
@@ -4518,7 +4721,7 @@ describe("Ext.form.field.ComboBox", function() {
             }
         });
 
-        makePanel = function(autoLoad, differentFields, hasValue) {
+        var makePanel = function(autoLoad, differentFields, hasValue) {
             panel = new Ext.panel.Panel({
                 renderTo: document.body,
                 height: 400,
@@ -4758,10 +4961,6 @@ describe("Ext.form.field.ComboBox", function() {
             vm.notify();
 
             jasmine.focusAndWait(component);
-            
-            waitsFor(function(){
-                return component.hasFocus;
-            }, 'combobox to focus'); 
 
             runs(function(){
                 vm.set('foo', [1]);
@@ -4771,7 +4970,7 @@ describe("Ext.form.field.ComboBox", function() {
         });
     });
 
-    describe('forceSelection: true', function() {
+    describe("forceSelection: true", function() {
         beforeEach(function() {
             makeComponent({
                 renderTo        : document.body,
@@ -4784,11 +4983,11 @@ describe("Ext.form.field.ComboBox", function() {
             });
         });
 
-        it('should not select the lastSelectedValue after a new value has been set', function() {
+        it("should not select the lastSelectedValue after a new value has been set", function() {
             jasmine.focusAndWait(component);
 
             runs(function() {
-                // Sshould narrow down to 3, 31, 32 etc
+                // Should narrow down to 3, 31, 32 etc
                 doTyping('text 3', false, true);
             });
 
@@ -4803,36 +5002,23 @@ describe("Ext.form.field.ComboBox", function() {
 
                 // Select 31 and blur
                 jasmine.fireKeyEvent(component.inputEl, 'keydown', Ext.event.Event.TAB);
-
-                jasmine.blurAndWait(component);
             });
-
-            waitsFor(function() {
-                return !component.hasFocus;
-            }, 'combobox to blur');
+            jasmine.blurAndWait(component);
 
             runs(function() {
                 expect(component.getValue()).toBe('value 31');
-                
                 component.setValue('');
-
                 component.inputEl.dom.focus();
             });
             
-
             jasmine.focusAndWait(component);
             
             runs(function() {
-
                 // Do not select a record
                 jasmine.fireKeyEvent(component.inputEl, 'keydown', Ext.event.Event.TAB);
-
-                jasmine.blurAndWait(component);
             });
 
-            waitsFor(function() {
-                return !component.hasFocus;
-            }, 'combobox to blur for the second time');
+            jasmine.blurAndWait(component);
 
             // The assertValue call on blur should NOT have imposed the last selected value
             // from the last time the field was used. The intervening setValue call clears it.
@@ -4846,19 +5032,20 @@ describe("Ext.form.field.ComboBox", function() {
     describe("destroy", function() {
         it("should not throw an exception when destroying on select", function() {
             makeComponent({
-                renderTo: Ext.getBody()
+                renderTo: Ext.getBody(),
+                valueField: 'val'
             });
             component.on('select', function() {
-                component.destroy();
-            });
+                this.destroy();
+            }, component);
             expect(function() {
                 clickListItem('value 2');
             }).not.toThrow();
         });
     });
 
-    describe('editable', function() {
-        it('should expand on inputEl click when NOT editable', function() {
+    describe("editable", function() {
+        it("should expand on inputEl click when NOT editable", function() {
             makeComponent({
                 renderTo: document.body,
                 editable: false
@@ -4881,8 +5068,8 @@ describe("Ext.form.field.ComboBox", function() {
         });
     });
 
-    describe('typeahead', function() {
-        it('should not extend the raw value with typeahead on erase', function() {
+    describe("typeahead", function() {
+        it("should not extend the raw value with typeahead on erase", function() {
             var indices;
 
             store.load();
@@ -4934,7 +5121,7 @@ describe("Ext.form.field.ComboBox", function() {
             });
         });
 
-        it('should clear any selected text after selection is made', function () {
+        it("should clear any selected text after selection is made", function () {
             var indices;
 
             store.load();
@@ -4970,10 +5157,113 @@ describe("Ext.form.field.ComboBox", function() {
                 expect(indices[1]).toBe(6);
             });
         });
+
+        var testTypeAheadOnBlur = function(enableForceSelection) {
+            it("should select the appropriate record on blur with forceSelection: " + enableForceSelection, function() {
+                var spy = jasmine.createSpy();
+                store.load();
+                makeComponent({
+                    displayField: 'text',
+                    valueField: 'val',
+                    typeAhead: true,
+                    minChars: 2,
+                    queryMode: 'local',
+                    forceSelection: enableForceSelection,
+                    renderTo: Ext.getBody()
+                });
+
+                component.on('select', spy);
+
+                jasmine.focusAndWait(component);
+
+                runs(function() {
+                    doTyping('tex');
+                });
+
+                // The typeahead setting will extend the raw value with a text selection
+                waitsFor(function() {
+                    return component.getRawValue() === 'text 1';
+                });
+
+                jasmine.blurAndWait(component);
+
+                runs(function() {
+                    expect(component.getRawValue()).toBe('text 1');
+                    expect(component.getValue()).toBe('value 1');
+                    expect(spy.callCount).toBe(1);
+                });
+            });
+
+            it("should not fire events if we did not change values (no value) with forceSelection: " + enableForceSelection, function() {
+                var spy = jasmine.createSpy();
+                store.load();
+                makeComponent({
+                    displayField: 'text',
+                    valueField: 'val',
+                    typeAhead: true,
+                    minChars: 2,
+                    queryMode: 'local',
+                    forceSelection: enableForceSelection,
+                    renderTo: Ext.getBody()
+                });
+
+                component.on('select', spy);
+
+                jasmine.focusAndWait(component);
+
+                runs(function() {
+                    doTyping('tex');
+                });
+
+                // The typeahead setting will extend the raw value with a text selection
+                waitsFor(function() {
+                    return component.getRawValue() === 'text 1';
+                });
+
+                runs(function() {
+                    doTyping('', true);
+                });
+
+                jasmine.blurAndWait(component);
+
+                runs(function() {
+                    expect(component.getValue()).toBeNull();
+                    expect(spy.callCount).toBe(0);
+                });
+            });
+
+            it("should not fire events if we did not change values (with value) with forceSelection: " + enableForceSelection, function() {
+                var spy = jasmine.createSpy();
+                store.load();
+                makeComponent({
+                    displayField: 'text',
+                    valueField: 'val',
+                    typeAhead: true,
+                    minChars: 2,
+                    queryMode: 'local',
+                    value: 'value 1',
+                    forceSelection: enableForceSelection,
+                    renderTo: Ext.getBody()
+                });
+
+                component.on('select', spy);
+                jasmine.focusAndWait(component);
+
+                jasmine.blurAndWait(component);
+
+                runs(function() {
+                    expect(component.getValue()).toBe('value 1');
+                    expect(spy.callCount).toBe(0);
+                });
+            });
+        };
+
+        testTypeAheadOnBlur(true);
+        testTypeAheadOnBlur(false);
     });
 
-    describe('collapse on scroll', function() {
-        it('should collapse when the field scrolls out of view', function() {
+    describe("collapse on scroll", function() {
+        it("should collapse when the field scrolls out of view", function() {
             component = new Ext.panel.Panel({
                 renderTo: document.body,
                 title: 'Framed panel with normal child',
@@ -5008,8 +5298,7 @@ describe("Ext.form.field.ComboBox", function() {
                             ['D Sunny', 'D Sunny'],
                             ['E', 'E']
                         ],
-                        lazyRender: true,
-                        listClass: 'x-combo-list-small'
+                        lazyRender: true
                     }, {
                         xtype: 'textfield'
                     }, {
@@ -5033,13 +5322,7 @@ describe("Ext.form.field.ComboBox", function() {
                             ['D Sunny', 'D Sunny'],
                             ['E', 'E']
                         ],
-                        lazyRender: true,
-                        listClass: 'x-combo-list-small',
-                        listeners: {
-                            'select': function() {
-                                alert(5);
-                            }
-                        }
+                        lazyRender: true
                     }]
                 }]
             });
@@ -5051,10 +5334,36 @@ describe("Ext.form.field.ComboBox", function() {
             scroller.scrollBy(0, 10);
 
             // Any scroll should cause the picker should be hidden
-            waitsFor(function() {
-                // When the scroll event fires, the picker should hide
-                return combo1.getPicker().isVisible() === false;
+            waitsForEvent(combo1.getPicker(), 'hide');
+        });
+    });
+
+    describe("misc tests", function() {
+        beforeEach(function() {
+            makeComponent({
+                displayField: 'text',
+                valueField: 'id',
+                queryMode: 'local',
+                renderTo: Ext.getBody()
             });
+        });
+ 
+        it("should set the value correctly when the display value contains unix line feeds", function() {
+            var rec = store.first();
+ 
+            rec.set('text', 'foo\nbar');
+            clickListItem(1);
+            expect(component.getSelection()).toBe(rec);
+            expect(component.getValue()).toBe(1);
+        });
+ 
+        it("should set the value correctly when the display value contains windows line feeds", function() {
+            var rec = store.first();
+ 
+            rec.set('text', 'foo\r\nbar');
+            clickListItem(1);
+            expect(component.getSelection()).toBe(rec);
+            expect(component.getValue()).toBe(1);
         });
     });
 
@@ -5077,16 +5386,14 @@ describe("Ext.form.field.ComboBox", function() {
                     x = triggerEl.getX() + triggerEl.getWidth() / 2,
                     y = triggerEl.getY() + triggerEl.getHeight() / 2;
 
-                Ext.testHelper.pointerDown(triggerEl.dom, { x: x, y: y });
-                Ext.testHelper.pointerUp(triggerEl.dom, { x: x, y: y });
+                Ext.testHelper.tap(triggerEl, { x: x, y: y });
 
                 boundList = component.getPicker();
                 expect(boundList.isVisible()).toBe(true);
                 component.collapse();
                 expect(boundList.isVisible()).toBe(false);
 
-                Ext.testHelper.pointerDown(triggerEl.dom, { x: x, y: y });
-                Ext.testHelper.pointerUp(triggerEl.dom, { x: x, y: y });
+                Ext.testHelper.tap(triggerEl, { x: x, y: y });
                 expect(boundList.isVisible()).toBe(true);
                 item = boundList.all.item(0);
 
@@ -5094,11 +5401,60 @@ describe("Ext.form.field.ComboBox", function() {
 
                 x = item.el.getX() + item.el.getWidth() / 2;
                 y = item.el.getY() + item.el.getHeight() / 2;
-                Ext.testHelper.pointerDown(item.el.dom, { x: x, y: y });
-                Ext.testHelper.pointerUp(item.el.dom, { x: x, y: y });
+                Ext.testHelper.tap(item.el, { x: x, y: y });
 
                 expect(boundList.getSelectionModel().getSelection().length).toBe(1);
             });
         });
     }
+
+    describe('ComboBox in a Window', function() {
+        var testWin, combo;
+
+        beforeEach(function() {
+            testWin = Ext.create('Ext.window.Window', {
+                title: 'combo popup still shown after resize or move',
+                width: 350,
+                height: 200,
+                items: {
+                    xtype: 'combobox',
+                    padding: '10 10 10 10',
+                    height: 15,
+                    width: 200,
+                    fieldLabel: 'Test Combo',
+                    store: [1, 2, 3],
+                    queryMode: 'local',
+                    displayField: 'name',
+                    valueField: 'abbr'
+                }
+            });
+            testWin.show();
+            combo = testWin.down('combobox');
+        });
+        afterEach(function() {
+            testWin.destroy();
+        });
+
+        it('should hide popup when window dragged', function() {
+            var offset = 5;
+
+            combo.expand();
+            expect(combo.picker.isVisible()).toBe(true);
+
+            jasmine.fireMouseEvent(testWin.header.el, 'mouseover', offset, offset);
+            testWin.el.dom.focus();
+            jasmine.fireMouseEvent(testWin.header.el, 'mousedown', offset, offset);
+            jasmine.fireMouseEvent(testWin.header.el, 'mousemove', 100, 0);
+
+            waitsFor(function() {
+                return combo.isExpanded === false && !combo.picker.pendingShow;
+            });
+
+            // Mouseup should not reshow
+            runs(function() {
+                jasmine.fireMouseEvent(testWin.header.el, 'mouseup');
+                expect(combo.picker.isVisible()).toBe(false);
+            });
+        });
+    });
 });

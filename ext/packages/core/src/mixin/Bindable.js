@@ -9,7 +9,7 @@ Ext.define('Ext.mixin.Bindable', {
 
     config: {
         /**
-         * @cfg {Object} [bind]
+         * @cfg {Object/String} [bind]
          * Setting this config option adds or removes data bindings for other configs.
          * For example, to bind the `title` config:
          *
@@ -34,6 +34,9 @@ Ext.define('Ext.mixin.Bindable', {
          *
          * The bind expressions are presented to `{@link Ext.app.ViewModel#bind}`. The
          * `ViewModel` instance is determined by `lookupViewModel`.
+         *
+         * **Note:** If  bind is passed as a string, it will use the {@link Ext.Component#property-defaultBindProperty}
+         * for the binding.
          */
         bind: {
             $value: null,
@@ -535,7 +538,7 @@ Ext.define('Ext.mixin.Bindable', {
                 viewModel = me.lookupViewModel(),
                 twoWayable = me.getTwoWayBindable(),
                 getBindTemplateScope = me._getBindTemplateScope,
-                b, property, descriptor;
+                b, property, descriptor, destroy;
 
             me.$hasBinds = true;
             if (!currentBindings || typeof currentBindings === 'string') {
@@ -568,6 +571,7 @@ Ext.define('Ext.mixin.Bindable', {
                 if (b && typeof b !== 'string') {
                     b.destroy();
                     b = null;
+                    destroy = true;
                 }
 
                 if (descriptor) {
@@ -583,10 +587,19 @@ Ext.define('Ext.mixin.Bindable', {
                     //</debug>
                 }
 
-                currentBindings[property] = b;
-                if (twoWayable && twoWayable[property] && !b.isReadOnly()) {
-                    me.addBindableUpdater(property);
+                if (destroy) {
+                    delete currentBindings[property];
+                } else {
+                    currentBindings[property] = b;
                 }
+
+                if (twoWayable && twoWayable[property]) {
+                    if (destroy) {
+                        me.clearBindableUpdater(property);
+                    } else if (!b.isReadOnly()) {
+                        me.addBindableUpdater(property);
+                    }
+                  }
             }
 
             return currentBindings;
@@ -666,7 +679,11 @@ Ext.define('Ext.mixin.Bindable', {
 
             if (!viewModel.isViewModel) {
                 config = {
-                    parent: me.lookupViewModel(true) // skip this component
+                    parent: me.lookupViewModel(true), // skip this component
+
+                    // Ensure that VM construction activity can reach the view (for
+                    // example events on stores)
+                    view: me
                 };
 
                 config.session = me.getSession();
@@ -691,6 +708,19 @@ Ext.define('Ext.mixin.Bindable', {
             // This method is called as a method on a Binding instance, so the "this" pointer
             // is that of the Binding. The "scope" of the Binding is the component owning it.
             return this.scope.resolveListenerScope();
+        },
+
+        clearBindableUpdater: function (property) {
+            var me = this,
+                configs = me.self.$config.configs,
+                cfg = configs[property],
+                updateName;
+
+            if (cfg && me.hasOwnProperty(updateName = cfg.names.update)) {
+                if (me[updateName].$bindableUpdater) {
+                    delete me[updateName];
+                }
+            }
         },
 
         destroyBindable: function() {
@@ -752,17 +782,20 @@ Ext.define('Ext.mixin.Bindable', {
          * @since 5.0.0
          */
         makeBindableUpdater: function (cfg) {
-            var updateName = cfg.names.update;
+            var updateName = cfg.names.update,
+                fn = function (newValue, oldValue) {
+                    var me = this,
+                        updater = me.self.prototype[updateName];
 
-            return function (newValue, oldValue) {
-                var me = this,
-                    updater = me.self.prototype[updateName];
+                    if (updater) {
+                        updater.call(me, newValue, oldValue);
+                    }
+                    me.publishState(cfg.name, newValue);
+                };
 
-                if (updater) {
-                    updater.call(me, newValue, oldValue);
-                }
-                me.publishState(cfg.name, newValue);
-            };
+                fn.$bindableUpdater = true;
+            
+            return fn;
         },
 
         /**

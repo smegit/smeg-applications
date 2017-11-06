@@ -98,6 +98,8 @@ Ext.define('Ext.menu.CheckItem', {
     childEls: [
         'checkEl'
     ],
+
+    defaultBindProperty: 'checked',
     
     showCheckbox: true,
 
@@ -120,12 +122,15 @@ Ext.define('Ext.menu.CheckItem', {
      */
 
     initComponent: function() {
-        var me = this;
+        var me = this,
+            checked = me.checked;
+
+        me.checkedConfigure = checked;
         
         // coerce to bool straight away
-        me.checked = !!me.checked;
+        me.checked = !!checked;
 
-        me.callParent(arguments);
+        me.callParent();
 
         if (me.group) {
             Ext.menu.Manager.registerCheckable(me);
@@ -161,7 +166,9 @@ Ext.define('Ext.menu.CheckItem', {
         me.callParent();
         
         me.checked = !me.checked;
+        me.initial = true;
         me.setChecked(!me.checked, true);
+        me.initial = false;
         
         if (me.checkChangeDisabled) {
             me.disableCheckChange();
@@ -227,12 +234,13 @@ Ext.define('Ext.menu.CheckItem', {
                 return false;
             }
         }
-        this.callParent([e]);
+        return me.callParent([e]);
     },
 
-    onDestroy: function() {
+    doDestroy: function() {
         Ext.menu.Manager.unregisterCheckable(this);
-        this.callParent(arguments);
+        
+        this.callParent();
     },
     
     setText: function(text) {
@@ -256,7 +264,8 @@ Ext.define('Ext.menu.CheckItem', {
             checkedCls = me.checkedCls,
             uncheckedCls = me.uncheckedCls,
             el = me.el,
-            ariaDom = me.ariaEl.dom;
+            ariaDom = me.ariaEl.dom,
+            checkedConfigure = me.checkedConfigure;
 
         if (me.checked !== checked && (suppressEvents || me.fireEvent('beforecheckchange', me, checked) !== false)) {
             if (el) {
@@ -274,7 +283,14 @@ Ext.define('Ext.menu.CheckItem', {
             }
 
             me.checked = checked;
+            me.checkedConfigure = checked;
             Ext.menu.Manager.onCheckChange(me, checked);
+
+            // Don't publish the state if we're initially setting the
+            // checked state and we didn't get configured with a value
+            if (!(me.initial && checkedConfigure == null)) {
+                me.publishState('checked', checked);
+            }
 
             if (!suppressEvents) {
                 Ext.callback(me.checkHandler, me.scope, [me, checked], 0, me);

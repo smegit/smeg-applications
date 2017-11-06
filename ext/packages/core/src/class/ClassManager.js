@@ -253,9 +253,7 @@ var makeCtor = Ext.Class.makeCtor,
          */
         existCache: {},
 
-        /**
-         * @private
-         */
+        /** @private */
         instantiators: [],
 
         /**
@@ -782,11 +780,11 @@ var makeCtor = Ext.Class.makeCtor,
                 mixins = data.mixins,
                 mixinsIsArray,
                 compat = 1, // default if 'compatibility' is not specified
-                depedenciesLoaded,
+                dependenciesLoaded,
                 classReady = function () {
                     var cls, dependencies, i, key, temp;
 
-                    if (!depedenciesLoaded) {
+                    if (!dependenciesLoaded) {
                         dependencies = requires ? requires.slice(0) : [];
 
                         if (mixins) {
@@ -805,7 +803,7 @@ var makeCtor = Ext.Class.makeCtor,
                             }
                         }
 
-                        depedenciesLoaded = true;
+                        dependenciesLoaded = true;
                         if (dependencies.length) {
                             // Since the override is going to be used (its target class is
                             // now created), we need to fetch the required classes for the
@@ -1851,6 +1849,9 @@ var makeCtor = Ext.Class.makeCtor,
             delete Manager.classState[className];
 
             Manager.removeName(className);
+            // Indiscriminately clear all factory caches here. It might be slightly inefficient however undefine
+            // is typically only called during unit testing.
+            Ext.Factory.clearCaches();
 
             var entry = Manager.getNamespaceEntry(className),
                 scope = entry.parent ? Manager.lookupName(entry.parent, false) : Ext.global;
@@ -2043,14 +2044,17 @@ var makeCtor = Ext.Class.makeCtor,
         data.xtypesChain = xtypesChain;
         data.xtypesMap = xtypesMap;
 
-        Ext.Function.interceptAfter(data, 'onClassCreated', function() {
+        // Class is already extended at this point
+        Ext.Function.interceptAfterOnce(cls, 'onClassCreated', function() {
+            var cls = this,
+                prototype = cls.prototype,
+                mixins = prototype.mixins,
+                key, mixin;
+            
             //<debug>
             Ext.classSystemMonitor && Ext.classSystemMonitor(cls, 'Ext.ClassManager#aliasPreprocessor#afterClassCreated', arguments);
             //</debug>
         
-            var mixins = prototype.mixins,
-                key, mixin;
-
             for (key in mixins) {
                 if (mixins.hasOwnProperty(key)) {
                     mixin = mixins[key];

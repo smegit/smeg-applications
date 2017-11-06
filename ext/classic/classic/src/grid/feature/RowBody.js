@@ -111,6 +111,7 @@ Ext.define('Ext.grid.feature.RowBody', {
 
             rowValues.rowBodyColspan = columns.length;
             rowValues.rowBodyCls = me.rowBodyCls;
+            rowValues.rowIdCls = me.rowIdCls;
             
             if (rowExpanderCol && rowExpanderCol.getView() === view) {
                 view.grid.removeCls(Ext.baseCSSPrefix + 'grid-hide-row-expander-spacer');
@@ -140,7 +141,7 @@ Ext.define('Ext.grid.feature.RowBody', {
             '}',
             'values.view.rowBodyFeature.setupRowData(values.record, values.recordIndex, values);',
         '%}',
-        '<tr class="' + Ext.baseCSSPrefix + 'grid-rowbody-tr {rowBodyCls}" {ariaRowAttr}>',
+        '<tr class="' + Ext.baseCSSPrefix + 'grid-rowbody-tr {rowBodyCls} {rowIdCls}" {ariaRowAttr}>',
             '<tpl if="addSpacerCell">',
                 '<td class="{spacerCellCls}"></td>',
             '</tpl>',
@@ -160,17 +161,21 @@ Ext.define('Ext.grid.feature.RowBody', {
             },
 
             syncContent: function(destRow, sourceRow, columnsToUpdate) {
-                var owner = this.owner,
-                    destRowBody = Ext.fly(destRow).down(owner.eventSelector, true),
-                    sourceRowBody;
+                if (this.doSync) {
+                    var owner = this.owner,
+                        destRowBody = Ext.fly(destRow).down(owner.eventSelector, true),
+                        sourceRowBody;
 
-                // Sync the heights of row body elements in each row if they need it.
-                if (destRowBody && (sourceRowBody = Ext.fly(sourceRow).down(owner.eventSelector, true))) {
-                    Ext.fly(destRowBody).syncContent(sourceRowBody);
+                    // Sync the heights of row body elements in each row if they need it.
+                    if (destRowBody && (sourceRowBody = Ext.fly(sourceRow).down(owner.eventSelector, true))) {
+                        Ext.fly(destRowBody).syncContent(sourceRowBody);
+                    }
                 }
             }
         }
     ],
+
+    doSync: true,
 
     init: function(grid) {
         var me = this,
