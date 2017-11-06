@@ -2,10 +2,10 @@
 
 if [ $1 == "start" ]
   then
-    sudo forever start --uid "smeg-applications-5.0" -a server.js
+    sudo forever start --uid "smeg-applications-5.1" -a server.js
 elif [ $1 == "stop" ]
   then
-    sudo forever stop "smeg-applications-5.0"
+    sudo forever stop "smeg-applications-5.1"
 elif [ $1 == "stopall" ]
   then
     sudo forever stopall

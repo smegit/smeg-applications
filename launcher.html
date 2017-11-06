@@ -15,9 +15,14 @@
             storeId : 'Apps',
             data    : [{
                 name       : 'Wrapper',
-                nonbuilt   : 'http://localhost:6150/apps/Wrapper/index.html?app=1001&autoLogout=false',
-                testing    : 'http://localhost:6150/build/testing/Wrapper/?app=1001&autoLogout=false',
-                production : 'http://localhost:6150/build/production/Wrapper/?app=1001&autoLogout=false'
+                nonbuilt   : 'http://localhost:8889/apps/Wrapper/index.html?app=1001&autoLogout=false',
+                testing    : 'http://localhost:8889/build/testing/Wrapper/?app=1001&autoLogout=false',
+                production : 'http://localhost:8889/build/production/Wrapper/?app=1001&autoLogout=false'
+            },{
+                name       : 'Shopping Cart',
+                nonbuilt   : 'http://localhost:8889/apps/ShoppingCart/index.html?app=1001&autoLogout=false',
+                testing    : 'http://localhost:8889/build/testing/ShoppingCart/?app=1001&autoLogout=false',
+                production : 'http://localhost:8889/build/production/ShoppingCart/?app=1001&autoLogout=false'
             }]
         });
         Ext.create('Ext.Panel', {
