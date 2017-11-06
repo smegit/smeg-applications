@@ -1,0 +1,70 @@
+.x-sheet-dialog {
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  border-width:0;
+  background-color:#FFF;
+  .x-panel-header-dialog{
+    background-color:inherit;
+    border: none;
+    color : $black-1-color;
+  }
+  .x-dock-body{
+    .x-panel-inner-dialog{
+      @media screen and (max-width: 540px) {
+        padding:0px 12px 8px 8px;
+      }
+      @media screen and (min-width: 541px) {
+        padding:16px 24px;
+      }
+      color:$black-2-color;
+      font-weight:400;
+      font-size:14px;
+    }
+  }
+  .x-toolbar{
+    @media screen and (max-width: 540px) {
+      padding:4px 4px 4px 4px;
+    }
+    @media screen and (min-width: 541px) {
+      padding:8px 8px 8px 24px;
+    }
+    background-color:#fff;
+    border :none;
+    .vv-btn-non-primary {
+      .x-button-label {
+        color:$black-2-color !important;
+      }
+    }
+    .x-button.vv-btn-dialog-nomargin {
+      @media screen and (max-width: 540px) {
+        margin-left:0px!important;
+        margin-right:0px!important;
+      }
+      @media screen and (min-width: 541px) {
+        margin-left:0px!important;
+        margin-right:0px!important;
+      }
+    }
+    .x-button{
+      padding:7px 7px;
+      min-width: 30px;
+      @media screen and (max-width: 540px) {
+        margin-left:8px!important;
+        margin-right:8px!important;
+      }
+      @media screen and (min-width: 541px) {
+        margin-left:20px!important;
+        margin-right:10px!important;
+      }
+      border:none;
+      background-image:none!important;
+      background-color:inherit!important;
+      .x-button-label {
+        font-size: 18px!important;
+        color:$valence-blue;
+        text-transform: uppercase;
+      }
+    }
+  }
+}

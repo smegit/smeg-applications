@@ -1,0 +1,82 @@
+.x-tab-focus{
+  outline:none!important;
+}
+.x-tab-default{
+  background-color:#E0E0E0;
+  .x-tab-icon-el{
+    font-size:16px;
+    line-height:20px;
+  }
+}
+.x-tab-inner-default{
+  color:$black-1-color;
+}
+.x-tab-over.x-tab-default{
+  background-color:darken(#E0E0E0,4%);
+}
+@include extjs-tab-ui(
+$ui : 'background',
+$ui-background-color:$bg-color,
+$ui-background-color-active:$bg-color,
+$ui-background-color-focus:$bg-color,
+$ui-background-color-over:$bg-color,
+$ui-background-color-focus-over:$bg-color,
+$ui-color:$black-2-color,
+$ui-color-active:$black-1-color,
+$ui-color-over:$black-1-color,
+$ui-border-color:$bg-color,
+$ui-border-width:0,
+$ui-inner-border-width:0,
+$ui-text-padding:24px
+);
+@include extjs-tab-ui(
+$ui : 'white',
+$ui-background-color:#fff,
+$ui-background-color-active:#fff,
+$ui-background-color-focus:#fff,
+$ui-background-color-over:#fff,
+$ui-background-color-focus-over:#fff,
+$ui-color:$black-2-color,
+$ui-color-active:$black-1-color,
+$ui-color-over:$black-1-color,
+$ui-border-color:#fff,
+$ui-border-width:0,
+$ui-inner-border-width:0,
+$ui-text-padding:24px
+);
+@include extjs-tab-ui(
+$ui : 'primary-dark',
+$ui-background-color:$primary-dark-color,
+$ui-background-color-active:$primary-dark-color,
+$ui-background-color-focus:$primary-dark-color,
+$ui-background-color-over:$primary-dark-color,
+$ui-background-color-focus-over:$primary-dark-color,
+$ui-color:$white-2-color,
+$ui-color-active:$white-1-color,
+$ui-color-over:$white-1-color,
+$ui-border-color:$primary-dark-color,
+$ui-border-width:0,
+$ui-inner-border-width:0,
+$ui-text-padding:24px
+);
+
+
+.x-tab-icon-right > .x-tab-inner-default, .x-tab-icon-left > .x-tab-inner-default {
+  max-width: calc(100% - 30px);
+}
+
+.x-tab-background,.x-tab-white{
+  .x-tab-close-btn,{
+    color:$black-4-color;
+  }
+}
+.x-tab-background.x-tab-over,.x-tab-white.x-tab-over{
+  .x-tab-close-btn,{
+    color:$black-3-color!important;
+  }
+}
+.x-tab-background.x-tab-active,.x-tab-white.x-tab-active{
+  .x-tab-close-btn,{
+    color:$black-2-color!important;
+  }
+}

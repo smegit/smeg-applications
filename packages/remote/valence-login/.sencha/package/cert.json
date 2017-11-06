@@ -1,0 +1,31 @@
+{
+  "data": {
+    "created": "2016-06-07T16:02:00Z",
+    "email": "support@cnxcorp.com",
+    "expires": "2021-06-08T00:00:00Z",
+    "name": "CNX",
+    "uuid": "39a06e6a-3c7a-4a1e-abc1-ee02d111b8c0"
+  },
+  "publicKey": {
+    "algorithm": "RSA",
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqKBu1xxUnD4t1SSoiWGHsUTgvqkXQuwlwkGL5RndjELOUF8PfCejyq8WOJNLPZ2ZWBhWSO9oRtbWogfPlT1mMw0jdkPfg8B3B8EspoQsG8O95d1m3mX29wUmFn2CgifOYUCaVuAawK28WLZY6pj+KAXKR8xACO/FzWwAOk6B26FilB85dWeNskY3Fph7U2JFPR0hcZt+VjTKD5iUj4JJ3pyyEkEOBEjmQAddr/01QELnDjc6u/AojYX5RUbcbFllVHFvRt+Z4aiHg/miIUTo48l0RruNe20OvKaF5F57JIhk2GzbxCHv+6FxmS5S6fLD2vowrFRvaq2Nk8k00tcTWwIDAQAB"
+  },
+  "signatures": [
+    {
+      "name": "CNX",
+      "uuid": "39a06e6a-3c7a-4a1e-abc1-ee02d111b8c0",
+      "created": "2016-06-07T16:02:01Z",
+      "algorithm": "SHA1withRSA",
+      "nonce": "ZbH45ngOTPs\u003d",
+      "signature": "WT4bwHZpmdvMkCxXZ/YG+O4uhuoXkK2SimmOriW4r4p4B86kh1x2LF8pIvNT2f2e3RVXpp/Pqq/tTJMttjLenmznPaUzFAijVvb+N350bfndMoPcNWYwLeUtkJpBNjTfqPex1ZFZkqHbGBAVN1EqZ2oz12U0c+Isbpq3pkSzOHF2sJ3fimWCobFz7oicce8bZI8sjXnxL0beZp83/xZrUnUhDIJV61AuuphmmWDkXM2ydHZ+bFkVXJFt6jBcQ8vBKc6AN3kPYtekyeX1Xp2EJB2HS9sIAOr0tnLQZ6JmnYr8fbT889+f+xJgOaQKd5FprcT2jEzp3MIP9dBQyf5Ljg\u003d\u003d"
+    },
+    {
+      "name": "CNX",
+      "uuid": "a0f1252b-153a-456b-aa6f-7ef07a3a0928",
+      "created": "2016-06-07T16:02:01Z",
+      "algorithm": "SHA1withRSA",
+      "nonce": "U5wqFpErOj0\u003d",
+      "signature": "xsxqO6E38xOkAzZQnzahsbPvDpa2rp+fsdhzeYaCdSMsYqCT5SVcoVbIhMiF3NW+TsyrtsxCRbya41xBBSjWU+7Q6Cn4LA0SD+w6V5a5qHxQAcRyVyJdamLPc5jmmq9GTzbhJjmhMAtVaibvPxncluk+Tun4JKUqshtGwQFkWnYHz/E8+5wn4d5Zc2iZi5L4d4HrzYFZ7MlWPGDVtJYck74A9CqxMetaBtKHkl+OgLelIRlpROasPrNe/hWyuKz8JSLslVDbQCZidymI8znEBB7dhtfpOHProIaAVO4BQQjkuH5OwwkXHInpaIzcvjvuXko2vS19pqci8mVVr4xcNw\u003d\u003d"
+    }
+  ]
+}

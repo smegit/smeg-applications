@@ -1,0 +1,75 @@
+.vv-login-cnt{
+  background-color:transparent;
+  padding-top:50px;
+  height:100%;
+  width:100%;
+  position:absolute;
+  top:0;
+  left:0;
+  z-index:19000;
+}
+.vv-login-img{
+  max-width:400px;
+  padding:0 0 20px 0;
+}
+.vv-login-form{
+  width:425px;
+  margin:5px;
+  @extend .depth-1;
+  .x-autocontainer-form-item, .x-anchor-form-item, .x-vbox-form-item, .x-table-form-item {
+    margin-bottom: 8px;
+  }
+}
+.vv-login-form .x-panel-body{
+  padding:24px 32px;
+}
+.vv-login-pwd-lbl,.vv-login-user-lbl{
+  font-weight:500;
+}
+.vv-login-forgot-pwd{
+  color:$valence-blue;
+  font-weight:500;
+  cursor:pointer;
+  font-size:14px;
+  padding:16px;
+}
+.vv-login-select-lng,.vv-login-forgotpwd-cancel{
+  color:$valence-blue;
+  font-weight:500;
+  cursor:pointer;
+  font-size:13px;
+  margin-top:8px;
+  text-align:right;
+}
+.vv-login-show-select-lng,.vv-login-show-chg-password{
+  -webkit-filter: blur(5px);
+  -moz-filter: blur(5px);
+  -o-filter: blur(5px);
+  -ms-filter: blur(5px);
+  filter: blur(5px);
+}
+
+.vv-login-user,.vv-login-pwd {
+  .login-trigger {
+    padding-right:3px;
+  }
+  .vv-icon-trigger-medium {
+    margin-right: 5px !important;
+  }
+  .x-form-text-wrap {
+    width: 100%;
+    padding-right:5px;
+  }
+}
+@include extjs-text-field-ui(
+  $ui:'large',
+  $ui-font-size:18px,
+  $ui-height:44px,
+  $ui-invalid-border-color:$form-text-field-invalid-border-color
+);
+.x-form-item-large{
+  .x-form-error-msg{
+    color:$form-text-field-invalid-border-color;
+    padding:4px 0 0 2px;
+  }
+}

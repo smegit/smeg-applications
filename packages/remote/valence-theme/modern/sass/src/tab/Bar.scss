@@ -1,0 +1,8 @@
+@include tabbar-ui(
+  $ui:'white',
+  $background-color:#fff
+);
+@include tabbar-ui(
+  $ui:'background',
+  $background-color:$bg-color
+);

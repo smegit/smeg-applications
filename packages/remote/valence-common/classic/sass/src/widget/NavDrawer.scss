@@ -1,0 +1,76 @@
+.w-navdrawer{
+  background-color:#fff;
+  color:$black-1-color;
+  @include transform(translateX(-400px));
+  @include transition(.15s cubic-bezier(0.4,0.0,1,1),opacity .15s cubic-bezier(0.4,0.0,1,1),visibility 0ms linear .15s);
+
+  .w-navdrawer-treebody{
+    background-color:#fff;
+  }
+  .w-navdrawer-header{
+    padding:20px 24px;
+    .x-btn-icon-el{
+      font-size:24px;
+      line-height:24px;
+    }
+    .w-navdrawer-title{
+      left:33px!important;
+      font-size:20px;
+      font-weight:500;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      width: 90%;
+    }
+  }
+
+  .x-tree-view{
+    background-color:#fff;
+    .x-grid-tree-node-expanded .x-tree-elbow-plus, .x-tree-icon-leaf,.x-grid-tree-node-expanded .x-tree-elbow-end-plus,.x-tree-elbow-plus, .x-tree-elbow-end-plus,.x-tree-icon-parent,.x-tree-icon-parent-expanded{
+      display:none;
+    }
+    .x-tree-icon-custom{
+      font-size: 19px!important;
+      line-height: 19px!important;
+      height: 100%;
+      vertical-align: middle;
+      display:inline-block!important;
+      margin-top:-16px;
+    }
+  }
+
+  .x-grid-item-selected{
+    .x-grid-cell-inner{
+      background-color:#EEE;
+    }
+    /*
+    .x-grid-tree-node-leaf{
+      .x-tree-icon-custom,.x-tree-node-text{
+        color:$secondary-color;
+        font-weight:400;
+      }
+    }
+    */
+  }
+}
+.w-navdrawer-icon{
+  left:45px;
+  font-size:19px!important;
+  line-height:19px!important;
+  display:inline-block;
+  vertical-align:middle;
+  margin-right:4px;
+}
+.w-navdrawer.is-active{
+  @extend .depth-3;
+  @include transform(translateX(0));
+}
+
+.x-toolbar-appbar .appbar-title .x-btn-inner-default-toolbar-large {
+  color: $black-1-color;
+}
+.x-toolbar-primary-dark{
+  .x-btn-inner-default-toolbar-large{
+    color:$white-1-color!important;
+  }
+}

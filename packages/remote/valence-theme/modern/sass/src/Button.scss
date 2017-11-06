@@ -1,0 +1,167 @@
+@include button-ui(
+$ui: 'transparent',
+
+$border-color: transparent,
+$pressed-border-color: transparent,
+
+$background-color: transparent,
+$pressed-background-color: transparent,
+
+$pressed-background-gradient:'none',
+
+$color: $color,
+$pressed-color: $color,
+$disabled-opacity:.90
+);
+
+@include button-ui(
+$ui: 'transparent-nonprimary',
+
+$border-color: transparent,
+$pressed-border-color: transparent,
+
+$background-color: transparent,
+$pressed-background-color: transparent,
+
+$pressed-background-gradient:'none',
+
+$color: $black-2-color,
+$pressed-color: $black-3-color,
+$disabled-opacity:.90
+);
+@include button-ui(
+$ui: 'transparent-action',
+
+$border-color: transparent,
+$pressed-border-color: transparent,
+
+$background-color: transparent,
+$pressed-background-color: transparent,
+
+$pressed-background-gradient:'none',
+
+$color: $secondary-dark-color,
+$pressed-color: $color,
+$disabled-opacity:.90
+);
+
+@include button-ui(
+$ui: 'transparent-action-blue',
+
+$border-color: transparent,
+$pressed-border-color: transparent,
+
+$background-color: transparent,
+$pressed-background-color: transparent,
+
+$pressed-background-gradient:'none',
+
+$color: $blue,
+$pressed-color: $blue,
+$disabled-opacity:.90
+);
+
+@include button-ui(
+$ui: 'transparent-action-valence-blue',
+
+$border-color: transparent,
+$pressed-border-color: transparent,
+
+$background-color: transparent,
+$pressed-background-color: transparent,
+
+$pressed-background-gradient:'none',
+
+$color: $valence-blue,
+$pressed-color: $color,
+$disabled-opacity:.90
+);
+
+@include button-ui(
+$ui: 'action',
+
+$border-color: transparent,
+$pressed-border-color: transparent,
+
+$background-color: $secondary-dark-color,
+$pressed-background-color: transparent,
+
+$pressed-background-gradient:'none',
+
+$color: $white-1-color,
+$pressed-color: $white-1-color,
+$disabled-opacity:.90
+);
+
+@include button-ui(
+$ui: 'action-blue',
+
+$border-color: transparent,
+$pressed-border-color: transparent,
+
+$background-color: $blue,
+$pressed-background-color: transparent,
+
+$pressed-background-gradient:'none',
+
+$color: $white-1-color,
+$pressed-color: $white-1-color,
+$disabled-opacity:.90
+);
+
+@include button-ui(
+$ui: 'action-valence-blue',
+
+$border-color: transparent,
+$pressed-border-color: transparent,
+
+$background-color: $valence-blue,
+$pressed-background-color: transparent,
+
+$pressed-background-gradient:'none',
+
+$color: $white-1-color,
+$pressed-color: $white-1-color,
+$disabled-opacity:.90
+);
+
+@include button-ui(
+$ui: 'action-secondary-color',
+
+$border-color: transparent,
+$pressed-border-color: transparent,
+
+$background-color: $secondary-color !important,
+$pressed-background-color: $secondary-color !important,
+
+$pressed-background-gradient:'none',
+
+$color: $white-1-color !important,
+$pressed-color: $white-1-color,
+$disabled-opacity:.90
+);
+
+
+
+.x-button{
+  @include transition(all .3s);
+  .x-button-label {
+    text-transform: uppercase;
+  }
+}
+
+.vv-btn-non-primary {
+  .x-button-label {
+    color:$black-2-color !important;
+  }
+}
+
+.vv-btn-secondary {
+  .x-button-label {
+    color:$secondary-dark-color !important;
+  }
+}
+
+.vv-btn-secondary {
+
+}

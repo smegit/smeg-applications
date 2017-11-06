@@ -1,0 +1,53 @@
+.x-window-header{
+  .x-tool-img{
+    color:$black-1-color;
+  }
+}
+/* background ui */
+@include extjs-window-ui(
+  $ui : 'background',
+  $ui-header-background-color:$bg-color,
+  $ui-body-background-color:$bg-color,
+  $ui-header-border-color:$black-4-color,
+  $ui-body-background-color:$bg-color
+);
+
+@include extjs-window-ui(
+  $ui : 'dialog',
+  $ui-border-radius:2px,
+  $ui-border-width:0,
+  $ui-inner-border-width:0,
+  $ui-header-inner-border-width:0,
+  $ui-header-background-color:#FFF,
+  $ui-header-padding:24px,
+  $ui-body-background-color:#FFF
+);
+.x-window-header-dialog-top{
+  padding-bottom:0;
+}
+.x-window-body-dialog{
+  padding:20px 24px 16px 24px;
+  color:$black-2-color;
+  font-weight:400;
+  font-size:14px;
+}
+.x-window-dialog,.x-window{
+  >.x-toolbar{
+    padding:8px 8px 8px 24px;
+    background-color:#fff;
+    .x-btn-transparent-medium{
+      padding:7px 4px;
+    }
+    .x-btn-inner-transparent-medium{
+      padding:0;
+    }
+    .x-btn-inner{
+      color:$blue;
+    }
+    .x-btn-primary,.x-btn-primary-medium{
+      .x-btn-inner{
+        color:$white-1-color;
+      }
+    }
+  }
+}

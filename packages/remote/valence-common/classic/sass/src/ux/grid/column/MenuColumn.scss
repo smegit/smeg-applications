@@ -1,0 +1,9 @@
+.menu-column{
+  font-size:16px!important;
+  line-height:16px!important;
+  color:$black-3-color!important;
+  cursor:pointer;
+  &:hover{
+    color:$black-1-color!important;
+  }
+}

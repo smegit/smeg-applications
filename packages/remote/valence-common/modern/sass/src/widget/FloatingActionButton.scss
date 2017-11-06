@@ -1,0 +1,19 @@
+.x-btn-floating-action {
+  position: relative;
+  bottom: 20px;
+  right: 24px;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  background-color: $secondary-color!important;
+  border-width: 0px;
+  @include border-radius(50%);
+  @include transition(all .5s);
+  @extend .depth-1;
+
+  .x-button-icon {
+    color: $white-1-color;
+    font-size:24px;
+    line-height:24px;
+  }
+}

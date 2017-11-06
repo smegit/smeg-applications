@@ -1,0 +1,42 @@
+.x-form-background-phone {
+  .x-form-inner {
+    background-color: $bg-color;
+  }
+  .x-field {
+    border-bottom : none;
+  }
+  .x-form-fieldset-inner {
+    border: none;
+  }
+  .x-form-label,.x-component-outer {
+    background-color : $bg-color;
+  }
+  .x-field-readonly, .x-field-input {
+    border-bottom : 3px solid $bg-color!important;
+  }
+}
+
+.vv-form-white-phone {
+  .x-form-inner {
+    background-color: $white-1-color;
+  }
+  .x-field {
+    border-bottom : none;
+  }
+  .x-form-fieldset-inner {
+    border: none;
+  }
+  .x-form-label {
+    background-color : $white-1-color;
+  }
+  .x-field-readonly .x-field-input {
+    border-bottom : 3px solid $white-1-color!important;
+  }
+}
+
+.x-form-background-tablet {
+  .x-form-inner {
+    background-color: $bg-color;
+    padding: 8px;
+  }
+}

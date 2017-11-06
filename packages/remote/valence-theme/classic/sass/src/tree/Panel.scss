@@ -1,0 +1,51 @@
+.x-panel-background.x-tree-panel{
+  .x-grid-header-ct{
+    border:none;
+  }
+  .x-tool-img{
+    color:$black-2-color;
+  }
+  .x-column-header{
+    background-color:$bg-color;
+    border-right:none;
+  }
+  .x-tree-view{
+    border-top:none;
+    border:1px solid $panel-body-border-color;
+    border-bottom:none;
+  }
+  .x-panel-body{
+    border-top:none;
+  }
+}
+
+.x-panel-primary-dark.x-tree-panel{
+  .x-grid-header-ct{
+    border:none;
+  }
+  .x-column-header{
+  }
+  .x-tool-img{
+    color:$white-1-color;
+  }
+  .x-tree-view{
+    background-color:$primary-dark-color;
+    .x-grid-text{
+      font-weight:400;
+    }
+    .x-grid-item,.x-grid-item-over,.x-grid-item-selected,.x-grid-item-focused{
+      background-color:$primary-dark-color;
+      color:$white-1-color;
+    }
+    .x-tree-icon,.x-tree-icon-parent,.x-tree-elbow-plus,.x-tree-icon-leaf{
+      color:$white-1-color!important;
+    }
+    .x-tree-elbow-plus, .x-tree-elbow-end-plus{
+      color:$white-1-color!important;
+    }
+    .x-grid-tree-node-expanded .x-tree-elbow-plus, .x-grid-tree-node-expanded .x-tree-elbow-end-plus{
+      color:$white-1-color!important;
+    }
+  }
+}
+

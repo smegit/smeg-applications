@@ -1,0 +1,61 @@
+@import url(//fonts.googleapis.com/css?family=Roboto:400,300,500,700);
+
+.vv-overflow-x{
+  overflow-x: auto!important;
+}
+.vv-empty-text-wrap {
+  width: 101%;
+  height: 101%;
+  background-image: url("/resources/images/empty_state_achromatic.png");
+  background-size: cover;
+  display:table;
+  .vv-empty-text-cnt{
+    display:table-cell;
+    text-align:center;
+    vertical-align: middle;
+    .vvicon {
+      opacity: .1
+    }
+    .vv-empty-subtext{
+      padding-top:8px;
+      font-size:14px;
+    }
+    .vv-empty-text-event{
+      color:$valence-blue;
+      cursor:pointer;
+      font-weight:400;
+    }
+    @media all and (min-width: 800px) {
+      .vvicon {
+        font-size: 20vw;
+      }
+      .icon-medium{
+        font-size: 15vw;
+      }
+    }
+    @media all and (max-width: 800px) {
+      .vvicon {
+        font-size: 20vw;
+      }
+      .icon-medium{
+        font-size: 15vw;
+      }
+    }
+    @media all and (max-width: 600px) {
+      .vvicon {
+        font-size: 25vw;
+      }
+      .icon-medium{
+        font-size: 20vw;
+      }
+    }
+    @media all and (min-width: 600px) {
+      .vvicon {
+        font-size: 15vw;
+      }
+      .icon-medium{
+        font-size: 11vw;
+      }
+    }
+  }
+}

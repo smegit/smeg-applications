@@ -1,0 +1,35 @@
+.x-tabbar.x-docked-bottom .x-tab .x-button-icon.x-hidden {
+  display: none;
+}
+
+.x-tabbar-background {
+  .x-tab {
+    .x-button-label {
+      color : $black-2-color !important;
+    }
+  }
+  .x-tab-active {
+    .x-button-label {
+      color : $secondary-color !important;
+    }
+  }
+}
+@include tab-ui(
+  $ui : 'white',
+  $background-color:transparent !important,
+  $active-background-color:transparent !important,
+  $color:$black-1-color,
+  $active-color:$black-1-color,
+  $border-color:#fff,
+  $active-border-color:#fff,
+  $border-width:0
+);
+@include tab-ui(
+  $ui : 'background',
+  $background-color:$bg-color,
+  $active-background-color:$bg-color,
+  $active-color:$black-1-color,
+  $color:$black-2-color,
+  $border-color:$bg-color,
+  $active-border-color:$bg-color
+);

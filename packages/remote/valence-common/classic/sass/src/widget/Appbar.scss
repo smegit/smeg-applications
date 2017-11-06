@@ -1,0 +1,94 @@
+.x-toolbar-appbar{
+  padding:20px 24px!important;
+  @include transition(all .3s);
+  z-index:1;
+  @include box-shadow(0 10px 17px 0 rgba(0, 0, 0, 0.2), 0 10px 20px 0 rgba(0, 0, 0, 0.19));
+  .x-btn-icon-el{
+    font-size:23px;
+    line-height:24px;
+  }
+  .appbar-title{
+    font-size:20px;
+    font-weight:500;
+    line-height:30px;
+    background-color:inherit;
+    border:none;
+    padding:0;
+    .x-btn-inner-default-toolbar-large{
+      color:inherit;
+      font-size:20px;
+      line-height:24px;
+      padding:0;
+    }
+    .x-btn-wrap-default-toolbar-large.x-btn-split-right > .x-btn-button:after{
+      border-right:none;
+    }
+    .x-btn-wrap-default-toolbar-large.x-btn-split-right:after{
+      color:inherit;
+    }
+  }
+  .x-form-type-text {
+    .x-form-trigger-wrap-default {
+      border: none;
+      input {
+        background-color: $white-4-color;
+        border-radius: 2px;
+      }
+    }
+  }
+}
+
+.x-toolbar-primary,.x-toolbar-primary-dark,.x-toolbar-secondary,.x-toolbar-secondary-dark,.x-toolbar-secondary-lite{
+  .x-btn-icon-el,.x-btn-inner,.appbar-title,.x-form-text-wrap{
+    color:$white-1-color;
+    input{
+      color:$white-1-color;
+      @include input-placeholder($white-1-color)
+    }
+  }
+}
+.x-toolbar-appbar.x-toolbar-background{
+  .x-form-trigger-wrap-default{
+    input{
+      background-color:#fff;
+    }
+  }
+}
+
+.x-toolbar-appbar-no-depth{
+  @include box-shadow(none);
+}
+
+
+.filter-banner {
+  border-left: none;
+  border-right: none;
+  .filter-cont {
+    width: 100%;
+    top: -4px;
+    text-align: center;
+    .filter-label {
+      font-weight: 400;
+      top: 6px;
+      padding: 2px;
+      position: relative;
+      display: inline-block;
+    }
+  }
+  .filter-close {
+    position: absolute;
+    left: 0;
+    text-align: left;
+    top: -7px;
+    padding-left: 8px;
+    cursor: pointer;
+  }
+  span.vvicon-cross {
+    font-size: 13px;
+    line-height: 15px;
+    position: relative;
+    top: 1px;
+    padding-left: 4px;
+    cursor: pointer;
+  }
+}

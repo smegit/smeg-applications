@@ -1,0 +1,59 @@
+{
+  "name": "valence-login",
+  "namespace": "Valence.login",
+  "format": "1",
+  "version": "5.0",
+  "creator": "CNX",
+  "summary": "Wrap Portal security to your application.",
+  "detailedDescription": "The valence login package allows the application to be run outside of the Portal while still using Portal security. It also automatically handles theme changes at the Portal level for your application.",
+  "type": "code",
+  "requires": [
+    "valence",
+    "valence-common",
+    "valence-locale"
+  ],
+  "signatures": [
+    {
+      "name": "CNX",
+      "uuid": "39a06e6a-3c7a-4a1e-abc1-ee02d111b8c0",
+      "created": "2016-06-07T17:07:51Z",
+      "algorithm": "SHA1withRSA",
+      "nonce": "bmOMafmFx0A\u003d",
+      "signature": "dxOy5xuzkvXHnLFKXeLu/JH9xi/AaQTIT+dwmIMbI/AudmgSsxG2SQNsFtHOuoK054Iig3Ozb4/Rezcl6k6OXH3ceeIsqKMY8OhwCSlyB1gukIbuRG0u60XPri4lxUsZAozaRbw10LTR15OOrNwtKy8RD6C/CiCWuFqz3vZffB3kTWNQ/L3NF0prGVOtX2DkrWu9sHIICHxndZwsHd6NDJDcDT6PhRkUgIxmaVhptHJFaUonhaW9F+p7BAtsyV5U4VUqi7tkyCd1LFLdkZItHLqgTHP0R17WDB6Kqn1of7Xw3XY2eI4j6yzJ65KYKaTMHZdr8zirQNE2kmzKtCfDOQ\u003d\u003d"
+    }
+  ],
+  "slicer": {
+    "js": [
+      {
+        "path": "${package.dir}/sass/example/custom.js",
+        "isWidgetManifest": true
+      }
+    ]
+  },
+  "builds": {
+    "classic": {
+      "toolkit": "classic",
+      "theme": "valence-theme"
+    },
+    "modern": {
+      "toolkit": "modern",
+      "theme": "valence-theme"
+    }
+  },
+  "toolkit": "${args.toolkit}",
+  "output": "${package.dir}/build/${package.toolkit}",
+  "sass": {
+    "namespace": "Valence.login",
+    "etc": "${package.dir}/sass/etc/all.scss,${package.dir}/${toolkit.name}/sass/etc/all.scss",
+    "var": "${package.dir}/sass/var,${package.dir}/${toolkit.name}/sass/var",
+    "src": "${package.dir}/sass/src,${package.dir}/${toolkit.name}/sass/src"
+  },
+  "classpath": "${package.dir}/src,${package.dir}/${toolkit.name}/src",
+  "overrides": "${package.dir}/overrides,${package.dir}/${toolkit.name}/overrides",
+  "example": {
+    "path": [
+      "${package.dir}/examples"
+    ]
+  },
+  "framework": "ext"
+}

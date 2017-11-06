@@ -1,0 +1,22 @@
+.vv-mdrn-invalid-msg {
+  display :none;
+}
+
+.vv-mdrn-invalid {
+  .x-field-input {
+    border-bottom : 1px solid $secondary-color !important;
+  }
+  .vv-mdrn-invalid-msg {
+    display:block;
+    text-align: center;
+    color : $secondary-color;
+    text-transform: uppercase;
+    padding: 2px 0px;
+  }
+}
+
+.x-field-readonly {
+  .x-field-input {
+    border-bottom : none!important;
+  }
+}

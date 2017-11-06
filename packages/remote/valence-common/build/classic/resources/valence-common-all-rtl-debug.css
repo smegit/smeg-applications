@@ -1,0 +1,1895 @@
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/depth.scss:1 */
+.depth-1,
+.x-btn-floating-action-small {
+    -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    -moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/depth.scss:4 */
+.depth-2,
+.x-btn-floating-action-small:not(.x-btn-disabled):hover {
+    -webkit-box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -moz-box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/depth.scss:7 */
+.depth-3,
+.w-navdrawer.is-active {
+    -webkit-box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+    -moz-box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/depth.scss:10 */
+.depth-4 {
+    -webkit-box-shadow: 0 16px 28px 0 rgba(0, 0, 0, 0.22), 0 25px 55px 0 rgba(0, 0, 0, 0.21);
+    -moz-box-shadow: 0 16px 28px 0 rgba(0, 0, 0, 0.22), 0 25px 55px 0 rgba(0, 0, 0, 0.21);
+    box-shadow: 0 16px 28px 0 rgba(0, 0, 0, 0.22), 0 25px 55px 0 rgba(0, 0, 0, 0.21);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/depth.scss:13 */
+.depth-5 {
+    -webkit-box-shadow: 0 27px 24px 0 rgba(0, 0, 0, 0.2), 0 40px 77px 0 rgba(0, 0, 0, 0.22);
+    -moz-box-shadow: 0 27px 24px 0 rgba(0, 0, 0, 0.2), 0 40px 77px 0 rgba(0, 0, 0, 0.22);
+    box-shadow: 0 27px 24px 0 rgba(0, 0, 0, 0.2), 0 40px 77px 0 rgba(0, 0, 0, 0.22);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/text-helper.scss:1 */
+.vv-text-clickable,
+.vv-text-clickable-primary,
+.vv-text-clickable-secondary {
+    cursor: pointer!important;
+    font: 400 14px/18px "Roboto", "Open Sans", "Helvetica Neue", helvetica, arial, verdana, sans-serif;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/text-helper.scss:8 */
+.vv-text-clickable-primary {
+    color: #00adf1;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/text-helper.scss:12 */
+.vv-text-clickable-secondary {
+    color: rgba(0, 0, 0, 0.54);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/text-helper.scss:16 */
+.vv-text-secondary-dark {
+    color: #f06292;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/text-helper.scss:20 */
+.font-size-19 {
+    font-size: 19px!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/text-helper.scss:24 */
+.font-size-26 {
+    font-size: 26px!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/text-helper.scss:28 */
+.font-red {
+    color: #db4437!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/transforms.scss:1 */
+@keyframes vv-transform-scale-in {
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/transforms.scss:2 */
+    0% {
+        transform: scale(0, 0);
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/transforms.scss:5 */
+    100% {
+        transform: scale(1, 1);
+    }
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/transforms.scss:10 */
+@keyframes vv-transform-scale-out {
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/transforms.scss:11 */
+    0% {
+        transform: scale(1, 1);
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/transforms.scss:14 */
+    100% {
+        transform: scale(0, 0);
+    }
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/ie.scss:2 */
+::-ms-clear {
+    display: none;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/ie.scss:5 */
+::-ms-reveal {
+    display: none;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/ie.scss:9 */
+* {
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/classic/sass/src/util/Helper.scss:2 */
+.vv-form-item-noborder .x-form-trigger-wrap {
+    border-width: 0;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/classic/sass/src/util/Helper.scss:7 */
+.vv-form-item-noborder-trl .x-form-trigger-wrap {
+    border-top-width: 0;
+    border-right-width: 0;
+    border-left-width: 0;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/classic/sass/src/util/Helper.scss:15 */
+.vv-form-item-noborder-r .x-form-trigger-wrap {
+    border-right-width: 0;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/classic/sass/src/util/Helper.scss:20 */
+.vv-form-item-full-width {
+    width: 100%!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/classic/sass/src/util/Helper.scss:23 */
+.vv-form-item-full-width .x-form-trigger-wrap {
+    border-width: 0 0 1px 0;
+    border-color: rgba(0, 0, 0, 0.12)!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/classic/sass/src/util/Helper.scss:27 */
+.vv-form-item-full-width input,
+.vv-form-item-full-width .x-form-trigger {
+    background-color: #f2f2f2;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/classic/sass/src/util/Helper.scss:33 */
+.x-window .vv-form-item-full-width .x-form-trigger-wrap {
+    border-top-width: 1px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/depth.scss:1 */
+.depth-1,
+.x-btn-floating-action-small {
+    -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    -moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/depth.scss:4 */
+.depth-2,
+.x-btn-floating-action-small:not(.x-btn-disabled):hover {
+    -webkit-box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -moz-box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/depth.scss:7 */
+.depth-3,
+.w-navdrawer.is-active {
+    -webkit-box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+    -moz-box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/depth.scss:10 */
+.depth-4 {
+    -webkit-box-shadow: 0 16px 28px 0 rgba(0, 0, 0, 0.22), 0 25px 55px 0 rgba(0, 0, 0, 0.21);
+    -moz-box-shadow: 0 16px 28px 0 rgba(0, 0, 0, 0.22), 0 25px 55px 0 rgba(0, 0, 0, 0.21);
+    box-shadow: 0 16px 28px 0 rgba(0, 0, 0, 0.22), 0 25px 55px 0 rgba(0, 0, 0, 0.21);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/depth.scss:13 */
+.depth-5 {
+    -webkit-box-shadow: 0 27px 24px 0 rgba(0, 0, 0, 0.2), 0 40px 77px 0 rgba(0, 0, 0, 0.22);
+    -moz-box-shadow: 0 27px 24px 0 rgba(0, 0, 0, 0.2), 0 40px 77px 0 rgba(0, 0, 0, 0.22);
+    box-shadow: 0 27px 24px 0 rgba(0, 0, 0, 0.2), 0 40px 77px 0 rgba(0, 0, 0, 0.22);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/text-helper.scss:1 */
+.vv-text-clickable,
+.vv-text-clickable-primary,
+.vv-text-clickable-secondary {
+    cursor: pointer!important;
+    font: 400 14px/18px "Roboto", "Open Sans", "Helvetica Neue", helvetica, arial, verdana, sans-serif;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/text-helper.scss:8 */
+.vv-text-clickable-primary {
+    color: #00adf1;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/text-helper.scss:12 */
+.vv-text-clickable-secondary {
+    color: rgba(0, 0, 0, 0.54);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/text-helper.scss:16 */
+.vv-text-secondary-dark {
+    color: #f06292;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/text-helper.scss:20 */
+.font-size-19 {
+    font-size: 19px!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/text-helper.scss:24 */
+.font-size-26 {
+    font-size: 26px!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/text-helper.scss:28 */
+.font-red {
+    color: #db4437!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/transforms.scss:1 */
+@keyframes vv-transform-scale-in {
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/transforms.scss:2 */
+    0% {
+        transform: scale(0, 0);
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/transforms.scss:5 */
+    100% {
+        transform: scale(1, 1);
+    }
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/transforms.scss:10 */
+@keyframes vv-transform-scale-out {
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/transforms.scss:11 */
+    0% {
+        transform: scale(1, 1);
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/transforms.scss:14 */
+    100% {
+        transform: scale(0, 0);
+    }
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/ie.scss:2 */
+::-ms-clear {
+    display: none;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/ie.scss:5 */
+::-ms-reveal {
+    display: none;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/ie.scss:9 */
+* {
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/sass/src/widget/Background.scss:1 */
+.w-bg {
+    position: absolute!important;
+    width: 20px!important;
+    height: 20px!important;
+    background-color: #f2f2f2;
+    -webkit-transition: -webkit-all 0.3s;
+    -moz-transition: -moz-all 0.3s;
+    -o-transition: -o-all 0.3s;
+    transition: all 0.3s;
+    border-radius: 50%!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:1 */
+.w-mask-outer {
+    position: absolute!important;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 20000;
+    background-color: rgba(242, 242, 242, 0.78);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:10 */
+.w-mask-inner {
+    width: 250px;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    margin-left: -125px;
+    margin-top: -45px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:17 */
+.w-mask-inner .w-mask-title {
+    color: #333;
+    padding: 15px;
+    position: relative;
+    text-align: center;
+    font-size: 15px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:24 */
+.w-mask-inner .w-mask-pbar {
+    height: 5px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:26 */
+.w-mask-inner .w-mask-pbar .w-mask-pbar-full {
+    height: 100%;
+    display: block;
+    background: #0288d1;
+    width: 100%;
+    overflow: hidden;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:33 */
+.w-mask-inner .w-mask-pbar .w-mask-pbar-fill {
+    height: 100%;
+    display: block;
+    background: #f06292;
+    position: relative;
+    width: 0;
+    -webkit-transition: width 600ms ease-out;
+    -moz-transition: width 600ms ease-out;
+    transition: width 600ms ease-out;
+    -webkit-animation: pbar 1s infinite;
+    animation: pbar 800ms infinite;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:47 */
+.w-mask-pbar-shrink {
+    animation: shrinkbar 500ms;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:50 */
+.w-mask-title-fade {
+    animation: fadeText 500ms;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:56 */
+@-webkit-keyframes shrinkbar {
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:57 */
+    20% {
+        height: 4px;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:60 */
+    40% {
+        height: 3px;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:63 */
+    60% {
+        height: 2px;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:66 */
+    80% {
+        height: 1px;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:69 */
+    100% {
+        height: 0;
+    }
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:74 */
+@-webkit-keyframes fadeText {
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:75 */
+    20% {
+        opacity: 0.8;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:78 */
+    40% {
+        opacity: 0.6;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:81 */
+    60% {
+        opacity: 0.4;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:84 */
+    80% {
+        opacity: 0.2;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:87 */
+    100% {
+        opacity: 0;
+    }
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:96 */
+@-webkit-keyframes pbar {
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:97 */
+    0% {
+        width: 0%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:100 */
+    1% {
+        width: 5%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:103 */
+    2% {
+        width: 10%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:106 */
+    3% {
+        width: 15%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:109 */
+    5% {
+        width: 20%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:112 */
+    7% {
+        width: 25%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:115 */
+    8% {
+        width: 30%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:118 */
+    9% {
+        width: 35%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:121 */
+    10% {
+        width: 40%;
+        left: 1%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:125 */
+    20% {
+        left: 20%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:128 */
+    30% {
+        left: 30%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:131 */
+    40% {
+        left: 40%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:134 */
+    50% {
+        left: 50%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:137 */
+    60% {
+        left: 60%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:140 */
+    70% {
+        left: none;
+        right: 1px;
+        width: 30%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:145 */
+    80% {
+        left: 80%;
+        width: 20%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:149 */
+    90% {
+        left: 90%;
+        width: 10%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:153 */
+    100% {
+        left: 100%;
+        width: 1%;
+    }
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:160 */
+.rect {
+    height: 60px;
+    text-align: center;
+    margin-top: -60px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:164 */
+.rect .w-mask-title {
+    padding: 0;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:167 */
+.rect p {
+    margin: 0;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:170 */
+.rect .ui {
+    background-color: #f48fb1;
+    height: 100%;
+    width: 6px;
+    display: inline-block;
+    margin-left: 2px;
+    -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+    animation: sk-stretchdelay 1.2s infinite ease-in-out;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:179 */
+.rect .rect2 {
+    -webkit-animation-delay: -1.1s;
+    animation-delay: -1.1s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:183 */
+.rect .rect3 {
+    -webkit-animation-delay: -1s;
+    animation-delay: -1s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:187 */
+.rect .rect4 {
+    -webkit-animation-delay: -0.9s;
+    animation-delay: -0.9s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:191 */
+.rect .rect5 {
+    -webkit-animation-delay: -0.8s;
+    animation-delay: -0.8s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:199 */
+@-webkit-keyframes sk-stretchdelay {
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:200 */
+    0%,
+    40%,
+    100% {
+        -webkit-transform: scaleY(0.4);
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:201 */
+    20% {
+        -webkit-transform: scaleY(1);
+    }
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:206 */
+@keyframes sk-stretchdelay {
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:207 */
+    0%,
+    40%,
+    100% {
+        transform: scaleY(0.4);
+        -webkit-transform: scaleY(0.4);
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:210 */
+    20% {
+        transform: scaleY(1);
+        -webkit-transform: scaleY(1);
+    }
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:216 */
+.w-spinner {
+    height: 60px;
+    width: 60px;
+    margin-left: -30px;
+    margin-top: -85px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:221 */
+.w-spinner .w-mask-title {
+    width: 250px;
+    margin-left: -95px;
+    padding: 75px 0 0 0;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:226 */
+.w-spinner .child {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:232 */
+.w-spinner .child:before {
+    content: '';
+    display: block;
+    margin: 0 auto;
+    width: 15%;
+    height: 15%;
+    background-color: #f48fb1;
+    border-radius: 100%;
+    -webkit-animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
+    animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:244 */
+.w-spinner .circle2 {
+    -webkit-transform: rotate(30deg);
+    -ms-transform: rotate(30deg);
+    transform: rotate(30deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:248 */
+.w-spinner .circle2:before {
+    -webkit-animation-delay: -1.1s;
+    animation-delay: -1.1s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:253 */
+.w-spinner .circle3 {
+    -webkit-transform: rotate(60deg);
+    -ms-transform: rotate(60deg);
+    transform: rotate(60deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:257 */
+.w-spinner .circle3:before {
+    -webkit-animation-delay: -1s;
+    animation-delay: -1s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:262 */
+.w-spinner .circle4 {
+    -webkit-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:266 */
+.w-spinner .circle4:before {
+    -webkit-animation-delay: -0.9s;
+    animation-delay: -0.9s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:271 */
+.w-spinner .circle5 {
+    -webkit-transform: rotate(120deg);
+    -ms-transform: rotate(120deg);
+    transform: rotate(120deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:275 */
+.w-spinner .circle5:before {
+    -webkit-animation-delay: -0.8s;
+    animation-delay: -0.8s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:280 */
+.w-spinner .circle6 {
+    -webkit-transform: rotate(150deg);
+    -ms-transform: rotate(150deg);
+    transform: rotate(150deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:284 */
+.w-spinner .circle6:before {
+    -webkit-animation-delay: -0.7s;
+    animation-delay: -0.7s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:289 */
+.w-spinner .circle7 {
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:293 */
+.w-spinner .circle7:before {
+    -webkit-animation-delay: -0.6s;
+    animation-delay: -0.6s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:298 */
+.w-spinner .circle8 {
+    -webkit-transform: rotate(210deg);
+    -ms-transform: rotate(210deg);
+    transform: rotate(210deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:302 */
+.w-spinner .circle8:before {
+    -webkit-animation-delay: -0.5s;
+    animation-delay: -0.5s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:307 */
+.w-spinner .circle9 {
+    -webkit-transform: rotate(240deg);
+    -ms-transform: rotate(240deg);
+    transform: rotate(240deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:311 */
+.w-spinner .circle9:before {
+    -webkit-animation-delay: -0.4s;
+    animation-delay: -0.4s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:316 */
+.w-spinner .circle10 {
+    -webkit-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);
+    transform: rotate(270deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:320 */
+.w-spinner .circle10:before {
+    -webkit-animation-delay: -0.3s;
+    animation-delay: -0.3s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:325 */
+.w-spinner .circle11 {
+    -webkit-transform: rotate(300deg);
+    -ms-transform: rotate(300deg);
+    transform: rotate(300deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:329 */
+.w-spinner .circle11:before {
+    -webkit-animation-delay: -0.2s;
+    animation-delay: -0.2s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:334 */
+.w-spinner .circle12 {
+    -webkit-transform: rotate(330deg);
+    -ms-transform: rotate(330deg);
+    transform: rotate(330deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:338 */
+.w-spinner .circle12:before {
+    -webkit-animation-delay: -0.1s;
+    animation-delay: -0.1s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:347 */
+@-webkit-keyframes sk-circleBounceDelay {
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:348 */
+    0%,
+    80%,
+    100% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:351 */
+    40% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:359 */
+@keyframes sk-circleBounceDelay {
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:360 */
+    0%,
+    80%,
+    100% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/LoadMask.scss:363 */
+    40% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/ux/grid/column/MenuColumn.scss:1 */
+.menu-column {
+    font-size: 16px!important;
+    line-height: 16px!important;
+    color: rgba(0, 0, 0, 0.26)!important;
+    cursor: pointer;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/ux/grid/column/MenuColumn.scss:6 */
+.menu-column:hover {
+    color: rgba(0, 0, 0, 0.87)!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/sass/src/widget/Background.scss:1 */
+.w-bg {
+    position: absolute!important;
+    width: 20px!important;
+    height: 20px!important;
+    background-color: #f2f2f2;
+    -webkit-transition: -webkit-all 0.3s;
+    -moz-transition: -moz-all 0.3s;
+    -o-transition: -o-all 0.3s;
+    transition: all 0.3s;
+    border-radius: 50%!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/sass/src/util/Snackbar.scss:1 */
+.w-snackbar-outer {
+    opacity: 0;
+    height: 48px;
+    background-color: #323232;
+    min-width: 288px;
+    max-width: 568px;
+    padding: 14px 24px;
+    color: #fff;
+    bottom: -10px;
+    -webkit-transform: translateY(47px);
+    -moz-transform: translateY(47px);
+    -ms-transform: translateY(47px);
+    -o-transform: translateY(47px);
+    transform: translateY(47px);
+    position: fixed!important;
+    z-index: 1200;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    -webkit-transition: -webkit-0.15s cubic-bezier(0.4, 0, 1, 1) -webkit-opacity 0.15s cubic-bezier(0.4, 0, 1, 1) -webkit-visibility linear;
+    -webkit-transition-delay: 0s 0s 0.15s;
+    -moz-transition: -moz-0.15s cubic-bezier(0.4, 0, 1, 1) -moz-opacity 0.15s cubic-bezier(0.4, 0, 1, 1) -moz-visibility linear 0.15s;
+    -o-transition: -o-0.15s cubic-bezier(0.4, 0, 1, 1) -o-opacity 0.15s cubic-bezier(0.4, 0, 1, 1) -o-visibility linear 0.15s;
+    transition: 0.15s cubic-bezier(0.4, 0, 1, 1), opacity 0.15s cubic-bezier(0.4, 0, 1, 1), visibility 0ms linear 0.15s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/sass/src/util/Snackbar.scss:16 */
+.w-snackbar-outer .w-snackbar-text {
+    font-size: 14px;
+    font-weight: 400;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/sass/src/util/Snackbar.scss:20 */
+.w-snackbar-outer .w-snackbar-btn {
+    font-weight: 600;
+    margin-left: 48px;
+    float: right;
+    cursor: pointer;
+    color: #2196f3;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/sass/src/util/Snackbar.scss:28 */
+.w-snackbar-full {
+    width: 101%;
+    max-width: none;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/sass/src/util/Snackbar.scss:32 */
+.w-snackbar-push {
+    -webkit-transition: -webkit-0.15s cubic-bezier(0.4, 0, 1, 1) -webkit-opacity 0.15s cubic-bezier(0.4, 0, 1, 1) -webkit-visibility linear;
+    -webkit-transition-delay: 0s 0s 0.15s;
+    -moz-transition: -moz-0.15s cubic-bezier(0.4, 0, 1, 1) -moz-opacity 0.15s cubic-bezier(0.4, 0, 1, 1) -moz-visibility linear 0.15s;
+    -o-transition: -o-0.15s cubic-bezier(0.4, 0, 1, 1) -o-opacity 0.15s cubic-bezier(0.4, 0, 1, 1) -o-visibility linear 0.15s;
+    transition: 0.15s cubic-bezier(0.4, 0, 1, 1), opacity 0.15s cubic-bezier(0.4, 0, 1, 1), visibility 0ms linear 0.15s;
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+    transform: translateY(0);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/sass/src/util/Snackbar.scss:36 */
+.w-snackbar-outer.is-active {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+    transform: translateY(0);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/sass/src/util/Snackbar.scss:40 */
+.w-snackbar-push.is-active {
+    opacity: 1;
+    -webkit-transform: translateY(-48px);
+    -moz-transform: translateY(-48px);
+    -ms-transform: translateY(-48px);
+    -o-transform: translateY(-48px);
+    transform: translateY(-48px);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:1 */
+.w-mask-outer {
+    position: absolute!important;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 20000;
+    background-color: rgba(242, 242, 242, 0.78);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:10 */
+.w-mask-inner {
+    width: 250px;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    margin-left: -125px;
+    margin-top: -45px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:17 */
+.w-mask-inner .w-mask-title {
+    color: #333;
+    padding: 15px;
+    position: relative;
+    text-align: center;
+    font-size: 15px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:24 */
+.w-mask-inner .w-mask-pbar {
+    height: 5px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:26 */
+.w-mask-inner .w-mask-pbar .w-mask-pbar-full {
+    height: 100%;
+    display: block;
+    background: #0288d1;
+    width: 100%;
+    overflow: hidden;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:33 */
+.w-mask-inner .w-mask-pbar .w-mask-pbar-fill {
+    height: 100%;
+    display: block;
+    background: #f06292;
+    position: relative;
+    width: 0;
+    -webkit-transition: width 600ms ease-out;
+    -moz-transition: width 600ms ease-out;
+    transition: width 600ms ease-out;
+    -webkit-animation: pbar 1s infinite;
+    animation: pbar 800ms infinite;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:47 */
+.w-mask-pbar-shrink {
+    animation: shrinkbar 500ms;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:50 */
+.w-mask-title-fade {
+    animation: fadeText 500ms;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:56 */
+@-webkit-keyframes shrinkbar {
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:57 */
+    20% {
+        height: 4px;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:60 */
+    40% {
+        height: 3px;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:63 */
+    60% {
+        height: 2px;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:66 */
+    80% {
+        height: 1px;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:69 */
+    100% {
+        height: 0;
+    }
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:74 */
+@-webkit-keyframes fadeText {
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:75 */
+    20% {
+        opacity: 0.8;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:78 */
+    40% {
+        opacity: 0.6;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:81 */
+    60% {
+        opacity: 0.4;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:84 */
+    80% {
+        opacity: 0.2;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:87 */
+    100% {
+        opacity: 0;
+    }
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:96 */
+@-webkit-keyframes pbar {
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:97 */
+    0% {
+        width: 0%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:100 */
+    1% {
+        width: 5%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:103 */
+    2% {
+        width: 10%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:106 */
+    3% {
+        width: 15%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:109 */
+    5% {
+        width: 20%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:112 */
+    7% {
+        width: 25%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:115 */
+    8% {
+        width: 30%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:118 */
+    9% {
+        width: 35%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:121 */
+    10% {
+        width: 40%;
+        left: 1%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:125 */
+    20% {
+        left: 20%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:128 */
+    30% {
+        left: 30%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:131 */
+    40% {
+        left: 40%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:134 */
+    50% {
+        left: 50%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:137 */
+    60% {
+        left: 60%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:140 */
+    70% {
+        left: none;
+        right: 1px;
+        width: 30%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:145 */
+    80% {
+        left: 80%;
+        width: 20%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:149 */
+    90% {
+        left: 90%;
+        width: 10%;
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:153 */
+    100% {
+        left: 100%;
+        width: 1%;
+    }
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:160 */
+.rect {
+    height: 60px;
+    text-align: center;
+    margin-top: -60px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:164 */
+.rect .w-mask-title {
+    padding: 0;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:167 */
+.rect p {
+    margin: 0;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:170 */
+.rect .ui {
+    background-color: #f48fb1;
+    height: 100%;
+    width: 6px;
+    display: inline-block;
+    margin-left: 2px;
+    -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+    animation: sk-stretchdelay 1.2s infinite ease-in-out;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:179 */
+.rect .rect2 {
+    -webkit-animation-delay: -1.1s;
+    animation-delay: -1.1s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:183 */
+.rect .rect3 {
+    -webkit-animation-delay: -1s;
+    animation-delay: -1s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:187 */
+.rect .rect4 {
+    -webkit-animation-delay: -0.9s;
+    animation-delay: -0.9s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:191 */
+.rect .rect5 {
+    -webkit-animation-delay: -0.8s;
+    animation-delay: -0.8s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:199 */
+@-webkit-keyframes sk-stretchdelay {
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:200 */
+    0%,
+    40%,
+    100% {
+        -webkit-transform: scaleY(0.4);
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:201 */
+    20% {
+        -webkit-transform: scaleY(1);
+    }
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:206 */
+@keyframes sk-stretchdelay {
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:207 */
+    0%,
+    40%,
+    100% {
+        transform: scaleY(0.4);
+        -webkit-transform: scaleY(0.4);
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:210 */
+    20% {
+        transform: scaleY(1);
+        -webkit-transform: scaleY(1);
+    }
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:216 */
+.w-spinner {
+    height: 60px;
+    width: 60px;
+    margin-left: -30px;
+    margin-top: -85px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:221 */
+.w-spinner .w-mask-title {
+    width: 250px;
+    margin-left: -95px;
+    padding: 75px 0 0 0;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:226 */
+.w-spinner .child {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:232 */
+.w-spinner .child:before {
+    content: '';
+    display: block;
+    margin: 0 auto;
+    width: 15%;
+    height: 15%;
+    background-color: #f48fb1;
+    border-radius: 100%;
+    -webkit-animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
+    animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:244 */
+.w-spinner .circle2 {
+    -webkit-transform: rotate(30deg);
+    -ms-transform: rotate(30deg);
+    transform: rotate(30deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:248 */
+.w-spinner .circle2:before {
+    -webkit-animation-delay: -1.1s;
+    animation-delay: -1.1s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:253 */
+.w-spinner .circle3 {
+    -webkit-transform: rotate(60deg);
+    -ms-transform: rotate(60deg);
+    transform: rotate(60deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:257 */
+.w-spinner .circle3:before {
+    -webkit-animation-delay: -1s;
+    animation-delay: -1s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:262 */
+.w-spinner .circle4 {
+    -webkit-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:266 */
+.w-spinner .circle4:before {
+    -webkit-animation-delay: -0.9s;
+    animation-delay: -0.9s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:271 */
+.w-spinner .circle5 {
+    -webkit-transform: rotate(120deg);
+    -ms-transform: rotate(120deg);
+    transform: rotate(120deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:275 */
+.w-spinner .circle5:before {
+    -webkit-animation-delay: -0.8s;
+    animation-delay: -0.8s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:280 */
+.w-spinner .circle6 {
+    -webkit-transform: rotate(150deg);
+    -ms-transform: rotate(150deg);
+    transform: rotate(150deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:284 */
+.w-spinner .circle6:before {
+    -webkit-animation-delay: -0.7s;
+    animation-delay: -0.7s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:289 */
+.w-spinner .circle7 {
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:293 */
+.w-spinner .circle7:before {
+    -webkit-animation-delay: -0.6s;
+    animation-delay: -0.6s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:298 */
+.w-spinner .circle8 {
+    -webkit-transform: rotate(210deg);
+    -ms-transform: rotate(210deg);
+    transform: rotate(210deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:302 */
+.w-spinner .circle8:before {
+    -webkit-animation-delay: -0.5s;
+    animation-delay: -0.5s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:307 */
+.w-spinner .circle9 {
+    -webkit-transform: rotate(240deg);
+    -ms-transform: rotate(240deg);
+    transform: rotate(240deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:311 */
+.w-spinner .circle9:before {
+    -webkit-animation-delay: -0.4s;
+    animation-delay: -0.4s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:316 */
+.w-spinner .circle10 {
+    -webkit-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);
+    transform: rotate(270deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:320 */
+.w-spinner .circle10:before {
+    -webkit-animation-delay: -0.3s;
+    animation-delay: -0.3s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:325 */
+.w-spinner .circle11 {
+    -webkit-transform: rotate(300deg);
+    -ms-transform: rotate(300deg);
+    transform: rotate(300deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:329 */
+.w-spinner .circle11:before {
+    -webkit-animation-delay: -0.2s;
+    animation-delay: -0.2s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:334 */
+.w-spinner .circle12 {
+    -webkit-transform: rotate(330deg);
+    -ms-transform: rotate(330deg);
+    transform: rotate(330deg);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:338 */
+.w-spinner .circle12:before {
+    -webkit-animation-delay: -0.1s;
+    animation-delay: -0.1s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:347 */
+@-webkit-keyframes sk-circleBounceDelay {
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:348 */
+    0%,
+    80%,
+    100% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:351 */
+    40% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:359 */
+@keyframes sk-circleBounceDelay {
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:360 */
+    0%,
+    80%,
+    100% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+    /* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Loadmask.scss:363 */
+    40% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/ux/grid/column/MenuColumn.scss:1 */
+.menu-column {
+    font-size: 16px!important;
+    line-height: 16px!important;
+    color: rgba(0, 0, 0, 0.26)!important;
+    cursor: pointer;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/ux/grid/column/MenuColumn.scss:6 */
+.menu-column:hover {
+    color: rgba(0, 0, 0, 0.87)!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/ux/plugin/EmptyText.scss:1 */
+.vv-plugin-empty-text {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #eee;
+    z-index: 500;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/ux/plugin/EmptyText.scss:8 */
+.vv-plugin-empty-text-hidden {
+    visibility: hidden;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/ux/plugin/grid/Multisort.scss:1 */
+.p-multisort-item {
+    background-color: #f2f2f2;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    padding: 4px 24px 4px 4px;
+    position: relative;
+    cursor: pointer;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/ux/plugin/grid/Multisort.scss:7 */
+.p-multisort-item .multisort-remove {
+    position: absolute;
+    right: 3px;
+    top: 5px;
+    font-size: 16px;
+    line-height: 16px;
+    color: rgba(0, 0, 0, 0.54);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/ux/plugin/grid/Multisort.scss:14 */
+.p-multisort-item .multisort-remove:hover {
+    color: rgba(0, 0, 0, 0.87);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/ux/plugin/grid/Multisort.scss:21 */
+.x-toolbar-background .p-multisort-item,
+.x-toolbar-footer .p-multisort-item {
+    background-color: #fff;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Appbar.scss:1 */
+.x-toolbar-appbar {
+    padding: 20px 24px!important;
+    -webkit-transition: -webkit-all 0.3s;
+    -moz-transition: -moz-all 0.3s;
+    -o-transition: -o-all 0.3s;
+    transition: all 0.3s;
+    z-index: 1;
+    -webkit-box-shadow: 0 10px 17px 0 rgba(0, 0, 0, 0.2), 0 10px 20px 0 rgba(0, 0, 0, 0.19);
+    -moz-box-shadow: 0 10px 17px 0 rgba(0, 0, 0, 0.2), 0 10px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 10px 17px 0 rgba(0, 0, 0, 0.2), 0 10px 20px 0 rgba(0, 0, 0, 0.19);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Appbar.scss:6 */
+.x-toolbar-appbar .x-btn-icon-el {
+    font-size: 23px;
+    line-height: 24px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Appbar.scss:10 */
+.x-toolbar-appbar .appbar-title {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 30px;
+    background-color: inherit;
+    border: none;
+    padding: 0;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Appbar.scss:17 */
+.x-toolbar-appbar .appbar-title .x-btn-inner-default-toolbar-large {
+    color: inherit;
+    font-size: 20px;
+    line-height: 24px;
+    padding: 0;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Appbar.scss:23 */
+.x-toolbar-appbar .appbar-title .x-btn-wrap-default-toolbar-large.x-btn-split-right > .x-btn-button:after {
+    border-right: none;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Appbar.scss:26 */
+.x-toolbar-appbar .appbar-title .x-btn-wrap-default-toolbar-large.x-btn-split-right:after {
+    color: inherit;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Appbar.scss:31 */
+.x-toolbar-appbar .x-form-type-text .x-form-trigger-wrap-default {
+    border: none;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Appbar.scss:33 */
+.x-toolbar-appbar .x-form-type-text .x-form-trigger-wrap-default input {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-radius: 2px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Appbar.scss:42 */
+.x-toolbar-primary .x-btn-icon-el,
+.x-toolbar-primary .x-btn-inner,
+.x-toolbar-primary .appbar-title,
+.x-toolbar-primary .x-form-text-wrap,
+.x-toolbar-primary-dark .x-btn-icon-el,
+.x-toolbar-primary-dark .x-btn-inner,
+.x-toolbar-primary-dark .appbar-title,
+.x-toolbar-primary-dark .x-form-text-wrap,
+.x-toolbar-secondary .x-btn-icon-el,
+.x-toolbar-secondary .x-btn-inner,
+.x-toolbar-secondary .appbar-title,
+.x-toolbar-secondary .x-form-text-wrap,
+.x-toolbar-secondary-dark .x-btn-icon-el,
+.x-toolbar-secondary-dark .x-btn-inner,
+.x-toolbar-secondary-dark .appbar-title,
+.x-toolbar-secondary-dark .x-form-text-wrap,
+.x-toolbar-secondary-lite .x-btn-icon-el,
+.x-toolbar-secondary-lite .x-btn-inner,
+.x-toolbar-secondary-lite .appbar-title,
+.x-toolbar-secondary-lite .x-form-text-wrap {
+    color: #fff;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Appbar.scss:44 */
+.x-toolbar-primary .x-btn-icon-el input,
+.x-toolbar-primary .x-btn-inner input,
+.x-toolbar-primary .appbar-title input,
+.x-toolbar-primary .x-form-text-wrap input,
+.x-toolbar-primary-dark .x-btn-icon-el input,
+.x-toolbar-primary-dark .x-btn-inner input,
+.x-toolbar-primary-dark .appbar-title input,
+.x-toolbar-primary-dark .x-form-text-wrap input,
+.x-toolbar-secondary .x-btn-icon-el input,
+.x-toolbar-secondary .x-btn-inner input,
+.x-toolbar-secondary .appbar-title input,
+.x-toolbar-secondary .x-form-text-wrap input,
+.x-toolbar-secondary-dark .x-btn-icon-el input,
+.x-toolbar-secondary-dark .x-btn-inner input,
+.x-toolbar-secondary-dark .appbar-title input,
+.x-toolbar-secondary-dark .x-form-text-wrap input,
+.x-toolbar-secondary-lite .x-btn-icon-el input,
+.x-toolbar-secondary-lite .x-btn-inner input,
+.x-toolbar-secondary-lite .appbar-title input,
+.x-toolbar-secondary-lite .x-form-text-wrap input {
+    color: #fff;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/mixins.scss:2 */
+.x-toolbar-primary .x-btn-icon-el input::-webkit-input-placeholder,
+.x-toolbar-primary .x-btn-inner input::-webkit-input-placeholder,
+.x-toolbar-primary .appbar-title input::-webkit-input-placeholder,
+.x-toolbar-primary .x-form-text-wrap input::-webkit-input-placeholder,
+.x-toolbar-primary-dark .x-btn-icon-el input::-webkit-input-placeholder,
+.x-toolbar-primary-dark .x-btn-inner input::-webkit-input-placeholder,
+.x-toolbar-primary-dark .appbar-title input::-webkit-input-placeholder,
+.x-toolbar-primary-dark .x-form-text-wrap input::-webkit-input-placeholder,
+.x-toolbar-secondary .x-btn-icon-el input::-webkit-input-placeholder,
+.x-toolbar-secondary .x-btn-inner input::-webkit-input-placeholder,
+.x-toolbar-secondary .appbar-title input::-webkit-input-placeholder,
+.x-toolbar-secondary .x-form-text-wrap input::-webkit-input-placeholder,
+.x-toolbar-secondary-dark .x-btn-icon-el input::-webkit-input-placeholder,
+.x-toolbar-secondary-dark .x-btn-inner input::-webkit-input-placeholder,
+.x-toolbar-secondary-dark .appbar-title input::-webkit-input-placeholder,
+.x-toolbar-secondary-dark .x-form-text-wrap input::-webkit-input-placeholder,
+.x-toolbar-secondary-lite .x-btn-icon-el input::-webkit-input-placeholder,
+.x-toolbar-secondary-lite .x-btn-inner input::-webkit-input-placeholder,
+.x-toolbar-secondary-lite .appbar-title input::-webkit-input-placeholder,
+.x-toolbar-secondary-lite .x-form-text-wrap input::-webkit-input-placeholder {
+    color: #fff;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/mixins.scss:5 */
+.x-toolbar-primary .x-btn-icon-el input:-moz-placeholder,
+.x-toolbar-primary .x-btn-inner input:-moz-placeholder,
+.x-toolbar-primary .appbar-title input:-moz-placeholder,
+.x-toolbar-primary .x-form-text-wrap input:-moz-placeholder,
+.x-toolbar-primary-dark .x-btn-icon-el input:-moz-placeholder,
+.x-toolbar-primary-dark .x-btn-inner input:-moz-placeholder,
+.x-toolbar-primary-dark .appbar-title input:-moz-placeholder,
+.x-toolbar-primary-dark .x-form-text-wrap input:-moz-placeholder,
+.x-toolbar-secondary .x-btn-icon-el input:-moz-placeholder,
+.x-toolbar-secondary .x-btn-inner input:-moz-placeholder,
+.x-toolbar-secondary .appbar-title input:-moz-placeholder,
+.x-toolbar-secondary .x-form-text-wrap input:-moz-placeholder,
+.x-toolbar-secondary-dark .x-btn-icon-el input:-moz-placeholder,
+.x-toolbar-secondary-dark .x-btn-inner input:-moz-placeholder,
+.x-toolbar-secondary-dark .appbar-title input:-moz-placeholder,
+.x-toolbar-secondary-dark .x-form-text-wrap input:-moz-placeholder,
+.x-toolbar-secondary-lite .x-btn-icon-el input:-moz-placeholder,
+.x-toolbar-secondary-lite .x-btn-inner input:-moz-placeholder,
+.x-toolbar-secondary-lite .appbar-title input:-moz-placeholder,
+.x-toolbar-secondary-lite .x-form-text-wrap input:-moz-placeholder {
+    color: #fff;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/mixins.scss:8 */
+.x-toolbar-primary .x-btn-icon-el input::-moz-placeholder,
+.x-toolbar-primary .x-btn-inner input::-moz-placeholder,
+.x-toolbar-primary .appbar-title input::-moz-placeholder,
+.x-toolbar-primary .x-form-text-wrap input::-moz-placeholder,
+.x-toolbar-primary-dark .x-btn-icon-el input::-moz-placeholder,
+.x-toolbar-primary-dark .x-btn-inner input::-moz-placeholder,
+.x-toolbar-primary-dark .appbar-title input::-moz-placeholder,
+.x-toolbar-primary-dark .x-form-text-wrap input::-moz-placeholder,
+.x-toolbar-secondary .x-btn-icon-el input::-moz-placeholder,
+.x-toolbar-secondary .x-btn-inner input::-moz-placeholder,
+.x-toolbar-secondary .appbar-title input::-moz-placeholder,
+.x-toolbar-secondary .x-form-text-wrap input::-moz-placeholder,
+.x-toolbar-secondary-dark .x-btn-icon-el input::-moz-placeholder,
+.x-toolbar-secondary-dark .x-btn-inner input::-moz-placeholder,
+.x-toolbar-secondary-dark .appbar-title input::-moz-placeholder,
+.x-toolbar-secondary-dark .x-form-text-wrap input::-moz-placeholder,
+.x-toolbar-secondary-lite .x-btn-icon-el input::-moz-placeholder,
+.x-toolbar-secondary-lite .x-btn-inner input::-moz-placeholder,
+.x-toolbar-secondary-lite .appbar-title input::-moz-placeholder,
+.x-toolbar-secondary-lite .x-form-text-wrap input::-moz-placeholder {
+    color: #fff;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-theme/sass/etc/mixins.scss:11 */
+.x-toolbar-primary .x-btn-icon-el input:-ms-input-placeholder,
+.x-toolbar-primary .x-btn-inner input:-ms-input-placeholder,
+.x-toolbar-primary .appbar-title input:-ms-input-placeholder,
+.x-toolbar-primary .x-form-text-wrap input:-ms-input-placeholder,
+.x-toolbar-primary-dark .x-btn-icon-el input:-ms-input-placeholder,
+.x-toolbar-primary-dark .x-btn-inner input:-ms-input-placeholder,
+.x-toolbar-primary-dark .appbar-title input:-ms-input-placeholder,
+.x-toolbar-primary-dark .x-form-text-wrap input:-ms-input-placeholder,
+.x-toolbar-secondary .x-btn-icon-el input:-ms-input-placeholder,
+.x-toolbar-secondary .x-btn-inner input:-ms-input-placeholder,
+.x-toolbar-secondary .appbar-title input:-ms-input-placeholder,
+.x-toolbar-secondary .x-form-text-wrap input:-ms-input-placeholder,
+.x-toolbar-secondary-dark .x-btn-icon-el input:-ms-input-placeholder,
+.x-toolbar-secondary-dark .x-btn-inner input:-ms-input-placeholder,
+.x-toolbar-secondary-dark .appbar-title input:-ms-input-placeholder,
+.x-toolbar-secondary-dark .x-form-text-wrap input:-ms-input-placeholder,
+.x-toolbar-secondary-lite .x-btn-icon-el input:-ms-input-placeholder,
+.x-toolbar-secondary-lite .x-btn-inner input:-ms-input-placeholder,
+.x-toolbar-secondary-lite .appbar-title input:-ms-input-placeholder,
+.x-toolbar-secondary-lite .x-form-text-wrap input:-ms-input-placeholder {
+    color: #fff;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Appbar.scss:52 */
+.x-toolbar-appbar.x-toolbar-background .x-form-trigger-wrap-default input {
+    background-color: #fff;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Appbar.scss:58 */
+.x-toolbar-appbar-no-depth {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Appbar.scss:63 */
+.filter-banner {
+    border-left: none;
+    border-right: none;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Appbar.scss:66 */
+.filter-banner .filter-cont {
+    width: 100%;
+    top: -4px;
+    text-align: center;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Appbar.scss:70 */
+.filter-banner .filter-cont .filter-label {
+    font-weight: 400;
+    top: 6px;
+    padding: 2px;
+    position: relative;
+    display: inline-block;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Appbar.scss:78 */
+.filter-banner .filter-close {
+    position: absolute;
+    left: 0;
+    text-align: left;
+    top: -7px;
+    padding-left: 8px;
+    cursor: pointer;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Appbar.scss:86 */
+.filter-banner span.vvicon-cross {
+    font-size: 13px;
+    line-height: 15px;
+    position: relative;
+    top: 1px;
+    padding-left: 4px;
+    cursor: pointer;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/FabWrapper.scss:1 */
+.vv-fabwrapper {
+    overflow: visible!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/FabWrapper.scss:3 */
+.vv-fabwrapper .x-box-inner {
+    overflow: visible!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/FabWrapper.scss:13 */
+.vv-fabwrapper-lr {
+    bottom: 32px!important;
+    right: initial!important;
+    top: initial!important;
+    left: 0!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/FloatingActionButton.scss:1 */
+.x-btn-floating-action-small {
+    background-color: #f48fb1;
+    font-size: 24px;
+    -webkit-transform: scale(0);
+    -moz-transform: scale(0);
+    -ms-transform: scale(0);
+    -o-transform: scale(0);
+    transform: scale(0);
+    z-index: 1000;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+    border-radius: 50%;
+    -webkit-transition: -webkit-all 0.5s;
+    -moz-transition: -moz-all 0.5s;
+    -o-transition: -o-all 0.5s;
+    transition: all 0.5s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/FloatingActionButton.scss:10 */
+.x-btn-floating-action-small:not(.x-btn-disabled):hover {
+    background-color: #f6a6c1;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/FloatingActionButton.scss:14 */
+.x-btn-floating-action-small .x-btn-icon-el {
+    color: #fff;
+    font-size: 24px;
+    line-height: 24px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/FloatingActionButton.scss:20 */
+.x-btn-floating-action-sub {
+    background-color: #03a9f4;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/FloatingActionButton.scss:22 */
+.x-btn-floating-action-sub .x-btn-icon-el {
+    color: #fff;
+    font-size: 18px;
+    line-height: 18px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/FloatingActionButton.scss:27 */
+.x-btn-floating-action-sub:not(.x-btn-disabled):hover {
+    background-color: #14b4fc;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/FloatingActionButton.scss:31 */
+.x-btn-scale-in {
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    -ms-transform: scale(1);
+    -o-transform: scale(1);
+    transform: scale(1);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/FloatingActionButton.scss:34 */
+.x-btn-position-br {
+    bottom: 32px!important;
+    right: 20px!important;
+    top: initial!important;
+    left: initial!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/MatTabs.scss:2 */
+.x-tab-bar-background .mattabs-active-div,
+.x-tab-bar-white .mattabs-active-div {
+    background-color: #0288d1;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/MatTabs.scss:7 */
+.x-tab-bar-primary-dark .mattabs-active-div {
+    background-color: #fff;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/MatTabs.scss:11 */
+.mattabs-active-div {
+    height: 4px;
+    bottom: 0px;
+    position: absolute;
+    z-index: 100;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/MatTabs.scss:18 */
+.mattabs .x-tab-inner {
+    font-size: 15px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/MatTabs.scss:21 */
+.mattabs .x-tab-icon-el {
+    font-size: 20px;
+    line-height: 20px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/NavDrawer.scss:1 */
+.w-navdrawer {
+    background-color: #fff;
+    color: rgba(0, 0, 0, 0.87);
+    -webkit-transform: translateX(-400px);
+    -moz-transform: translateX(-400px);
+    -ms-transform: translateX(-400px);
+    -o-transform: translateX(-400px);
+    transform: translateX(-400px);
+    -webkit-transition: -webkit-0.15s cubic-bezier(0.4, 0, 1, 1) -webkit-opacity 0.15s cubic-bezier(0.4, 0, 1, 1) -webkit-visibility linear;
+    -webkit-transition-delay: 0s 0s 0.15s;
+    -moz-transition: -moz-0.15s cubic-bezier(0.4, 0, 1, 1) -moz-opacity 0.15s cubic-bezier(0.4, 0, 1, 1) -moz-visibility linear 0.15s;
+    -o-transition: -o-0.15s cubic-bezier(0.4, 0, 1, 1) -o-opacity 0.15s cubic-bezier(0.4, 0, 1, 1) -o-visibility linear 0.15s;
+    transition: 0.15s cubic-bezier(0.4, 0, 1, 1), opacity 0.15s cubic-bezier(0.4, 0, 1, 1), visibility 0ms linear 0.15s;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/NavDrawer.scss:7 */
+.w-navdrawer .w-navdrawer-treebody {
+    background-color: #fff;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/NavDrawer.scss:10 */
+.w-navdrawer .w-navdrawer-header {
+    padding: 20px 24px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/NavDrawer.scss:12 */
+.w-navdrawer .w-navdrawer-header .x-btn-icon-el {
+    font-size: 24px;
+    line-height: 24px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/NavDrawer.scss:16 */
+.w-navdrawer .w-navdrawer-header .w-navdrawer-title {
+    left: 33px!important;
+    font-size: 20px;
+    font-weight: 500;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 90%;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/NavDrawer.scss:27 */
+.w-navdrawer .x-tree-view {
+    background-color: #fff;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/NavDrawer.scss:29 */
+.w-navdrawer .x-tree-view .x-grid-tree-node-expanded .x-tree-elbow-plus,
+.w-navdrawer .x-tree-view .x-tree-icon-leaf,
+.w-navdrawer .x-tree-view .x-grid-tree-node-expanded .x-tree-elbow-end-plus,
+.w-navdrawer .x-tree-view .x-tree-elbow-plus,
+.w-navdrawer .x-tree-view .x-tree-elbow-end-plus,
+.w-navdrawer .x-tree-view .x-tree-icon-parent,
+.w-navdrawer .x-tree-view .x-tree-icon-parent-expanded {
+    display: none;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/NavDrawer.scss:32 */
+.w-navdrawer .x-tree-view .x-tree-icon-custom {
+    font-size: 19px!important;
+    line-height: 19px!important;
+    height: 100%;
+    vertical-align: middle;
+    display: inline-block!important;
+    margin-top: -16px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/NavDrawer.scss:43 */
+.w-navdrawer .x-grid-item-selected .x-grid-cell-inner {
+    background-color: #eee;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/NavDrawer.scss:56 */
+.w-navdrawer-icon {
+    left: 45px;
+    font-size: 19px!important;
+    line-height: 19px!important;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/NavDrawer.scss:64 */
+.w-navdrawer.is-active {
+    -webkit-transform: translateX(0);
+    -moz-transform: translateX(0);
+    -ms-transform: translateX(0);
+    -o-transform: translateX(0);
+    transform: translateX(0);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/NavDrawer.scss:69 */
+.x-toolbar-appbar .appbar-title .x-btn-inner-default-toolbar-large {
+    color: rgba(0, 0, 0, 0.87);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/NavDrawer.scss:73 */
+.x-toolbar-primary-dark .x-btn-inner-default-toolbar-large {
+    color: #fff!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Selector.scss:1 */
+.w-selector-wrap {
+    font-weight: 500;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Selector.scss:4 */
+.w-selector-item,
+.w-selector-item-sml {
+    padding: 3px;
+    display: table-cell;
+    border: 1px solid rgba(0, 0, 0, 0.26);
+    min-width: 85px;
+    text-align: center;
+    -webkit-transition: -webkit-all 100ms ease-in;
+    -moz-transition: -moz-all 100ms ease-in;
+    -o-transition: -o-all 100ms ease-in;
+    transition: all 100ms ease-in;
+    background-color: #f2f2f2;
+    color: rgba(0, 0, 0, 0.87);
+    max-width: 125px;
+    vertical-align: middle;
+    height: 100%;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Selector.scss:17 */
+.w-selector-item-sml {
+    min-width: 40px;
+    padding: 5px 2px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Selector.scss:21 */
+.w-selector-item-over {
+    -webkit-transition: -webkit-all 100ms ease-in;
+    -moz-transition: -moz-all 100ms ease-in;
+    -o-transition: -o-all 100ms ease-in;
+    transition: all 100ms ease-in;
+    color: #fff;
+    background-color: #79d4fd!important;
+    cursor: pointer;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Selector.scss:27 */
+.w-selector-item-sel {
+    background-color: #47c4fd!important;
+    -webkit-transition: -webkit-all 100ms ease-in;
+    -moz-transition: -moz-all 100ms ease-in;
+    -o-transition: -o-all 100ms ease-in;
+    transition: all 100ms ease-in;
+    color: #fff!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/Selector.scss:33 */
+.x-panel-background .w-selector-item,
+.x-panel-background .w-selector-item-sml {
+    background-color: #fff;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/VideoInvite.scss:2 */
+.w-video-invite .close-icon {
+    color: #fff;
+    font-size: 22px;
+    line-height: 24px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/VideoInvite.scss:7 */
+.w-video-invite .x-toolbar-text {
+    text-align: center;
+    font-size: 15px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/VideoInvite.scss:10 */
+.w-video-invite .x-toolbar-text a {
+    padding-left: 8px;
+    color: #fff;
+    text-transform: uppercase;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:2 */
+.hs-wrap .hs-inner {
+    margin: 0 20px;
+    white-space: nowrap;
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:8 */
+.hs-wrap .hs-inner .hs-step-wrap {
+    height: inherit;
+    display: table-cell;
+    padding: 4px 0;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:12 */
+.hs-wrap .hs-inner .hs-step-wrap .hs-step {
+    position: relative;
+    z-index: 1;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:15 */
+.hs-wrap .hs-inner .hs-step-wrap .hs-step .hs-step-circle {
+    height: 32px;
+    width: 32px;
+    border-radius: 16px;
+    background-color: #b2b2b2;
+    font-size: 14px;
+    color: #fff;
+    line-height: 32px;
+    text-align: center;
+    display: inline-block;
+    font-weight: 400;
+    cursor: pointer;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:28 */
+.hs-wrap .hs-inner .hs-step-wrap .hs-step .hs-step-text {
+    padding-left: 8px;
+    padding-right: 8px;
+    background-color: #f2f2f2;
+    display: inline-block;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.54);
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:36 */
+.hs-wrap .hs-inner .hs-step-wrap .hs-step .hs-step-subtext {
+    position: absolute;
+    top: 26px;
+    left: 40px;
+    font-weight: 400;
+    background-color: #f2f2f2;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.26);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 80%;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:48 */
+.hs-wrap .hs-inner .hs-step-wrap .hs-step .hs-step-cmpl {
+    color: #03a9f4;
+    font-size: 14px;
+    display: inline-block;
+    line-height: 14px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:54 */
+.hs-wrap .hs-inner .hs-step-wrap .hs-step .hs-step-incmpl {
+    color: #db4437;
+    font-size: 14px;
+    display: inline-block;
+    line-height: 14px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:61 */
+.hs-wrap .hs-inner .hs-step-wrap .hs-step-line {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    position: relative;
+    top: -16px;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:67 */
+.hs-wrap .hs-inner .hs-step-wrap:last-child .hs-step-line {
+    border-bottom-width: 0;
+    display: none;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:74 */
+.hs-wrap .hs-inner .hs-selected .hs-step-circle,
+.hs-wrap .hs-inner .hs-complete .hs-step-circle {
+    background-color: #03a9f4!important;
+    font-weight: 600!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:78 */
+.hs-wrap .hs-inner .hs-selected .hs-step-text,
+.hs-wrap .hs-inner .hs-complete .hs-step-text {
+    font-weight: 500!important;
+    color: rgba(0, 0, 0, 0.87)!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:82 */
+.hs-wrap .hs-inner .hs-selected .hs-step-subtext,
+.hs-wrap .hs-inner .hs-complete .hs-step-subtext {
+    font-weight: 500!important;
+    color: rgba(0, 0, 0, 0.54)!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:88 */
+.hs-wrap .hs-inner .hs-incomplete.hs-selected .hs-step-circle {
+    background-color: #03a9f4!important;
+    font-weight: 600!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:92 */
+.hs-wrap .hs-inner .hs-incomplete.hs-selected .hs-step-text {
+    font-weight: 500!important;
+    color: rgba(0, 0, 0, 0.87)!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:96 */
+.hs-wrap .hs-inner .hs-incomplete.hs-selected .hs-step-subtext {
+    font-weight: 500!important;
+    color: rgba(0, 0, 0, 0.54)!important;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:100 */
+.hs-wrap .hs-inner .hs-incomplete.hs-selected .hs-step-incmpl {
+    color: #fff;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:105 */
+.hs-wrap .hs-inner .hs-complete .hs-step-circle {
+    background-color: #fff!important;
+    border: 1px solid #03a9f4;
+}
+/* /Users/seanlanktree/WebstormProjects/vvdev-5-0/packages/local/valence-common/classic/sass/src/widget/hsteps/HSteps.scss:111 */
+.hs-wrap .hs-inner .hs-incomplete:not(.hs-selected) .hs-step-circle {
+    background-color: #fff!important;
+    border: 1px solid #db4437;
+}

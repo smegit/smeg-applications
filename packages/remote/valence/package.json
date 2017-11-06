@@ -1,0 +1,43 @@
+{
+  "name": "valence",
+  "namespace": "valence",
+  "format": "1",
+  "version": "5.0",
+  "creator": "CNX",
+  "summary": "Provides basic Portal security.",
+  "detailedDescription": "The valence package provides Portal security and various utility methods for interacting with the Portal.",
+  "type": "code",
+  "signatures": [
+    {
+      "name": "CNX",
+      "uuid": "39a06e6a-3c7a-4a1e-abc1-ee02d111b8c0",
+      "created": "2016-06-07T21:12:00Z",
+      "algorithm": "SHA1withRSA",
+      "nonce": "l9Ad7Fxj9So\u003d",
+      "signature": "LyD0qU7TnkOAFqTvyyP+QqCackR1Qf6lgcAewUeYLM/rHtNxIEEc15co84S/ketU/LZ3KYvJaWcRFtUQD+Lg67BpgGpmQhEm/GDwzICtzaUbGkD5sV+yhVTNDJ2aJE/xJ3p+TEXDvSPDgqIvuFsMHQSI2E5thR1FbR/71kLynAaw0o8gpPVZd8+r7vqEIhdgbuHb3r/gCIkZ+Vf23KcfEBFlq8l2iTmExASgbQFlQC12kWEbaTexybuwlWR1EisJiPqVYflmcy3/J0RXbfExKH9BkfOws0uPUdTrOt1DmmYYHwEqyCb+9eFWtNay8ugyT+J+DwGu/yq8H8Y65XBFXA\u003d\u003d"
+    }
+  ],
+  "slicer": {
+    "js": [
+      {
+        "path": "${package.dir}/sass/example/custom.js",
+        "isWidgetManifest": true
+      }
+    ]
+  },
+  "toolkit": "${args.toolkit}",
+  "output": "${workspace.dir}/resources",
+  "sass": {
+    "namespace": "valence",
+    "etc": "${package.dir}/sass/etc/all.scss,${package.dir}/${toolkit.name}/sass/etc/all.scss",
+    "var": "${package.dir}/sass/var,${package.dir}/${toolkit.name}/sass/var",
+    "src": "${package.dir}/sass/src,${package.dir}/${toolkit.name}/sass/src"
+  },
+  "classpath": "${package.dir}/src,${package.dir}/${toolkit.name}/src",
+  "overrides": "${package.dir}/overrides,${package.dir}/${toolkit.name}/overrides",
+  "example": {
+    "path": [
+      "${package.dir}/examples"
+    ]
+  }
+}

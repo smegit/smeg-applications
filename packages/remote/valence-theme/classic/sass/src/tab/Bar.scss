@@ -1,0 +1,29 @@
+@include extjs-tab-bar-ui(
+  $ui:'background',
+  $ui-strip-height:2px,
+  $ui-strip-background-color:$bg-color,
+  $ui-strip-border-width:0,
+  $ui-background-color:$bg-color
+);
+@include extjs-tab-bar-ui(
+  $ui:'white',
+  $ui-strip-height:2px,
+  $ui-strip-background-color:#fff,
+  $ui-strip-border-width:0,
+  $ui-background-color:#fff
+);
+@include extjs-tab-bar-ui(
+$ui:'primary-dark',
+$ui-strip-height:2px,
+$ui-strip-background-color:$primary-dark-color,
+$ui-strip-border-width:0,
+$ui-background-color:$primary-dark-color
+);
+
+.x-tab-bar-background,.x-tab-bar-white{
+  .x-box-scroller-tab-bar-background{
+    color:$black-2-color!important;
+  }
+}
+
+

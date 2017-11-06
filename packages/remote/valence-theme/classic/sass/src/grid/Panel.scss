@@ -1,0 +1,42 @@
+@include extjs-panel-ui(
+  $ui : 'slim'
+);
+
+.x-panel-slim.x-grid{
+  .x-column-header-inner,.x-grid-cell-inner{
+    padding:8px 4px;
+  }
+  .x-column-header-align-right .x-column-header-text{
+    margin-right:4px;
+  }
+}
+
+.x-panel-background.x-grid{
+  .x-grid-header-ct{
+    border:none;
+    background-color:$bg-color;
+  }
+  .x-column-header{
+    background-color:$bg-color;
+  }
+  .x-grid-view{
+    border:1px solid $panel-body-border-color;
+    overflow-x:hidden!important;
+    border-top:none;
+    border-bottom:none;
+  }
+}
+
+.x-grid-td{
+  vertical-align:middle;
+}
+
+.x-grid-empty,.vv-empty-text-wrap {
+  position : absolute;
+  top : 0;
+  left:0;
+  width: 100%;
+  height: 100%;
+  padding:0 !important;
+  z-index: 10;
+}

@@ -1,0 +1,55 @@
+.x-toolbar-transparent,.x-toolbar-background{
+  @media screen and (max-width: 540px) {
+    padding:4px 4px 4px 4px;
+  }
+  @media screen and (min-width: 541px) {
+    padding:8px 8px 8px 24px;
+  }
+  border :none;
+  .x-button{
+    padding:7px 7px;
+    min-width: 30px;
+    @media screen and (max-width: 540px) {
+      margin-left:8px!important;
+      margin-right:8px!important;
+    }
+    @media screen and (min-width: 541px) {
+      margin-left:20px!important;
+      margin-right:10px!important;
+    }
+    border:none;
+    background-image:none!important;
+    background-color:inherit!important;
+    .x-button-label {
+      font-size: 18px!important;
+      color:$valence-blue;
+      text-transform: uppercase;
+    }
+  }
+  .x-button-action-secondary-color {
+    @extend .depth-1;
+    height: 48px;
+    background-color:$secondary-color!important;
+    border-radius:4px;
+    .x-button-label {
+      color:$white-1-color!important;
+    }
+  }
+  .x-button-action-secondary-dark-color {
+    @extend .depth-1;
+    height:48px;
+    background-color:$secondary-color!important;
+    border-radius:4px;
+    .x-button-label {
+      color:$white-1-color!important;
+    }
+  }
+}
+
+.x-toolbar-transparent{
+  background-color:#fff;
+}
+
+.x-toolbar-background {
+  background-color:$bg-color;
+}

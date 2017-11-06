@@ -1,0 +1,43 @@
+.w-snackbar-outer{
+  opacity:0;
+  height:48px;
+  background-color:#323232;
+  min-width:288px;
+  max-width:568px;
+  padding:14px 24px;
+  color:#FFF;
+  bottom:-10px;
+  @include transform(translateY(47px));
+  position: fixed!important;
+  z-index: 1200;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  @include transition(.15s cubic-bezier(0.4,0.0,1,1),opacity .15s cubic-bezier(0.4,0.0,1,1),visibility 0ms linear .15s);
+  .w-snackbar-text{
+    font-size:14px;
+    font-weight:400;
+  }
+  .w-snackbar-btn{
+    font-weight:600;
+    margin-left:48px;
+    float:right;
+    cursor:pointer;
+    color:$blue;
+  }
+}
+.w-snackbar-full{
+  width:101%;
+  max-width:none;
+}
+.w-snackbar-push{
+  @include transition(.15s cubic-bezier(0.4,0.0,1,1),opacity .15s cubic-bezier(0.4,0.0,1,1),visibility 0ms linear .15s);
+  @include transform(translateY(0));
+}
+.w-snackbar-outer.is-active{
+  opacity:1;
+  @include transform(translateY(0));
+}
+.w-snackbar-push.is-active{
+  opacity:1;
+  @include transform(translateY(-48px));
+}

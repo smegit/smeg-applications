@@ -1,0 +1,54 @@
+.vv-connection-cnt-tablet {
+  width: 400px;
+  background-color: #fff;
+  .vv-connection-form {
+    width : 380px;
+    .x-body {
+      width: 90%;
+      margin: 0 auto;
+      padding: 15px;
+      .x-form-inner {
+        background-color: inherit;
+        .vv-connection-hdr {
+          text-align: center;
+          width: 100%;
+          font-size: 18px;
+          padding: 5px 0;
+          font-weight:600;
+        }
+        .vv-connection-desc-lbl, .vv-connection-url-lbl, .vv-connection-port-lbl, .vv-connection-autostartapp-lbl {
+          font-weight: 500;
+          background-color: inherit;
+        }
+        .vv-connection-desc, .vv-connection-url, .vv-connection-port, .vv-connection-autostartapp {
+          .x-form-field {
+            border: 1px solid $black-2-color;
+          }
+        }
+        .vv-field-invalid {
+          .x-form-field {
+            border: 1px solid $secondary-dark-color !important;
+          }
+        }
+        .vv-connection-validation {
+          color : $secondary-dark-color;
+          padding-top: 5px;
+          text-align:center;
+          line-height: 16px;
+          span {
+            color : $secondary-dark-color;
+            font-size : 16px;
+            line-height: 16px;
+            position : absolute;
+            left : 25px;
+          }
+        }
+        .vv-connection-save-btn {
+          margin-top: 8px;
+        }
+      }
+    }
+
+  }
+}
+

@@ -1,0 +1,39 @@
+.x-btn-floating-action-small {
+  background-color: $secondary-color;
+  font-size: 24px;
+  @include transform(scale(0));
+  z-index:1000;
+  @include border-radius(50%);
+  @include transition(all .5s);
+  @extend .depth-1;
+
+  &:hover:not(.x-btn-disabled) {
+    @extend .depth-2;
+    background-color:lighten($secondary-color,5%);
+  }
+  .x-btn-icon-el{
+    color: $white-1-color;
+    font-size:24px;
+    line-height:24px;
+  }
+}
+.x-btn-floating-action-sub{
+  background-color: $primary-color;
+  .x-btn-icon-el{
+    color: $white-1-color;
+    font-size:18px;
+    line-height:18px;
+  }
+  &:hover:not(.x-btn-disabled) {
+    background-color:lighten($primary-color,5%);
+  }
+}
+.x-btn-scale-in{
+  @include transform(scale(1));
+}
+.x-btn-position-br{
+  bottom:32px!important;
+  right:20px!important;
+  top:initial!important;
+  left:initial!important;
+}

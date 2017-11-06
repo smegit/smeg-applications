@@ -1,0 +1,55 @@
+.cart {
+  border-top:2px solid #dcdcdc;
+  background-color:#fafafa !important;
+  overflow-x: hidden !important;
+}
+
+.cart > .x-toolbar {
+  border-top: solid 1px #ccc !important;
+  border-bottom: solid 1px #ccc !important;
+}
+
+.btn-shopping {
+  background-color: #6f6f6f;
+  background-image: none;
+}
+
+.btn-checkout {
+  @extend .depth-1;
+  background-color:#2196F3;
+  background-image: none;
+}
+
+.btn-checkout-over {
+  background-color: #53a8f3;
+}
+
+.btn-shopping-over {
+  background-color:#777;
+}
+
+.btn-checkout .x-btn-inner, .btn-shopping .x-btn-inner{
+  color: white;
+}
+
+.x-panel-inset {
+  border: 1px solid $black-3-color;
+  .x-panel-header-inset {
+    padding: 8px;
+    height : 32px;
+    .x-title-text {
+      color : $black-1-color;
+    }
+  }
+  .x-panel-body-inset {
+    border-top : 1px solid $black-3-color !important;
+    background: #fff;
+  }
+}
+
+.combo-cart-stock {
+  .x-form-item-label-text {
+    position: relative;
+    top: 2px;
+  }
+}

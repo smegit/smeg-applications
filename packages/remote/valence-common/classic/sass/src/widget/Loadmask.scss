@@ -1,0 +1,353 @@
+.w-mask-outer{
+  position:absolute!important;
+  top:0;
+  left:0;
+  height:100%;
+  width:100%;
+  z-index:20000;
+  background-color:$bg-color-7;
+}
+.w-mask-inner {
+  width:250px;
+  position:relative;
+  top:50%;
+  left:50%;
+  margin-left:-125px;
+  margin-top:-45px;
+  .w-mask-title{
+    color:#333;
+    padding:15px;
+    position:relative;
+    text-align:center;
+    font-size:15px;
+  }
+  .w-mask-pbar{
+    height:5px;
+    .w-mask-pbar-full{
+      height:100%;
+      display:block;
+      background:$primary-dark-color;
+      width:100%;
+      overflow:hidden;
+    }
+    .w-mask-pbar-fill{
+      height:100%;
+      display:block;
+      background:$secondary-dark-color;
+      position:relative;
+      width:0;
+      -webkit-transition:width 600ms ease-out;
+      -moz-transition:width 600ms ease-out;
+      transition:width 600ms ease-out;
+      -webkit-animation:pbar 1s infinite;
+      animation:pbar 800ms infinite;
+    }
+  }
+}
+.w-mask-pbar-shrink{
+  animation:shrinkbar 500ms;
+}
+.w-mask-title-fade{
+  animation:fadeText 500ms;
+}
+
+@-webkit-keyframes shrinkbar {
+  20%{
+     height:4px;
+   }
+  40%{
+    height:3px;
+  }
+  60%{
+    height:2px;
+  }
+  80%{
+    height:1px;
+  }
+  100%{
+    height:0;
+  }
+}
+@-webkit-keyframes fadeText {
+  20%{
+    opacity:0.8;
+  }
+  40%{
+    opacity:0.6;
+  }
+  60%{
+    opacity:0.4;
+  }
+  80%{
+    opacity:0.2;
+  }
+  100%{
+    opacity:0;
+  }
+}
+
+/* Chrome, Safari, Opera */
+@-webkit-keyframes pbar {
+  0%{
+    width:0%;
+  }
+  1%{
+    width:5%;
+  }
+  2%{
+    width:10%;
+  }
+  3%{
+    width:15%;
+  }
+  5%{
+    width:20%;
+  }
+  7%{
+    width:25%;
+  }
+  8%{
+    width:30%;
+  }
+  9%{
+    width:35%;
+  }
+  10%{
+    width:40%;
+    left:1%;
+  }
+  20%{
+    left:20%;
+  }
+  30%{
+    left:30%;
+  }
+  40%{
+    left:40%;
+  }
+  50%{
+    left:50%;
+  }
+  60%{
+    left:60%;
+  }
+  70%{
+    left:none;
+    right:1px;
+    width:30%;
+  }
+  80%{
+    left:80%;
+    width:20%;
+  }
+  90%{
+    left:90%;
+    width:10%;
+  }
+  100%{
+    left:100%;
+    width:1%;
+  }
+
+}
+
+.rect {
+  height: 60px;
+  text-align: center;
+  margin-top:-60px;
+  .w-mask-title{
+    padding:0;
+  }
+  p{
+    margin:0;
+  }
+  .ui{
+    background-color: $secondary-color;
+    height: 100%;
+    width: 6px;
+    display: inline-block;
+    margin-left:2px;
+    -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+    animation: sk-stretchdelay 1.2s infinite ease-in-out;
+  }
+  .rect2{
+    -webkit-animation-delay: -1.1s;
+    animation-delay: -1.1s;
+  }
+  .rect3{
+    -webkit-animation-delay: -1.0s;
+    animation-delay: -1.0s;
+  }
+  .rect4{
+    -webkit-animation-delay: -0.9s;
+    animation-delay: -0.9s;
+  }
+  .rect5{
+    -webkit-animation-delay: -0.8s;
+    animation-delay: -0.8s;
+  }
+}
+
+@-webkit-keyframes sk-stretchdelay {
+  0%, 40%, 100% { -webkit-transform: scaleY(0.4) }
+  20% { -webkit-transform: scaleY(1.0) }
+}
+
+@keyframes sk-stretchdelay {
+  0%, 40%, 100% {
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }  20% {
+       transform: scaleY(1.0);
+       -webkit-transform: scaleY(1.0);
+     }
+}
+
+.w-spinner{
+  height:60px;
+  width:60px;
+  margin-left:-30px;
+  margin-top:-85px;
+  .w-mask-title{
+    width:250px;
+    margin-left:-95px;
+    padding:75px 0 0 0;
+  }
+  .child{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    &:before{
+      content: '';
+      display: block;
+      margin: 0 auto;
+      width: 15%;
+      height: 15%;
+      background-color: $secondary-color;
+      border-radius: 100%;
+      -webkit-animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
+      animation: sk-circleBounceDelay 1.2s infinite ease-in-out both;
+    }
+  }
+  .circle2 {
+    -webkit-transform: rotate(30deg);
+    -ms-transform: rotate(30deg);
+    transform: rotate(30deg);
+    &:before{
+      -webkit-animation-delay: -1.1s;
+      animation-delay: -1.1s;
+    }
+  }
+  .circle3 {
+    -webkit-transform: rotate(60deg);
+    -ms-transform: rotate(60deg);
+    transform: rotate(60deg);
+    &:before{
+      -webkit-animation-delay: -1s;
+      animation-delay: -1s;
+    }
+  }
+  .circle4 {
+    -webkit-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+    &:before{
+      -webkit-animation-delay: -0.9s;
+      animation-delay: -0.9s;
+    }
+  }
+  .circle5 {
+    -webkit-transform: rotate(120deg);
+    -ms-transform: rotate(120deg);
+    transform: rotate(120deg);
+    &:before{
+      -webkit-animation-delay: -0.8s;
+      animation-delay: -0.8s;
+    }
+  }
+  .circle6 {
+    -webkit-transform: rotate(150deg);
+    -ms-transform: rotate(150deg);
+    transform: rotate(150deg);
+    &:before{
+      -webkit-animation-delay: -0.7s;
+      animation-delay: -0.7s;
+    }
+  }
+  .circle7 {
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+    &:before{
+      -webkit-animation-delay: -0.6s;
+      animation-delay: -0.6s;
+    }
+  }
+  .circle8 {
+    -webkit-transform: rotate(210deg);
+    -ms-transform: rotate(210deg);
+    transform: rotate(210deg);
+    &:before{
+      -webkit-animation-delay: -0.5s;
+      animation-delay: -0.5s;
+    }
+  }
+  .circle9 {
+    -webkit-transform: rotate(240deg);
+    -ms-transform: rotate(240deg);
+    transform: rotate(240deg);
+    &:before{
+      -webkit-animation-delay: -0.4s;
+      animation-delay: -0.4s;
+    }
+  }
+  .circle10 {
+    -webkit-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);
+    transform: rotate(270deg);
+    &:before{
+      -webkit-animation-delay: -0.3s;
+      animation-delay: -0.3s;
+    }
+  }
+  .circle11 {
+    -webkit-transform: rotate(300deg);
+    -ms-transform: rotate(300deg);
+    transform: rotate(300deg);
+    &:before{
+      -webkit-animation-delay: -0.2s;
+      animation-delay: -0.2s;
+    }
+  }
+  .circle12 {
+    -webkit-transform: rotate(330deg);
+    -ms-transform: rotate(330deg);
+    transform: rotate(330deg);
+    &:before{
+      -webkit-animation-delay: -0.1s;
+      animation-delay: -0.1s;
+    }
+  }
+}
+
+@-webkit-keyframes sk-circleBounceDelay {
+  0%, 80%, 100% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  } 40% {
+      -webkit-transform: scale(1);
+      transform: scale(1);
+    }
+}
+
+@keyframes sk-circleBounceDelay {
+  0%, 80%, 100% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  } 40% {
+      -webkit-transform: scale(1);
+      transform: scale(1);
+    }
+}

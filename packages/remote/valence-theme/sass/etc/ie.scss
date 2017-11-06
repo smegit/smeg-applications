@@ -1,0 +1,11 @@
+//hide the clear text items
+::-ms-clear {
+  display: none;
+}
+::-ms-reveal {
+  display: none;
+}
+//auto hide the scrollbars
+*{
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}

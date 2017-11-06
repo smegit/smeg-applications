@@ -1,0 +1,228 @@
+@include extjs-button-small-ui(
+$ui: 'transparent',
+$border-color: transparent,
+$border-color-over: transparent,
+$border-color-focus: transparent,
+$border-color-pressed: transparent,
+$border-color-focus-over: transparent,
+$border-color-focus-pressed: transparent,
+$border-color-disabled: transparent,
+$background-color: transparent,
+$background-color-over: transparent,
+$background-color-focus: transparent,
+$background-color-pressed: transparent,
+$background-color-focus-over: transparent,
+$background-color-focus-pressed: transparent,
+$background-color-disabled: transparent,
+$background-gradient-over: 'none',
+$color: $color,
+$color-over: darken($color, 10),
+$color-focus: $color,
+$color-pressed: $color,
+$color-focus-over: $color,
+$color-focus-pressed: $color,
+$color-disabled: lighten($color, 10%),
+$inner-border-color: transparent,
+$inner-border-color-over: transparent,
+$inner-border-color-focus: transparent,
+$inner-border-color-pressed: transparent,
+$inner-border-color-focus-over: transparent,
+$inner-border-color-focus-pressed: transparent,
+$inner-border-color-disabled: transparent
+);
+@include extjs-button-small-ui(
+$ui: 'transparent-action',
+$border-color: transparent,
+$border-color-over: transparent,
+$border-color-focus: transparent,
+$border-color-pressed: transparent,
+$border-color-focus-over: transparent,
+$border-color-focus-pressed: transparent,
+$border-color-disabled: transparent,
+$background-color: transparent,
+$background-color-over: transparent,
+$background-color-focus: transparent,
+$background-color-pressed: transparent,
+$background-color-focus-over: transparent,
+$background-color-focus-pressed: transparent,
+$background-color-disabled: transparent,
+$background-gradient-over: 'none',
+$color: $secondary-dark-color,
+$color-over: darken($secondary-dark-color, 5),
+$color-focus: $secondary-dark-color,
+$color-pressed: $secondary-dark-color,
+$color-focus-over: $secondary-dark-color,
+$color-focus-pressed: $secondary-dark-color,
+$color-disabled: lighten($secondary-dark-color, 10%),
+$inner-border-color: transparent,
+$inner-border-color-over: transparent,
+$inner-border-color-focus: transparent,
+$inner-border-color-pressed: transparent,
+$inner-border-color-focus-over: transparent,
+$inner-border-color-focus-pressed: transparent,
+$inner-border-color-disabled: transparent,
+$padding: 0 8
+);
+
+@include extjs-button-small-ui(
+$ui: 'transparent-action-blue',
+$border-color: transparent,
+$border-color-over: transparent,
+$border-color-focus: transparent,
+$border-color-pressed: transparent,
+$border-color-focus-over: transparent,
+$border-color-focus-pressed: transparent,
+$border-color-disabled: transparent,
+$background-color: transparent,
+$background-color-over: transparent,
+$background-color-focus: transparent,
+$background-color-pressed: transparent,
+$background-color-focus-over: transparent,
+$background-color-focus-pressed: transparent,
+$background-color-disabled: transparent,
+$background-gradient-over: 'none',
+$color: $blue,
+$color-over: darken($blue, 5),
+$color-focus: $blue,
+$color-pressed: $blue,
+$color-focus-over: $blue,
+$color-focus-pressed: $blue,
+$color-disabled: lighten($blue, 10%),
+$inner-border-color: transparent,
+$inner-border-color-over: transparent,
+$inner-border-color-focus: transparent,
+$inner-border-color-pressed: transparent,
+$inner-border-color-focus-over: transparent,
+$inner-border-color-focus-pressed: transparent,
+$inner-border-color-disabled: transparent,
+$padding: 0 8
+);
+
+@include extjs-button-medium-ui(
+$ui: 'transparent',
+$border-color: transparent,
+$border-color-over: transparent,
+$border-color-focus: transparent,
+$border-color-pressed: transparent,
+$border-color-focus-over: transparent,
+$border-color-focus-pressed: transparent,
+$border-color-disabled: transparent,
+$background-color: transparent,
+$background-color-over: transparent,
+$background-color-focus: transparent,
+$background-color-pressed: transparent,
+$background-color-focus-over: transparent,
+$background-color-focus-pressed: transparent,
+$background-color-disabled: transparent,
+$background-gradient-over: 'none',
+$color: $color,
+$color-over: darken($color, 10),
+$color-focus: $color,
+$color-pressed: $color,
+$color-focus-over: $color,
+$color-focus-pressed: $color,
+$color-disabled: lighten($color, 10%),
+$inner-border-color: transparent,
+$inner-border-color-over: transparent,
+$inner-border-color-focus: transparent,
+$inner-border-color-pressed: transparent,
+$inner-border-color-focus-over: transparent,
+$inner-border-color-focus-pressed: transparent,
+$inner-border-color-disabled: transparent
+);
+@include extjs-button-medium-ui(
+$ui: 'transparent-action',
+$border-color: transparent,
+$border-color-over: transparent,
+$border-color-focus: transparent,
+$border-color-pressed: transparent,
+$border-color-focus-over: transparent,
+$border-color-focus-pressed: transparent,
+$border-color-disabled: transparent,
+$background-color: transparent,
+$background-color-over: transparent,
+$background-color-focus: transparent,
+$background-color-pressed: transparent,
+$background-color-focus-over: transparent,
+$background-color-focus-pressed: transparent,
+$background-color-disabled: transparent,
+$background-gradient-over: 'none',
+$color: $secondary-dark-color,
+$color-over: darken($secondary-dark-color, 5),
+$color-focus: $secondary-dark-color,
+$color-pressed: $secondary-dark-color,
+$color-focus-over: $secondary-dark-color,
+$color-focus-pressed: $secondary-dark-color,
+$color-disabled: lighten($secondary-dark-color, 10%),
+$inner-border-color: transparent,
+$inner-border-color-over: transparent,
+$inner-border-color-focus: transparent,
+$inner-border-color-pressed: transparent,
+$inner-border-color-focus-over: transparent,
+$inner-border-color-focus-pressed: transparent,
+$inner-border-color-disabled: transparent,
+$padding: 0 8
+);
+
+@include extjs-button-medium-ui(
+$ui: 'transparent-action-blue',
+$border-color: transparent,
+$border-color-over: transparent,
+$border-color-focus: transparent,
+$border-color-pressed: transparent,
+$border-color-focus-over: transparent,
+$border-color-focus-pressed: transparent,
+$border-color-disabled: transparent,
+$background-color: transparent,
+$background-color-over: transparent,
+$background-color-focus: transparent,
+$background-color-pressed: transparent,
+$background-color-focus-over: transparent,
+$background-color-focus-pressed: transparent,
+$background-color-disabled: transparent,
+$background-gradient-over: 'none',
+$color: $blue,
+$color-over: darken($blue, 5),
+$color-focus: $blue,
+$color-pressed: $blue,
+$color-focus-over: $blue,
+$color-focus-pressed: $blue,
+$color-disabled: lighten($blue, 10%),
+$inner-border-color: transparent,
+$inner-border-color-over: transparent,
+$inner-border-color-focus: transparent,
+$inner-border-color-pressed: transparent,
+$inner-border-color-focus-over: transparent,
+$inner-border-color-focus-pressed: transparent,
+$inner-border-color-disabled: transparent,
+$padding: 0 8
+);
+@include extjs-button-toolbar-small-ui(
+$ui: 'primary',
+$background-color: $primary-color
+);
+@include extjs-button-toolbar-medium-ui(
+$ui: 'primary',
+$background-color: $primary-color
+);
+@include extjs-button-small-ui(
+$ui: 'primary',
+$background-color: $primary-color
+);
+@include extjs-button-medium-ui(
+$ui: 'primary',
+$background-color: $primary-color
+);
+
+.x-btn {
+  @include transition(all .3s);
+}
+
+.x-btn-over.depth-1 {
+  @extend .depth-2;
+}
+
+.x-btn-disabled {
+  opacity: 0.3;
+}
+

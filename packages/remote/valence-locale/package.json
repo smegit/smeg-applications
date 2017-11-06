@@ -1,0 +1,43 @@
+{
+  "name": "valence-locale",
+  "namespace": "Valence.locale",
+  "format": "1",
+  "version": "5.0",
+  "creator": "CNX",
+  "summary": "Provides all locale variables for the Portal and all Valence applications.",
+  "detailedDescription": " ",
+  "type": "code",
+  "signatures": [
+    {
+      "name": "CNX",
+      "uuid": "39a06e6a-3c7a-4a1e-abc1-ee02d111b8c0",
+      "created": "2016-06-07T17:06:22Z",
+      "algorithm": "SHA1withRSA",
+      "nonce": "hmcRfMW9qA4\u003d",
+      "signature": "WlQtLTABI93YESlm995aWDdoOUBJb0sV6ifep32EMtIM7jRoyMpUNQE7fKoU2JXxmAzxzf51KlCsTq3RfzPjgMkoOHedW8WeDimla2vF7BUT/WPay8pne06qFNHf+lxGVbbkGCuXnKuDpbjkLXwzNlA3/LIg9ReIuJkpkD0oMQ4CxKsjDpJEoo4dAILV2olYxM5z7gDrWFU0flE/BycC/8XR2lacjWOGElJQSmW1d2CCzfXIafpy0axhFN1X3UnzqML0kPl3K02iACq+g28hz0NYVDijXLUTWgkmkAt8O5NhIJaci4cvmaW0BrZhZ1oyRnE5NmR5g+/uOo1wdztSaw\u003d\u003d"
+    }
+  ],
+  "slicer": {
+    "js": [
+      {
+        "path": "${package.dir}/sass/example/custom.js",
+        "isWidgetManifest": true
+      }
+    ]
+  },
+  "toolkit": "${args.toolkit}",
+  "output": "${package.dir}/build",
+  "sass": {
+    "namespace": "Valence.locale",
+    "etc": "${package.dir}/sass/etc/all.scss,${package.dir}/${toolkit.name}/sass/etc/all.scss",
+    "var": "${package.dir}/sass/var,${package.dir}/${toolkit.name}/sass/var",
+    "src": "${package.dir}/sass/src,${package.dir}/${toolkit.name}/sass/src"
+  },
+  "classpath": "${package.dir}/src,${package.dir}/${toolkit.name}/src",
+  "overrides": "${package.dir}/overrides,${package.dir}/${toolkit.name}/overrides",
+  "example": {
+    "path": [
+      "${package.dir}/examples"
+    ]
+  }
+}

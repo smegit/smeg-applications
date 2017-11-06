@@ -1,0 +1,85 @@
+#!/bin/bash
+
+# Valence build script
+# to run open terminal, navigate to project root and type ./.build
+
+# first argument is the app
+# second argument is the buildtype
+
+
+# set path for sencha command
+#
+# check if Sencha CMD [version] exists
+version=6.1.2.15
+versionLinux=6.1.3.28
+userCMD=/Users/$USER/bin/Sencha/Cmd/$version
+usrCMD=/usr/bin/Sencha/Cmd/$versionLinux
+
+if [ -e $userCMD ] || [ -e $usrCMD ]
+then
+    export SENCHA_CMD_3_0_0=$usrCMD
+    export PATH=$usrCMD:$PATH
+    export PATH=$userCMD:$PATH
+    HOMEPATH=$PWD
+else
+    echo "Error: Must use Sencha CMD $version on Mac or $versionLinux on Linux"
+    exit 0;
+fi
+
+# Check if first argument is provided
+if [ $1 == ""]
+then
+    echo "Please specify which app to build or "*ALL" for all apps as the first argument"
+    exit 0;
+fi
+
+# Check if second argument is provided
+if [ $2 == ""]
+then
+    buildtype=testing
+else
+    buildtype=$2
+fi
+
+# Get current directory
+CWD=$(pwd)
+
+# Check which
+if [ "$1" == "*ALL" ]
+then
+    # Check for applications
+    apps=apps/
+    cd $apps
+
+    # Get all directories that contains a build.xml file and attempt to build the application
+    #
+    find . -name 'build.xml' -print0 | xargs -0 -n1 dirname | sort --unique|while read appDirectory; do
+        echo "Building Application $appDirectory for $buildtype ..."
+        cd $appDirectory
+        sencha app build $3 $buildtype
+        cd $CWD
+        cd $apps
+    done
+elif [ "$1" == "*ALLPackages" ]
+then
+    function buildPackage {
+        basePackageDir=packages/local/
+        buildMessage="Building Package "
+
+        # Build Valence Locale
+        echo $buildMessage$1
+        package=$basePackageDir$1
+        cd $CWD
+        cd $package
+        sencha package build
+    }
+else
+    appname=$1
+    appdirectory=apps/$appname
+    if [ -e $appdirectory ]
+    then
+        echo "Building $appname for $buildtype ..."
+        cd $appdirectory
+        sencha app build $3 $buildtype
+    fi
+fi

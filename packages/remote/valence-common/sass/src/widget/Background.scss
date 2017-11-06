@@ -1,0 +1,8 @@
+.w-bg{
+  position:absolute!important;
+  width:20px!important;
+  height:20px!important;
+  background-color:$bg-color;
+  @include transition(all .3s);
+  border-radius:50%!important;
+}

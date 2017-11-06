@@ -1,0 +1,36 @@
+.w-selector-wrap{
+  font-weight: 500;
+}
+.w-selector-item,.w-selector-item-sml{
+  padding:3px;
+  display:table-cell;
+  border:1px solid $black-3-color;
+  min-width:85px;
+  text-align:center;
+  @include transition(all 100ms ease-in);
+  background-color:$bg-color;
+  color:$black-1-color;
+  max-width:125px;
+  vertical-align:middle;
+  height:100%;
+}
+.w-selector-item-sml{
+  min-width:40px;
+  padding:5px 2px;
+}
+.w-selector-item-over{
+  @include transition(all 100ms ease-in);
+  color: $white-1-color;
+  background-color:lighten($primary-color,25%)!important;
+  cursor:pointer;
+}
+.w-selector-item-sel{
+  background-color:lighten($primary-color,15%)!important;
+  @include transition(all 100ms ease-in);
+  color:$white-1-color!important;
+}
+.x-panel-background{
+  .w-selector-item,.w-selector-item-sml{
+    background-color:#FFF;
+  }
+}

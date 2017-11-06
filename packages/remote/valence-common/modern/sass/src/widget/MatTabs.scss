@@ -1,0 +1,17 @@
+.x-tabbar-background,.x-tabbar-white{
+  .mattabs-active-div{
+    background-color:$primary-dark-color;
+  }
+}
+.x-tabbar-primary-dark{
+  .mattabs-active-div{
+    background-color:#FFF;
+  }
+}
+.mattabs-active-div{
+  height: 4px;
+  bottom: 0px;
+  position: absolute;
+  z-index: 1;
+  @include transition(all .1s);
+}

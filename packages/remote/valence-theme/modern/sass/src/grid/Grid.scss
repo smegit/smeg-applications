@@ -1,0 +1,22 @@
+.x-grid-background {
+  .x-grid-header-container {
+    border-width : 0px !important;
+    .x-grid-column {
+      background: $bg-color !important;
+      border-width : 0px !important;
+      height : 40px;
+      .x-inner-html {
+        color : $black-2-color;
+      }
+    }
+  }
+  .x-dock-body {
+    border: 1px solid $black-3-color;
+  }
+}
+
+.x-grid-emptytext {
+  .x-innerhtml{
+    height: 100%;
+  }
+}

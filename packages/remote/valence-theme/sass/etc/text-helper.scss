@@ -1,0 +1,30 @@
+.vv-text-clickable{
+  cursor:pointer!important;
+  font:400 14px/18px "Roboto","Open Sans","Helvetica Neue",helvetica,arial,verdana,sans-serif;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.vv-text-clickable-primary {
+  @extend .vv-text-clickable;
+  color: $valence-blue;
+}
+.vv-text-clickable-secondary {
+  @extend .vv-text-clickable;
+  color: $black-2-color;
+}
+.vv-text-secondary-dark{
+  color:$secondary-dark-color;
+}
+
+.font-size-19 {
+  font-size: 19px!important;
+}
+
+.font-size-26 {
+  font-size: 26px!important;
+}
+
+.font-red {
+  color: $red!important;
+}

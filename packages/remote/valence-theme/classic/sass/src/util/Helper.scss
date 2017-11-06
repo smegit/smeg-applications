@@ -1,0 +1,37 @@
+.vv-form-item-noborder{
+  .x-form-trigger-wrap{
+    border-width:0;
+  }
+}
+.vv-form-item-noborder-trl{
+  .x-form-trigger-wrap{
+    border-top-width:0;
+    border-right-width:0;
+    border-left-width:0;
+  }
+}
+
+.vv-form-item-noborder-r{
+  .x-form-trigger-wrap{
+    border-right-width:0;
+  }
+}
+/* field helper classes */
+.vv-form-item-full-width{
+  width:100%!important;
+  @extend .x-form-item;
+  .x-form-trigger-wrap{
+    border-width:0 0 1px 0;
+    border-color:$black-4-color!important;
+  }
+  input,.x-form-trigger{
+    background-color:$bg-color;
+  }
+}
+.x-window{
+  .vv-form-item-full-width{
+    .x-form-trigger-wrap{
+      border-top-width:1px;
+    }
+  }
+}

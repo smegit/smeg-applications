@@ -1,0 +1,9 @@
+.x-panel-header.x-docked-top {
+  border-bottom : 1px solid $black-4-color !important;
+}
+
+.x-sheet-dialog {
+  .x-panel-header.x-docked-top {
+    border-bottom-width: 0px !important;
+  }
+}

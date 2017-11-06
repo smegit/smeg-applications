@@ -1,0 +1,55 @@
+.x-panel{
+  border-radius:2px;
+  .x-panel-header{
+    border-radius:2px 2px 0 0;
+  }
+  .x-panel-body{
+    border-radius:0 0 2px 2px;
+  }
+}
+.x-panel-header {
+  .x-btn-icon-el {
+    line-height: 18px !important;
+    font-size: 18px !important;
+    padding: 0 5px;
+  }
+}
+@include extjs-panel-ui(
+  $ui : 'background',
+  $ui-header-background-color:$bg-color,
+  $ui-body-background-color:$bg-color,
+  $ui-header-border-color:$black-4-color,
+  $ui-header-color:$black-1-color
+);
+
+@include extjs-panel-ui(
+  $ui : 'primary-dark',
+  $ui-border-color:$primary-dark-color,
+  $ui-header-background-color:$primary-dark-color,
+  $ui-body-background-color:$primary-dark-color,
+  $ui-header-color:$white-1-color,
+  $ui-header-glyph-color:$white-1-color
+);
+
+.x-panel-background{
+  background-color:$bg-color;
+  .x-title-text{
+    color:$black-1-color;
+  }
+  >.x-toolbar-default{
+    background-color:$bg-color;
+  }
+  >.x-toolbar-docked-bottom{
+    border-width:1px!important;
+    border-top:none;
+  }
+  >.x-grid-body{
+    background-color:#fff;
+  }
+  >.x-grid-view{
+    background-color:#fff;
+  }
+  .x-panel-header{
+    border:none;
+  }
+}

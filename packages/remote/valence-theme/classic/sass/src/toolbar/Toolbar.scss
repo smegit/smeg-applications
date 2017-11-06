@@ -1,0 +1,77 @@
+@include extjs-toolbar-ui(
+  $ui : 'primary',
+  $background-color:$primary-color,
+  $border-width:0,
+  $text-color:$white-1-color
+);
+@include extjs-toolbar-ui(
+ $ui : 'primary-dark',
+ $background-color:$primary-dark-color,
+ $border-width:0,
+ $text-color:$white-1-color
+);
+@include extjs-toolbar-ui(
+  $ui : 'primary-lite',
+  $background-color:$primary-lite-color,
+  $border-width:0,
+  $text-color:$black-1-color,
+  $text-font-weight:400
+);
+
+@include extjs-toolbar-ui(
+  $ui : 'secondary',
+  $background-color:$secondary-color,
+  $border-width:0,
+  $text-color:$black-1-color,
+  $text-font-weight:400
+);
+@include extjs-toolbar-ui(
+  $ui : 'secondary-dark',
+  $background-color:$secondary-dark-color,
+  $border-width:0,
+  $text-color:$white-1-color,
+  $text-font-weight:400
+);
+@include extjs-toolbar-ui(
+  $ui : 'secondary-lite',
+  $background-color:$secondary-lite-color,
+  $border-width:0,
+  $text-color:$white-1-color,
+  $text-font-weight:400
+);
+@include extjs-toolbar-ui(
+  $ui : 'background',
+  $background-color:$bg-color,
+  $border-width:0,
+  $text-color:$black-1-color,
+  $text-font-weight:400
+);
+@include extjs-toolbar-ui(
+  $ui : 'white',
+  $background-color:#fff,
+  $border-width:0,
+  $text-color:$black-1-color,
+  $text-font-weight:400
+);
+@include extjs-toolbar-ui(
+  $ui : 'white-bordered',
+  $background-color:#fff,
+  $border-width:1px!important,
+  $border-color:$black-4-color,
+  $text-color:$black-1-color,
+  $text-font-weight:400
+);
+
+
+.x-toolbar-primary,.x-toolbar-primary-dark,.x-toolbar-primary-lite,.x-toolbar-secondary,.x-toolbar-secondary-dark,.x-toolbar-secondary-lite,.x-toolbar-background{
+  .x-toolbar-text{
+    font-weight:400;
+  }
+}
+.x-toolbar-secondary-dark,.x-toolbar-primary-dark{
+  .x-toolbar-text{
+    color:$white-1-color;
+  }
+}
+
+

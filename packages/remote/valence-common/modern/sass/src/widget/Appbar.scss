@@ -1,0 +1,169 @@
+@-webkit-keyframes filterHidePhone {
+  0%{
+    width: 80%;
+  }
+  30% {
+    width: 30%;
+    opacity: 0;
+  }
+  100%{
+    width: 5%;
+    opacity : 0;
+  }
+}
+
+@keyframes filterHidePhone {
+  0%{
+    width: 80%;
+  }
+  30% {
+    width: 30%;
+    opacity: 0;
+  }
+  100%{
+    width: 5%;
+    opacity : 0;
+  }
+}
+
+@-webkit-keyframes filterHide {
+  0%{
+    width: 80%;
+  }
+  100%{
+    width: 5%;
+    opacity : 0;
+  }
+}
+
+@keyframes filterHide {
+  0%{
+    width: 80%;
+  }
+  100%{
+    width: 5%;
+    opacity : 0;
+  }
+}
+
+@-webkit-keyframes filterShow {
+  0% {
+    opacity : 1;
+    width : 5%;
+  }
+  100%{
+    width: 80%;
+  }
+}
+
+@keyframes filterShow {
+  0% {
+    opacity : 1;
+    width : 5%;
+  }
+  100%{
+    width: 80%;
+  }
+}
+
+.vv-appbar-filter-modern {
+  width : 0 !important;
+  opacity : 0;
+}
+
+.vv-appbar-filter-btn-modern {
+  padding-bottom: 6px;
+}
+
+.vv-appbar-filter-modern-show {
+  -webkit-animation: filterShow 500ms forwards;
+  animation: filterShow 500ms forwards;
+}
+
+.x-toolbar-appbar{
+  transition:all .3s;
+  z-index:1;
+  @include box-shadow(0 10px 17px 0 rgba(0, 0, 0, 0.2), 0 10px 20px 0 rgba(0, 0, 0, 0.19));
+  background-color: $primary-dark-color !important;
+  border : none !important;
+
+  .vv-appbar-filter-btn-modern {
+    .x-button-icon {
+      font-size: 23px !important;
+    }
+  }
+
+  .appbar-title,.appbar-filter-btn-modern,.x-button,.x-button-icon,.x-btn-pressing,.x-btn-pressed{
+    @media screen and (max-width:540px){
+      max-width: 300px;
+    }
+    @media screen and (min-width:541px){
+      max-width: 420px;
+    }
+    font-size:20px;
+    font-weight:500;
+    line-height:24px;
+    background-color:inherit;
+    border:none;
+    padding:0;
+    color:$white-1-color !important;
+    .x-button-label{
+      font-size:20px;
+      line-height:24px;
+      padding:0;
+      text-transform:none!important;
+    }
+    .x-button-icon {
+      color : $white-1-color !important;
+    }
+    .x-btn-wrap-default-toolbar-large.x-btn-split-right > .x-btn-button:after{
+      border-right:none;
+    }
+    .x-btn-wrap-default-toolbar-large.x-btn-split-right:after{
+      color:inherit;
+    }
+  }
+  .appbar-title-phone {
+    .fa-caret-left {
+      top: 0px !important;
+    }
+  }
+  .appbar-title {
+    .fa-caret-left {
+      position: relative;
+      top: -3px;
+    }
+  }
+  .vv-appbar-filter-btn-modern {
+    line-height : 20px!important;
+    @extend .font-size-19;
+  }
+  .x-button-label {
+    padding-left: 0 !important;
+  }
+
+  @media screen and (max-width:540px){
+    padding: 10px 8px 10px 12px !important;
+  }
+  @media screen and (min-width:541px){
+      padding: 20px 24px !important;
+  }
+}
+
+.x-toolbar-secondary {
+  background : $secondary-dark-color !important;
+}
+
+@media screen and (max-width:540px){
+  .vv-appbar-filter-modern-hide {
+    -webkit-animation: filterHidePhone 500ms forwards;
+    animation: filterHidePhone 500ms forwards;
+  }
+}
+@media screen and (min-width:541px){
+  .vv-appbar-filter-modern-hide {
+    -webkit-animation: filterHide 500ms forwards;
+    animation: filterHide 500ms forwards;
+  }
+}
+

@@ -1,0 +1,57 @@
+{
+  "name": "valence-common",
+  "namespace": "Valence.common",
+  "format": "1",
+  "version": "5.0",
+  "creator": "CNX",
+  "summary": "Common Valence Components",
+  "detailedDescription": "The valence common package includes UI widgets and helper methods to aid in your application development.",
+  "type": "code",
+  "requires": [
+    "ux"
+  ],
+  "signatures": [
+    {
+      "name": "CNX",
+      "uuid": "39a06e6a-3c7a-4a1e-abc1-ee02d111b8c0",
+      "created": "2016-06-07T17:07:25Z",
+      "algorithm": "SHA1withRSA",
+      "nonce": "hX0ehLWzhC4\u003d",
+      "signature": "fsuWpo1rw4OL3u3tSwpno+HXvmuVoP21RzC0SowwTTv5hwX1sjcMjKssvbPlqTDfw+6B4kBp+NXHiaUvg8i3ZBptYUcuUwPjTBYiLQetzdQ63RnXBWa5SIz6otwtRxlXW+Wj0lpZCOC3KwMp6ya/60fXdNlEFj6XavJ70W2R/qChEQa9oUmRqI0uDCm6S7qfFfuYRJT647YwN2xw5qTQXMwWeB9L0gh7SRF2Y+5Dp9UH5F7O9O/MgDF05zo5E1QbCoPsOvfotVCa3va8sm27YO/QkrYnX+T4FhARJre7MpqEIFQkt917zDizEudETnhr8wAg5vnDHav+h8tmyCFoBw\u003d\u003d"
+    }
+  ],
+  "slicer": {
+    "js": [
+      {
+        "path": "${package.dir}/sass/example/custom.js",
+        "isWidgetManifest": true
+      }
+    ]
+  },
+  "builds": {
+    "classic": {
+      "toolkit": "classic",
+      "theme": "valence-theme"
+    },
+    "modern": {
+      "toolkit": "modern",
+      "theme": "valence-theme"
+    }
+  },
+  "toolkit": "${args.toolkit}",
+  "output": "${package.dir}/build/${package.toolkit}",
+  "sass": {
+    "namespace": "Valence.common",
+    "etc": "${package.dir}/sass/etc/all.scss,${package.dir}/${toolkit.name}/sass/etc/all.scss",
+    "var": "${package.dir}/sass/var,${package.dir}/${toolkit.name}/sass/var",
+    "src": "${package.dir}/sass/src,${package.dir}/${toolkit.name}/sass/src"
+  },
+  "classpath": "${package.dir}/src,${package.dir}/${toolkit.name}/src",
+  "overrides": "${package.dir}/overrides,${package.dir}/${toolkit.name}/overrides",
+  "example": {
+    "path": [
+      "${package.dir}/examples"
+    ]
+  },
+  "framework": "ext"
+}

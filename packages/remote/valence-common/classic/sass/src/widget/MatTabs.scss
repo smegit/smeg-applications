@@ -1,0 +1,25 @@
+.x-tab-bar-background,.x-tab-bar-white{
+  .mattabs-active-div{
+    background-color:$primary-dark-color;
+  }
+}
+.x-tab-bar-primary-dark{
+  .mattabs-active-div{
+    background-color:#FFF;
+  }
+}
+.mattabs-active-div{
+  height: 4px;
+  bottom: 0px;
+  position: absolute;
+  z-index: 100;
+}
+.mattabs{
+  .x-tab-inner{
+    font-size:15px;
+  }
+  .x-tab-icon-el {
+    font-size:20px;
+    line-height:20px;
+  }
+}

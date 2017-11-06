@@ -1,0 +1,44 @@
+.vv-connection-form {
+  height : 100%;
+  .x-form-inner {
+    background-color: inherit;
+    .vv-connection-hdr {
+      text-align: center;
+      width: 100%;
+      font-size: 18px;
+      padding: 5px 0;
+      font-weight: 600;
+    }
+    .vv-connection-desc-lbl, .vv-connection-url-lbl, .vv-connection-port-lbl, .vv-connection-autostartapp-lbl {
+      font-weight: 500;
+      background-color: inherit;
+    }
+    .vv-connection-desc, .vv-connection-url, .vv-connection-port, .vv-connection-autostartapp {
+      .x-form-field {
+        border-bottom: 1px solid $black-2-color;
+      }
+    }
+    .vv-field-invalid {
+      .x-form-field {
+        border-bottom: 1px solid $secondary-dark-color !important;
+      }
+    }
+    .vv-connection-validation {
+      color : $secondary-dark-color;
+      padding-top: 5px;
+      text-align:center;
+      line-height: 16px;
+      span {
+        color : $secondary-dark-color;
+        font-size : 16px;
+        line-height: 16px;
+        position : absolute;
+        left : 8px;
+      }
+    }
+    .vv-connection-save-btn {
+      margin-top: 8px;
+    }
+  }
+}
+

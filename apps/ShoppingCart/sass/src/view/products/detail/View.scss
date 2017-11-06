@@ -1,0 +1,143 @@
+.prd-detail-wrap {
+  min-height: 420px;
+  position: absolute;
+  width: 100%;
+  font-family: Helvetica, Arial, Geneva, sans-serif;
+  color: #333;
+  .prd-detail-header {
+    width:100%;
+    display: block;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    position: relative;
+    height:54px;
+    .prd-price-wrpr {
+      display: inline-block;
+      position: absolute;
+      right: 8px;
+      .prd-price-normal {
+        display: inline-block;
+        padding-right: 8px;
+        color: $black-3-color;
+        text-decoration: line-through;
+        font-size: 19px;
+        font-weight: 400;
+      }
+      .prd-price-spc {
+        display: inline-block;
+        color: $smeg-red;
+        font-weight: bold;
+        font-size: 19px;
+      }
+      .prd-price {
+        display:inline-block;
+        margin-right: 10px;
+        text-align: right;
+        font-size: 20px;
+        font-weight: 800;
+        letter-spacing: 2px;
+      }
+    }
+    .prd-general.prd-expire {
+      position: absolute;
+      right: 8px;
+      display: block;
+      font-style: italic;
+    }
+
+    .prd-desc{
+      display: inline;
+      width: 80%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-left: 15px;
+      margin-bottom: 10px;
+      font-size: 15px;
+      font-weight: 500;
+    }
+  }
+
+  .prd-detail-body{
+    line-height: 18px;
+    h3 {
+      font-size : 16px;
+    }
+    .prd-detail-body-left {
+      width: 50%;
+      height: 100%;
+      float: left;
+      padding-left: 15px;
+      ul {
+        list-style-type: none;
+        line-height: 20px;
+        font-size: 14px;
+        color: #333;
+        padding: 0;
+        li {
+          font-size: 13px;
+          //white-space: nowrap;
+          //overflow: hidden;
+          //text-overflow: ellipsis;
+          //max-width: 130px;
+        }
+      }
+      .prd-detail-gen {
+        font-family : Helvetica, Arial, Geneva, sans-serif;
+        font-size: 13px;
+        padding-top: 20px;
+      }
+    }
+    .prd-detail-body-right {
+      width: 50%;
+      height: 100%;
+      right: 0;
+      float: right;
+      padding-left: 10px;
+      .prd-img-wrap{
+        border: solid 1px #aaa;
+        border-radius: 2px;
+        img {
+          display: block;
+          margin-right:auto;
+          margin-left:auto;
+          width: 200px;
+          height: 200px;
+        }
+      }
+
+      .prd-files-wrap{
+        width:100%;
+
+        * {
+          font-size: 16px;
+          line-height: 23px;
+        }
+        .prd-files-list {
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        ul {
+          list-style-type: none;
+          padding: 0;
+          li a {
+            font-family: Helvetica, Arial, Geneva, sans-serif;
+            font-size: 13px;
+            color: #336699;
+          }
+        }
+      }
+    }
+
+    .prd-lg-img-wrap {
+      img {
+        display: block;
+        margin-right:auto;
+        margin-left:auto;
+        width: 400px;
+        height: 400px;
+      }
+    }
+
+  }
+}
