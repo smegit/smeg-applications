@@ -4,7 +4,13 @@ describe("Ext.view.View", function() {
     var view, store, TestModel, navModel,
         synchronousLoad = true,
         proxyStoreLoad = Ext.data.ProxyStore.prototype.load,
-        loadStore;
+        loadStore = function() {
+            proxyStoreLoad.apply(this, arguments);
+            if (synchronousLoad) {
+                this.flushLoad.apply(this, arguments);
+            }
+            return this;
+        };
     
     TestModel = Ext.define(null, {
         extend : 'Ext.data.Model',
@@ -88,13 +94,7 @@ describe("Ext.view.View", function() {
 
     beforeEach(function() {
         // Override so that we can control asynchronous loading
-        loadStore = Ext.data.ProxyStore.prototype.load = function() {
-            proxyStoreLoad.apply(this, arguments);
-            if (synchronousLoad) {
-                this.flushLoad.apply(this, arguments);
-            }
-            return this;
-        };
+        Ext.data.ProxyStore.prototype.load = loadStore;
 
         MockAjaxManager.addMethods();
     });
@@ -206,7 +206,7 @@ describe("Ext.view.View", function() {
                 sm = view.getSelectionModel();
 
                 view.destroy();
-                expect(sm.getStore()).toBeNull();
+                expect(sm.store).toBeNull();
             });
         });
 
@@ -441,7 +441,7 @@ describe("Ext.view.View", function() {
             });
         });
 
-        describe("getRecord", function() {
+        describe("getRecord/getRecords", function() {
             it("should accept a DOM element", function() {
                 createSimpleView();
                 var node = view.getNode(3);
@@ -459,6 +459,18 @@ describe("Ext.view.View", function() {
                 var el = Ext.getBody().createChild();
                 expect(view.getRecord(el)).toBeNull();
                 el.destroy();
+            });
+
+            it("should return an array of records when using getRecords", function() {
+                createSimpleView();
+                var nodes = view.getNodes(0, 2),
+                    records = view.getRecords(nodes),
+                    i;
+
+                expect(records.length).toBe(3);
+                for (i = 0; i < records.length; i++) {
+                    expect(records[i]).toBe(store.getAt(i));
+                }
             });
         });
 
@@ -569,7 +581,7 @@ describe("Ext.view.View", function() {
             });
             expect(view.getStore()).toBe(store);
             view.destroy();
-            expect(view.getStore()).toBeNull();
+            expect(view.store).toBeNull();
         });
 
         it("should destroy a load mask", function() {

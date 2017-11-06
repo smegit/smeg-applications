@@ -123,6 +123,8 @@ Ext.define('Ext.plugin.AbstractClipboard', {
         var me = this,
             keyMap = me.keyMap,
             shared = me.shared;
+        
+        Ext.destroy(me.destroyListener);
 
         if (keyMap) {
             // If we have a keyMap then we have incremented the shared usage counter
@@ -190,7 +192,7 @@ Ext.define('Ext.plugin.AbstractClipboard', {
          * currently using this object.
          * @property {Object} shared.data The clipboard data for intra-page copy/paste. The
          * properties of the object are keyed by format.
-         * @property {Ext.dom.Element} textArea The shared textarea used to polyfill the
+         * @property {Ext.dom.Element} shared.textArea The shared textarea used to polyfill the
          * lack of HTML5 clipboard API.
          * @private
          */
@@ -302,7 +304,8 @@ Ext.define('Ext.plugin.AbstractClipboard', {
 
             ++me.shared.counter;
 
-            comp.on({
+            me.destroyListener = comp.on({
+                destroyable: true,
                 destroy: 'destroy',
                 scope: me
             });
