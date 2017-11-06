@@ -1,0 +1,2 @@
+# smeg-theme - Read Me
+
