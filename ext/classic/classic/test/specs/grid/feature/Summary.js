@@ -1,7 +1,16 @@
+/* global expect, Ext, MockAjaxManager, xit */
+
 describe('Ext.grid.feature.Summary', function () {
-    var synchronousLoad = true,
+    var itNotIE8 = Ext.isIE8 ? xit : it,
+        synchronousLoad = true,
         proxyStoreLoad = Ext.data.ProxyStore.prototype.load,
-        loadStore;
+        loadStore = function() {
+            proxyStoreLoad.apply(this, arguments);
+            if (synchronousLoad) {
+                this.flushLoad.apply(this, arguments);
+            }
+            return this;
+        };
 
     function makeSuite(withLocking) {
         describe(withLocking ? "with locking" : "without locking", function() {
@@ -76,7 +85,7 @@ describe('Ext.grid.feature.Summary', function () {
                     renderTo: Ext.getBody()
                 }, gridCfg));
 
-                view = grid.view;
+                view = grid.getView();
                 selector = summary.summaryRowSelector;
                 if (withLocking) {
                     lockedGrid = grid.lockedGrid;
@@ -88,13 +97,7 @@ describe('Ext.grid.feature.Summary', function () {
 
             beforeEach(function() {
                 // Override so that we can control asynchronous loading
-                loadStore = Ext.data.ProxyStore.prototype.load = function() {
-                    proxyStoreLoad.apply(this, arguments);
-                    if (synchronousLoad) {
-                        this.flushLoad.apply(this, arguments);
-                    }
-                    return this;
-                };
+                Ext.data.ProxyStore.prototype.load = loadStore;
             });
 
             afterEach(function () {
@@ -181,6 +184,17 @@ describe('Ext.grid.feature.Summary', function () {
                         expect(row.childNodes[1].offsetWidth).toBe(100);
                     }
                 });
+
+                it("should not add summary rows on sort", function() {
+                    var column;
+                    createGrid(null, null, null, []);
+
+                    column = grid.getColumnManager().getColumns()[0];
+
+                    column.sort();
+
+                    expect(summary.view.el.query(selector).length).toBe(1);
+                });
             });
 
             describe('summaryRenderer', function () {
@@ -194,7 +208,12 @@ describe('Ext.grid.feature.Summary', function () {
 
                     // When the Mark column is shown, that column's summary should be shown
                     grid.getColumnManager().getColumns()[1].show();
-                    expect(getSummaryContent()).toBe('4students80');
+
+                    // Syncing of column arrangement is deferred to batch multiple
+                    // changes into one syncLockedWidth call, so wait for the correct state.
+                    waitsFor(function() {
+                        return getSummaryContent() === '4students80';
+                    });
                 });
                 
                 it('should be passed the expected function parameters', function () {
@@ -619,6 +638,41 @@ describe('Ext.grid.feature.Summary', function () {
                     });
                     return content.replace(/\s/g, '');
                 }
+                
+                function expectPosition(dock, expectedIndex) {
+                    var theView, summaryRow, parentNode;
+                    
+                    if (!dock) {
+                        if (withLocking) {
+                            summaryRow = getSummary(lockedView);
+                            
+                            // Summary row table attached directly to nodeContainer
+                            if (expectedIndex === -1) {
+                                summaryRow = Ext.fly(summaryRow).up('table', 50, true);
+                                parentNode = lockedView.getNodeContainer();
+                            }
+                            else {
+                                parentNode = lockedView.getRow(expectedIndex).parentNode;
+                            }
+                            
+                            expect(summaryRow.parentNode).toBe(parentNode);
+                        }
+                        
+                        theView = normalView || view;
+                        
+                        summaryRow = getSummary(theView);
+                        
+                        if (expectedIndex === -1) {
+                            summaryRow = Ext.fly(summaryRow).up('table', 50, true);
+                            parentNode = theView.getNodeContainer();
+                        }
+                        else {
+                            parentNode = theView.getRow(expectedIndex).parentNode;
+                        }
+                        
+                        expect(summaryRow.parentNode).toBe(parentNode);
+                    }
+                }
 
                 describe("before being rendered", function() {
                     function beforeRenderSuite(withDocking) {
@@ -688,6 +742,7 @@ describe('Ext.grid.feature.Summary', function () {
                             it("should react to an update", function() {
                                 store.getAt(0).set('mark', 100);
                                 expectContent(withDocking, '4students84');
+                                expectPosition(withDocking, 3);
                             });
 
                             it("should react to an add", function() {
@@ -697,16 +752,19 @@ describe('Ext.grid.feature.Summary', function () {
                                     mark: 10
                                 });
                                 expectContent(withDocking, '5students66');
+                                expectPosition(withDocking, 4);
                             });
 
                             it("should react to a remove", function() {
                                 store.removeAt(3);
                                 expectContent(withDocking, '3students84');
+                                expectPosition(withDocking, 2);
                             });
 
                             it("should react to a removeAll", function() {
                                 store.removeAll();
                                 expectContent(withDocking, '0students0');
+                                expectPosition(-1);
                             });
 
                             it("should react to a load of new data", function() {
@@ -718,6 +776,7 @@ describe('Ext.grid.feature.Summary', function () {
                                     mark: 25
                                 }]);
                                 expectContent(withDocking, '2students50');
+                                expectPosition(withDocking, 1);
                             });
                         });
                     }
@@ -754,6 +813,7 @@ describe('Ext.grid.feature.Summary', function () {
                             it("should react to an update", function() {
                                 store.getAt(0).set('mark', 100);
                                 expectContent(withDocking, '2students75');
+                                expectPosition(withDocking, 1);
                             });
 
                             it("should react to an add", function() {
@@ -762,16 +822,19 @@ describe('Ext.grid.feature.Summary', function () {
                                     mark: 10
                                 });
                                 expectContent(withDocking, '3students30');
+                                expectPosition(withDocking, 2);
                             });
 
                             it("should react to a remove", function() {
                                 store.removeAt(0);
                                 expectContent(withDocking, '1student50');
+                                expectPosition(withDocking, 0);
                             });
 
                             it("should react to a removeAll", function() {
                                 store.removeAll();
                                 expectContent(withDocking, '0students0');
+                                expectPosition(withDocking, -1);
                             });
 
                             it("should react to a load of new data", function() {
@@ -783,6 +846,7 @@ describe('Ext.grid.feature.Summary', function () {
                                     mark: 25
                                 }]);
                                 expectContent(withDocking, '2students50');
+                                expectPosition(withDocking, 1);
                             });
                         });
                     }
@@ -792,9 +856,10 @@ describe('Ext.grid.feature.Summary', function () {
             });
 
             describe("buffered rendering", function() {
-                it("should not render the summary row until the last row is in the view", function() {
+                itNotIE8("should not render the summary row until the last row is in the view", function() {
                     var data = [],
-                        i;
+                        i,
+                        summaryErroreouslyRendered = false;
 
                     for (i = 1; i <= 1000; ++i) {
                         data.push({
@@ -810,7 +875,7 @@ describe('Ext.grid.feature.Summary', function () {
                     }, null, null, data);
 
                     var theView = withLocking ? lockedView : view,
-                        scrollingView = withLocking ? normalView : view;
+                        scroller = withLocking ? grid.getScrollable() : view.getScrollable();
 
                     expect(theView.getEl().down(selector)).toBeNull();
                     
@@ -819,22 +884,19 @@ describe('Ext.grid.feature.Summary', function () {
                     // As soon as it is present, check that the summary is there and quit.
                     // N.B. This latch function accepts done callback and because of this
                     // it will be called only ONCE, not in a loop!
-                    waitsFor(function(done) {
-                        scrollingView.getScrollable().on('scroll', function() {
-                            if (view.all.endIndex === store.getCount() - 1) {
-                                done();
-                            }
-                            else {
-                                expect(theView.getEl().down(selector)).toBeNull();
-                                grid.scrollByDeltaY(100);
-                            }
-                        });
-                        
-                        grid.scrollByDeltaY(100);
-                    // 15 seconds should be enough even for IE8
-                    }, 'downward scrolling to complete', 15000);
+                    jasmine.waitsForScroll(scroller, function() {
+                        if (view.all.endIndex === store.getCount() - 1 || summaryErroreouslyRendered) {
+                            return true;
+                        }
+                        else {
+                            summaryErroreouslyRendered = !!theView.getEl().down(selector);
+                            scroller.scrollBy(0, 200);
+                        }
+                    // 30 seconds should be enough even for IE8
+                    }, 'downward scrolling to complete', 30000);
                     
                     runs(function() {
+                        expect(summaryErroreouslyRendered).toBe(false);
                         expect(theView.getEl().down(selector)).not.toBeNull();
                     });
                 });
@@ -850,7 +912,7 @@ describe('Ext.grid.feature.Summary', function () {
                         });
                         expect(getSummaryContent()).toBe('4students80');
                     });
-                })
+                });
             });
         });
     }

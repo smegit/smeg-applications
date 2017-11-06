@@ -1,3 +1,5 @@
+/* global expect, Ext, jasmine */
+
 describe("grid-columns", function() {
     function createSuite(buffered) {
         describe(buffered ? "with buffered rendering" : "without buffered rendering", function() {
@@ -81,13 +83,13 @@ describe("grid-columns", function() {
                 });
             }
 
-            function getCellText(rowIdx, colIdx) {
-                return getCellInner(rowIdx, colIdx).innerHTML;
-            }
-
             function getCellInner(rowIdx, colIdx) {
                 var cell = getCell(rowIdx, colIdx);
                 return Ext.fly(cell).down(grid.getView().innerSelector).dom;
+            }
+
+            function getCellText(rowIdx, colIdx) {
+                return getCellInner(rowIdx, colIdx).innerHTML;
             }
 
             function hasCls(el, cls) {
@@ -201,14 +203,31 @@ describe("grid-columns", function() {
                     beforeEach(function () {
                         makeGrid([{
                             itemId: 'main1',
+                            text: 'Group Header',
+                            flex: 1,
+                            // Allow for the full 600 width so that flexes work out to integers.
+                            border: false,
+
                             columns: [{
-                                itemId: 'child1'
+                                itemId: 'child1',
+                                text: 'Subcol 1',
+                                flex: 1
                             }, {
-                                itemId: 'child2'
+                                itemId: 'child2',
+                                text: 'Subcol 2',
+                                flex: 2
                             }, {
-                                itemId: 'child3'
+                                itemId: 'child3',
+                                text: 'Subcol 3',
+                                flex: 3
                             }]
-                        }]);
+                        }], {
+                            width: 600,
+
+                            // No scrollbar, so we have one calculation pass with
+                            // 600 pixels available.
+                            scroll: false
+                        });
 
                         col = grid.down('#main1');
                     });
@@ -220,6 +239,39 @@ describe("grid-columns", function() {
                     it('should not give the titleEl the leaf column class', function () {
                         expect(col.titleEl.hasCls(leafCls)).toBe(false);
                     });
+
+                    it('should honour flex settings in group headers and their children', function() {
+                        // Owner is calculated widthModel
+                        expect(colRef[0].lastBox.width).toBe(100);
+                        expect(colRef[1].lastBox.width).toBe(200);
+                        expect(colRef[2].lastBox.width).toBe(300);
+
+                        // When all children are fixed width, it should revert to shrink wrapping
+                        colRef[0].flex = colRef[1].flex = colRef[2].flex = null;
+                        colRef[0].setWidth(100);
+                        colRef[1].setWidth(100);
+                        colRef[2].setWidth(100);
+                        expect(colRef[0].ownerCt.lastBox.width).toBe(300);
+
+                        // Now when owner is configured widthModel with 
+                        // flexed children
+                        colRef[0].ownerCt.flex = null;
+                        colRef[0].flex = 1;
+                        colRef[1].flex = 2;
+                        colRef[2].flex = 3;
+                        colRef[0].ownerCt.setWidth(600);
+
+                        expect(colRef[0].lastBox.width).toBe(100);
+                        expect(colRef[1].lastBox.width).toBe(200);
+                        expect(colRef[2].lastBox.width).toBe(300);
+
+                        // Fall back to shrinkWrapping column widths
+                        colRef[0].ownerCt.setWidth(null);
+                        colRef[0].setWidth(100);
+                        colRef[1].setWidth(100);
+                        colRef[2].setWidth(100);
+                        expect(colRef[0].ownerCt.lastBox.width).toBe(300);
+                    });
                 });
 
                 describe('contains child items', function () {
@@ -227,6 +279,7 @@ describe("grid-columns", function() {
                         makeGrid([{
                             text: 'Foo',
                             dataIndex: 'field0',
+                            flex: 1,
                             items: [{
                                 xtype: 'textfield',
                                 itemId: 'foo'
@@ -242,6 +295,10 @@ describe("grid-columns", function() {
 
                     it('should not give the titleEl the leaf column class', function () {
                         expect(col.titleEl.hasCls(leafCls)).toBe(false);
+                    });
+
+                    it("should retain a flex value", function() {
+                        expect(col.getWidth()).toBe(grid.getWidth());
                     });
 
                     describe('focusing', function () {
@@ -873,6 +930,40 @@ describe("grid-columns", function() {
                     });
                 });
 
+                describe('getHeaderByDataIndex', function () {
+                    beforeEach(function () {
+                        makeGrid([{
+                            text: 'Name',
+                            width: 100,
+                            dataIndex: 'name',
+                            hidden: true
+                        },{
+                            text: 'Email',
+                            width: 100,
+                            dataIndex: 'email'
+                        },{
+                            xtype: 'templatecolumn',
+                            text: 'Name & Email',
+                            width: 100,
+                            tpl: '{name} & {email}'
+                        }]);
+                    });
+
+                    it("should return the correct header for dataIndex", function () {
+                        expect(gam().getHeaderByDataIndex('email').dataIndex).toBe('email');
+                    });
+                        
+                    it("should return null if column doesn't exist", function () {
+                        expect(gam().getHeaderByDataIndex('foo')).toBe(null);
+                    });
+
+                    it("should return null if invalid dataIndex is passed", function () {
+                        expect(gam().getHeaderByDataIndex(null)).toBe(null);
+                        expect(gam().getHeaderByDataIndex('')).toBe(null);
+                        expect(gam().getHeaderByDataIndex(undefined)).toBe(null);
+                    });
+                });
+
                 describe('hidden columns', function() {
                     // Hidden at index 3/6
                     beforeEach(function(){
@@ -1140,14 +1231,7 @@ describe("grid-columns", function() {
                         plugins: 'gridfilters'
                     });
 
-                    var col = colRef[0],
-                        menu;
-
-                    col.triggerEl.show();
-                    jasmine.fireMouseEvent(col.triggerEl.dom, 'click');
-                    menu = col.activeMenu;
-                    expect(menu.isVisible()).toBe(true);
-                    expect(col.requiresMenu).toBe(true);
+                    Ext.testHelper.showHeaderMenu(colRef[0]);
                 });
             });
 
@@ -1548,7 +1632,7 @@ describe("grid-columns", function() {
                             groupheader = grid.down('#main2');
                             subheader1 = grid.down('#child1').hide();
                             subheader3 = grid.down('#child3').hide();
-                            subheader2 = grid.down('#child2')
+                            subheader2 = grid.down('#child2');
                             subheader2.hide();
 
                             expect(subheader2.hidden).toBe(true);
@@ -1690,7 +1774,7 @@ describe("grid-columns", function() {
                                         }]
                                     }, {
                                         itemId: 'col5'
-                                    }]
+                                    }];
                                 });
 
                                 it('should hide every group header above the target group header', function () {
@@ -1775,7 +1859,7 @@ describe("grid-columns", function() {
                                         }]
                                     }, {
                                         itemId: 'col5'
-                                    }]
+                                    }];
                                 });
 
                                 it('should show every group header above the target group header', function () {
@@ -2373,6 +2457,24 @@ describe("grid-columns", function() {
                     });
                 });
 
+                describe("empty values", function() {
+                    function makeEmptySuite(val, label) {
+                        it("should render " + label + " as empty", function() {
+                            makeGrid(null, {
+                                renderTo: null
+                            });
+                            store.getAt(0).set('field0', val);
+                            grid.render(Ext.getBody());
+                            expectEmptyText(colRef[0], 0, 0);
+                        });
+                    }
+
+                    makeEmptySuite(undefined, 'undefined');
+                    makeEmptySuite(null, 'null');
+                    makeEmptySuite('', 'empty string');
+                    makeEmptySuite([], 'empty array');
+                });
+
                 describe("column update", function() {
                     describe("full row update", function() {
                         it("should use the empty text on update", function() {
@@ -2410,6 +2512,29 @@ describe("grid-columns", function() {
                                 }]);
                                 store.getAt(0).set('field0', '');
                                 expectEmptyText(colRef[0], 0, 0);
+                            });
+
+                            it("should not merge classes when changing tdStyle", function() {
+                                var cell;
+                                makeGrid([{
+                                    width: 100,
+                                    dataIndex: 'field0',
+                                    renderer: function(value, metaData, record) {
+                                        if (!record.get('foo')) {
+                                            metaData.tdStyle = 'background-color: red;';
+                                        } else {
+                                            metaData.tdStyle = 'text-decoration: underline;';
+                                        }
+                                        return value;
+                                    }
+                                }]);
+
+                                cell = grid.view.body.el.down('.x-grid-cell');
+
+                                expect(cell.dom.style['background-color']).toBe('red');
+                                store.getAt(0).set('foo', true);
+                                expect(cell.dom.style['background-color']).not.toBe('red');
+                                expect(cell.dom.style['text-decoration']).toBe('underline');
                             });
                         });
 
@@ -2497,18 +2622,16 @@ describe("grid-columns", function() {
                             return i === 0;
                         });
 
-                        var borderWidth = grid.lockedGrid.el.getBorderWidth('lr');
-
                         // Default column width
-                        expect(grid.lockedGrid.getWidth()).toBe(100 + borderWidth);
+                        expect(grid.lockedGrid.getWidth()).toBe(100 + grid.lockedGrid.gridPanelBorderWidth);
                         grid.reconfigure(null, [{
                             locked: true,
                             width: 120
                         }, {
                             locked: true,
                             width: 170
-                        }, {}, {}])
-                        expect(grid.lockedGrid.getWidth()).toBe(120 + 170 + borderWidth);
+                        }, {}, {}]);
+                        expect(grid.lockedGrid.getWidth()).toBe(120 + 170 + grid.lockedGrid.gridPanelBorderWidth);
                     });
                 });
             });
@@ -2547,6 +2670,355 @@ describe("grid-columns", function() {
                     resizeColumn(colRef[0], 10);
                     expect(colRef[0].getWidth()).toBe(colWidth + 10);
                     expect(dragSpy).not.toHaveBeenCalled();
+                });
+            });
+            
+            describe("auto hiding headers", function() {
+                // Unit test setup defines hideHeaders as false in setup
+                // because many tests lazily use empty headers and 
+                // contain layout measurement which assumes visible headers.
+                // Undo that interference for this test case.
+                beforeEach(function() {
+                    delete Ext.grid.Panel.prototype.config.hideHeaders;
+                });
+                afterEach(function() {
+                    Ext.grid.Panel.prototype.config.hideHeaders = false;
+                });
+                function isHidden(theGrid) {
+                    theGrid = theGrid || grid;
+                    return theGrid.hasCls(theGrid.hiddenHeaderCls);
+                }
+
+                describe("not locked grid", function() {
+                    describe("with a configured value", function() {
+                        describe("at construction time", function() {
+                            it("should hide the columns even if the columns have text", function() {
+                                makeGrid([{
+                                    text: 'Foo'
+                                }], {
+                                    hideHeaders: true
+                                });
+                                expect(isHidden()).toBe(true);
+                            });
+
+                            it("should not hide the columns even if the columns have no text", function() {
+                                makeGrid([{
+                                    text: ''
+                                }], {
+                                    hideHeaders: false
+                                });
+                                expect(isHidden()).toBe(false);
+                            });
+                        });
+
+                        describe("dynamic", function() {
+                            it("should be able to toggle from hidden to visible", function() {
+                                makeGrid([{
+                                    text: 'Foo'
+                                }], {
+                                    hideHeaders: true
+                                });
+                                grid.setHideHeaders(false);
+                                expect(isHidden()).toBe(false);
+                            });
+
+                            it("should be able to toggle from visible to hidden", function() {
+                                makeGrid([{
+                                    text: ''
+                                }], {
+                                    hideHeaders: false
+                                });
+                                grid.setHideHeaders(true);
+                                expect(isHidden()).toBe(true);
+                            });
+
+                            it("should compute to hidden", function() {
+                                makeGrid([{
+                                    text: ''
+                                }], {
+                                    hideHeaders: false
+                                });
+                                grid.setHideHeaders(null);
+                                expect(isHidden()).toBe(true);
+                            });
+
+                            it("should compute to visible", function() {
+                                makeGrid([{
+                                    text: 'Foo'
+                                }], {
+                                    hideHeaders: true
+                                });
+                                grid.setHideHeaders(null);
+                                expect(isHidden()).toBe(false);
+                            });
+                        });
+                    });
+
+                    describe("with no configured value", function() {
+                        describe("at construction time", function() {
+                            it("should hide headers when none of the headers have text", function() {
+                                makeGrid([{}, {}, {}, {}]);
+                                expect(isHidden()).toBe(true);
+                            });
+
+                            it("should not hide headers if any header has text", function() {
+                                makeGrid([{}, {}, {
+                                    text: 'Foo'
+                                }, {}]);
+                                expect(isHidden()).toBe(false);
+                            });
+
+                            it("should not hide an empty header when it's the only sibling when it's not a top level header", function() {
+                                makeGrid([{
+                                    text: 'main'
+                                }, {
+                                    text: 'group',
+                                    columns: [{
+                                        itemId: 'empty-header'
+                                    }]
+                                }]);
+                        
+                                var h = grid.down('#empty-header');
+
+                                // Text should be non-empty, so same line-height
+                                expect(h.textContainerEl.dom.offsetHeight).toBe(h.ownerCt.textContainerEl.dom.offsetHeight);
+                            });
+                        });
+
+                        describe("dynamic", function() {
+                            it("should be able to hide headers", function() {
+                                makeGrid([{}, {}, {
+                                    text: 'Foo'
+                                }, {}]);
+                                grid.setHideHeaders(true);
+                                expect(isHidden()).toBe(true);
+                            });
+
+                            it("should be able to show headers", function() {
+                                makeGrid([{}, {}, {}, {}]);
+                                grid.setHideHeaders(true);
+                                expect(isHidden()).toBe(true);
+                            });
+                        });
+                    });
+
+                    describe("setting column text", function() {
+                        it("should compute to hidden", function() {
+                            makeGrid([{
+                                text: 'Foo'
+                            }, {
+                                text: ''
+                            }]);
+                            colRef[0].setText('');
+                            expect(isHidden()).toBe(true);
+                        });
+
+                        it("should compute to visible", function() {
+                            makeGrid([{
+                                text: ''
+                            }, {
+                                text: ''
+                            }]);
+                            colRef[0].setText('Foo');
+                            expect(isHidden()).toBe(false);
+                        });
+                    });
+                });
+
+                describe("locked grid", function() {
+                    describe("with a configured value", function() {
+                        describe("at construction time", function() {
+                            it("should hide the columns even if the columns have text", function() {
+                                makeGrid([{
+                                    text: 'Foo',
+                                    locked: true
+                                }, {
+                                    text: 'Bar'
+                                }], {
+                                    hideHeaders: true
+                                });
+                                expect(isHidden(grid.lockedGrid)).toBe(true);
+                                expect(isHidden(grid.normalGrid)).toBe(true);
+                            });
+
+                            it("should not hide the columns even if the columns have no text", function() {
+                                makeGrid([{
+                                    text: '',
+                                    locked: true
+                                }, {
+                                    text: ''
+                                }], {
+                                    hideHeaders: false
+                                });
+                                expect(isHidden()).toBe(false);
+                            });
+                        });
+
+                        describe("dynamic", function() {
+                            it("should be able to toggle from hidden to visible", function() {
+                                makeGrid([{
+                                    text: 'Foo',
+                                    locked: true
+                                }, {
+                                    text: 'Bar'
+                                }], {
+                                    hideHeaders: true
+                                });
+                                grid.setHideHeaders(false);
+                                expect(isHidden(grid.lockedGrid)).toBe(false);
+                                expect(isHidden(grid.normalGrid)).toBe(false);
+                            });
+
+                            it("should be able to toggle from visible to hidden", function() {
+                                makeGrid([{
+                                    text: '',
+                                    locked: true
+                                }, {
+                                    text: ''
+                                }], {
+                                    hideHeaders: false
+                                });
+                                grid.setHideHeaders(true);
+                                expect(isHidden(grid.lockedGrid)).toBe(true);
+                                expect(isHidden(grid.normalGrid)).toBe(true);
+                            });
+
+                            it("should compute to hidden", function() {
+                                makeGrid([{
+                                    locked: true,
+                                    text: ''
+                                }, {
+                                    text: ''
+                                }], {
+                                    hideHeaders: false
+                                });
+                                grid.setHideHeaders(null);
+                                expect(isHidden(grid.lockedGrid)).toBe(true);
+                                expect(isHidden(grid.normalGrid)).toBe(true);
+                            });
+
+                            it("should compute to visible", function() {
+                                makeGrid([{
+                                    locked: true,
+                                    text: 'Foo'
+                                }, {
+                                    text: 'Bar'
+                                }], {
+                                    hideHeaders: true
+                                });
+                                grid.setHideHeaders(null);
+                                expect(isHidden(grid.lockedGrid)).toBe(false);
+                                expect(isHidden(grid.normalGrid)).toBe(false);
+                            });
+                        });
+                    });
+
+                    describe("with no configured value", function() {
+                        describe("at construction time", function() {
+                            it("should hide the headers when no columns have text", function() {
+                                makeGrid([{
+                                    locked: true
+                                }, {}]);
+                                expect(isHidden(grid.lockedGrid)).toBe(true);
+                                expect(isHidden(grid.normalGrid)).toBe(true);
+                            });
+
+                            it("should not hide headers when the locked side has header text", function() {
+                                makeGrid([{
+                                    text: 'Foo',
+                                    locked: true
+                                }, {}]);
+                                expect(isHidden(grid.lockedGrid)).toBe(false);
+                                expect(isHidden(grid.normalGrid)).toBe(false);
+                            });
+
+                            it("should not hide headers when the normal side has header text", function() {
+                                makeGrid([{
+                                    locked: true
+                                }, {
+                                    text: 'Foo'
+                                }]);
+                                expect(isHidden(grid.lockedGrid)).toBe(false);
+                                expect(isHidden(grid.normalGrid)).toBe(false);
+                            });
+                        });
+
+                        describe("dynamic", function() {
+                            it("should be able to hide headers", function() {
+                                makeGrid([{
+                                    locked: true,
+                                    text: 'Foo'
+                                }, {
+                                    text: 'Bar'
+                                }]);
+                                grid.setHideHeaders(true);
+                                expect(isHidden(grid.lockedGrid)).toBe(true);
+                                expect(isHidden(grid.normalGrid)).toBe(true);
+                            });
+
+                            it("should be able to show headers", function() {
+                                makeGrid([{
+                                    locked: true,
+                                    text: ''
+                                }, {
+                                    text: ''
+                                }]);
+                                grid.setHideHeaders(false);
+                                expect(isHidden(grid.lockedGrid)).toBe(false);
+                                expect(isHidden(grid.normalGrid)).toBe(false);
+                            });
+                        });
+                    });
+
+                    describe("setting column text", function() {
+                        it("should compute to hidden when setting the locked column", function() {
+                            makeGrid([{
+                                text: 'Foo',
+                                locked: true
+                            }, {
+                                text: ''
+                            }]);
+                            colRef[0].setText('');
+                            expect(isHidden(grid.lockedGrid)).toBe(true);
+                            expect(isHidden(grid.normalGrid)).toBe(true);
+                        });
+
+                        it("should compute to hidden when setting the unlocked column", function() {
+                            makeGrid([{
+                                text: '',
+                                locked: true
+                            }, {
+                                text: 'Foo'
+                            }]);
+                            colRef[1].setText('');
+                            expect(isHidden(grid.lockedGrid)).toBe(true);
+                            expect(isHidden(grid.normalGrid)).toBe(true);
+                        });
+
+                        it("should compute to visible when setting the locked column", function() {
+                            makeGrid([{
+                                text: '',
+                                locked: true
+                            }, {
+                                text: ''
+                            }]);
+                            colRef[0].setText('Foo');
+                            expect(isHidden(grid.lockedGrid)).toBe(false);
+                            expect(isHidden(grid.normalGrid)).toBe(false);
+                        });
+
+                        it("should compute to visible when setting the unlocked column", function() {
+                            makeGrid([{
+                                text: '',
+                                locked: true
+                            }, {
+                                text: ''
+                            }]);
+                            colRef[1].setText('Foo');
+                            expect(isHidden(grid.lockedGrid)).toBe(false);
+                            expect(isHidden(grid.normalGrid)).toBe(false);
+                        });
+                    });
                 });
             });
         });

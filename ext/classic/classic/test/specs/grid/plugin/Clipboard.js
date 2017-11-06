@@ -4,7 +4,13 @@ describe('Ext.grid.plugin.Clipboard', function () {
     var store, cellediting, clipboard, grid, view, navModel, record, column, field,
         synchronousLoad = true,
         proxyStoreLoad = Ext.data.ProxyStore.prototype.load,
-        loadStore;
+        loadStore = function() {
+            proxyStoreLoad.apply(this, arguments);
+            if (synchronousLoad) {
+                this.flushLoad.apply(this, arguments);
+            }
+            return this;
+        };
 
     function makeGrid(editorCfg, clipboardCfg, gridCfg, storeCfg, locked) {
         store = new Ext.data.Store(Ext.apply({
@@ -50,6 +56,7 @@ describe('Ext.grid.plugin.Clipboard', function () {
         column = grid.columns[colId || 0];
         cellediting.startEdit(record, column);
         field = column.field;
+        waitsForFocus(field);
     }
 
     function clipboardAction(eventName) {
@@ -73,13 +80,7 @@ describe('Ext.grid.plugin.Clipboard', function () {
 
     beforeEach(function() {
         // Override so that we can control asynchronous loading
-        loadStore = Ext.data.ProxyStore.prototype.load = function() {
-            proxyStoreLoad.apply(this, arguments);
-            if (synchronousLoad) {
-                this.flushLoad.apply(this, arguments);
-            }
-            return this;
-        };
+        Ext.data.ProxyStore.prototype.load = loadStore;
 
         MockAjaxManager.addMethods();
     });
@@ -102,25 +103,25 @@ describe('Ext.grid.plugin.Clipboard', function () {
         });
 
         it("system clipboard should take precedence when actionableMode is true", function() {
-            var field;
-
             spyOn(clipboard, 'validateAction').andCallThrough();
 
             startEdit(0,0);
-            field = cellediting.activeEditor.field;
-            field.selectText();
+            
+            runs(function() {
+                field.selectText();
 
-            clipboardAction("copy");
-            clipboardAction("cut");
-            clipboardAction("paste");
+                clipboardAction("copy");
+                clipboardAction("cut");
+                clipboardAction("paste");
 
-            // here we are testing the validateAction method because it is the best
-            // way of testing that the clipboard plugin did not disturb the system's
-            // clipboard action.
-            expect(clipboard.validateAction.callCount).toBe(3);
-            for (var i=0; i<clipboard.validateAction.callCount; i++) {
-                expect(clipboard.validateAction.calls[i].result).toBe(false);
-            }
+                // here we are testing the validateAction method because it is the best
+                // way of testing that the clipboard plugin did not disturb the system's
+                // clipboard action.
+                expect(clipboard.validateAction.callCount).toBe(3);
+                for (var i=0; i<clipboard.validateAction.callCount; i++) {
+                    expect(clipboard.validateAction.calls[i].result).toBe(false);
+                }
+            });
         });
     });
 });

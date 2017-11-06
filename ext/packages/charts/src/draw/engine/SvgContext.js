@@ -663,7 +663,7 @@ Ext.define('Ext.draw.engine.SvgContext', {
 });
 
 /**
- * @class Ext.draw.engine.SvgContext.Gradient.
+ * @class Ext.draw.engine.SvgContext.Gradient
  *
  * A class that implements native CanvasGradient interface
  * (https://developer.mozilla.org/en/docs/Web/API/CanvasGradient)
@@ -722,7 +722,7 @@ Ext.define('Ext.draw.engine.SvgContext.Gradient', {
         me.surface.setElementAttributes(stop, {
             "offset": (((1 - compression) * offset + compression) * 100).toFixed(2) + '%',
             "stop-color": color,
-            "stop-opacity": Ext.draw.Color.fly(color).a.toFixed(15)
+            "stop-opacity": Ext.util.Color.fly(color).a.toFixed(15)
         });
     },
 

@@ -58,6 +58,18 @@ Ext.define('Ext.plugin.Viewport', {
         }
     },
 
+    destroy: function() {
+        var el = this.cmp.el;
+
+        this.callParent();
+        // Remove the injected overrides so that the bodyEl singleton
+        // can be reused by subsequent code (eg, unit tests)
+        if (el) {
+            delete el.setHeight;
+            delete el.setWidth;
+        }
+    },
+
     statics: {
         decorate: function (target) {
             Ext.applyIf(target.prototype || target, {
@@ -97,15 +109,7 @@ Ext.define('Ext.plugin.Viewport', {
 
                 setupViewport : function() {
                     var me = this,
-                        el = document.body,
-                        DomScroller = Ext.scroll.DomScroller;
-
-                    // By default document.body is monitored by a special DomScroller singleton so that
-                    // the global scroll event fires when the document scrolls.
-                    // A Viewport's Scroller will take over from this one.
-                    if (DomScroller.document) {
-                        DomScroller.document = DomScroller.document.destroy();
-                    }
+                        el = document.body;
 
                     // Here in the (perhaps unlikely) case that the body dom el doesn't yet have an id,
                     // we want to give it the same id as the viewport component so getCmp lookups will
@@ -159,9 +163,26 @@ Ext.define('Ext.plugin.Viewport', {
                 },
 
                 onRender: function() {
-                    var me = this;
+                    var me = this,
+                        overflowEl = me.getOverflowEl(),
+                        body = Ext.getBody();
 
                     me.callParent(arguments);
+
+                    // The global scroller is our scroller.
+                    // We must provide a non-scrolling one if we are not configured to scroll,
+                    // otherwise the deferred ready listener in Scroller will create
+                    // one with scroll: true
+                    Ext.setViewportScroller(me.getScrollable() || {
+                        x: false,
+                        y: false,
+                        element: body
+                    });
+
+                    // If we are not scrolling the body, the body has to be overflow:hidden
+                    if (me.getOverflowEl() !== body) {
+                        body.setStyle('overflow', 'hidden');
+                    }
 
                     // Important to start life as the proper size (to avoid extra layouts)
                     // But after render so that the size is not stamped into the body,
@@ -171,17 +192,6 @@ Ext.define('Ext.plugin.Viewport', {
                     me.height = me.initialViewportHeight;
                     
                     me.initialViewportWidth = me.initialViewportHeight = null;
-
-                    // prevent touchmove from panning the viewport in mobile safari
-                    if (Ext.supports.TouchEvents) {
-                        me.mon(Ext.getDoc(), {
-                            touchmove: function(e) {
-                                e.preventDefault();
-                            },
-                            translate: false,
-                            delegated: false
-                        });
-                    }
                 },
 
                 initInheritedState: function (inheritedState, inheritedStateInner) {
@@ -198,7 +208,7 @@ Ext.define('Ext.plugin.Viewport', {
                     }
                 },
 
-                beforeDestroy: function(){
+                doDestroy: function() {
                     var me = this,
                         root = Ext.rootInheritedState,
                         key;
@@ -212,9 +222,12 @@ Ext.define('Ext.plugin.Viewport', {
                         }
                     }
 
+                    delete me.el.setHeight;
+                    delete me.el.setWidth;
                     me.removeUIFromElement();
                     me.el.removeCls(me.baseCls);
                     Ext.fly(document.body.parentNode).removeCls(me.viewportCls);
+                    
                     me.callParent();
                 },
 
@@ -230,11 +243,11 @@ Ext.define('Ext.plugin.Viewport', {
                     // override here to prevent an extraneous warning
                     applyTargetCls: function (targetCls) {
                         var el = this.el;
-                        if (el === this.getTargetEl()) {
-                             this.el.addCls(targetCls);
-                        } else {
-                            this.callParent([targetCls]);
-                        }
+                         if (el === this.getTargetEl()) {
+                              this.el.addCls(targetCls);
+                         } else {
+                             this.callParent([targetCls]);
+                         }
                     },
                     
                     // Override here to prevent tabIndex set/reset on the body
@@ -254,10 +267,6 @@ Ext.define('Ext.plugin.Viewport', {
                         if (el) {
                             el.restoreTabbableState(/* skipSelf = */ true);
                         }
-                    },
-
-                    getOverflowEl: function() {
-                        return Ext.get(document.documentElement);
                     }
                 }
             });

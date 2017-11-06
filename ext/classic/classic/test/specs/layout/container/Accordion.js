@@ -1,3 +1,5 @@
+/* global expect, Ext, jasmine */
+
 describe("Ext.layout.container.Accordion", function() {
 
     describe("single item", function() {
@@ -11,6 +13,9 @@ describe("Ext.layout.container.Accordion", function() {
                     animate: false,
                     multi: multi,
                     fill: fill === false ? false : true
+                },
+                defaults: {
+                    animCollapseDuration: 100
                 },
                 items: [{
                     title: 'Child Panel'
@@ -793,7 +798,7 @@ describe("Ext.layout.container.Accordion", function() {
             ct.items.each(function(item) {
                 item.on('expand', function() {
                     ++count;
-                })
+                });
             });
             
             ct.destroy();
@@ -855,6 +860,9 @@ describe("Ext.layout.container.Accordion", function() {
                             type: 'accordion',
                             animate: !!animate
                         },
+                        defaults: {
+                            animCollapseDuration: 100
+                        },
                         items: [{
                             title: 'foo',
                             collapsible: true,
@@ -885,7 +893,9 @@ describe("Ext.layout.container.Accordion", function() {
                             foo.collapse();
                         });
                         
-                        waitsForSpy(collapseSpy, 'collapse', 1000);
+                        if (animate) {
+                            waitsForSpy(collapseSpy, 'collapse', 'foo panel to initially collapse');
+                        }
                     }
                     
                     if (options && options.expand) {
@@ -893,7 +903,9 @@ describe("Ext.layout.container.Accordion", function() {
                             foo.expand();
                         });
                         
-                        waitsForSpy(expandSpy, 'expand', 1000);
+                        if (animate) {
+                            waitsForSpy(expandSpy, 'expand', 'foo panel to expand after its initial collapse');
+                        }
                     }
                 });
                 
@@ -960,7 +972,7 @@ describe("Ext.layout.container.Accordion", function() {
                             
                             it("should be tabbable", function() {
                                 expect(pinTool.el.isTabbable()).toBe(true);
-                            })
+                            });
                         });
                     });
                     
@@ -1094,6 +1106,9 @@ describe("Ext.layout.container.Accordion", function() {
                             type: 'accordion',
                             animate: animate
                         },
+                        defaults: {
+                            animCollapseDuration: 100
+                        },
                         items: [{
                             title: 'foo',
                             collapsible: true,
@@ -1146,14 +1161,12 @@ describe("Ext.layout.container.Accordion", function() {
                     collapseSpy = expandSpy = null;
                 });
                 
-                describe("pointer interaction", function() {
+                describe("pointer", function() {
                     describe("title collapse", function() {
                         beforeEach(function() {
-                            runs(function() {
-                                jasmine.fireMouseEvent(barHdr, 'click');
-                            });
+                            jasmine.fireMouseEvent(barHdr, 'click');
                         
-                            waitsForSpy(collapseSpy, 'collapse', 1000);
+                            waitsForSpy(collapseSpy, 'collapse');
                         });
                         
                         it("should collapse foo", function() {
@@ -1166,11 +1179,9 @@ describe("Ext.layout.container.Accordion", function() {
                         
                         describe("expand", function() {
                             beforeEach(function() {
-                                runs(function() {
-                                    jasmine.fireMouseEvent(barHdr, 'click');
-                                });
+                                jasmine.fireMouseEvent(barHdr, 'click');
                                 
-                                waitsForSpy(expandSpy, 'expand', 1000);
+                                waitsForSpy(expandSpy, 'expand');
                             });
                             
                             it("should expand foo", function() {
@@ -1185,11 +1196,9 @@ describe("Ext.layout.container.Accordion", function() {
                     
                     describe("tool collapse", function() {
                         beforeEach(function() {
-                            runs(function() {
-                                jasmine.fireMouseEvent(foo.collapseTool, 'click');
-                            });
+                            jasmine.fireMouseEvent(foo.collapseTool, 'click');
                             
-                            waitsForSpy(collapseSpy, 'collapse', 1000);
+                            waitsForSpy(collapseSpy, 'collapse');
                         });
                         
                         it("should collapse foo", function() {
@@ -1210,7 +1219,7 @@ describe("Ext.layout.container.Accordion", function() {
                     });
                 });
                 
-                describe("keyboard interaction", function() {
+                describe("keyboard", function() {
                     var fooTitle, barTitle;
                     
                     beforeEach(function() {
@@ -1235,6 +1244,14 @@ describe("Ext.layout.container.Accordion", function() {
                                 
                                 expectFocused(fooTitle);
                             });
+                            
+                            it("should not wrap over when accordionWrapOver == false", function() {
+                                bar.accordionWrapOver = false;
+                                
+                                asyncPressKey(barTitle, 'down');
+                                
+                                expectFocused(barTitle);
+                            });
                         });
 
                         describe("right arrow", function() {
@@ -1248,6 +1265,14 @@ describe("Ext.layout.container.Accordion", function() {
                                 asyncPressKey(barTitle, "right");
                                 
                                 expectFocused(fooTitle);
+                            });
+                            
+                            it("should not wrap over when accordionWrapOver == false", function() {
+                                bar.accordionWrapOver = false;
+                                
+                                asyncPressKey(barTitle, 'right');
+                                
+                                expectFocused(barTitle);
                             });
                         });
                         
@@ -1263,6 +1288,14 @@ describe("Ext.layout.container.Accordion", function() {
                                 
                                 expectFocused(barTitle);
                             });
+                            
+                            it("should not wrap over when accordionWrapOver == false", function() {
+                                foo.accordionWrapOver = false;
+                                
+                                asyncPressKey(fooTitle, 'up');
+                                
+                                expectFocused(fooTitle);
+                            });
                         });
 
                         describe("left arrow", function() {
@@ -1276,6 +1309,14 @@ describe("Ext.layout.container.Accordion", function() {
                                 asyncPressKey(fooTitle, 'left');
                                 
                                 expectFocused(barTitle);
+                            });
+                            
+                            it("should not wrap over when accordionWrapOver == false", function() {
+                                foo.accordionWrapOver = false;
+                                
+                                asyncPressKey(fooTitle, 'up');
+                                
+                                expectFocused(fooTitle);
                             });
                         });
                     });
@@ -1350,6 +1391,26 @@ describe("Ext.layout.container.Accordion", function() {
                         });
                     });
                     
+                    describe("within panel body", function() {
+                        describe("Ctrl-Up", function() {
+                            it("should go to foo title from foo input", function() {
+                                asyncPressKey(fooInnerInput, 'up', { ctrl: true });
+                                
+                                expectFocused(fooTitle);
+                            });
+                            
+                            it("should go to bar title from bar input", function() {
+                                foo.collapse();
+                                
+                                waitForSpy(collapseSpy);
+                                
+                                asyncPressKey(barInnerInput, 'up', { ctrl: true });
+                                
+                                expectFocused(barTitle);
+                            });
+                        });
+                    });
+                    
                     describe("tab key", function() {
                         describe("forward", function() {
                             describe("foo expanded", function() {
@@ -1386,11 +1447,9 @@ describe("Ext.layout.container.Accordion", function() {
                             
                             describe("foo collapsed", function() {
                                 beforeEach(function() {
-                                    runs(function() {
-                                        foo.collapse();
-                                    });
+                                    foo.collapse();
                                     
-                                    waitForSpy(collapseSpy, 'collapse', 1000);
+                                    waitForSpy(collapseSpy, 'collapse');
                                 });
                                 
                                 it("should go from before input to foo title", function() {
@@ -1460,11 +1519,9 @@ describe("Ext.layout.container.Accordion", function() {
                             
                             describe("foo collapsed", function() {
                                 beforeEach(function() {
-                                    runs(function() {
-                                        foo.collapse();
-                                    });
+                                    foo.collapse();
                                     
-                                    waitForSpy(collapseSpy, 'collapse', 1000);
+                                    waitForSpy(collapseSpy, 'collapse');
                                 });
                                 
                                 it("should go from after input to bar inner input", function() {
