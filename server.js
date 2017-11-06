@@ -41,6 +41,7 @@ app.all('/Product/*', valenceProxy);
 // serve static folders from this local machine
 //
 app.use('/smeg-applications/', express.static(__dirname));
+app.use('/SmegApps/', express.static(__dirname));
 app.use('/', express.static(__dirname));
 
 // begin listening on local port
