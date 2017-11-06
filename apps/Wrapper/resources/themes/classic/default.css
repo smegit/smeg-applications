@@ -1,0 +1,135 @@
+/* Ext */
+/* line 8, ../../base/src/compass/sass/dracula.scss */
+.x-body {
+    background: #555555;
+}
+
+/* line 11, ../../base/src/compass/sass/dracula.scss */
+.x-btn-primary-medium, .x-btn-primary-small {
+    border-color: #616161 !important;
+    background-color: #616161 !important;
+}
+
+/* line 15, ../../base/src/compass/sass/dracula.scss */
+.x-btn-inner-transparent-action-medium {
+    color: #E3F2FD;
+}
+
+/* line 20, ../../base/src/compass/sass/dracula.scss */
+.x-panel-body-background .x-form-checkbox-default {
+    color: #fff;
+}
+/* line 23, ../../base/src/compass/sass/dracula.scss */
+.x-panel-body-background .x-form-trigger-wrap-default {
+    border: none;
+}
+
+/* line 27, ../../base/src/compass/sass/dracula.scss */
+.x-panel-body-background {
+    background: #555555;
+    border: none;
+}
+/* line 30, ../../base/src/compass/sass/dracula.scss */
+.x-panel-body-background .x-form-cb-label-default.x-form-cb-label-after {
+    color: #fff;
+}
+/* line 33, ../../base/src/compass/sass/dracula.scss */
+.x-panel-body-background .x-form-item-label-default {
+    color: #fff;
+}
+/* line 36, ../../base/src/compass/sass/dracula.scss */
+.x-panel-body-background .x-panel-default-framed {
+    border-color: #555555;
+}
+
+/* line 41, ../../base/src/compass/sass/dracula.scss */
+.x-panel-background.x-grid .x-column-header {
+    background-color: #555555;
+    color: #fff;
+}
+/* line 45, ../../base/src/compass/sass/dracula.scss */
+.x-panel-background.x-grid .x-grid-view {
+    border: none;
+}
+
+/* line 49, ../../base/src/compass/sass/dracula.scss */
+.x-panel-background {
+    background: #555555;
+}
+/* line 51, ../../base/src/compass/sass/dracula.scss */
+.x-panel-background .x-column-header-text-inner {
+    color: white !important;
+}
+
+/* line 56, ../../base/src/compass/sass/dracula.scss */
+.x-tab-bar-background, .x-tab-bar-strip-background, .x-tab.x-tab-active.x-tab-background, .x-tab-background-top {
+    background-color: #9e9e9e !important;
+}
+
+/* line 59, ../../base/src/compass/sass/dracula.scss */
+.x-tab-bar-white, .x-tab-bar-strip-white, .x-tab.x-tab-active.x-tab-white, .x-tab-white-top {
+    background-color: #9e9e9e !important;
+}
+
+/* line 63, ../../base/src/compass/sass/dracula.scss */
+.x-tab-inner-white, .x-tab-inner-background {
+    color: white !important;
+}
+
+/* line 66, ../../base/src/compass/sass/dracula.scss */
+.x-toolbar-primary-dark {
+    background-color: #444444;
+}
+
+/* line 69, ../../base/src/compass/sass/dracula.scss */
+.x-toolbar-secondary {
+    background-color: #757575;
+}
+
+/* line 72, ../../base/src/compass/sass/dracula.scss */
+.x-toolbar-default {
+    background-color: #f2f2f2;
+}
+
+/* line 75, ../../base/src/compass/sass/dracula.scss */
+.x-window-default, .x-window-background, .x-window-dialog, .x-window-body-default, .x-window-body-background, .x-window-body-dialog, .x-window-dialog > .x-toolbar, .x-window > .x-toolbar, .x-window-header-background, .x-window-header-default, .x-window-header-dialog {
+    background-color: #555555;
+}
+
+/* line 78, ../../base/src/compass/sass/dracula.scss */
+.x-window-body-dialog, .x-window-header-title-default, .x-window-header-title-background, .x-window-header-title-dialog {
+    color: #FFF;
+}
+
+/* line 83, ../../base/src/compass/sass/dracula.scss */
+.x-window > .x-toolbar .x-btn-inner, .x-window-dialog > .x-toolbar .x-btn-inner {
+    color: #E3F2FD;
+}
+
+/* Valence "common" */
+/* line 94, ../../base/src/compass/sass/dracula.scss */
+.hs-wrap .hs-inner .hs-step-wrap .hs-step .hs-step-text, .hs-wrap .hs-inner .hs-step-wrap .hs-step .hs-step-subtext {
+    background-color: #555555;
+    color: white !important;
+}
+/* line 99, ../../base/src/compass/sass/dracula.scss */
+.hs-wrap .hs-inner .hs-step-wrap .hs-step-line {
+    border-color: #BBB;
+}
+
+/* line 106, ../../base/src/compass/sass/dracula.scss */
+.w-navdrawer .w-navdrawer-treebody {
+    background-color: #f2f2f2;
+}
+/* line 109, ../../base/src/compass/sass/dracula.scss */
+.w-navdrawer .w-navdrawer-header {
+    background-color: #444444;
+}
+/* line 111, ../../base/src/compass/sass/dracula.scss */
+.w-navdrawer .w-navdrawer-header .x-btn-icon-el {
+    color: #fff;
+}
+/* line 114, ../../base/src/compass/sass/dracula.scss */
+.w-navdrawer .w-navdrawer-header .w-navdrawer-title {
+    color: #fff;
+}

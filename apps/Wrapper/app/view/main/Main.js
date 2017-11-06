@@ -41,6 +41,7 @@ Ext.define('Wrapper.view.main.Main', {
                 scale : 'medium',
                 text  : Valence.login.config.Runtime.getLoginData().loginId,
                 menu  : {
+                    plain : true,
                     items : [{
                         reference : 'changePassword',
                         text      : Valence.lang.lit.changePassword,
