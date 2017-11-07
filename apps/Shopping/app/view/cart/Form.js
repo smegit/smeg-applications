@@ -20,20 +20,18 @@ Ext.define('Shopping.view.cart.Form', {
     },
 
     buildItems : function (opts) {
-        var ninety    = new Date(),
-            optItems = [],
+        var optItems = [],
             optItem;
-        ninety.setDate(ninety.getDate() + 90);
 
         for (var i = 0; i < opts.length; i++) {
             optItem = opts[i];
             optItems.push({
-                xtype : 'checkbox',
-                boxLabel : optItem.DELOPTD,
+                xtype          : 'checkbox',
+                boxLabel       : optItem.DELOPTD,
                 uncheckedValue : '0',
-                inputValue : '1',
-                name : optItem.DELOPTC,
-                width :'100%'
+                inputValue     : '1',
+                name           : optItem.DELOPTC,
+                width          : '100%'
             });
         }
 
@@ -50,7 +48,7 @@ Ext.define('Shopping.view.cart.Form', {
                     padding        : 5,
                     width          : '22%'
                 },
-                margin : 0,
+                margin        : 0,
                 padding       : '0 20',
                 layout        : {
                     type  : 'hbox',
@@ -69,25 +67,25 @@ Ext.define('Shopping.view.cart.Form', {
                         minWidth : 250,
                         defaults : {
                             labelAlign : 'left',
-                            labelWidth   : 150
+                            labelWidth : 150
                         },
                         items    : [{
-                            xtype : 'textfield',
-                            name  : 'OAORDKEY',
+                            xtype  : 'textfield',
+                            name   : 'OAORDKEY',
                             hidden : true
                         }, {
                             xtype      : 'textfield',
                             name       : 'OACSTREF',
                             fieldLabel : 'Reference *',
                             allowBlank : false,
-                            reference : 'reffield',
+                            reference  : 'reffield'
                         }, {
                             xtype          : 'combo',
                             bind           : {
                                 store : '{cartReps}'
                             },
                             queryMode      : 'local',
-                            reference : 'cartrepscombo',
+                            reference      : 'cartrepscombo',
                             displayField   : 'REP',
                             valueField     : 'REP',
                             name           : 'OAREP',
@@ -95,34 +93,40 @@ Ext.define('Shopping.view.cart.Form', {
                             fieldLabel     : 'Sales Person *',
                             allowBlank     : false,
                             minWidth       : 200,
-                            anyMatch : true
+                            anyMatch       : true
                         }, {
-                            xtype        : 'datefield',
-                            name         : 'OADELD',
-                            required     : true,
-                            fieldLabel   : 'Preferred Delivery Date',
-                            minValue     : new Date(),
-                            maxValue     : ninety,
-                            format       : 'd/m/Y',
-                            submitFormat : 'Y-m-d',
-                            minWidth     : 135
+                            xtype             : 'datefield',
+                            name              : 'OADELD',
+                            required          : true,
+                            fieldLabel        : 'Preferred Delivery Date',
+                            minValue          : new Date(),
+                            maxValue          : Ext.Date.add(new Date(), Ext.Date.YEAR, 1), //1 Year from the current date
+                            format            : 'd/m/Y',
+                            submitFormat      : 'Y-m-d',
+                            minWidth          : 135,
+                            disabledDatesText : 'Delivery not available on holidays',
+                            disabledDaysText  : 'Delivery not available on weekends',
+                            bind              : {
+                                disabledDates : '{deliveryDisabledDates}',
+                                disabledDays  : '{deliveryDisabledDays}'
+                            }
                         }]
                     }, {
-                        xtype  : 'panel',
-                        title : 'Delivery Options',
-                        cls : 'delopts-panel',
-                        ui : 'inset',
-                        margin : '2 8 20 24',
+                        xtype       : 'panel',
+                        title       : 'Delivery Options',
+                        cls         : 'delopts-panel',
+                        ui          : 'inset',
+                        margin      : '2 8 20 24',
                         bodyPadding : '4 24 4 48',
-                        scrollable : 'y',
-                        flex : 2,
-                        maxHeight : 122,
-                        border : '1px solid black',
-                        layout : {
-                            type  : 'table',
+                        scrollable  : 'y',
+                        flex        : 2,
+                        maxHeight   : 122,
+                        border      : '1px solid black',
+                        layout      : {
+                            type    : 'table',
                             columns : 3
                         },
-                        items  : optItems
+                        items       : optItems
                     }
                 ]
             },
@@ -312,7 +316,7 @@ Ext.define('Shopping.view.cart.Form', {
                             },
                             beforecollapse : function (cmp) {
                                 var fields = cmp.query('field'),
-                                    regex = new RegExp('checkbox',"i"),
+                                    regex  = new RegExp('checkbox', "i"),
                                     field;
 
                                 for (var i = 0; i < fields.length; i++) {
@@ -325,7 +329,7 @@ Ext.define('Shopping.view.cart.Form', {
                             },
                             beforeexpand   : function (cmp) {
                                 var fields = cmp.query('field'),
-                                    regex = new RegExp('checkbox',"i"),
+                                    regex  = new RegExp('checkbox', "i"),
                                     field;
                                 for (var i = 0; i < fields.length; i++) {
                                     field = fields[i];

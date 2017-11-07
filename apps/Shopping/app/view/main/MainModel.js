@@ -1,6 +1,6 @@
-Ext.define('Shopping.view.main.MainModel',{
-    extend    : 'Ext.app.ViewModel',
-    alias     : 'viewmodel.main',
+Ext.define('Shopping.view.main.MainModel', {
+    extend : 'Ext.app.ViewModel',
+    alias  : 'viewmodel.main',
 
     requires : [
         'Shopping.model.CartDeliveryOpt',
@@ -14,63 +14,65 @@ Ext.define('Shopping.view.main.MainModel',{
     ],
 
     data : {
-        agentName : '',
-        cartCount : 0,
-        loadProducts : false,
-        STKLOC : null,
-        hideAllocated : true,
-        hideBannerText : true,
-        bannerText : ''
+        agentName             : '',
+        cartCount             : 0,
+        loadProducts          : false,
+        STKLOC                : null,
+        hideAllocated         : true,
+        hideBannerText        : true,
+        bannerText            : '',
+        deliveryDisabledDates : null, //Example exclude one day ['25/12/2017']
+        deliveryDisabledDays  : null //Example [0, 6] would be excluding weekends
     },
 
     formulas : {
-        hideOrdKey : function(get){
+        hideOrdKey    : function (get) {
             return Ext.isEmpty(get('activeCartNumber'));
         },
-        ordKeyText : function(get) {
+        ordKeyText    : function (get) {
             return 'Order: ' + get('activeCartNumber');
         },
-        stkLocation : function(get) {
+        stkLocation   : function (get) {
             return get('STKLOC') || get('STKDFT');
         },
-        hideClearCart : function(get){
+        hideClearCart : function (get) {
             return get('cartCount') == 0;
         }
     },
 
     stores : {
         cartDeliveryOpts : {
-            model : 'Shopping.model.CartDeliveryOpt',
+            model    : 'Shopping.model.CartDeliveryOpt',
             autoLoad : false
         },
-        cartPaymentOpts : {
-            model : 'Shopping.model.CartPaymentOpt',
+        cartPaymentOpts  : {
+            model    : 'Shopping.model.CartPaymentOpt',
             autoLoad : false
         },
-        cartReps : {
-            model : 'Shopping.model.CartRep',
+        cartReps         : {
+            model    : 'Shopping.model.CartRep',
             autoLoad : true
         },
-        cartItems : {
-            model : 'Shopping.model.CartItem',
+        cartItems        : {
+            model    : 'Shopping.model.CartItem',
             autoLoad : false
         },
-        categories : {
-            model : 'Shopping.model.Category',
+        categories       : {
+            model    : 'Shopping.model.Category',
             autoLoad : false,
             pageSize : 0
         },
-        existingCarts : {
-            model : 'Shopping.model.ExistingCart',
+        existingCarts    : {
+            model    : 'Shopping.model.ExistingCart',
             autoLoad : false
         },
-        products : {
-            model : 'Shopping.model.Product',
+        products         : {
+            model    : 'Shopping.model.Product',
             autoLoad : false,
             pageSize : 0
         },
-        stockLocations : {
-            model : 'Shopping.model.StockLocation',
+        stockLocations   : {
+            model    : 'Shopping.model.StockLocation',
             autoLoad : false
         }
     }
