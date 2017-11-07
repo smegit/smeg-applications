@@ -27,11 +27,12 @@ Ext.define('Shopping.view.cart.Form', {
             optItem = opts[i];
             optItems.push({
                 xtype          : 'checkbox',
-                boxLabel       : optItem.DELOPTD,
+                fieldLabel     : optItem.DELOPTD,
                 uncheckedValue : '0',
                 inputValue     : '1',
                 name           : optItem.DELOPTC,
-                width          : '100%'
+                width          : '100%',
+                colspan        : (optItem.DELOPTD === 'Switch door open on dryer') ? 2 : 1
             });
         }
 
@@ -49,7 +50,6 @@ Ext.define('Shopping.view.cart.Form', {
                     width          : '22%'
                 },
                 margin        : 0,
-                padding       : '0 20',
                 layout        : {
                     type  : 'hbox',
                     align : 'stretch'
@@ -64,6 +64,7 @@ Ext.define('Shopping.view.cart.Form', {
                             type  : 'vbox',
                             align : 'stretch'
                         },
+                        margin   : '10 0 0 0',
                         minWidth : 250,
                         defaults : {
                             labelAlign : 'left',
@@ -116,15 +117,18 @@ Ext.define('Shopping.view.cart.Form', {
                         title       : 'Delivery Options',
                         cls         : 'delopts-panel',
                         ui          : 'inset',
-                        margin      : '2 8 20 24',
-                        bodyPadding : '4 24 4 48',
-                        scrollable  : 'y',
+                        margin      : '0 0 0 32',
+                        bodyPadding : 8,
                         flex        : 2,
-                        maxHeight   : 122,
+                        maxHeight   : 155,
                         border      : '1px solid black',
                         layout      : {
                             type    : 'table',
-                            columns : 3
+                            columns : 4
+                        },
+                        defaults    : {
+                            labelAlign    : 'top',
+                            labelSepartor : ''
                         },
                         items       : optItems
                     }
