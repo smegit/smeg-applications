@@ -612,6 +612,8 @@ Ext.define('Shopping.view.main.MainController', {
         if (!Ext.isEmpty(column.action) && column.action === 'removecartitem') {
             viewModel.set('cartCount', cartCount - rec.get('quantity'));
             store.remove(rec);
+
+            grid.getView().refresh();
         }
     },
 

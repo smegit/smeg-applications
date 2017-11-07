@@ -5,6 +5,15 @@
       margin-right : 0px!important;
     }
   }
+  .x-grid-view{
+    border: none!important;
+    height : 100%;
+  }
+  .x-grid-empty{
+    text-align: center;
+    padding-top: 20px!important;
+    padding-left:0px!important;
+  }
 }
 
 .x-grid-row-summary .x-grid-cell {

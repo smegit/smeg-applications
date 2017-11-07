@@ -156,7 +156,7 @@ Ext.define('Shopping.view.cart.Main', {
     buildItems : function (opts) {
         return [{
             xtype     : 'cartlist',
-            minHeight : 110
+            minHeight : 100
         }, {
             xtype       : 'cartform',
             cartOptions : opts
