@@ -29,9 +29,13 @@ Ext.define('Wrapper.Application', {
                             noButtons : true,
                             minWidth  : 400
                         });
-                    }
+                    };
 
                 Valence.common.util.Helper.loadMask(Valence.lang.lit.loading);
+
+                //setup the window unload
+                //
+                me.setupUnload();
 
                 //load the available apps
                 //
@@ -42,7 +46,7 @@ Ext.define('Wrapper.Application', {
                             //wrapperAppId = Ext.getUrlParam('app'),
                             // update this value if you create a new app record otherwise uncomment the line before
                             // and the ?app=[appId] to the url
-                            wrapperAppId = '1004',
+                            wrapperAppId    = '1004',
                             appId;
 
                         for (var ii = 0; ii < recs.length; ii++) {
@@ -77,5 +81,27 @@ Ext.define('Wrapper.Application', {
 
     onAppUpdate : function () {
         window.location.reload();
+    },
+
+    setupUnload : function () {
+        var me       = this,
+            onUnload = (!Ext.isEmpty(window.onunload)) ? window.onunload : Ext.emptyFn;
+
+        window.onunload = Ext.bind(function () {
+            var frames = Ext.ComponentQuery.query('uxiframe[app]');
+
+            //find any uxiframes and notify them destroy
+            //
+            for (var ii = 0; ii < frames.length; ii++) {
+                var frameWin = frames[ii].getWin();
+
+                frames[ii].fireEvent('beforedestroy', frames[ii]);
+                frames[ii].fireEvent('destroy', frames[ii]);
+                if (!Ext.isEmpty(frameWin.beforeDestroy) && typeof frameWin.beforeDestroy === 'function'){
+                    frameWin.beforeDestroy();
+                }
+            }
+            onUnload();
+        }, me);
     }
 });

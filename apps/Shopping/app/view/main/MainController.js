@@ -72,10 +72,12 @@ Ext.define('Shopping.view.main.MainController', {
             'existingcarts'                 : {
                 celldblclick : me.loadExistingCart,
                 cellclick    : me.onCellClickExistCart
-            },
+            }
         });
 
-        window.onbeforeunload = Ext.bind(me.resetCart, me);
+        window.beforeDestroy = Ext.bind(function(){
+            this.releaseCart();
+        },me);
 
         // cnx update
         Shopping.getApplication().on('beforelogout',me.resetCart);

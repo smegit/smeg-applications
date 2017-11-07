@@ -1,23 +1,29 @@
 Ext.define('Wrapper.view.app.App', {
     extend : 'Ext.container.Container',
     xtype  : 'app-wrapped-app',
-
     requires : [
         'Ext.layout.container.Fit',
+        'Ext.ux.IFrame',
         'Wrapper.view.app.AppModel'
     ],
-
     viewModel : 'app',
-
     layout : {
         type : 'fit'
     },
-
-    items : [{
-        xtype : 'component',
-        tpl   : '<iframe width="100%" height="100%" frameborder="0" src="{src}"></iframe>',
-        bind  : {
-            data : '{iframeData}'
-        }
-    }]
+    initComponent : function () {
+        var me = this;
+        Ext.apply(me, {
+            items : me.buildItems()
+        });
+        me.callParent(arguments);
+    },
+    buildItems : function(){
+        var me = this,
+            vm = me.getViewModel();
+        return [{
+            xtype     : 'uxiframe',
+            app : vm.get('app'),
+            src : vm.get('src')
+        }]
+    }
 });

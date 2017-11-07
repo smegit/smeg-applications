@@ -59,6 +59,7 @@ Ext.define('Wrapper.view.main.MainController', {
 
     showApp : function (rec) {
         var me             = this,
+            appId          = rec.get('appId'),
             view           = me.getView(),
             loginProcessor = Valence.login.Processor,
             key            = Ext.util.Format.date(new Date(), 'time') + Math.floor((Math.random() * 10000) + 1),
@@ -97,9 +98,9 @@ Ext.define('Wrapper.view.main.MainController', {
         if (type === '*URL' || type === '*XCT') {
             url = path + params;
         } else if (type === '*DOC') {
-            url = connUrl + '/valence/vvcall.pgm?pgm=*DOC&app=' + rec.get('appId') + '&sid=' + sid + params;
+            url = connUrl + '/valence/vvcall.pgm?pgm=*DOC&app=' + appId + '&sid=' + sid + params;
         } else {
-            url = connUrl + path + oper + 'app=' + rec.get('appId') + '&lang=' + loginProcessor.getLanguage() + '&sid=' + sid + '&env=' + env + '&key=' + key + '&theme=' + theme + params;
+            url = connUrl + path + oper + 'app=' + appId + '&lang=' + loginProcessor.getLanguage() + '&sid=' + sid + '&env=' + env + '&key=' + key + '&theme=' + theme + params;
             if (!Ext.isClassic) {
                 url += '&native=true&deviceType=' + Wrapper.getApplication().getCurrentProfile().getName();
             }
@@ -107,12 +108,11 @@ Ext.define('Wrapper.view.main.MainController', {
 
         var newApp = view.add({
             xtype     : 'app-wrapped-app',
-            appId     : rec.get('appId'),
+            appId     : appId,
             viewModel : {
                 data : {
-                    iframeData : {
-                        src : url
-                    }
+                    app     : appId,
+                    src       : url
                 }
             }
         });
