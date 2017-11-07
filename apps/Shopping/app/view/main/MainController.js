@@ -55,7 +55,8 @@ Ext.define('Shopping.view.main.MainController', {
             },
             'cartlist'                      : {
                 cellclick : me.onCellClickProducts,
-                edit      : me.onCellEdit
+                edit      : me.onCellEdit,
+                viewready : me.onViewReadyCartList
             },
             'cartmain button'               : {
                 click : me.onCartButtonClick
@@ -75,12 +76,12 @@ Ext.define('Shopping.view.main.MainController', {
             }
         });
 
-        window.beforeDestroy = Ext.bind(function(){
+        window.beforeDestroy = Ext.bind(function () {
             this.releaseCart();
-        },me);
+        }, me);
 
         // cnx update
-        Shopping.getApplication().on('beforelogout',me.resetCart);
+        Shopping.getApplication().on('beforelogout', me.resetCart);
 
         me.getOptions(function () {
             catStr.load(function (recs) {
@@ -98,7 +99,7 @@ Ext.define('Shopping.view.main.MainController', {
     listen : {
         global : {
             resize : {
-                fn : 'onViewportResize',
+                fn     : 'onViewportResize',
                 buffer : 200
             }
         }
@@ -113,7 +114,7 @@ Ext.define('Shopping.view.main.MainController', {
             wdwHeight, wdwWidth;
 
         if (!Ext.isEmpty(wdw) && wdw.isVisible()) {
-            wdwWidth = wdw.getWidth();
+            wdwWidth  = wdw.getWidth();
             wdwHeight = wdw.getHeight();
             if (wdwWidth > width) {
                 if (Ext.isEmpty(wdw.orgWidth)) {
@@ -539,29 +540,29 @@ Ext.define('Shopping.view.main.MainController', {
                 me.getViewModel().set('product', obj);
 
                 Ext.create('Ext.window.Window', {
-                    frame         : true,
-                    closable      : true,
-                    ui            : 'smeg',
-                    width         : 600,
-                    height        : "80%",
-                    modal         : true,
-                    fixed         : true,
-                    scrollable    : true,
+                    frame       : true,
+                    closable    : true,
+                    ui          : 'smeg',
+                    width       : 600,
+                    height      : "80%",
+                    modal       : true,
+                    fixed       : true,
+                    scrollable  : true,
                     // cnx update
-                    reference : 'smegwindow',
-                    bodyPadding   : 5,
-                    layout        : {
+                    reference   : 'smegwindow',
+                    bodyPadding : 5,
+                    layout      : {
                         type : 'card'
                     },
-                    title         : 'Product Detail: ' + obj.Product[0].MODEL,
-                    items         : [{
-                        xtype : 'productdetail',
-                        height : '100%',
+                    title       : 'Product Detail: ' + obj.Product[0].MODEL,
+                    items       : [{
+                        xtype    : 'productdetail',
+                        height   : '100%',
                         // CNX update -- set minWidth
                         minWidth : 400
                     }],
-                    autoShow      : true,
-                    dockedItems   : [{
+                    autoShow    : true,
+                    dockedItems : [{
                         xtype  : 'toolbar',
                         dock   : 'bottom',
                         cls    : 'detail-bbar',
@@ -763,6 +764,19 @@ Ext.define('Shopping.view.main.MainController', {
         me.onCartButtonClick(menuItem);
     },
 
+    onViewReadyCartList : function (cmp) {
+        var me    = this,
+            store = cmp.getStore();
+
+        //because of the layout and the grid not scrolling initial view
+        // of the grid is not showing empty text if empty
+        //
+        if (store.getCount() === 0) {
+            var rec = store.add({dummy : true});
+            store.remove(rec);
+        }
+    },
+
     saveCart : function (cmp, formData, products) {
         var me     = this,
             vm     = me.getViewModel(),
@@ -885,30 +899,30 @@ Ext.define('Shopping.view.main.MainController', {
                         response.OAORDKEY = orderKey;
                         maxPayment        = response.maxpay[0].maxpay;
                         cartPayment       = {
-                            xtype         : 'window',
-                            itemId        : 'cartPayment',
-                            ui            : 'smeg',
-                            bodyPadding   : 20,
-                            width         : 600,
-                            y             : 40,
-                            height        : '80%',
-                            modal         : true,
-                            title         : action == 'checkout' ? 'Payment' : 'Deposit',
-                            closable      : true,
-                            scrollable    : true,
-                            layout        : 'fit',
+                            xtype        : 'window',
+                            itemId       : 'cartPayment',
+                            ui           : 'smeg',
+                            bodyPadding  : 20,
+                            width        : 600,
+                            y            : 40,
+                            height       : '80%',
+                            modal        : true,
+                            title        : action == 'checkout' ? 'Payment' : 'Deposit',
+                            closable     : true,
+                            scrollable   : true,
+                            layout       : 'fit',
                             // cnx update
-                            reference : 'smegwindow',
+                            reference    : 'smegwindow',
                             // cnx update -- default focus
                             defaultFocus : '#payMethCombo',
-                            items         : [{
+                            items        : [{
                                 xtype      : 'cartpayment',
                                 scrollable : 'y',
                                 paymode    : action,
                                 cartInfo   : response,
                                 maxpay     : maxPayment
                             }],
-                            bbar          : ['->', {
+                            bbar         : ['->', {
                                 text    : 'Cancel',
                                 ui      : 'primary',
                                 scale   : 'medium',
@@ -985,24 +999,24 @@ Ext.define('Shopping.view.main.MainController', {
             callback : function () {
                 body.unmask();
                 Ext.create('Ext.window.Window', {
-                    itemId        : 'exCartWindow',
-                    ui            : 'smeg',
-                    frame         : true,
-                    closable      : true,
-                    width         : 800,
-                    height        : "80%",
-                    modal         : true,
-                    reference : 'smegwindow',
-                    bodyPadding   : 5,
-                    layout        : {
+                    itemId      : 'exCartWindow',
+                    ui          : 'smeg',
+                    frame       : true,
+                    closable    : true,
+                    width       : 800,
+                    height      : "80%",
+                    modal       : true,
+                    reference   : 'smegwindow',
+                    bodyPadding : 5,
+                    layout      : {
                         type : 'card'
                     },
-                    title         : 'Saved Orders',
-                    items         : [
+                    title       : 'Saved Orders',
+                    items       : [
                         {
                             xtype : 'existingcarts'
                         }],
-                    autoShow      : true
+                    autoShow    : true
                 });
             }
         });
@@ -1146,14 +1160,14 @@ Ext.define('Shopping.view.main.MainController', {
     },
 
     sendPayment : function () {
-        var me         = this,
-            formPanel  = Ext.ComponentQuery.query('cartpayment')[0],
-            form       = formPanel.getForm(),
-            formValues = form.getValues(),
-            orderKey   = formValues.OAORDKEY,
-            maxPayment = formPanel.maxpay,
-            payAmt     = formValues.OAPAYAMT,
-            blankStr   = 'This field is required.',
+        var me          = this,
+            formPanel   = Ext.ComponentQuery.query('cartpayment')[0],
+            form        = formPanel.getForm(),
+            formValues  = form.getValues(),
+            orderKey    = formValues.OAORDKEY,
+            maxPayment  = formPanel.maxpay,
+            payAmt      = formValues.OAPAYAMT,
+            blankStr    = 'This field is required.',
             // cnx update
             invalidForm = false,
             wdw, resp, params, payAmtCnt, keepGoing, maxpay;

@@ -11,6 +11,14 @@ Ext.define('Shopping.view.cart.ExistingCarts', {
         countInTitle : false
     },
 
+    viewConfig : {
+        emptyTextPlugin        : true,
+        emptyText              : {
+            heading : 'No Saved Orders',
+            iconCls : 'vvicon-file-text'
+        }
+    },
+
     tbar : [{
         xtype : 'tbtext',
         html  : 'Double-click to load cart'
