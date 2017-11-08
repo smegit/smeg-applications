@@ -15,7 +15,7 @@ Ext.define('Shopping.view.cart.ExistingCarts', {
         emptyTextPlugin        : true,
         emptyText              : {
             heading : 'No Saved Orders',
-            iconCls : 'vvicon-file-text'
+            iconCls : 'vvicon-price-tags2'
         }
     },
 
