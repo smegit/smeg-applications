@@ -5,7 +5,8 @@
     "apps": [
         "apps/Wrapper",
         "apps/ShoppingCart",
-        "apps/Shopping"
+        "apps/Shopping",
+        "apps/Welcome"
     ],
 
     /**

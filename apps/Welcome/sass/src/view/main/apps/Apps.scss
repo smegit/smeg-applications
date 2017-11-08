@@ -1,0 +1,20 @@
+.welcome-apps{
+  .x-tree-elbow-img{
+    display:none;
+  }
+  .x-tree-icon{
+    display:none;
+  }
+  .app-icon{
+    left:45px;
+    font-size:19px!important;
+    line-height:19px!important;
+    display:inline-block;
+    vertical-align:middle;
+    margin-right:4px;
+    margin-left:16px;
+  }
+  .x-grid-cell-inner{
+    padding: 6px 12px 6px 6px;
+  }
+}

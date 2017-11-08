@@ -35,6 +35,8 @@ app.all('/build/production/Shopping/*', express.static(__dirname));
 app.all('/build/testing/ShoppingCart/*', express.static(__dirname));
 app.all('/build/testing/Wrapper/*', express.static(__dirname));
 app.all('/build/production/Wrapper/*', express.static(__dirname));
+app.all('/build/production/Welcome/*', express.static(__dirname));
+app.all('/apps/Welcome/*', express.static(__dirname));
 app.all('/build/*', valenceProxy);
 app.all('/Product/*', valenceProxy);
 

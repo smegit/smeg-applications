@@ -2,7 +2,7 @@
     /**
      * The application's namespace.
      */
-    "name": "Shopping",
+    "name": "Welcome",
     
     /**
      * The version of the application.
@@ -52,7 +52,7 @@
      * The name of the theme for this application.
      */
     
-    "theme": "smeg-theme",
+    "theme": "valence-theme",
     
     
     /**
@@ -66,9 +66,7 @@
      */
     "requires": [
         "valence",
-        "valence-common",
-        "valence-theme",
-        "valence-login"
+        "valence-common"
     ],
 
     /**
@@ -89,13 +87,13 @@
     "sass": {
         /**
          * The root namespace to use when mapping *.scss files to classes in the
-         * sass/src and sass/var directories. For example, "Shopping.view.Foo" would
-         * map to "sass/src/view/Foo.scss". If we changed this to "Shopping.view" then
+         * sass/src and sass/var directories. For example, "Welcome.view.Foo" would
+         * map to "sass/src/view/Foo.scss". If we changed this to "Welcome.view" then
          * it would map to "sass/src/Foo.scss". To style classes outside the app's
          * root namespace, change this to "". Doing so would change the mapping of
-         * "Shopping.view.Foo" to "sass/src/Shopping/view/Foo.scss".
+         * "Welcome.view.Foo" to "sass/src/Welcome/view/Foo.scss".
          */
-        "namespace": "Shopping",
+        "namespace": "Welcome",
 
         /**
          * Generated sass source settings
@@ -532,5 +530,5 @@
      * Uniquely generated id for this application, used as prefix for localStorage keys.
      * Normally you should never change this value.
      */
-    "id": "4e639865-7d60-4b57-8b1d-eac14927cee6"
+    "id": "33226537-0093-49ac-8789-4eebcec53c81"
 }
