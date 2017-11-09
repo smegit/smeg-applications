@@ -44,9 +44,20 @@ Ext.define('Shopping.view.main.MainController', {
                 var me          = this,
                     d           = Ext.decode(r.responseText),
                     continueFnc = function (agency) {
+                        var stockDefault;
+
+                        if (!Ext.isEmpty(d.StockDft)) {
+                            stockDefault = d.StockDft[0].STKDFT;
+                        }
+
                         //use the base "single" agent
                         //
-                        vm.set('agent', agency);
+                        vm.set({
+                            'agent'       : agency,
+                            'agentName'   : d.AgentName[0].Name,
+                            'cartOptions' : d.DelOpts,
+                            'STKDFT'      : stockDefault
+                        });
 
                         me.loadDeliveryOptions(d);
                         me.loadPaymentOptions(d);
@@ -102,7 +113,7 @@ Ext.define('Shopping.view.main.MainController', {
         return deferred.promise;
     },
 
-    loadDeliveryOptions : function(content){
+    loadDeliveryOptions : function (content) {
         var me    = this,
             vm    = me.getViewModel(),
             store = vm.getStore('DeliveryOptions');

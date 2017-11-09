@@ -143,8 +143,47 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     agentSelected : function(content){
-        var me = this;
+        var me = this,
+            vm = me.getViewModel(),
+            mainVm = me.getView().lookupViewModel(true),
+            stockDefault = mainVm.get('STKDFT');
+
+        if (!Ext.isEmpty(stockDefault)){
+            var productsStore = vm.getStore('products');
+            Ext.apply(prodStr.getProxy().extraParams, {
+                stkloc : stockDefault
+            });
+
+            setTimeout(function () {
+                vm.set('loadProducts', true);
+            }, 300);
+        }
         console.log('agentSelected : ', content);
+                var obj = Ext.decode(response.responseText);
+                if (!Ext.isEmpty(obj.AgentName)) {
+                    vm.set('agentName', obj.AgentName[0].Name);
+                }
+                if (!Ext.isEmpty(obj.StockDft)) {
+                    dflt    = obj.StockDft[0].STKDFT;
+                    prodStr = vm.getStore('products');
+                    Ext.apply(prodStr.getProxy().extraParams, {
+                        stkloc : dflt
+                    });
+                    vm.set('STKDFT', dflt);
+                    setTimeout(function () {
+                        vm.set('loadProducts', true);
+                    }, 300);
+                }
+                if (!Ext.isEmpty(obj.DelOpts)) {
+                    cartOptions = obj.DelOpts;
+                }
+                cmp = Ext.create('Shopping.view.cart.Main', {
+                    cartOptions : cartOptions
+                });
+                card.add(cmp);
+                if (!Ext.isEmpty(callback)) {
+                    Ext.callback(callback, (!Ext.isEmpty(scope)) ? scope : me, [true, obj]);
+                }
     },
 
     autoFillAddress : function (customer) {
@@ -227,7 +266,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         });
 
         if (vm.get('loadProducts')) {
-            debugger;
             str.load(
                 function () {
                     setTimeout(function () {
@@ -506,7 +544,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 cat : rec.get('CATID')
             });
             if (vm.get('loadProducts')) {
-                debugger;
                 str.load(
                     function () {
                         setTimeout(function () {

@@ -7,18 +7,21 @@ Ext.define('Shopping.view.main.MainModel', {
     ],
     alias    : 'viewmodel.main',
     data     : {
-        agent : null
+        agent       : null,
+        agentName   : '',
+        cartOptions : null,
+        STKDFT      : null
     },
     stores   : {
         DeliveryOptions : {
             model    : 'Shopping.model.DeliveryOption',
             autoLoad : false
         },
-        PaymentOptions : {
+        PaymentOptions  : {
             model    : 'Shopping.model.PaymentOption',
             autoLoad : false
         },
-        StockLocations   : {
+        StockLocations  : {
             model    : 'Shopping.model.StockLocation',
             autoLoad : false
         }

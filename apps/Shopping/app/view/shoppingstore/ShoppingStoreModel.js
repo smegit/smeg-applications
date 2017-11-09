@@ -10,10 +10,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
     ],
 
     data : {
-        agentName             : '',
         cartCount             : 0,
         loadProducts          : false,
-        STKLOC                : null,
         hideAllocated         : true,
         hideBannerText        : true,
         bannerText            : '',

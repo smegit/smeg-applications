@@ -48,31 +48,39 @@ Ext.define('Welcome.view.main.Main', {
             type  : 'hbox',
             align : 'stretch'
         },
-        defaults : {
+        // defaults : {
+        //     flex : 1,
+        //     cls  : 'depth-1'
+        // },
+        items    : [{
+            xtype : 'component',
+            flex  : 1
+        },{
+            xtype  : 'apps',
+            margin : '0 16 32 32',
             flex : 1,
             cls  : 'depth-1'
-        },
-        items    : [{
-            xtype  : 'apps',
-            margin : '0 16 32 32'
-        }, {
-            xtype       : 'panel',
-            title       : 'Specials',
-            margin      : '0 16 32 16',
-            bodyPadding : 32,
-            style       : {
-                'border' : '1px solid #d0d0d0'
-            },
-            html        : '<div style="font-size:15px;font-weight:400;">Content</div>'
-        }, {
-            xtype       : 'panel',
-            title       : 'News',
-            margin      : '0 32 32 16',
-            bodyPadding : 32,
-            style       : {
-                'border' : '1px solid #d0d0d0'
-            },
-            html        : '<div style="font-size:15px;font-weight:400;">Content</div>'
+        },{
+            xtype : 'component',
+            flex  : 1
+        // }, {
+        //     xtype       : 'panel',
+        //     title       : 'Specials',
+        //     margin      : '0 16 32 16',
+        //     bodyPadding : 32,
+        //     style       : {
+        //         'border' : '1px solid #d0d0d0'
+        //     },
+        //     html        : '<div style="font-size:15px;font-weight:400;">Content</div>'
+        // }, {
+        //     xtype       : 'panel',
+        //     title       : 'News',
+        //     margin      : '0 32 32 16',
+        //     bodyPadding : 32,
+        //     style       : {
+        //         'border' : '1px solid #d0d0d0'
+        //     },
+        //     html        : '<div style="font-size:15px;font-weight:400;">Content</div>'
         }]
     }]
 });
