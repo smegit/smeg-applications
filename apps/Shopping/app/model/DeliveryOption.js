@@ -1,6 +1,6 @@
-Ext.define('Shopping.model.StockLocation', {
+Ext.define('Shopping.model.DeliveryOption', {
     extend : 'Ext.data.Model',
-    fields : ['STKCOD', 'STKDSC'],
+    fields : ['DELOPTC', 'DELOPTD'],
     type   : 'memory',
     reader : {
         type : 'json'

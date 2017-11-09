@@ -1,6 +1,6 @@
-Ext.define('Shopping.model.StockLocation', {
+Ext.define('Shopping.model.PaymentOption', {
     extend : 'Ext.data.Model',
-    fields : ['STKCOD', 'STKDSC'],
+    fields : ['PAYMCOD', 'PAYMDSC'],
     type   : 'memory',
     reader : {
         type : 'json'

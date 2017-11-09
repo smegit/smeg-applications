@@ -46,7 +46,7 @@ Ext.define('Shopping.view.products.Heading', {
                 change : 'onChangeStockLocation'
             },
             bind : {
-                store : '{stockLocations}',
+                store : '{StockLocations}',
                 value : '{stkLocation}'
             }
         },{

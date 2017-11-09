@@ -82,7 +82,7 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                     maxValue        : cartInfo.maxpay[0].maxpay,
                     fieldLabel      : 'Payment Method',
                     bind            : {
-                        store : '{cartPaymentOpts}'
+                        store : '{PaymentOptions}'
                     },
                     queryMode       : 'local',
                     forceSelection  : true,

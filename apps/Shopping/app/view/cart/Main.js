@@ -74,7 +74,7 @@ Ext.define('Shopping.view.cart.Main', {
                         change : 'onChangeStockLocation'
                     },
                     bind           : {
-                        store : '{stockLocations}',
+                        store : '{StockLocations}',
                         value : '{stkLocation}'
                     }
                 }]
