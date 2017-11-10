@@ -21,7 +21,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
         me.callParent(arguments);
     },
     buildItems    : function () {
-        var me = this,
+        var me               = this,
             customerReadOnly = (!Ext.isEmpty(me.editCustomer) && me.editCustomer === true) ? false : true;
 
         return [{
@@ -31,20 +31,19 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
             flex          : 1,
             itemId        : 'customerfieldset',
             defaultType   : 'textfield',
-            defaults      : {
-                anchor : '100%'
-            },
             margin        : '0 18 0 0',
             padding       : '0 20',
-            fieldDefaults : {
+            defaults      : {
                 labelAlign : 'left',
                 labelWidth : 150,
-                readOnly   : customerReadOnly
+                readOnly : customerReadOnly,
+                width  : '100%'
             },
             items         : [{
                 name       : 'OACSTNAM',
                 fieldLabel : 'Name',
-                required   : true
+                required   : true,
+                readOnly   : customerReadOnly
             }, {
                 itemId     : 'customerSearch',
                 name       : 'customerSearch',
@@ -103,15 +102,13 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
             reference      : 'deliveryfieldset',
             defaultType    : 'textfield',
             defaults       : {
+                labelAlign : 'left',
+                labelWidth : 150,
                 anchor   : '100%',
                 disabled : true
             },
             margin         : '0 0 0 20',
             padding        : '0 20',
-            fieldDefaults  : {
-                labelAlign : 'left',
-                labelWidth : 150
-            },
             checkboxName   : 'dlvychbx',
             checkboxToggle : true,
             collapsable    : true,

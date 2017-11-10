@@ -36,7 +36,7 @@
      *
      *    "extend": "parent-theme-package",
      */
-    "extend": "theme-triton",
+    "extend": "valence-theme",
 
     /**
       * The author of the package.
