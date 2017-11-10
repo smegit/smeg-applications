@@ -1,34 +1,24 @@
 Ext.define('Shopping.view.cart.List', {
-    extend : 'Ext.grid.Panel',
-
-    xtype : 'cartlist',
-
-    bind : {
+    extend       : 'Ext.grid.Panel',
+    xtype        : 'cartlist',
+    bind         : {
         store : '{cartItems}'
     },
-
     countInTitle : false,
-
-    ui : 'background',
-
-    features : [{
+    ui           : 'background',
+    features     : [{
         ftype : 'summary'
     }],
-
-    cls : 'cart-list',
-
-    overCls : 'cart-list-over',
-
-    plugins : [{
+    cls          : 'cart-list',
+    overCls      : 'cart-list-over',
+    plugins      : [{
         ptype        : 'cellediting',
         clicksToEdit : 1
     }],
-
-    viewConfig : {
+    viewConfig   : {
         emptyText : 'No Items have been added to this Order'
     },
-
-    columns : {
+    columns      : {
         items    : [
             {
                 text      : 'Item',

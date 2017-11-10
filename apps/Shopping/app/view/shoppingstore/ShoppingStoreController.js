@@ -1029,18 +1029,19 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 // Close Existing Cart List Window
                 exCartListWindow.unmask();
                 exCartListWindow.close();
-                var products                                    = obj.CartDtl,
-                    viewModel                                   = me.getViewModel(),
-                    formPanel                                   = Ext.ComponentQuery.query('cartform')[0],
-                    form                                        = formPanel.getForm(),
-                    fieldset                                    = formPanel.query('#deliveryfieldset')[0],
-                    fields                                      = fieldset.query('field'),
-                    cartItemStore                               = vm.getStore('cartItems'),
-                    cartItemStoreItems                          = [],
-                    cartItemCount                               = 0,
-                    repStr                                      = vm.getStore('cartReps'),
+                var products           = obj.CartDtl,
+                    viewModel          = me.getViewModel(),
+                    formPanel          = Ext.ComponentQuery.query('cartform')[0],
+                    form               = formPanel.getForm(),
+                    fieldset           = formPanel.query('#deliveryfieldset')[0],
+                    fields             = fieldset.query('field'),
+                    cartItemStore      = vm.getStore('cartItems'),
+                    cartItemStoreItems = [],
+                    cartItemCount      = 0,
+                    repStr             = vm.getStore('cartReps'),
+                    formValues         = {},
                     repRec, product, field, fldValue, prodQuantity,
-                    delvDate, ninetyDate, todayDate, formValues = {};
+                    delvDate, ninetyDate, todayDate;
 
                 if (!Ext.isEmpty(obj.CartHdr)) {
                     Ext.apply(formValues, obj.CartHdr[0]);

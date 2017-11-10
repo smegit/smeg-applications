@@ -92,12 +92,12 @@ Ext.define('Shopping.view.cart.Main', {
                 text    : 'Save',
                 action  : 'savecart',
                 maskMsg : 'Saving Order'
+            // }, {
+            //     text    : 'Deposit',
+            //     action  : 'deposit',
+            //     maskMsg : 'Setting up Deposit'
             }, {
-                text    : 'Deposit',
-                action  : 'deposit',
-                maskMsg : 'Setting up Deposit'
-            }, {
-                text     : 'Checkout',
+                text     : 'Release',
                 action   : 'checkout',
                 maskMsg  : 'Checking Out',
                 cls      : 'btn-checkout',
@@ -124,12 +124,12 @@ Ext.define('Shopping.view.cart.Main', {
             text    : 'Save',
             action  : 'savecart',
             maskMsg : 'Saving Order'
+        // }, {
+        //     text    : 'Deposit',
+        //     action  : 'deposit',
+        //     maskMsg : 'Setting up Deposit'
         }, {
-            text    : 'Deposit',
-            action  : 'deposit',
-            maskMsg : 'Setting up Deposit'
-        }, {
-            text     : 'Checkout',
+            text     : 'Release',
             action   : 'checkout',
             maskMsg  : 'Checking Out',
             cls      : 'btn-checkout',
