@@ -82,9 +82,9 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         Shopping.getApplication().on('beforelogout', me.resetCart);
 
         Shopping.getApplication().on({
-            scope : me,
+            scope         : me,
             agentselected : me.agentSelected,
-            beforelogout : me.resetCart
+            beforelogout  : me.resetCart
         })
 
         // me.getOptions(function () {
@@ -142,15 +142,17 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         }
     },
 
-    agentSelected : function(content){
-        var me = this,
-            vm = me.getViewModel(),
-            mainVm = me.getView().lookupViewModel(true),
+    agentSelected : function (content) {
+        var me           = this,
+            vm           = me.getViewModel(),
+            mainVm       = me.getView().lookupViewModel(true),
+            card         = me.lookupReference('card'),
+            mainCart     = me.lookupReference('cartcontainer'),
             stockDefault = mainVm.get('STKDFT');
 
-        if (!Ext.isEmpty(stockDefault)){
+        if (!Ext.isEmpty(stockDefault)) {
             var productsStore = vm.getStore('products');
-            Ext.apply(prodStr.getProxy().extraParams, {
+            Ext.apply(productsStore.getProxy().extraParams, {
                 stkloc : stockDefault
             });
 
@@ -158,32 +160,22 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 vm.set('loadProducts', true);
             }, 300);
         }
-        console.log('agentSelected : ', content);
-                var obj = Ext.decode(response.responseText);
-                if (!Ext.isEmpty(obj.AgentName)) {
-                    vm.set('agentName', obj.AgentName[0].Name);
-                }
-                if (!Ext.isEmpty(obj.StockDft)) {
-                    dflt    = obj.StockDft[0].STKDFT;
-                    prodStr = vm.getStore('products');
-                    Ext.apply(prodStr.getProxy().extraParams, {
-                        stkloc : dflt
-                    });
-                    vm.set('STKDFT', dflt);
-                    setTimeout(function () {
-                        vm.set('loadProducts', true);
-                    }, 300);
-                }
-                if (!Ext.isEmpty(obj.DelOpts)) {
-                    cartOptions = obj.DelOpts;
-                }
-                cmp = Ext.create('Shopping.view.cart.Main', {
-                    cartOptions : cartOptions
-                });
-                card.add(cmp);
-                if (!Ext.isEmpty(callback)) {
-                    Ext.callback(callback, (!Ext.isEmpty(scope)) ? scope : me, [true, obj]);
-                }
+
+        if (Ext.isEmpty(mainCart)) {
+            mainCart = Ext.create('Shopping.view.cart.Main', {
+                cartOptions : mainVm.get('cartOptions')
+            });
+            card.add(mainCart);
+        } else {
+            me.resetCart();
+        }
+
+        vm.getStore('categories').load(function (recs) {
+            if (!Ext.isEmpty(recs)) {
+                me.lookupReference('cats').getSelectionModel().select(recs[0]);
+            }
+            me.lookupReference('productsdv').unmask();
+        });
     },
 
     autoFillAddress : function (customer) {

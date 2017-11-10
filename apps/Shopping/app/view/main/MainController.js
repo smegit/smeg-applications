@@ -2,14 +2,24 @@ Ext.define('Shopping.view.main.MainController', {
     extend        : 'Ext.app.ViewController',
     alias         : 'controller.main',
     initViewModel : function () {
-        var me = this;
+        var me          = this,
+            updateAgent = new Ext.util.DelayedTask(function () {
+                me.onSmegAgentSetPortal();
+            });
+
+        //listen for the agent change from the portal that is fired
+        // from the hook
+        //
+        window.smegAgentChanged = Ext.bind(function () {
+            updateAgent.delay(500);
+        }, me);
 
         //get the initial options
         //
         me.getOptions()
             .then(function (content) {
-                Shopping.getApplication().fireEvent('agentselected', content);
                 Valence.common.util.Helper.destroyLoadMask();
+                Shopping.getApplication().fireEvent('agentselected', content);
             });
     },
 
@@ -41,73 +51,28 @@ Ext.define('Shopping.view.main.MainController', {
             params  : params,
             scope   : me,
             success : function (r) {
-                var me          = this,
-                    d           = Ext.decode(r.responseText),
-                    continueFnc = function (agency) {
-                        var stockDefault;
+                var me = this,
+                    d  = Ext.decode(r.responseText),
+                    stockDefault;
 
-                        if (!Ext.isEmpty(d.StockDft)) {
-                            stockDefault = d.StockDft[0].STKDFT;
-                        }
-
-                        //use the base "single" agent
-                        //
-                        vm.set({
-                            'agent'       : agency,
-                            'agentName'   : d.AgentName[0].Name,
-                            'cartOptions' : d.DelOpts,
-                            'STKDFT'      : stockDefault
-                        });
-
-                        me.loadDeliveryOptions(d);
-                        me.loadPaymentOptions(d);
-                        me.loadStockLocations(d);
-
-                        deferred.resolve(d);
-                    };
-
-                if (!Ext.isEmpty(d.agencies) && Ext.isArray(d.agencies) && d.agencies.length > 1) {
-                    //has multiple agencies
-                    // ask user which agent they want to work with
-                    //
-                } else {
-                    //use the base "single" agent
-                    //
-                    continueFnc(d.agencies);
+                if (!Ext.isEmpty(d.StockDft)) {
+                    stockDefault = d.StockDft[0].STKDFT;
                 }
+
+                //use the base "single" agent
+                //
+                vm.set({
+                    'agentName'   : d.AgentName[0].Name,
+                    'cartOptions' : d.DelOpts,
+                    'STKDFT'      : stockDefault
+                });
+
+                me.loadDeliveryOptions(d);
+                me.loadPaymentOptions(d);
+                me.loadStockLocations(d);
+
+                deferred.resolve(d);
             }
-            // success : function (response, opts) {
-            //     var obj = Ext.decode(response.responseText);
-            //     if (!Ext.isEmpty(obj.AgentName)) {
-            //         vm.set('agentName', obj.AgentName[0].Name);
-            //     }
-            //     if (!Ext.isEmpty(obj.StockDft)) {
-            //         dflt    = obj.StockDft[0].STKDFT;
-            //         prodStr = vm.getStore('products');
-            //         Ext.apply(prodStr.getProxy().extraParams, {
-            //             stkloc : dflt
-            //         });
-            //         vm.set('STKDFT', dflt);
-            //         setTimeout(function () {
-            //             vm.set('loadProducts', true);
-            //         }, 300);
-            //     }
-            //     if (!Ext.isEmpty(obj.DelOpts)) {
-            //         cartOptions = obj.DelOpts;
-            //     }
-            //     cmp = Ext.create('Shopping.view.cart.Main', {
-            //         cartOptions : cartOptions
-            //     });
-            //     card.add(cmp);
-            //     if (!Ext.isEmpty(callback)) {
-            //         Ext.callback(callback, (!Ext.isEmpty(scope)) ? scope : me, [true, obj]);
-            //     }
-            // },
-            // failure : function (response, opts) {
-            //     if (!Ext.isEmpty(callback)) {
-            //         Ext.callback(callback, (!Ext.isEmpty(scope)) ? scope : me, [false, response]);
-            //     }
-            // }
         });
 
         return deferred.promise;
@@ -141,5 +106,21 @@ Ext.define('Shopping.view.main.MainController', {
         if (!Ext.isEmpty(store) && !Ext.isEmpty(content.StockLoc)) {
             store.loadRawData(content.StockLoc);
         }
+    },
+
+    onSmegAgentSetPortal : function () {
+        var me = this;
+
+        Valence.common.util.Helper.loadMask({
+            text : 'Loading Agent'
+        });
+
+        //get the initial options
+        //
+        me.getOptions()
+            .then(function (content) {
+                Shopping.getApplication().fireEvent('agentselected', content);
+                Valence.common.util.Helper.destroyLoadMask();
+            });
     }
 });

@@ -12,8 +12,8 @@ Ext.define('Shopping.view.cart.ExistingCarts', {
     },
 
     viewConfig : {
-        emptyTextPlugin        : true,
-        emptyText              : {
+        emptyTextPlugin : true,
+        emptyText       : {
             heading : 'No Saved Orders',
             iconCls : 'vvicon-price-tags2'
         }
@@ -26,6 +26,9 @@ Ext.define('Shopping.view.cart.ExistingCarts', {
         xtype     : 'textfield',
         width     : 300,
         emptyText : 'Search Saved Orders',
+        style     : {
+            'z-index' : 11
+        },
         listeners : {
             change : 'onChangeSearchSavedOrders'
         }
