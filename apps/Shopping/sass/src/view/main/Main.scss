@@ -49,6 +49,11 @@
   $ui-header-background-color : #555,
   $ui-header-glyph-color : $white-1-color
 );
+.x-window-header-smeg{
+  .x-tool-img{
+    color : #fff;
+  }
+}
 
 @include extjs-button-toolbar-medium-ui(
 $ui: 'non-primary',

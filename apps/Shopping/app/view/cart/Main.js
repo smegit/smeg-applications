@@ -89,10 +89,6 @@ Ext.define('Shopping.view.cart.Main', {
                 maskMsg : 'Clearing Cart',
                 action  : 'clearcart'
             }, {
-                text    : 'View Saved Orders',
-                maskMsg : 'Loading',
-                action  : 'existingcarts'
-            }, {
                 text    : 'Save',
                 action  : 'savecart',
                 maskMsg : 'Saving Order'
@@ -124,10 +120,6 @@ Ext.define('Shopping.view.cart.Main', {
             text    : 'Clear Order',
             maskMsg : 'Clearing Cart',
             action  : 'clearcart'
-        }, {
-            text    : 'View Saved Orders',
-            maskMsg : 'Loading',
-            action  : 'existingcarts'
         }, {
             text    : 'Save',
             action  : 'savecart',

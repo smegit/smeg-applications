@@ -25,8 +25,13 @@ Ext.define('Shopping.view.cart.ExistingCarts', {
             xtype     : 'textfield',
             width     : 300,
             emptyText : 'Search Saved Orders',
+            plugins   : [{
+                ptype : 'formfieldclearvalue'
+            }],
             listeners : {
-                change : 'onChangeSearchSavedOrders'
+                afterrender : 'onAfterRenderSearchSavedOrders',
+                change      : 'onChangeSearchSavedOrders',
+                clear       : 'onClearSearchSavedOrders'
             }
         }]
     },

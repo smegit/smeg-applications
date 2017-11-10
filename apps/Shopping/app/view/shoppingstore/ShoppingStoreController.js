@@ -202,6 +202,13 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         }
     },
 
+    onAfterRenderSearchSavedOrders : function (cmp) {
+        var me = this;
+        setTimeout(function () {
+            cmp.focus();
+        }, 100);
+    },
+
     onBeforeShowCartMenu : function (menu) {
         var me               = this,
             vm               = me.getViewModel(),
@@ -242,6 +249,14 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         var me = this;
         me.getViewModel().getStore('products').load();
         me.lookupReference('card').getLayout().setActiveItem(0);
+    },
+
+    onClearSearchSavedOrders : function (cmp) {
+        var me  = this,
+            vm  = me.getViewModel(),
+            str = vm.getStore('existingCarts');
+
+        str.clearFilter();
     },
 
     onHideCreditInfo   : function (cmp) {
