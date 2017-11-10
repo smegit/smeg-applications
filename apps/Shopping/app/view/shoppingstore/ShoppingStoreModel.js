@@ -35,24 +35,25 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
     },
 
     stores : {
-        cartReps         : {
+        cartReps      : {
             model    : 'Shopping.model.CartRep',
             autoLoad : true
         },
-        cartItems        : {
+        cartItems     : {
             model    : 'Shopping.model.CartItem',
             autoLoad : false
         },
-        categories       : {
+        categories    : {
             model    : 'Shopping.model.Category',
             autoLoad : false,
             pageSize : 0
         },
-        existingCarts    : {
+        existingCarts : {
             model    : 'Shopping.model.ExistingCart',
+            pageSize : 0,
             autoLoad : false
         },
-        products         : {
+        products      : {
             model    : 'Shopping.model.Product',
             autoLoad : false,
             pageSize : 0

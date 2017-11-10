@@ -1,10 +1,13 @@
 Ext.define('Shopping.view.shoppingstore.ShoppingStore', {
     extend     : 'Ext.Container',
     requires   : [
-        'Shopping.view.shoppingstore.ShoppingStoreModel',
-        'Shopping.view.shoppingstore.ShoppingStoreController',
-        'Shopping.view.products.Main',
+        'Ext.container.Container',
+        'Ext.layout.container.Card',
+        'Ext.layout.container.Fit',
         'Shopping.view.cart.Main',
+        'Shopping.view.products.Main',
+        'Shopping.view.shoppingstore.ShoppingStoreController',
+        'Shopping.view.shoppingstore.ShoppingStoreModel'
     ],
     xtype      : 'shoppingstore',
     viewModel  : {
@@ -19,7 +22,12 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStore', {
         },
         reference : 'card',
         items     : [{
-            xtype : 'productsmain'
+            reference : 'productsMain',
+            xtype     : 'productsmain',
+            listeners : {
+                changestocklocation : 'onChangeStockLocation',
+                viewcart            : 'onViewCart'
+            }
         }]
     }]
 });

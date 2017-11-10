@@ -1,15 +1,13 @@
 Ext.define('Shopping.view.products.Heading', {
-    extend   : 'Ext.toolbar.Toolbar',
-    requires : [
+    extend        : 'Ext.toolbar.Toolbar',
+    requires      : [
         'Valence.common.ux.plugin.form.field.ClearValue'
     ],
-    xtype    : 'heading',
-    ui       : 'heading',
-
-    layout : {
+    xtype         : 'heading',
+    ui            : 'heading',
+    layout        : {
         type : 'hbox'
     },
-
     initComponent : function () {
         var me = this;
         Ext.apply(me, {
@@ -22,34 +20,34 @@ Ext.define('Shopping.view.products.Heading', {
         var me = this;
         return [{
             xtype : 'tbtext',
-            style   : {
+            style : {
                 'font-weight' : 500,
                 'font-size'   : '16px'
             },
-            bind : {
+            bind  : {
                 html : '{agentName}'
             }
         }, {
             xtype : 'tbfill'
         }, {
-            xtype : 'combo',
-            queryMode : 'local',
-            width : 305,
-            labelWidth : 95,
-            valueField : 'STKCOD',
-            displayField : 'STKDSC',
-            reference : 'stocklocs',
-            cls : 'combo-no-bckgrd',
-            fieldLabel : 'Stock Location',
+            xtype          : 'combo',
+            queryMode      : 'local',
+            width          : 305,
+            labelWidth     : 95,
+            valueField     : 'STKCOD',
+            displayField   : 'STKDSC',
+            reference      : 'stocklocs',
+            cls            : 'combo-no-bckgrd',
+            fieldLabel     : 'Stock Location',
             forceSelection : true,
-            listeners : {
+            listeners      : {
                 change : 'onChangeStockLocation'
             },
-            bind : {
+            bind           : {
                 store : '{StockLocations}',
                 value : '{stkLocation}'
             }
-        },{
+        }, {
             xtype           : 'textfield',
             itemId          : 'search',
             width           : 200,
@@ -58,11 +56,22 @@ Ext.define('Shopping.view.products.Heading', {
             enableKeyEvents : true,
             plugins         : [{
                 ptype : 'formfieldclearvalue'
-            }]
+            }],
+            listeners       : {
+                clear : 'onClearSearch',
+                keyup : {
+                    buffer : 250,
+                    fn     : 'onKeyupSearch'
+                }
+            }
         }, {
             xtype  : 'button',
             action : 'existingcarts',
-            text   : 'View Saved Orders'
+            text   : 'View Saved Orders',
+            handler : 'onClickExistingCarts',
+            bind : {
+                hidden : '{!hideClearCart}'
+            }
         }, {
             xtype     : 'component',
             height    : '100%',
@@ -72,10 +81,13 @@ Ext.define('Shopping.view.products.Heading', {
             bind      : {
                 data : {
                     cartCount : '{cartCount}'
-                }
+                },
+                hidden : '{hideClearCart}'
             },
             listeners : {
-                click : 'onViewCart'
+                el : {
+                    click : 'onViewCart'
+                }
             },
             tpl       : me.buildTpl()
         }, {
@@ -97,26 +109,5 @@ Ext.define('Shopping.view.products.Heading', {
             '<div data-event="viewcart" class="cart-num">{cartCount}</div>',
             '</div>'
         );
-    },
-
-    onClickHeading : function (e) {
-        var me    = this,
-            el    = Ext.get(e.getTarget()),
-            event = el.getAttribute('data-event');
-
-        if (event) {
-            me.fireEvent(event, el);
-        }
-    },
-
-    onRender : function () {
-        var me = this;
-        me.callParent(arguments);
-
-        me.el.on({
-            scope : me,
-            click : me.onClickHeading
-        });
     }
-
 });

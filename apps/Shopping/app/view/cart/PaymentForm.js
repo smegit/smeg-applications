@@ -175,23 +175,23 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                         },
                         items      : [
                             {
-                                xtype      : 'numberfield',
-                                name       : 'CCEM',
-                                reference  : 'ccmonth',
-                                minValue   : 1,
-                                maxValue   : 12,
-                                value      : new Date().getMonth() + 1,
-                                width      : 70,
-                                margin     : '0 5 0 0'
+                                xtype     : 'numberfield',
+                                name      : 'CCEM',
+                                reference : 'ccmonth',
+                                minValue  : 1,
+                                maxValue  : 12,
+                                value     : new Date().getMonth() + 1,
+                                width     : 70,
+                                margin    : '0 5 0 0'
                             },
                             {
-                                xtype      : 'numberfield',
-                                name       : 'CCEY',
-                                reference  : 'ccyear',
-                                minValue   : new Date().getFullYear(),
-                                maxValue   : 9999,
-                                value      : new Date().getFullYear(),
-                                width      : 95
+                                xtype     : 'numberfield',
+                                name      : 'CCEY',
+                                reference : 'ccyear',
+                                minValue  : new Date().getFullYear(),
+                                maxValue  : 9999,
+                                value     : new Date().getFullYear(),
+                                width     : 95
                             }
                         ]
                     }, {

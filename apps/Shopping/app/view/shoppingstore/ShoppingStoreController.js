@@ -19,9 +19,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     ],
 
     init : function () {
-        var me     = this,
-            vm     = me.getViewModel(),
-            catStr = vm.getStore('categories');
+        var me = this,
+            vm = me.getViewModel();
 
         me.control({
             'categories'                    : {
@@ -34,16 +33,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             },
             'detailview'                    : {
                 showlargerimage : me.onDetailImageClick
-            },
-            'heading'                       : {
-                viewcart : me.onViewCart
-            },
-            'heading #search'               : {
-                clear : me.onClearSearch,
-                keyup : {
-                    buffer : 250,
-                    fn     : me.onKeyupSearch
-                }
             },
             'heading button'                : {
                 click : me.onHeadingButtonClick
@@ -85,17 +74,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             scope         : me,
             agentselected : me.agentSelected,
             beforelogout  : me.resetCart
-        })
-
-        // me.getOptions(function () {
-        //     catStr.load(function (recs) {
-        //         if (!Ext.isEmpty(recs)) {
-        //             me.lookupReference('cats').getSelectionModel().select(recs[0]);
-        //         }
-        //         me.lookupReference('productsdv').unmask();
-        //         Valence.common.util.Helper.destroyLoadMask();
-        //     });
-        // });
+        });
     },
 
     // cnx update -- added global listener for window resizing
@@ -155,10 +134,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             Ext.apply(productsStore.getProxy().extraParams, {
                 stkloc : stockDefault
             });
-
-            // setTimeout(function () {
-            //     vm.set('loadProducts', true);
-            // }, 300);
         }
 
         if (Ext.isEmpty(mainCart)) {
@@ -170,12 +145,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             me.resetCart();
         }
 
-        vm.getStore('categories').load(function (recs) {
-            if (!Ext.isEmpty(recs)) {
-                me.lookupReference('cats').getSelectionModel().select(recs[0]);
-            }
-            me.lookupReference('productsdv').unmask();
-        });
+        vm.getStore('categories').load();
     },
 
     autoFillAddress : function (customer) {
@@ -261,7 +231,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             str.load(
                 function () {
                     setTimeout(function () {
-                        me.lookupReference('productsdv').unmask();
+                        me.lookupReference('productsMain').fireEvent('unmaskproductsview');
                     }, 200);
                 }
             );
@@ -311,52 +281,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 }
             }
         });
-    },
-
-    getOptions : function (callback, scope) {
-        var me          = this,
-            vm          = me.getViewModel(),
-            card        = me.lookupReference('card'),
-            cartOptions = [], prodStr, dflt, cmp;
-        // Ext.Ajax.request({
-        //     url     : '/valence/vvcall.pgm',
-        //     params  : {
-        //         pgm    : 'EC1010',
-        //         action : 'getOptions'
-        //     },
-        //     success : function (response, opts) {
-        //         var obj = Ext.decode(response.responseText);
-        //         if (!Ext.isEmpty(obj.AgentName)) {
-        //             vm.set('agentName', obj.AgentName[0].Name);
-        //         }
-        //         if (!Ext.isEmpty(obj.StockDft)) {
-        //             dflt    = obj.StockDft[0].STKDFT;
-        //             prodStr = vm.getStore('products');
-        //             Ext.apply(prodStr.getProxy().extraParams, {
-        //                 stkloc : dflt
-        //             });
-        //             vm.set('STKDFT', dflt);
-        //             setTimeout(function () {
-        //                 vm.set('loadProducts', true);
-        //             }, 300);
-        //         }
-        //         if (!Ext.isEmpty(obj.DelOpts)) {
-        //             cartOptions = obj.DelOpts;
-        //         }
-        //         cmp = Ext.create('Shopping.view.cart.Main', {
-        //             cartOptions : cartOptions
-        //         });
-        //         card.add(cmp);
-        //         if (!Ext.isEmpty(callback)) {
-        //             Ext.callback(callback, (!Ext.isEmpty(scope)) ? scope : me, [true, obj]);
-        //         }
-        //     },
-        //     failure : function (response, opts) {
-        //         if (!Ext.isEmpty(callback)) {
-        //             Ext.callback(callback, (!Ext.isEmpty(scope)) ? scope : me, [false, response]);
-        //         }
-        //     }
-        // });
     },
 
     onAfterRenderAddressSearch : function (cmp) {
@@ -539,7 +463,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 str.load(
                     function () {
                         setTimeout(function () {
-                            me.lookupReference('productsdv').unmask();
+                            me.lookupReference('productsMain').fireEvent('unmaskproductsview');
                         }, 200);
                     }
                 );
@@ -1004,9 +928,9 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             cartCount        : 0,
             activeCartNumber : null
         });
-        me.lookupReference('cats').getSelectionModel().select(vm.getStore('categories').getAt(0));
-        me.onClickGoBack();
 
+        me.lookupReference('productsMain').fireEvent('selectfirstcat');
+        me.onClickGoBack();
     },
 
     onHeadingButtonClick : function (btn) {
@@ -1023,14 +947,19 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     showExistingCarts : function () {
         var me   = this,
             body = Ext.getBody(),
+            view = me.getView(),
             vm   = me.getViewModel();
+
         body.mask('Loading');
 
         vm.getStore('existingCarts').load({
+            scope    : me,
             callback : function () {
                 body.unmask();
-                Ext.create('Ext.window.Window', {
+                view.add({
+                    xtype       : 'window',
                     itemId      : 'exCartWindow',
+                    renderTo    : Ext.getBody(),
                     ui          : 'smeg',
                     frame       : true,
                     closable    : true,
@@ -1043,12 +972,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                         type : 'card'
                     },
                     title       : 'Saved Orders',
-                    items       : [
-                        {
-                            xtype : 'existingcarts'
-                        }],
-                    autoShow    : true
-                });
+                    items       : [{
+                        xtype : 'existingcarts'
+                    }]
+                }).show();
             }
         });
     },
