@@ -19,20 +19,22 @@ Ext.define('Shopping.view.cart.ExistingCarts', {
         }
     },
 
-    tbar : [{
-        xtype : 'tbtext',
-        html  : 'Double-click to load cart'
-    }, '->', {
-        xtype     : 'textfield',
-        width     : 300,
-        emptyText : 'Search Saved Orders',
+    tbar : {
         style     : {
             'z-index' : 11
         },
-        listeners : {
-            change : 'onChangeSearchSavedOrders'
-        }
-    }],
+        items : [{
+            xtype : 'tbtext',
+            html  : 'Double-click to load cart'
+        }, '->', {
+            xtype     : 'textfield',
+            width     : 300,
+            emptyText : 'Search Saved Orders',
+            listeners : {
+                change : 'onChangeSearchSavedOrders'
+            }
+        }]
+    },
 
     columns : {
         items    : [
