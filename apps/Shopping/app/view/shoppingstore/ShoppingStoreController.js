@@ -542,6 +542,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                             name       : 'quantity',
                             itemId     : 'dtl-quantity',
                             fieldLabel : 'Quantity',
+                            labelWidth : 54,
+                            width      : 150,
                             minValue   : 0,
                             value      : 1
                         }, {
