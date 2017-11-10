@@ -17,7 +17,6 @@ Ext.define('Shopping.view.products.View', {
     items : [{
         xtype     : 'container',
         cls       : 'category-text',
-        margin    : '16 24 0',
         bind      : {
             html   : '{bannerText}',
             hidden : '{hideBannerText}'

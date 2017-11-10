@@ -2,7 +2,6 @@ Ext.define('Shopping.view.cart.Main', {
     extend    : 'Ext.panel.Panel',
     xtype     : 'cartmain',
     reference : 'cartcontainer',
-
     requires      : [
         'Shopping.view.cart.List',
         'Shopping.view.cart.Form',
@@ -22,6 +21,7 @@ Ext.define('Shopping.view.cart.Main', {
     },
     tbar          : {
         xtype  : 'toolbar',
+        ui : 'primary-dark',
         height : 50,
         layout : {
             type : 'hbox'
@@ -39,6 +39,7 @@ Ext.define('Shopping.view.cart.Main', {
                 },
                 items    : [{
                     xtype   : 'tbtext',
+                    cls : 'fld-in-header',
                     padding : 6,
                     style   : {
                         'font-weight' : 500,
@@ -49,6 +50,7 @@ Ext.define('Shopping.view.cart.Main', {
                     }
                 }, {
                     xtype   : 'tbtext',
+                    cls : 'fld-in-header',
                     padding : 6,
                     style   : {
                         'font-weight' : 500,
@@ -60,6 +62,7 @@ Ext.define('Shopping.view.cart.Main', {
                     }
                 }, {
                     xtype          : 'combo',
+                    cls : 'fld-in-header',
                     queryMode      : 'local',
                     flex           : 0,
                     width          : 305,
@@ -67,7 +70,6 @@ Ext.define('Shopping.view.cart.Main', {
                     valueField     : 'STKCOD',
                     displayField   : 'STKDSC',
                     reference      : 'stocklocs',
-                    cls            : 'combo-cart-stock',
                     fieldLabel     : 'Stock Location',
                     forceSelection : true,
                     listeners      : {
@@ -107,6 +109,7 @@ Ext.define('Shopping.view.cart.Main', {
     },
     bbar          : {
         xtype  : 'toolbar',
+        ui : 'primary-dark',
         height : 50,
         items  : [{
             xtype : 'tbfill'

@@ -1,13 +1,14 @@
 .cart {
-  border-top:2px solid #dcdcdc;
-  background-color:#fafafa !important;
+  //border-top:2px solid #dcdcdc;
+  //background-color:#fafafa !important;
   overflow-x: hidden !important;
+  border-radius : 0px!important;
 }
 
-.cart > .x-toolbar {
-  border-top: solid 1px #ccc !important;
-  border-bottom: solid 1px #ccc !important;
-}
+//.cart > .x-toolbar {
+//  border-top: solid 1px #ccc !important;
+//  border-bottom: solid 1px #ccc !important;
+//}
 
 .btn-shopping {
   background-color: #6f6f6f;

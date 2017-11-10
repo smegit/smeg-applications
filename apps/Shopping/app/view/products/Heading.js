@@ -4,7 +4,7 @@ Ext.define('Shopping.view.products.Heading', {
         'Valence.common.ux.plugin.form.field.ClearValue'
     ],
     xtype         : 'heading',
-    ui            : 'heading',
+    ui            : 'primary-dark',
     layout        : {
         type : 'hbox'
     },
@@ -31,13 +31,14 @@ Ext.define('Shopping.view.products.Heading', {
             xtype : 'tbfill'
         }, {
             xtype          : 'combo',
+            cls : 'fld-in-header',
             queryMode      : 'local',
             width          : 305,
             labelWidth     : 95,
+            height : 32,
             valueField     : 'STKCOD',
             displayField   : 'STKDSC',
             reference      : 'stocklocs',
-            cls            : 'combo-no-bckgrd',
             fieldLabel     : 'Stock Location',
             forceSelection : true,
             listeners      : {
@@ -49,8 +50,10 @@ Ext.define('Shopping.view.products.Heading', {
             }
         }, {
             xtype           : 'textfield',
+            cls : 'fld-in-header',
             itemId          : 'search',
             width           : 200,
+            height : 32,
             emptyText       : 'Filter Results',
             margin          : '0 15 0 0',
             enableKeyEvents : true,
@@ -65,11 +68,11 @@ Ext.define('Shopping.view.products.Heading', {
                 }
             }
         }, {
-            xtype  : 'button',
-            action : 'existingcarts',
-            text   : 'View Saved Orders',
+            xtype   : 'button',
+            action  : 'existingcarts',
+            text    : 'View Saved Orders',
             handler : 'onClickExistingCarts',
-            bind : {
+            bind    : {
                 hidden : '{!hideClearCart}'
             }
         }, {
@@ -79,7 +82,7 @@ Ext.define('Shopping.view.products.Heading', {
             width     : 50,
             margin    : '8 0 0 0',
             bind      : {
-                data : {
+                data   : {
                     cartCount : '{cartCount}'
                 },
                 hidden : '{hideClearCart}'
