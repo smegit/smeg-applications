@@ -156,9 +156,9 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 stkloc : stockDefault
             });
 
-            setTimeout(function () {
-                vm.set('loadProducts', true);
-            }, 300);
+            // setTimeout(function () {
+            //     vm.set('loadProducts', true);
+            // }, 300);
         }
 
         if (Ext.isEmpty(mainCart)) {
