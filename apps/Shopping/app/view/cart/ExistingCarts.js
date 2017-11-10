@@ -40,12 +40,24 @@ Ext.define('Shopping.view.cart.ExistingCarts', {
             text      : 'Date',
             dataIndex : 'OAMNTD',
             flex      : 0,
-            width     : 100
+            width     : 100,
+            renderer  : function(v){
+                if (!Ext.isEmpty(v)){
+                    return Ext.util.Format.date(Ext.Date.parse(v, 'Y-m-d'), 'd-m-Y');
+                }
+                return '';
+            }
         }, {
             text      : 'Time',
             dataIndex : 'OAMNTT',
             flex      : 0,
-            width     : 80
+            width     : 80,
+            renderer  : function(v){
+                if (!Ext.isEmpty(v)){
+                    return Ext.util.Format.date(Ext.Date.parse(v, 'H:i:s'), 'H:i');
+                }
+                return '';
+            }
         }, {
             text      : 'Order #',
             dataIndex : 'OAORDKEY',
