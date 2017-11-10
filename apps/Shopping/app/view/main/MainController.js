@@ -20,6 +20,21 @@ Ext.define('Shopping.view.main.MainController', {
             .then(function (content) {
                 Valence.common.util.Helper.destroyLoadMask();
                 Shopping.getApplication().fireEvent('agentselected', content);
+            }, function(content){
+                Valence.common.util.Helper.destroyLoadMask();
+
+                Valence.common.util.Dialog.show({
+                    title    : 'Error',
+                    msg      : content.msg,
+                    minWidth : 210,
+                    buttons  : [{
+                        text : Valence.lang.lit.ok
+                    }],
+                    scope    : me,
+                    handler  : function () {
+                        Valence.util.App.close(Ext.getUrlParam('app'));
+                    }
+                });
             });
     },
 
@@ -55,23 +70,27 @@ Ext.define('Shopping.view.main.MainController', {
                     d  = Ext.decode(r.responseText),
                     stockDefault;
 
-                if (!Ext.isEmpty(d.StockDft)) {
-                    stockDefault = d.StockDft[0].STKDFT;
+                if (!Ext.isEmpty(d.msg)) {
+                    deferred.reject(d);
+                } else {
+                    if (!Ext.isEmpty(d.StockDft)) {
+                        stockDefault = d.StockDft[0].STKDFT;
+                    }
+
+                    //use the base "single" agent
+                    //
+                    vm.set({
+                        'agentName'   : d.AgentName[0].Name,
+                        'cartOptions' : d.DelOpts,
+                        'STKDFT'      : stockDefault
+                    });
+
+                    me.loadDeliveryOptions(d);
+                    me.loadPaymentOptions(d);
+                    me.loadStockLocations(d);
+
+                    deferred.resolve(d);
                 }
-
-                //use the base "single" agent
-                //
-                vm.set({
-                    'agentName'   : d.AgentName[0].Name,
-                    'cartOptions' : d.DelOpts,
-                    'STKDFT'      : stockDefault
-                });
-
-                me.loadDeliveryOptions(d);
-                me.loadPaymentOptions(d);
-                me.loadStockLocations(d);
-
-                deferred.resolve(d);
             }
         });
 
