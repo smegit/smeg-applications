@@ -491,8 +491,9 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     onShowDetail : function (cmp, rec) {
-        var me = this,
-            vm = me.getViewModel(),
+        var me   = this,
+            view = me.getView(),
+            vm   = me.getViewModel(),
             obj;
         cmp.mask("Loading");
 
@@ -509,7 +510,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 obj = Ext.decode(response.responseText);
                 me.getViewModel().set('product', obj);
 
-                Ext.create('Ext.window.Window', {
+                view.add({
+                    xtype       : 'window',
                     frame       : true,
                     closable    : true,
                     ui          : 'smeg',
@@ -518,7 +520,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     modal       : true,
                     fixed       : true,
                     scrollable  : true,
-                    // cnx update
                     reference   : 'smegwindow',
                     bodyPadding : 5,
                     layout      : {
@@ -528,7 +529,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     items       : [{
                         xtype    : 'productdetail',
                         height   : '100%',
-                        // CNX update -- set minWidth
                         minWidth : 400
                     }],
                     autoShow    : true,
@@ -553,7 +553,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                             handler : 'onAddToCartFromDetail'
                         }]
                     }]
-                });
+                }).show();
             },
 
             failure : function (response, opts) {
