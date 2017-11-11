@@ -19,23 +19,23 @@ Ext.define('Shopping.view.products.Heading', {
     buildItems : function () {
         var me = this;
         return [{
-            xtype : 'tbtext',
-            style : {
-                'font-weight' : 500,
-                'font-size'   : '16px'
-            },
-            bind  : {
-                html : '{agentName}'
-            }
-        }, {
-            xtype : 'tbfill'
-        }, {
+        //     xtype : 'tbtext',
+        //     style : {
+        //         'font-weight' : 500,
+        //         'font-size'   : '16px'
+        //     },
+        //     bind  : {
+        //         html : '{agentName}'
+        //     }
+        // }, {
+        //     xtype : 'tbfill'
+        // }, {
             xtype          : 'combo',
-            cls : 'fld-in-header',
+            cls            : 'fld-in-header',
             queryMode      : 'local',
             width          : 305,
             labelWidth     : 95,
-            height : 32,
+            height         : 32,
             valueField     : 'STKCOD',
             displayField   : 'STKDSC',
             reference      : 'stocklocs',
@@ -49,13 +49,15 @@ Ext.define('Shopping.view.products.Heading', {
                 value : '{stkLocation}'
             }
         }, {
+            xtype : 'tbfill'
+        }, {
             xtype           : 'textfield',
-            cls : 'fld-in-header',
+            cls             : 'fld-in-header',
             itemId          : 'search',
             width           : 200,
-            height : 32,
+            height          : 32,
             emptyText       : 'Filter Results',
-            margin          : '0 15 0 0',
+            margin          : '0 8 0 0',
             enableKeyEvents : true,
             plugins         : [{
                 ptype : 'formfieldclearvalue'

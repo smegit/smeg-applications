@@ -82,7 +82,7 @@ Ext.define('Shopping.view.cart.List', {
                 width    : 30,
                 align    : 'center',
                 renderer : function () {
-                    return '<span class="vvicon-in-cell vvicon-cross" style="color:#B20000;"><span>';
+                    return '<span data-qtip="Remove" class="vvicon-in-cell vvicon-cross"><span>';
                 }
             }
         ],

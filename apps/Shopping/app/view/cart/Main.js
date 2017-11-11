@@ -1,7 +1,7 @@
 Ext.define('Shopping.view.cart.Main', {
-    extend    : 'Ext.panel.Panel',
-    xtype     : 'cartmain',
-    reference : 'cartcontainer',
+    extend        : 'Ext.panel.Panel',
+    xtype         : 'cartmain',
+    reference     : 'cartcontainer',
     requires      : [
         'Shopping.view.cart.List',
         'Shopping.view.cart.Form',
@@ -21,7 +21,7 @@ Ext.define('Shopping.view.cart.Main', {
     },
     tbar          : {
         xtype  : 'toolbar',
-        ui : 'primary-dark',
+        ui     : 'primary-dark',
         height : 50,
         layout : {
             type : 'hbox'
@@ -38,19 +38,19 @@ Ext.define('Shopping.view.cart.Main', {
                     flex : 1
                 },
                 items    : [{
+                //     xtype   : 'tbtext',
+                //     cls     : 'fld-in-header',
+                //     padding : 6,
+                //     style   : {
+                //         'font-weight' : 500,
+                //         'font-size'   : '16px'
+                //     },
+                //     bind    : {
+                //         html : '{agentName}'
+                //     }
+                // }, {
                     xtype   : 'tbtext',
-                    cls : 'fld-in-header',
-                    padding : 6,
-                    style   : {
-                        'font-weight' : 500,
-                        'font-size'   : '16px'
-                    },
-                    bind    : {
-                        html : '{agentName}'
-                    }
-                }, {
-                    xtype   : 'tbtext',
-                    cls : 'fld-in-header',
+                    cls     : 'fld-in-header',
                     padding : 6,
                     style   : {
                         'font-weight' : 500,
@@ -62,7 +62,7 @@ Ext.define('Shopping.view.cart.Main', {
                     }
                 }, {
                     xtype          : 'combo',
-                    cls : 'fld-in-header',
+                    cls            : 'fld-in-header',
                     queryMode      : 'local',
                     flex           : 0,
                     width          : 305,
@@ -94,10 +94,10 @@ Ext.define('Shopping.view.cart.Main', {
                 text    : 'Save',
                 action  : 'savecart',
                 maskMsg : 'Saving Order'
-            // }, {
-            //     text    : 'Deposit',
-            //     action  : 'deposit',
-            //     maskMsg : 'Setting up Deposit'
+                // }, {
+                //     text    : 'Deposit',
+                //     action  : 'deposit',
+                //     maskMsg : 'Setting up Deposit'
             }, {
                 text     : 'Release',
                 action   : 'checkout',
@@ -109,7 +109,7 @@ Ext.define('Shopping.view.cart.Main', {
     },
     bbar          : {
         xtype  : 'toolbar',
-        ui : 'primary-dark',
+        ui     : 'primary-dark',
         height : 50,
         items  : [{
             xtype : 'tbfill'
@@ -127,10 +127,10 @@ Ext.define('Shopping.view.cart.Main', {
             text    : 'Save',
             action  : 'savecart',
             maskMsg : 'Saving Order'
-        // }, {
-        //     text    : 'Deposit',
-        //     action  : 'deposit',
-        //     maskMsg : 'Setting up Deposit'
+            // }, {
+            //     text    : 'Deposit',
+            //     action  : 'deposit',
+            //     maskMsg : 'Setting up Deposit'
         }, {
             text     : 'Release',
             action   : 'checkout',

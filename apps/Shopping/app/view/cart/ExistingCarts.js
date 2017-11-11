@@ -78,14 +78,15 @@ Ext.define('Shopping.view.cart.ExistingCarts', {
             text     : '',
             action   : 'removecart',
             flex     : 0,
-            width    : 50,
+            width    : 30,
+            align    : 'center',
             renderer : function (val, meta, rec) {
                 var regex = new RegExp("dep", "i");
 
                 if (regex.test(rec.get('OAOSTS'))) {
                     return '';
                 }
-                return '<span class="vvicon-in-cell vvicon-cross" style="color:#B20000;"><span>';
+                return '<span data-qtip="Remove" class="vvicon-in-cell vvicon-cross"><span>';
             }
         }],
         defaults : {

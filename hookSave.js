@@ -293,7 +293,7 @@ Ext.define('Valence.Hook', {
         var me           = this,
             store        = Ext.create('Ext.data.Store', {
                 fields : me.agencyFields,
-                data   : me.agencies
+                data   : Ext.clone(me.agencies)
             }),
             agencyWindow = Ext.create('Ext.window.Window', {
                 title    : 'Select Agency',
