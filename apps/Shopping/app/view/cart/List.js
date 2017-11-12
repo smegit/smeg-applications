@@ -113,8 +113,11 @@ Ext.define('Shopping.view.cart.List', {
                 action   : 'removecartitem',
                 width    : 30,
                 align    : 'center',
-                renderer : function () {
-                    return '<span data-qtip="Remove" class="vvicon-in-cell vvicon-cross"><span>';
+                renderer : function (value, meta, rec, rowIndex, colIndex, store) {
+                    if (store.getCount() > 1){
+                        return '<span data-qtip="Remove" class="vvicon-in-cell vvicon-cross"><span>';
+                    }
+                    return '';
                 }
             }
         ],
