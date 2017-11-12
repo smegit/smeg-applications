@@ -13,7 +13,10 @@ Ext.define('Shopping.view.cart.List', {
     overCls      : 'cart-list-over',
     plugins      : [{
         ptype        : 'cellediting',
-        clicksToEdit : 1
+        clicksToEdit : 1,
+        listeners : {
+            validateedit : 'onValidateEditCartItems'
+        }
     }],
     viewConfig   : {
         emptyText : 'No Items have been added to this Order'
@@ -22,14 +25,16 @@ Ext.define('Shopping.view.cart.List', {
         items    : [
             {
                 text      : 'Item',
+                cellWrap  : true,
                 flex      : 1,
+                maxWidth  : 110,
                 dataIndex : 'product_id'
             },
             {
                 text      : 'Description',
+                cellWrap  : true,
                 dataIndex : 'prod_desc',
-                flex      : 0,
-                width     : 400
+                flex      : 2
             }, {
                 text            : 'Quantity (Click to Change)',
                 width           : 160,
@@ -53,6 +58,36 @@ Ext.define('Shopping.view.cart.List', {
                 }
 
             }, {
+                text            : 'Release',
+                dataIndex       : 'release',
+                width           : 85,
+                align           : 'right',
+                editor          : {
+                    xtype : 'numberfield'
+                },
+                summaryType     : 'sum',
+                summaryRenderer : function (value) {
+                    return Ext.String.format('<b>{0}</b>', value);
+                }
+            }, {
+                text            : 'Delivered',
+                dataIndex       : 'delivered',
+                width           : 85,
+                align           : 'right',
+                summaryType     : 'sum',
+                summaryRenderer : function (value) {
+                    return Ext.String.format('<b>{0}</b>', value);
+                }
+            }, {
+                text            : 'Outstanding',
+                dataIndex       : 'outstanding',
+                width           : 100,
+                align           : 'right',
+                summaryType     : 'sum',
+                summaryRenderer : function (value) {
+                    return Ext.String.format('<b>{0}</b>', value);
+                }
+            }, {
                 text      : 'Price',
                 flex      : 1,
                 align     : 'right',
@@ -70,7 +105,7 @@ Ext.define('Shopping.view.cart.List', {
                     return Ext.util.Format.currency(value);
                 },
                 summaryType     : 'sum',
-                summaryRenderer : function (value, summaryData, dataIndex) {
+                summaryRenderer : function (value) {
                     return Ext.String.format('<b>{0}</b>', Ext.util.Format.currency(value));
                 }
             }, {

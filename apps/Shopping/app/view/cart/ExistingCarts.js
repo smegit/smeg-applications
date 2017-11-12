@@ -67,12 +67,15 @@ Ext.define('Shopping.view.cart.ExistingCarts', {
             width     : 90
         }, {
             text      : 'Name',
+            cellWrap  : true,
             dataIndex : 'OACSTNAM'
         }, {
             text      : 'Reference',
+            cellWrap  : true,
             dataIndex : 'OACSTREF'
         }, {
             text      : 'Rep Code',
+            cellWrap  : true,
             dataIndex : 'OAREP'
         }, {
             text      : 'Status',

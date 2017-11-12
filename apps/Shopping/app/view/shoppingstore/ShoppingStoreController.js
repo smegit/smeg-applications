@@ -334,13 +334,13 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     onChangeSearchSavedOrders : function (fld, val) {
-        var me    = this,
-            vm    = me.getViewModel(),
-            str   = vm.getStore('existingCarts');
+        var me  = this,
+            vm  = me.getViewModel(),
+            str = vm.getStore('existingCarts');
 
         str.clearFilter();
 
-        Valence.util.Helper.processTypedInputFilter(str, ['OAORDKEY','OAMNTD','OAMNTT','OACSTREF','OAREP','OAORDKEY', 'OACSTNAM'], val);
+        Valence.util.Helper.processTypedInputFilter(str, ['OAORDKEY', 'OAMNTD', 'OAMNTT', 'OACSTREF', 'OAREP', 'OAORDKEY', 'OACSTNAM'], val);
     },
     onClearSearch             : function (fld) {
         var me  = this,
@@ -961,21 +961,21 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             callback : function () {
                 body.unmask();
                 view.add({
-                    xtype       : 'window',
-                    itemId      : 'exCartWindow',
-                    renderTo    : Ext.getBody(),
-                    ui          : 'smeg',
-                    frame       : true,
-                    closable    : true,
-                    width       : 850,
-                    height      : "80%",
-                    modal       : true,
-                    reference   : 'smegwindow',
-                    layout      : {
+                    xtype     : 'window',
+                    itemId    : 'exCartWindow',
+                    renderTo  : Ext.getBody(),
+                    ui        : 'smeg',
+                    frame     : true,
+                    closable  : true,
+                    width     : 850,
+                    height    : "80%",
+                    modal     : true,
+                    reference : 'smegwindow',
+                    layout    : {
                         type : 'card'
                     },
-                    title       : 'Saved Orders',
-                    items       : [{
+                    title     : 'Saved Orders',
+                    items     : [{
                         xtype : 'existingcarts'
                     }]
                 }).show();
@@ -1394,6 +1394,27 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 }
             }
         });
+    },
+
+    /**
+     * onValidateEditCartItems - Validate the edit on the release column so they can't enter more than the quantity
+     * @param editor
+     * @param context
+     * @returns {boolean}
+     */
+    onValidateEditCartItems : function (editor, context) {
+        var me = this;
+
+        if (context.field === 'release') {
+            var rec   = context.record,
+                value = context.value,
+                fld = context.column.field;
+            fld.markInvalid(null);
+            if (!Ext.isEmpty(value) && value > rec.get('quantity')) {
+                fld.markInvalid('Quantity is greater than release');
+                return false;
+            }
+        }
     },
 
     releaseCart : function () {
