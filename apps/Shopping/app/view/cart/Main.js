@@ -38,17 +38,17 @@ Ext.define('Shopping.view.cart.Main', {
                     flex : 1
                 },
                 items    : [{
-                //     xtype   : 'tbtext',
-                //     cls     : 'fld-in-header',
-                //     padding : 6,
-                //     style   : {
-                //         'font-weight' : 500,
-                //         'font-size'   : '16px'
-                //     },
-                //     bind    : {
-                //         html : '{agentName}'
-                //     }
-                // }, {
+                    //     xtype   : 'tbtext',
+                    //     cls     : 'fld-in-header',
+                    //     padding : 6,
+                    //     style   : {
+                    //         'font-weight' : 500,
+                    //         'font-size'   : '16px'
+                    //     },
+                    //     bind    : {
+                    //         html : '{agentName}'
+                    //     }
+                    // }, {
                     xtype   : 'tbtext',
                     cls     : 'fld-in-header',
                     padding : 6,
@@ -94,10 +94,10 @@ Ext.define('Shopping.view.cart.Main', {
                 text    : 'Save',
                 action  : 'savecart',
                 maskMsg : 'Saving Order'
-                // }, {
-                //     text    : 'Deposit',
-                //     action  : 'deposit',
-                //     maskMsg : 'Setting up Deposit'
+            }, {
+                text    : 'Deposit',
+                action  : 'deposit',
+                maskMsg : 'Setting up Deposit'
             }, {
                 text     : 'Release',
                 action   : 'checkout',
@@ -127,10 +127,10 @@ Ext.define('Shopping.view.cart.Main', {
             text    : 'Save',
             action  : 'savecart',
             maskMsg : 'Saving Order'
-            // }, {
-            //     text    : 'Deposit',
-            //     action  : 'deposit',
-            //     maskMsg : 'Setting up Deposit'
+        }, {
+            text    : 'Deposit',
+            action  : 'deposit',
+            maskMsg : 'Setting up Deposit'
         }, {
             text     : 'Release',
             action   : 'checkout',

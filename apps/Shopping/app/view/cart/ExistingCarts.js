@@ -8,6 +8,7 @@ Ext.define('Shopping.view.cart.ExistingCarts', {
         countInTitle : false
     },
     viewConfig : {
+        stripeRows      : true,
         emptyTextPlugin : true,
         emptyText       : {
             heading : 'No Saved Orders',
@@ -40,9 +41,9 @@ Ext.define('Shopping.view.cart.ExistingCarts', {
             text      : 'Date',
             dataIndex : 'OAMNTD',
             flex      : 0,
-            width     : 100,
-            renderer  : function(v){
-                if (!Ext.isEmpty(v)){
+            width     : 85,
+            renderer  : function (v) {
+                if (!Ext.isEmpty(v)) {
                     return Ext.util.Format.date(Ext.Date.parse(v, 'Y-m-d'), 'd-m-Y');
                 }
                 return '';
@@ -51,9 +52,10 @@ Ext.define('Shopping.view.cart.ExistingCarts', {
             text      : 'Time',
             dataIndex : 'OAMNTT',
             flex      : 0,
-            width     : 80,
-            renderer  : function(v){
-                if (!Ext.isEmpty(v)){
+            align     : 'center',
+            width     : 60,
+            renderer  : function (v) {
+                if (!Ext.isEmpty(v)) {
                     return Ext.util.Format.date(Ext.Date.parse(v, 'H:i:s'), 'H:i');
                 }
                 return '';
@@ -62,7 +64,10 @@ Ext.define('Shopping.view.cart.ExistingCarts', {
             text      : 'Order #',
             dataIndex : 'OAORDKEY',
             flex      : 0,
-            width     : 100
+            width     : 90
+        }, {
+            text      : 'Name',
+            dataIndex : 'OACSTNAM'
         }, {
             text      : 'Reference',
             dataIndex : 'OACSTREF'
@@ -71,9 +76,10 @@ Ext.define('Shopping.view.cart.ExistingCarts', {
             dataIndex : 'OAREP'
         }, {
             text      : 'Status',
+            align     : 'center',
             dataIndex : 'OAOSTS',
             flex      : 0,
-            width     : 80
+            width     : 60
         }, {
             text     : '',
             action   : 'removecart',

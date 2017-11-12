@@ -43,8 +43,7 @@ Ext.define('Shopping.view.cart.List', {
                 summaryRenderer : function (value, summaryData, dataIndex) {
                     return Ext.String.format('<b>{0}</b>', value);
                 }
-            },
-            {
+            }, {
                 text      : 'Allocated',
                 flex      : 1,
                 align     : 'right',
@@ -53,8 +52,7 @@ Ext.define('Shopping.view.cart.List', {
                     hidden : '{hideAllocated}'
                 }
 
-            },
-            {
+            }, {
                 text      : 'Price',
                 flex      : 1,
                 align     : 'right',
@@ -63,8 +61,7 @@ Ext.define('Shopping.view.cart.List', {
                     return Ext.util.Format.currency(value, null, 0);
                 }
 
-            },
-            {
+            }, {
                 text            : 'Total',
                 flex            : 1,
                 align           : 'right',

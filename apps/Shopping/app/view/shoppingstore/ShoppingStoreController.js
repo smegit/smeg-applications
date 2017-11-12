@@ -336,24 +336,11 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     onChangeSearchSavedOrders : function (fld, val) {
         var me    = this,
             vm    = me.getViewModel(),
-            str   = vm.getStore('existingCarts'),
-            regex = new RegExp(val, "i");
+            str   = vm.getStore('existingCarts');
 
         str.clearFilter();
 
-        str.filterBy(function (rec) {
-            if (regex.test(rec.get('OACSTREF'))) {
-                return true;
-            }
-            if (regex.test(rec.get('OAREP'))) {
-                return true;
-            }
-            // cnx update -- bug fix
-            if (regex.test(rec.get('OAORDKEY'))) {
-                return true;
-            }
-            return false;
-        });
+        Valence.util.Helper.processTypedInputFilter(str, ['OAORDKEY','OAMNTD','OAMNTT','OACSTREF','OAREP','OAORDKEY', 'OACSTNAM'], val);
     },
     onClearSearch             : function (fld) {
         var me  = this,
@@ -980,11 +967,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     ui          : 'smeg',
                     frame       : true,
                     closable    : true,
-                    width       : 800,
+                    width       : 850,
                     height      : "80%",
                     modal       : true,
                     reference   : 'smegwindow',
-                    bodyPadding : 5,
                     layout      : {
                         type : 'card'
                     },

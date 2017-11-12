@@ -21,55 +21,50 @@ Ext.define('Shopping.view.cart.Form', {
     },
 
     buildItems : function (opts) {
-        var optItems = [],
-            optItem;
-
-        for (var i = 0; i < opts.length; i++) {
-            optItem = opts[i];
-            optItems.push({
-                xtype          : 'checkbox',
-                fieldLabel     : optItem.DELOPTD,
-                uncheckedValue : '0',
-                inputValue     : '1',
-                name           : optItem.DELOPTC,
-                width          : '100%',
-                colspan        : (optItem.DELOPTD === 'Switch door open on dryer') ? 2 : 1
-            });
-        }
+        //removing delivery options from the main cart
+        // johnny
+        // var optItems = [],
+        //     optItem;
+        //
+        // for (var i = 0; i < opts.length; i++) {
+        //     optItem = opts[i];
+        //     optItems.push({
+        //         xtype          : 'checkbox',
+        //         fieldLabel     : optItem.DELOPTD,
+        //         uncheckedValue : '0',
+        //         inputValue     : '1',
+        //         name           : optItem.DELOPTC,
+        //         width          : '100%',
+        //         colspan        : (optItem.DELOPTD === 'Switch door open on dryer') ? 2 : 1
+        //     });
+        // }
 
         return [
             {
-                xtype         : 'fieldset',
-                title         : 'Order Info',
-                defaultType   : 'textfield',
-                cls           : 'cart-fieldset',
-                itemId        : 'orderInfoFieldSet',
-                fieldDefaults : {
-                    labelAlign     : 'top',
-                    labelSeparator : '',
-                    padding        : 5,
-                    width          : '22%'
-                },
-                margin        : 0,
-                layout        : {
+                xtype       : 'fieldset',
+                title       : 'Order Info',
+                defaultType : 'textfield',
+                cls         : 'cart-fieldset',
+                itemId      : 'orderInfoFieldSet',
+                margin      : 0,
+                layout      : {
                     type  : 'hbox',
                     align : 'stretch'
                 },
-                defaults      : {
+                defaults    : {
                     flex : 1
                 },
-                items         : [
+                items       : [
                     {
                         xtype    : 'container',
                         layout   : {
-                            type  : 'vbox',
+                            type  : 'hbox',
                             align : 'stretch'
                         },
-                        margin   : '10 0 0 0',
-                        minWidth : 250,
+                        padding  : '0 32 4 32',
                         defaults : {
                             labelAlign : 'left',
-                            labelWidth : 150
+                            flex       : 1
                         },
                         items    : [{
                             xtype  : 'textfield',
@@ -77,12 +72,16 @@ Ext.define('Shopping.view.cart.Form', {
                             hidden : true
                         }, {
                             xtype      : 'textfield',
+                            margin     : '0 32 0 0',
+                            labelWidth : 75,
                             name       : 'OACSTREF',
                             fieldLabel : 'Reference *',
                             allowBlank : false,
                             reference  : 'reffield'
                         }, {
                             xtype          : 'combo',
+                            margin         : '0 32 0 0',
+                            labelWidth     : 90,
                             bind           : {
                                 store : '{cartReps}'
                             },
@@ -101,11 +100,13 @@ Ext.define('Shopping.view.cart.Form', {
                             name              : 'OADELD',
                             required          : true,
                             fieldLabel        : 'Preferred Delivery Date',
+                            labelWidth        : 150,
+                            flex              : 0,
+                            width             : 270,
                             minValue          : new Date(),
                             maxValue          : Ext.Date.add(new Date(), Ext.Date.YEAR, 1), //1 Year from the current date
                             format            : 'd/m/Y',
                             submitFormat      : 'Y-m-d',
-                            minWidth          : 135,
                             disabledDatesText : 'Delivery not available on holidays',
                             disabledDaysText  : 'Delivery not available on weekends',
                             bind              : {
@@ -113,25 +114,25 @@ Ext.define('Shopping.view.cart.Form', {
                                 disabledDays  : '{deliveryDisabledDays}'
                             }
                         }]
-                    }, {
-                        xtype       : 'panel',
-                        title       : 'Delivery Options',
-                        cls         : 'delopts-panel',
-                        ui          : 'inset',
-                        margin      : '0 0 0 32',
-                        bodyPadding : 8,
-                        flex        : 2,
-                        maxHeight   : 155,
-                        border      : '1px solid black',
-                        layout      : {
-                            type    : 'table',
-                            columns : 4
-                        },
-                        defaults    : {
-                            labelAlign    : 'top',
-                            labelSepartor : ''
-                        },
-                        items       : optItems
+                        // }, {
+                        //     xtype       : 'panel',
+                        //     title       : 'Delivery Options',
+                        //     cls         : 'delopts-panel',
+                        //     ui          : 'inset',
+                        //     margin      : '0 0 0 32',
+                        //     bodyPadding : 8,
+                        //     flex        : 2,
+                        //     maxHeight   : 155,
+                        //     border      : '1px solid black',
+                        //     layout      : {
+                        //         type    : 'table',
+                        //         columns : 4
+                        //     },
+                        //     defaults    : {
+                        //         labelAlign    : 'top',
+                        //         labelSepartor : ''
+                        //     },
+                        //     items       : optItems
                     }
                 ]
             }, {
