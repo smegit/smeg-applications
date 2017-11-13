@@ -224,11 +224,12 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         menuItem.maskMsg = !Ext.isEmpty(activeCartNumber) ? 'Updating Invoice' : 'Creating Invoice';
     },
 
-    onChangeStockLocation : function (fld, val) {
+    onSelectStockLocation : function (fld, rec) {
         var me          = this,
             vm          = me.getViewModel(),
             str         = vm.getStore('products'),
-            extraParams = str.getProxy().extraParams;
+            extraParams = str.getProxy().extraParams,
+            val         = rec.get('STKCOD');
 
         vm.set('STKLOC', val);
 
@@ -612,11 +613,11 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             } else if (action === 'savecart' || action === 'checkout' || action === 'deposit') {
                 var formErrorMsg = function () {
                     Valence.util.Helper.showSnackbar('Please fill in all required sections');
-                        var fieldInError = cartForm.down('field{isValid()===false}');
-                        if (!Ext.isEmpty(fieldInError)) {
-                            fieldInError.focus();
-                        }
-                    };
+                    var fieldInError = cartForm.down('field{isValid()===false}');
+                    if (!Ext.isEmpty(fieldInError)) {
+                        fieldInError.focus();
+                    }
+                };
 
                 if (!cartForm.isValid()) {
                     formErrorMsg();

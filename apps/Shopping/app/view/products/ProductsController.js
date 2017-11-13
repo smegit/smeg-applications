@@ -21,8 +21,8 @@ Ext.define('Shopping.view.products.ProductsController', {
         return view.lookupViewModel().getStore('categories');
     },
 
-    onChangeStockLocation : function (fld, val) {
-        this.getView().fireEvent('changestocklocation', fld, val);
+    onSelectStockLocation : function (fld, rec) {
+        this.getView().fireEvent('selectstocklocation', fld, rec);
     },
 
     onClickExistingCarts : function(){

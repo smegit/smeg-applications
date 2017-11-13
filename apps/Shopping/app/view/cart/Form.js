@@ -90,7 +90,7 @@ Ext.define('Shopping.view.cart.Form', {
                     fieldLabel        : 'Preferred Delivery Date',
                     labelWidth        : 150,
                     flex              : 0,
-                    width             : 270,
+                    width             : 280,
                     minValue          : new Date(),
                     maxValue          : Ext.Date.add(new Date(), Ext.Date.YEAR, 1), //1 Year from the current date
                     format            : 'd/m/Y',

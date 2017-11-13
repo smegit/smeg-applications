@@ -25,7 +25,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStore', {
             reference : 'productsMain',
             xtype     : 'productsmain',
             listeners : {
-                changestocklocation : 'onChangeStockLocation',
+                selectstocklocation : 'onSelectStockLocation',
                 viewcart            : 'onViewCart'
             }
         }]

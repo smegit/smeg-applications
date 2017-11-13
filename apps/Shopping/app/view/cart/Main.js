@@ -73,11 +73,11 @@ Ext.define('Shopping.view.cart.Main', {
                     fieldLabel     : 'Stock Location',
                     forceSelection : true,
                     listeners      : {
-                        change : 'onChangeStockLocation'
+                        select : 'onSelectStockLocation'
                     },
                     bind           : {
                         store : '{StockLocations}',
-                        value : '{stkLocation}'
+                        value : '{STKCOD}'
                     }
                 }]
             }, {
