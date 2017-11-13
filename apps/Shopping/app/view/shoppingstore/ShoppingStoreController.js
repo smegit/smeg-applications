@@ -150,6 +150,37 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         vm.getStore('categories').load();
     },
 
+    depositRelease : function (cmp, action) {//johnny
+        var me       = this,
+            vm       = me.getViewModel(),
+            deferred = Ext.create('Ext.Deferred'),
+            cartInfo = me.getCartInformation(),
+            params   = {
+                pgm      : 'EC1050',
+                action   : action,
+                products : (!Ext.isEmpty(cartInfo) && !Ext.isEmpty(cartInfo.products)) ? Ext.encode(cartInfo.products) : null,
+                stkloc   : vm.get('stkLocation')
+            }, rep;
+
+        if (!Ext.isEmpty(cartInfo)) {
+            // Valence.util.Helper.loadMask(cmp.maskMsg);
+
+            // rep = vm.getStore('cartReps').findRecord('REP', cartInfo.data.OAREP, 0, false, false, true);
+
+            // if (!Ext.isEmpty(rep)) {
+            //     Ext.apply(params, {
+            //         OAREPC : rep.get('CODE')
+            //     });
+            // }
+
+            Ext.apply(params, cartInfo.data);
+            console.log('would call : ', params);
+            deferred.resolve(null);
+        }
+
+        return deferred.promise;
+    },
+
     autoFillAddress : function (customer) {
         var me           = this,
             place        = (customer) ? me.customerAddressAutoComplete.getPlace() : me.deliveryAddressAutoComplete.getPlace(),
@@ -201,6 +232,71 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     Ext.ComponentQuery.query('cartform [name=OADELST1]')[0].setValue(addressLine1);
                 }
             }
+        }
+    },
+
+    getCartInformation : function () {
+        var me   = this,
+            vm   = me.getViewModel(),
+            form = me.lookupReference('cartcontainer').down('cartform');
+
+        if (!form.isValid()) {
+            Valence.util.Helper.showSnackbar('Please fill in all required sections');
+            var fieldInError = form.down('field{isValid()===false}');
+            if (!Ext.isEmpty(fieldInError)) {
+                fieldInError.focus();
+            }
+            return null;
+        } else {
+            var formData         = form.getValues(),
+                store            = vm.getStore('cartItems'),
+                storeCount       = store.getCount(),
+                outstandingItems = store.queryBy(function (rec) {
+                    if (!Ext.isEmpty(rec.get('outstanding')) && rec.get('outstanding') > 0) {
+                        return true;
+                    }
+                }),
+                releaseZeroItems = store.query('release', 0, 0, false, false, true),
+                standardOrder    = (outstandingItems.getCount() === releaseZeroItems.getCount()) ? true : false,
+                prodArray        = [],
+                product;
+
+            for (var i = 0; i < storeCount; i++) {
+                product = store.getAt(i).getData();
+                if (product.quantity !== product.delivered) {
+                    prodArray.push({
+                        OBITM  : product.product_id,
+                        OBQTYO : product.quantity,
+                        OBUPRC : product.price,
+                        OBQTYR : (standardOrder) ? product.quantity : product.release
+                    });
+                }
+            }
+
+            //remove the address search fields if in the values object
+            //
+            //customer
+            //
+            if (typeof formData.customerSearch !== 'undefined') {
+                delete formData.customerSearch;
+            }
+
+            //delivery
+            //
+            if (typeof formData.deliverySearch !== 'undefined') {
+                delete formData.deliverySearch;
+            }
+
+            // Remove fieldset collapsible checkbox from formData
+            var checkboxName = form.down('#deliveryfieldset').down('checkbox').name;
+            if (checkboxName && typeof formData[checkboxName] !== 'undefined') {
+                delete formData[checkboxName];
+            }
+
+            return {
+                data     : formData,
+                products : prodArray
+            };
         }
     },
 
@@ -414,7 +510,15 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 quantity   : quantity,
                 price      : product.PRICE
             },
-            existingRec   = cartItemStore.findRecord('product_id', product.MODEL, 0, false, true, true);
+            existingRec   = cartItemStore.findRecord('product_id', product.MODEL, 0, false, true, true),
+            snackbarEl    = Ext.getBody().query('.w-snackbar-outer')[0],
+            snackbarCmp   = (!Ext.isEmpty(snackbarEl)) ? Ext.getCmp(snackbarEl.id) : null,
+            notify        = function () {
+                Valence.common.util.Snackbar.show({
+                    text     : quantity + ' item(s) have been added to cart',
+                    duration : 2000
+                });
+            };
 
         if (!Ext.isEmpty(existingRec)) {
             existingRec.set({
@@ -426,10 +530,13 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         }
 
         viewModel.set('cartCount', viewModel.get('cartCount') + quantity);
-        Valence.common.util.Snackbar.show({
-            text     : quantity + ' item(s) have been added to cart',
-            duration : 2000
-        });
+        //check if the snackbar is already visible and if so don't show it again
+        //
+        if (!Ext.isEmpty(snackbarCmp) && (!snackbarCmp.isVisible() || !snackbarCmp.hasCls('is-active'))) {
+            notify();
+        } else if (Ext.isEmpty(snackbarCmp)) {
+            notify();
+        }
     },
 
     onAddToCartFromDetail : function (cmp, e) {
@@ -652,13 +759,11 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
                 for (var i = 0; i < store.getCount(); i++) {
                     var product = store.getAt(i).getData();
-                    prodArray.push(
-                        {
-                            OBITM  : product.product_id,
-                            OBQTYO : product.quantity,
-                            OBUPRC : product.price
-                        }
-                    );
+                    prodArray.push({
+                        OBITM  : product.product_id,
+                        OBQTYO : product.quantity,
+                        OBUPRC : product.price
+                    });
                 }
 
                 if (action === 'savecart' || action == 'printcart') {
@@ -672,7 +777,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         }
     },
 
-    onClickRelease : function () {
+    onClickRelease : function (cmp) {
         var me           = this,
             form         = Ext.ComponentQuery.query('cartform')[0],
             valid        = form.isValid(),
@@ -680,11 +785,15 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             view         = me.getView();
 
         if (Ext.isEmpty(fieldInError)) {
-            view.add({
-                xtype     : 'cartrelease',
-                reference : 'releasewindow',
-                renderTo  : Ext.getBody()
-            }).show();
+            me.depositRelease(cmp, 'checkout')
+                .then(function (content) {
+                    console.log('response : ', content);
+                });
+            // view.add({
+            //     xtype     : 'cartrelease',
+            //     reference : 'releasewindow',
+            //     renderTo  : Ext.getBody()
+            // }).show();
         } else {
             fieldInError.focus();
         }
@@ -1377,15 +1486,21 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
      * @returns {boolean}
      */
     onValidateEditCartItems : function (editor, context) {
-        var me = this;
+        var me    = this,
+            rec   = context.record,
+            value = context.value,
+            fld   = context.column.field;
 
         if (context.field === 'release') {
-            var rec   = context.record,
-                value = context.value,
-                fld   = context.column.field;
             fld.markInvalid(null);
             if (!Ext.isEmpty(value) && value > rec.get('quantity')) {
                 fld.markInvalid('Quantity is greater than release');
+                return false;
+            }
+        } else if (context.field === 'quantity') {
+            fld.markInvalid(null);
+            if (value < rec.get('delivered')) {
+                fld.markInvalid('Quantity can not be greater than delivered');
                 return false;
             }
         }
