@@ -3,7 +3,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     alias    : 'controller.shoppingstore',
     requires : [
         'Ext.window.Window',
-
         'Shopping.util.Helper',
         'Shopping.view.cart.Main',
         'Shopping.view.products.Heading',
@@ -13,7 +12,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         'Shopping.view.cart.List',
         'Shopping.view.cart.PaymentForm',
         'Shopping.view.cart.ExistingCarts',
-
+        'Shopping.view.cart.Release',
         'Valence.common.util.Dialog',
         'Valence.common.util.Snackbar'
     ],
@@ -718,21 +717,33 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         }
     },
 
+    onClickRelease : function () {
+        var me   = this,
+            view = me.getView();
+
+        view.add({
+            xtype    : 'cartrelease',
+            renderTo : Ext.getBody()
+        }).show();
+    },
+
     onMenuClickCartAction : function (menu, menuItem) {
         var me = this;
         me.onCartButtonClick(menuItem);
     },
 
     onViewReadyCartList : function (cmp) {
-        var me    = this,
-            store = cmp.getStore();
+        if (!cmp.release) {
+            var me    = this,
+                store = cmp.getStore();
 
-        //because of the layout and the grid not scrolling initial view
-        // of the grid is not showing empty text if empty
-        //
-        if (store.getCount() === 0) {
-            var rec = store.add({dummy : true});
-            store.remove(rec);
+            //because of the layout and the grid not scrolling initial view
+            // of the grid is not showing empty text if empty
+            //
+            if (store.getCount() === 0) {
+                var rec = store.add({dummy : true});
+                store.remove(rec);
+            }
         }
     },
 
@@ -1077,7 +1088,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 vm.set('STKLOC', formValues.OASTKLOC);
 
                 //Update form values
-                form.setValues(formValues);
+                vm.set('cartValues', formValues);
 
                 // Check to see if Delivery Address is set and should be "expanded"
                 for (var i = 0; i < fields.length; i++) {
@@ -1408,7 +1419,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         if (context.field === 'release') {
             var rec   = context.record,
                 value = context.value,
-                fld = context.column.field;
+                fld   = context.column.field;
             fld.markInvalid(null);
             if (!Ext.isEmpty(value) && value > rec.get('quantity')) {
                 fld.markInvalid('Quantity is greater than release');

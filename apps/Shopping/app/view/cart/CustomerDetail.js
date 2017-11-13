@@ -11,7 +11,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
         align : 'stretch'
     },
     margin        : 0,
-    editCustomer  : true,
+    release  :false,
     initComponent : function () {
         var me = this;
 
@@ -21,8 +21,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
         me.callParent(arguments);
     },
     buildItems    : function () {
-        var me               = this,
-            customerReadOnly = (!Ext.isEmpty(me.editCustomer) && me.editCustomer === true) ? false : true;
+        var me               = this;
 
         return [{
             xtype         : 'fieldset',
@@ -36,62 +35,92 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
             defaults      : {
                 labelAlign : 'left',
                 labelWidth : 150,
-                readOnly : customerReadOnly,
+                readOnly : me.release,
                 width  : '100%'
             },
             items         : [{
                 name       : 'OACSTNAM',
                 fieldLabel : 'Name',
                 required   : true,
-                readOnly   : customerReadOnly
+                readOnly   : me.release,
+                bind : {
+                    value : '{cartValues.OACSTNAM}'
+                }
             }, {
                 itemId     : 'customerSearch',
                 name       : 'customerSearch',
                 fieldLabel : 'Address Search',
-                hidden     : customerReadOnly
+                hidden     : me.release
             }, {
                 name         : 'OACSTST1',
                 gApiAddrType : 'baseAddressLine1',
                 fieldLabel   : 'Street Address 1',
-                required     : true
+                required     : true,
+                bind : {
+                    value : '{cartValues.OACSTST1}'
+                }
             }, {
                 name       : 'OACSTST2',
-                fieldLabel : 'Street Address 2'
+                fieldLabel : 'Street Address 2',
+                bind : {
+                    value : '{cartValues.OACSTST2}'
+                }
             }, {
                 name         : 'OACSTCTY',
                 required     : true,
                 gApiAddrType : 'locality',
                 gApiAddrAttr : 'long_name',
-                fieldLabel   : 'City'
+                fieldLabel   : 'City',
+                bind : {
+                    value : '{cartValues.OACSTCTY}'
+                }
             }, {
                 name         : 'OACSTSTA',
                 required     : true,
                 gApiAddrType : 'administrative_area_level_1',
                 gApiAddrAttr : 'short_name',
-                fieldLabel   : 'State'
+                fieldLabel   : 'State',
+                bind : {
+                    value : '{cartValues.OACSTSTA}'
+                }
             }, {
                 name         : 'OACSTPST',
                 required     : true,
                 gApiAddrType : 'postal_code',
                 gApiAddrAttr : 'long_name',
-                fieldLabel   : 'Post Code'
+                fieldLabel   : 'Post Code',
+                bind : {
+                    value : '{cartValues.OACSTPST}'
+                }
             }, {
                 name         : 'OACSTCOU',
                 gApiAddrType : 'country',
                 gApiAddrAttr : 'long_name',
-                fieldLabel   : 'Country'
+                fieldLabel   : 'Country',
+                bind : {
+                    value : '{cartValues.OACSTCOU}'
+                }
             }, {
                 name       : 'OACSTPH1',
                 fieldLabel : 'Daytime Phone',
-                required   : true
+                required   : true,
+                bind : {
+                    value : '{cartValues.OACSTPH1}'
+                }
             }, {
                 name       : 'OACSTPH2',
-                fieldLabel : 'After Hours Phone'
+                fieldLabel : 'After Hours Phone',
+                bind : {
+                    value : '{cartValues.OACSTPH2}'
+                }
             }, {
                 name       : 'OACSTEML',
                 fieldLabel : 'Email Address',
                 vtype      : 'email',
-                required   : true
+                required   : true,
+                bind : {
+                    value : '{cartValues.OACSTEML}'
+                }
             }]
         }, {
             xtype          : 'fieldset',
@@ -114,7 +143,10 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
             collapsable    : true,
             items          : [{
                 name       : 'OADELNAM',
-                fieldLabel : 'Name'
+                fieldLabel : 'Name',
+                bind : {
+                    value : '{cartValues.OADELNAM}'
+                }
             }, {
                 itemId     : 'deliverySearch',
                 name       : 'deliverySearch',
@@ -123,43 +155,70 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 name         : 'OADELST1',
                 gApiAddrType : 'baseAddressLine1',
                 fieldLabel   : 'Street Address 1',
-                required     : true
+                required     : true,
+                bind : {
+                    value : '{cartValues.OADELST1}'
+                }
             }, {
                 name       : 'OADELST2',
-                fieldLabel : 'Street Address 2'
+                fieldLabel : 'Street Address 2',
+                bind : {
+                    value : '{cartValues.OADELST2}'
+                }
             }, {
                 name         : 'OADELCTY',
                 required     : true,
                 gApiAddrType : 'locality',
                 gApiAddrAttr : 'long_name',
-                fieldLabel   : 'City'
+                fieldLabel   : 'City',
+                bind : {
+                    value : '{cartValues.OADELCTY}'
+                }
             }, {
                 name         : 'OADELSTA',
                 required     : true,
                 gApiAddrType : 'administrative_area_level_1',
                 gApiAddrAttr : 'short_name',
-                fieldLabel   : 'State'
+                fieldLabel   : 'State',
+                bind : {
+                    value : '{cartValues.OADELSTA}'
+                }
             }, {
                 name         : 'OADELPST',
                 required     : true,
                 gApiAddrType : 'postal_code',
                 gApiAddrAttr : 'long_name',
-                fieldLabel   : 'Post Code'
+                fieldLabel   : 'Post Code',
+                bind : {
+                    value : '{cartValues.OADELPST}'
+                }
             }, {
                 name         : 'OADELCOU',
                 gApiAddrType : 'country',
                 gApiAddrAttr : 'long_name',
-                fieldLabel   : 'Country'
+                fieldLabel   : 'Country',
+                bind : {
+                    value : '{cartValues.OADELCOU}'
+                }
             }, {
                 name       : 'OADELPH1',
-                fieldLabel : 'Daytime Phone'
+                fieldLabel : 'Daytime Phone',
+                bind : {
+                    value : '{cartValues.OADELPH1}'
+                }
             }, {
                 name       : 'OADELPH2',
-                fieldLabel : 'After Hours Phone'
+                fieldLabel : 'After Hours Phone',
+                bind : {
+                    value : '{cartValues.OADELPH2}'
+                }
             }, {
                 name       : 'OADELEML',
                 fieldLabel : 'Email Address',
-                vtype      : 'email'
+                vtype      : 'email',
+                bind : {
+                    value : '{cartValues.OADELEML}'
+                }
             }],
             listeners      : {
                 afterrender    : function (cmp) {

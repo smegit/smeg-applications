@@ -7,7 +7,8 @@ Ext.define('Shopping.view.cart.Form', {
         'Ext.form.field.Date',
         'Ext.form.field.ComboBox',
         'Ext.layout.container.Table',
-        'Shopping.view.cart.CustomerDetail'
+        'Shopping.view.cart.CustomerDetail',
+        'Shopping.view.cart.SpecialInstructions'
     ],
     xtype    : 'cartform',
 
@@ -138,19 +139,7 @@ Ext.define('Shopping.view.cart.Form', {
             }, {
                 xtype : 'cart-customerdetail'
             }, {
-                xtype   : 'fieldset',
-                title   : 'Special Instructions',
-                cls     : 'cart-fieldset',
-                padding : '5 18 5 15',
-                items   : [
-                    {
-                        xtype         : 'textareafield',
-                        name          : 'OASPI',
-                        anchor        : '100%',
-                        maxLength     : 160,
-                        maxLengthText : 'This field is limited to 160 characters.'
-                    }
-                ]
+                xtype : 'specialinstructions'
             }
         ];
     }

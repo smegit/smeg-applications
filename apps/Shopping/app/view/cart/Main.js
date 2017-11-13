@@ -99,12 +99,15 @@ Ext.define('Shopping.view.cart.Main', {
                 action  : 'deposit',
                 maskMsg : 'Setting up Deposit'
             }, {
-                text     : 'Release',
+                text     : 'Checkout',
                 action   : 'checkout',
                 maskMsg  : 'Checking Out',
                 cls      : 'btn-checkout',
                 overCls  : 'btn-checkout-over',
                 focusCls : 'btn-checkout'
+            }, {
+                text    : 'Release',
+                handler : 'onClickRelease'
             }]
     },
     bbar          : {
