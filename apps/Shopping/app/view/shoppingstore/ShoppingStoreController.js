@@ -39,22 +39,11 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             'dtlimagemain #dtlImgAddToCart' : {
                 click : me.onAddToCartFromDetail
             },
-            'cartlist'                      : {
-                cellclick : me.onCellClickProducts,
-                edit      : me.onCellEdit,
-                viewready : me.onViewReadyCartList
-            },
-            'cartmain button'               : {
-                click : me.onCartButtonClick
-            },
+            // 'cartmain button'               : {
+            //     click : me.onCartButtonClick
+            // },
             'cartpayment'                   : {
                 hideCreditInfo : me.onHideCreditInfo
-            },
-            'cartform #customerSearch'      : {
-                afterrender : me.onAfterRenderAddressSearch
-            },
-            'cartform #deliverySearch'      : {
-                afterrender : me.onAfterRenderAddressSearch
             },
             'existingcarts'                 : {
                 celldblclick : me.loadExistingCart,
@@ -140,7 +129,12 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
         if (Ext.isEmpty(mainCart)) {
             mainCart = Ext.create('Shopping.view.cart.Main', {
-                cartOptions : mainVm.get('cartOptions')
+                cartOptions : mainVm.get('cartOptions'),
+                listeners   : {
+                    scope               : me,
+                    back                : 'onClickGoBack',
+                    selectstocklocation : 'onSelectStockLocation'
+                }
             });
             card.add(mainCart);
         } else {
@@ -179,60 +173,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         }
 
         return deferred.promise;
-    },
-
-    autoFillAddress : function (customer) {
-        var me           = this,
-            place        = (customer) ? me.customerAddressAutoComplete.getPlace() : me.deliveryAddressAutoComplete.getPlace(),
-            fieldset     = (customer) ? Ext.ComponentQuery.query('cartform #customerfieldset')[0] : Ext.ComponentQuery.query('cartform #deliveryfieldset')[0],
-            fields       = fieldset.query('field[gApiAddrType]'),
-            addressLine1 = '',
-            type, field, value;
-
-        if (!Ext.isEmpty(place.address_components)) {
-            for (var ii = 0; ii < fields.length; ii++) {
-                fields[ii].setValue('');
-            }
-
-            for (ii = 0; ii < place.address_components.length; ii++) {
-                type = place.address_components[ii].types[0];
-
-                if (type !== 'street_number' && type !== 'route') {
-                    field = fieldset.down('[gApiAddrType=' + type + ']');
-
-                    if (!Ext.isEmpty(field)) {
-                        value = place.address_components[ii][field.gApiAddrAttr];
-                        if (!Ext.isEmpty(value)) {
-                            field.setValue(value);
-                        }
-                    }
-                } else {
-                    if (type === 'street_number') {
-                        value = place.address_components[ii].long_name;
-                        if (!Ext.isEmpty(value)) {
-                            addressLine1 = value + ' ';
-                        }
-                    } else {
-                        value = place.address_components[ii].long_name;
-                        if (!Ext.isEmpty(value)) {
-                            addressLine1 += value;
-                        }
-                    }
-                }
-            }
-
-            if (customer) {
-                Ext.ComponentQuery.query('cartform #customerSearch')[0].setValue('');
-                if (!Ext.isEmpty(addressLine1)) {
-                    Ext.ComponentQuery.query('cartform [name=OACSTST1]')[0].setValue(addressLine1);
-                }
-            } else {
-                Ext.ComponentQuery.query('cartform #deliverySearch')[0].setValue('');
-                if (!Ext.isEmpty(addressLine1)) {
-                    Ext.ComponentQuery.query('cartform [name=OADELST1]')[0].setValue(addressLine1);
-                }
-            }
-        }
     },
 
     getCartInformation : function () {
@@ -397,41 +337,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         });
     },
 
-    onAfterRenderAddressSearch : function (cmp) {
-        var me    = this,
-            input = cmp.el.down('input');
-
-        //google api auto places a place holder on the element. Stop it by adding the attribute
-        //
-        input.dom.placeholder = ' ';
-
-        //set input background color
-        //
-        input.setStyle('background-color', '#E3F2FD');
-
-        if (cmp.itemId === 'customerSearch') {
-            // Create the customer address auto complete object
-            //
-            me.customerAddressAutoComplete = new google.maps.places.Autocomplete(
-                (document.getElementById(input.id)),
-                {types : ['geocode']});
-
-            // When the user selects an address from the dropdown, populate the address
-            // fields in the form.
-            me.customerAddressAutoComplete.addListener('place_changed', Ext.bind(me.autoFillAddress, me, [true]));
-        } else {
-            // Create the customer address auto complete object
-            //
-            me.deliveryAddressAutoComplete = new google.maps.places.Autocomplete(
-                (document.getElementById(input.id)),
-                {types : ['geocode']});
-
-            // When the user selects an address from the dropdown, populate the address
-            // fields in the form.
-            me.deliveryAddressAutoComplete.addListener('place_changed', Ext.bind(me.autoFillAddress, me, [false]));
-        }
-    },
-
     onChangeSearchSavedOrders : function (fld, val) {
         var me  = this,
             vm  = me.getViewModel(),
@@ -469,31 +374,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     onViewCart : function (rec) {
-        var me          = this,
-            vm          = me.getViewModel(),
-            dlvFieldSet = me.lookupReference('deliveryfieldset'),
-            dlvName     = dlvFieldSet.down('[name=OADELNAM]').getValue();
-
-        vm.set('hideAllocated', true);
-        if (vm.get('hideOrdKey')) {
-            me.lookupReference('cartrepscombo').setReadOnly(false);
-        }
-
-        vm.getStore('cartReps').load();
-
-        Ext.ComponentQuery.query('cartlist')[0].reconfigure(vm.getStore('cartItems'));
-
-        me.lookupReference('card').getLayout().setActiveItem(1);
-
-        dlvFieldSet.checkboxCmp.setValue(!Ext.isEmpty(dlvName));
-
-        // set scroll to top
-        //
-        me.lookupReference('cartcontainer').setScrollY(0);
-
-        setTimeout(function () {
-            me.lookupReference('reffield').focus();
-        }, 200);
+        this.lookupReference('card').getLayout().setActiveItem(1);
     },
 
     onAddToCart : function (e, dtlQuantity) {
@@ -671,38 +552,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         Ext.ComponentQuery.query('detailview')[0].up('window').getLayout().setActiveItem(cmp);
     },
 
-    onCellClickProducts : function (cmp, td, cellIndex, rec) {
-        var me        = this,
-            grid      = cmp.grid,
-            store     = grid.getStore(),
-            column    = grid.headerCt.items.getAt(cellIndex),
-            viewModel = me.getViewModel(),
-            cartCount = viewModel.get('cartCount');
-
-        if (!Ext.isEmpty(column.action) && column.action === 'removecartitem') {
-            viewModel.set('cartCount', cartCount - rec.get('quantity'));
-            store.remove(rec);
-
-            grid.getView().refresh();
-        }
-    },
-
-    onCellEdit : function (editor, e) {
-        e.record.commit();
-
-        var me        = this,
-            viewModel = me.getViewModel(),
-            total     = e.store.sum('quantity');
-
-        //update the cart number
-        //
-        if (!Ext.isEmpty(total)) {
-            viewModel.set('cartCount', total);
-        } else {
-            viewModel.set('cartCount', 0);
-        }
-    },
-
     onCartButtonClick : function (cmp) {
         var me         = this,
             body       = Ext.getBody(),
@@ -802,21 +651,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     onMenuClickCartAction : function (menu, menuItem) {
         var me = this;
         me.onCartButtonClick(menuItem);
-    },
-
-    onViewReadyCartList : function (cmp) {
-        if (!cmp.release) {
-            var me    = this,
-                store = cmp.getStore();
-
-            //because of the layout and the grid not scrolling initial view
-            // of the grid is not showing empty text if empty
-            //
-            if (store.getCount() === 0) {
-                var rec = store.add({dummy : true});
-                store.remove(rec);
-            }
-        }
     },
 
     saveCart : function (cmp, formData, products) {
@@ -1477,33 +1311,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 }
             }
         });
-    },
-
-    /**
-     * onValidateEditCartItems - Validate the edit on the release column so they can't enter more than the quantity
-     * @param editor
-     * @param context
-     * @returns {boolean}
-     */
-    onValidateEditCartItems : function (editor, context) {
-        var me    = this,
-            rec   = context.record,
-            value = context.value,
-            fld   = context.column.field;
-
-        if (context.field === 'release') {
-            fld.markInvalid(null);
-            if (!Ext.isEmpty(value) && value > rec.get('quantity')) {
-                fld.markInvalid('Quantity is greater than release');
-                return false;
-            }
-        } else if (context.field === 'quantity') {
-            fld.markInvalid(null);
-            if (value < rec.get('delivered')) {
-                fld.markInvalid('Quantity can not be greater than delivered');
-                return false;
-            }
-        }
     },
 
     releaseCart : function () {

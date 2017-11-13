@@ -51,12 +51,15 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 itemId     : 'customerSearch',
                 name       : 'customerSearch',
                 fieldLabel : 'Address Search',
-                hidden     : me.release
+                hidden     : me.release,
+                listeners  : {
+                    afterrender : 'onAfterRenderAddressSearch'
+                }
             }, {
                 name         : 'OACSTST1',
                 gApiAddrType : 'baseAddressLine1',
                 fieldLabel   : 'Street Address 1',
-                allowBlank : false,
+                allowBlank   : false,
                 bind         : {
                     value : '{cartValues.OACSTST1}'
                 }
@@ -68,7 +71,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 }
             }, {
                 name         : 'OACSTCTY',
-                allowBlank : false,
+                allowBlank   : false,
                 gApiAddrType : 'locality',
                 gApiAddrAttr : 'long_name',
                 fieldLabel   : 'City',
@@ -77,7 +80,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 }
             }, {
                 name         : 'OACSTSTA',
-                allowBlank : false,
+                allowBlank   : false,
                 gApiAddrType : 'administrative_area_level_1',
                 gApiAddrAttr : 'short_name',
                 fieldLabel   : 'State',
@@ -86,7 +89,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 }
             }, {
                 name         : 'OACSTPST',
-                allowBlank : false,
+                allowBlank   : false,
                 gApiAddrType : 'postal_code',
                 gApiAddrAttr : 'long_name',
                 fieldLabel   : 'Post Code',
@@ -151,12 +154,15 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
             }, {
                 itemId     : 'deliverySearch',
                 name       : 'deliverySearch',
-                fieldLabel : 'Address Search'
+                fieldLabel : 'Address Search',
+                listeners  : {
+                    afterrender : 'onAfterRenderAddressSearch'
+                }
             }, {
                 name         : 'OADELST1',
                 gApiAddrType : 'baseAddressLine1',
                 fieldLabel   : 'Street Address 1',
-                allowBlank : false,
+                allowBlank   : false,
                 bind         : {
                     value : '{cartValues.OADELST1}'
                 }
@@ -168,7 +174,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 }
             }, {
                 name         : 'OADELCTY',
-                allowBlank : false,
+                allowBlank   : false,
                 gApiAddrType : 'locality',
                 gApiAddrAttr : 'long_name',
                 fieldLabel   : 'City',
@@ -177,7 +183,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 }
             }, {
                 name         : 'OADELSTA',
-                allowBlank : false,
+                allowBlank   : false,
                 gApiAddrType : 'administrative_area_level_1',
                 gApiAddrAttr : 'short_name',
                 fieldLabel   : 'State',
@@ -186,7 +192,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 }
             }, {
                 name         : 'OADELPST',
-                allowBlank : false,
+                allowBlank   : false,
                 gApiAddrType : 'postal_code',
                 gApiAddrAttr : 'long_name',
                 fieldLabel   : 'Post Code',

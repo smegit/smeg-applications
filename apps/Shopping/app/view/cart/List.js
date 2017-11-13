@@ -21,6 +21,11 @@ Ext.define('Shopping.view.cart.List', {
     viewConfig    : {
         emptyText : 'No Items have been added to this Order'
     },
+    listeners     : {
+        cellclick : 'onCellClickList',
+        edit      : 'onCellEditList',
+        viewready : 'onViewReadyList'
+    },
     initComponent : function () {
         var me = this;
 
@@ -178,7 +183,7 @@ Ext.define('Shopping.view.cart.List', {
                 ptype        : 'cellediting',
                 clicksToEdit : 1,
                 listeners    : {
-                    validateedit : 'onValidateEditCartItems'
+                    validateedit : 'onValidateEditList'
                 }
             }];
         }

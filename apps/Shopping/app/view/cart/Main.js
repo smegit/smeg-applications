@@ -5,13 +5,18 @@ Ext.define('Shopping.view.cart.Main', {
     requires      : [
         'Shopping.view.cart.List',
         'Shopping.view.cart.Form',
+        'Shopping.view.cart.CartController',
         'Ext.button.Split',
         'Ext.layout.container.VBox'
     ],
+    controller    : 'cart',
     cls           : 'cart',
     bodyPadding   : '10 20',
     scrollable    : true,
     layout        : 'anchor',
+    listeners : {
+        activate : 'onActivate'
+    },
     defaults      : {
         maxWidth : 1060,
         style    : {
@@ -38,17 +43,6 @@ Ext.define('Shopping.view.cart.Main', {
                     flex : 1
                 },
                 items    : [{
-                    //     xtype   : 'tbtext',
-                    //     cls     : 'fld-in-header',
-                    //     padding : 6,
-                    //     style   : {
-                    //         'font-weight' : 500,
-                    //         'font-size'   : '16px'
-                    //     },
-                    //     bind    : {
-                    //         html : '{agentName}'
-                    //     }
-                    // }, {
                     xtype   : 'tbtext',
                     cls     : 'fld-in-header',
                     padding : 6,
@@ -86,7 +80,7 @@ Ext.define('Shopping.view.cart.Main', {
                 // focusCls : 'btn-shopping',
                 // overCls  : 'btn-shopping-over',
                 ui      : 'white',
-                handler : 'onClickGoBack'
+                handler : 'onClickBack'
             }, {
                 text    : 'Clear Order',
                 maskMsg : 'Clearing Cart',
@@ -127,7 +121,7 @@ Ext.define('Shopping.view.cart.Main', {
             // focusCls : 'btn-shopping',
             // overCls  : 'btn-shopping-over',
             ui      : 'white',
-            handler : 'onClickGoBack'
+            handler : 'onClickBack'
         }, {
             text    : 'Clear Order',
             ui      : 'white',
