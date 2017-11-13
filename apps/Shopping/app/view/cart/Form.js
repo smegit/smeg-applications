@@ -57,7 +57,7 @@ Ext.define('Shopping.view.cart.Form', {
                     margin     : '0 32 0 0',
                     labelWidth : 75,
                     name       : 'OACSTREF',
-                    fieldLabel : 'Reference *',
+                    fieldLabel : 'Reference',
                     allowBlank : false,
                     reference  : 'reffield',
                     bind       : {
@@ -77,7 +77,7 @@ Ext.define('Shopping.view.cart.Form', {
                     valueField     : 'REP',
                     name           : 'OAREP',
                     forceSelection : true,
-                    fieldLabel     : (!me.release) ? 'Sales Person *' : 'Sales Person',
+                    fieldLabel     : 'Sales Person',
                     allowBlank     : false,
                     minWidth       : 200,
                     anyMatch       : true,
@@ -86,7 +86,7 @@ Ext.define('Shopping.view.cart.Form', {
                 }, {
                     xtype             : 'datefield',
                     name              : 'OADELD',
-                    required          : true,
+                    allowBlank        : false,
                     fieldLabel        : 'Preferred Delivery Date',
                     labelWidth        : 150,
                     flex              : 0,

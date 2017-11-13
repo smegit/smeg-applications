@@ -1,6 +1,13 @@
 Ext.define('Shopping.view.cart.List', {
-    extend        : 'Ext.grid.Panel',
-    xtype         : 'cartlist',
+    extend : 'Ext.grid.Panel',
+    xtype  : 'cartlist',
+
+    requires : [
+        'Ext.form.field.Number',
+        'Ext.grid.feature.Summary',
+        'Ext.grid.plugin.CellEditing'
+    ],
+
     bind          : {
         store : '{cartItems}'
     },
@@ -44,7 +51,6 @@ Ext.define('Shopping.view.cart.List', {
                 width           : 160,
                 align           : 'right',
                 dataIndex       : 'quantity',
-                cls             : 'cart-qty-col',
                 editor          : {
                     xtype : 'numberfield'
                 },
@@ -127,10 +133,9 @@ Ext.define('Shopping.view.cart.List', {
         } else {
             cols = Ext.Array.merge(cols, [{
                 text            : 'Quantity',
-                width           : 160,
+                width           : 85,
                 align           : 'right',
                 dataIndex       : 'quantity',
-                cls             : 'cart-qty-col',
                 summaryType     : 'sum',
                 summaryRenderer : function (value) {
                     return Ext.String.format('<b>{0}</b>', value);

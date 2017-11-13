@@ -118,7 +118,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             wdw.center();
             // cnx update
             wdw.updateLayout();
-        } else if (!Ext.isEmpty(releaseWin) && releaseWin.isVisible()){
+        } else if (!Ext.isEmpty(releaseWin) && releaseWin.isVisible()) {
             releaseWin.updateLayout();
         }
     },
@@ -610,66 +610,17 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             if (action === 'clearcart') {
                 me.resetCart();
             } else if (action === 'savecart' || action === 'checkout' || action === 'deposit') {
-
-                var errorMessage = 'This field is required',
-                    formErrorMsg = function () {
-                        Valence.common.util.Dialog.show({
-                            title   : 'Incomplete Cart',
-                            msg     : 'Please fill in all required sections.',
-                            buttons : [{text : 'Ok'}]
-                        });
-                    },
-                    validateForm = function () {
-                        var orderInfoFields  = cartForm.down('#orderInfoFieldSet').query('[required]'),
-                            customerFields   = cartForm.down('#customerfieldset').query('[required]'),
-                            deliveryCheckbox = cartForm.down('#deliveryfieldset').down('checkbox'),
-                            errorFound       = false,
-                            deliveryFields;
-
-                        //check order fields
-                        //
-                        for (var ii = 0; ii < orderInfoFields.length; ii++) {
-                            if (Ext.isEmpty(orderInfoFields[ii].getValue())) {
-                                orderInfoFields[ii].markInvalid(errorMessage);
-                                errorFound = true;
-                            }
+                var formErrorMsg = function () {
+                    Valence.util.Helper.showSnackbar('Please fill in all required sections');
+                        var fieldInError = cartForm.down('field{isValid()===false}');
+                        if (!Ext.isEmpty(fieldInError)) {
+                            fieldInError.focus();
                         }
-
-                        //check customer fields
-                        //
-                        for (ii = 0; ii < customerFields.length; ii++) {
-                            if (Ext.isEmpty(customerFields[ii].getValue())) {
-                                customerFields[ii].markInvalid(errorMessage);
-                                errorFound = true;
-                            }
-                        }
-
-                        //delivery if needed
-                        //
-                        if (deliveryCheckbox.getValue()) {
-                            deliveryFields = cartForm.down('#deliveryfieldset').query('[required]');
-                            for (ii = 0; ii < deliveryFields.length; ii++) {
-                                if (Ext.isEmpty(deliveryFields[ii].getValue())) {
-                                    deliveryFields[ii].markInvalid(errorMessage);
-                                    errorFound = true;
-                                }
-                            }
-                        }
-                        return !errorFound;
                     };
 
                 if (!cartForm.isValid()) {
-                    if (action === 'checkout' || action === 'deposit') {
-                        validateForm();
-                    }
                     formErrorMsg();
                     return;
-                } else if (action === 'checkout' || action === 'deposit') {
-                    var valid = validateForm();
-                    if (!valid) {
-                        formErrorMsg();
-                        return;
-                    }
                 }
 
                 // Get Form Data and Products from Store
