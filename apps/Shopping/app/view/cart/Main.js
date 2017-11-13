@@ -14,7 +14,7 @@ Ext.define('Shopping.view.cart.Main', {
     bodyPadding   : '10 20',
     scrollable    : true,
     layout        : 'anchor',
-    listeners : {
+    listeners     : {
         activate : 'onActivate'
     },
     defaults      : {
@@ -82,10 +82,12 @@ Ext.define('Shopping.view.cart.Main', {
                 ui      : 'white',
                 handler : 'onClickBack'
             }, {
-                text    : 'Clear Order',
-                maskMsg : 'Clearing Cart',
-                ui      : 'white',
-                action  : 'clearcart'
+                text      : 'Clear Order',
+                maskMsg   : 'Clearing Cart',
+                ui        : 'white',
+                listeners : {
+                    click : 'onClickClear'
+                }
             }, {
                 text    : 'Save',
                 action  : 'savecart',

@@ -51,12 +51,14 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             }
         });
 
-        window.beforeDestroy = Ext.bind(function () {
-            this.releaseCart();
-        }, me);
-
-        // cnx update
-        Shopping.getApplication().on('beforelogout', me.resetCart);
+        //need to work on destroy
+        // johnny
+        // window.beforeDestroy = Ext.bind(function () {
+        //     this.releaseCart();
+        // }, me);
+        //
+        // // cnx update
+        // Shopping.getApplication().on('beforelogout', me.resetCart);
 
         Shopping.getApplication().on({
             scope         : me,
@@ -133,6 +135,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 listeners   : {
                     scope               : me,
                     back                : 'onClickGoBack',
+                    resetcart           : 'onResetCart',
                     selectstocklocation : 'onSelectStockLocation'
                 }
             });
@@ -836,22 +839,14 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         });
     },
 
+    onResetCart : function () {
+        this.lookupReference('productsMain').fireEvent('selectfirstcat');
+    },
+
     resetCart : function () {
-        var me = this,
-            vm = me.getViewModel();
+        Shopping.getApplication().fireEvent('resetcart');
 
-        me.releaseCart();
-
-        vm.getStore('cartItems').removeAll();
-        Ext.ComponentQuery.query('cartform')[0].reset();
-
-        vm.set({
-            cartCount        : 0,
-            activeCartNumber : null
-        });
-
-        me.lookupReference('productsMain').fireEvent('selectfirstcat');
-        me.onClickGoBack();
+        this.lookupReference('productsMain').fireEvent('selectfirstcat');
     },
 
     onHeadingButtonClick : function (btn) {
@@ -1313,24 +1308,24 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         });
     },
 
-    releaseCart : function () {
-        var me         = this,
-            vm         = me.getViewModel(),
-            activeCart = vm.get('activeCartNumber');
-
-        if (!Ext.isEmpty(activeCart)) {
-            // No success callback because we do nothing with the response
-            Ext.Ajax.request({
-                url    : '/valence/vvcall.pgm',
-                async  : false,
-                params : {
-                    pgm      : 'EC1050',
-                    action   : 'releaseCart',
-                    OAORDKEY : activeCart
-                }
-            });
-        }
-    },
+    // releaseCart : function () {
+    //     var me         = this,
+    //         vm         = me.getViewModel(),
+    //         activeCart = vm.get('activeCartNumber');
+    //
+    //     if (!Ext.isEmpty(activeCart)) {
+    //         // No success callback because we do nothing with the response
+    //         Ext.Ajax.request({
+    //             url    : '/valence/vvcall.pgm',
+    //             async  : false,
+    //             params : {
+    //                 pgm      : 'EC1050',
+    //                 action   : 'releaseCart',
+    //                 OAORDKEY : activeCart
+    //             }
+    //         });
+    //     }
+    // },
 
     showError : function (r) {
         var d = {};

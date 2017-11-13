@@ -2,6 +2,15 @@ Ext.define('Shopping.view.cart.CartController', {
     extend : 'Ext.app.ViewController',
     alias  : 'controller.cart',
 
+    init : function () {
+        var me = this;
+        Shopping.getApplication().on({
+            scope     : me,
+            resetcart : 'onResetCart'
+        });
+    },
+
+
     autoFillAddress : function (customer) {
         var me           = this,
             place        = (customer) ? me.customerAddressAutoComplete.getPlace() : me.deliveryAddressAutoComplete.getPlace(),
@@ -251,6 +260,15 @@ Ext.define('Shopping.view.cart.CartController', {
         view.fireEvent('back', view);
     },
 
+    onClickClear : function () {
+        var me   = this,
+            view = me.getView();
+
+        me.resetCart();
+        view.fire('reset', view);
+        me.onClickGoBack();
+    },
+
     onClickRelease        : function (cmp) {
         var me           = this,
             view         = me.getView(),
@@ -272,6 +290,11 @@ Ext.define('Shopping.view.cart.CartController', {
             fieldInError.focus();
         }
     },
+
+    onResetCart : function(){
+        this.resetCart();
+    },
+
     onSelectStockLocation : function (fld, rec) {
         var me   = this,
             view = me.getView();
@@ -318,5 +341,39 @@ Ext.define('Shopping.view.cart.CartController', {
                 store.remove(rec);
             }
         }
+    },
+
+    releaseCart : function () {
+        var me         = this,
+            vm         = me.getViewModel(),
+            activeCart = vm.get('activeCartNumber');
+
+        if (!Ext.isEmpty(activeCart)) {
+            // No success callback because we do nothing with the response
+            Ext.Ajax.request({
+                url    : '/valence/vvcall.pgm',
+                async  : false,
+                params : {
+                    pgm      : 'EC1050',
+                    action   : 'releaseCart',
+                    OAORDKEY : activeCart
+                }
+            });
+        }
+    },
+
+    resetCart : function () {
+        var me = this,
+            vm = me.getViewModel();
+
+        me.releaseCart();
+
+        vm.getStore('cartItems').removeAll();
+        Ext.ComponentQuery.query('cartform')[0].reset();
+
+        vm.set({
+            cartCount        : 0,
+            activeCartNumber : null
+        });
     }
 });
