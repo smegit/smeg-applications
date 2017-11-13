@@ -265,11 +265,11 @@ Ext.define('Shopping.view.cart.CartController', {
             view = me.getView();
 
         me.resetCart();
-        view.fire('reset', view);
-        me.onClickGoBack();
+        view.fireEvent('reset', view);
+        me.onClickBack();
     },
 
-    onClickRelease        : function (cmp) {
+    onClickRelease : function (cmp) {
         var me           = this,
             view         = me.getView(),
             form         = view.down('cartform'),
@@ -291,7 +291,7 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
-    onResetCart : function(){
+    onResetCart : function () {
         this.resetCart();
     },
 
