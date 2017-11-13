@@ -11,7 +11,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
         align : 'stretch'
     },
     margin        : 0,
-    release  :false,
+    release       : false,
     initComponent : function () {
         var me = this;
 
@@ -21,29 +21,28 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
         me.callParent(arguments);
     },
     buildItems    : function () {
-        var me               = this;
-
+        var me = this;
         return [{
-            xtype         : 'fieldset',
-            title         : 'Customer Details',
-            cls           : 'cart-fieldset',
-            flex          : 1,
-            itemId        : 'customerfieldset',
-            defaultType   : 'textfield',
-            margin        : '0 18 0 0',
-            padding       : '0 20',
-            defaults      : {
+            xtype       : 'fieldset',
+            title       : 'Customer Details',
+            cls         : 'cart-fieldset',
+            flex        : 1,
+            itemId      : 'customerfieldset',
+            defaultType : 'textfield',
+            margin      : '0 18 0 0',
+            padding     : '0 20',
+            defaults    : {
                 labelAlign : 'left',
                 labelWidth : 150,
-                readOnly : me.release,
-                width  : '100%'
+                readOnly   : me.release,
+                width      : '100%'
             },
-            items         : [{
+            items       : [{
                 name       : 'OACSTNAM',
                 fieldLabel : 'Name',
                 required   : true,
                 readOnly   : me.release,
-                bind : {
+                bind       : {
                     value : '{cartValues.OACSTNAM}'
                 }
             }, {
@@ -56,13 +55,13 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 gApiAddrType : 'baseAddressLine1',
                 fieldLabel   : 'Street Address 1',
                 required     : true,
-                bind : {
+                bind         : {
                     value : '{cartValues.OACSTST1}'
                 }
             }, {
                 name       : 'OACSTST2',
                 fieldLabel : 'Street Address 2',
-                bind : {
+                bind       : {
                     value : '{cartValues.OACSTST2}'
                 }
             }, {
@@ -71,7 +70,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 gApiAddrType : 'locality',
                 gApiAddrAttr : 'long_name',
                 fieldLabel   : 'City',
-                bind : {
+                bind         : {
                     value : '{cartValues.OACSTCTY}'
                 }
             }, {
@@ -80,7 +79,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 gApiAddrType : 'administrative_area_level_1',
                 gApiAddrAttr : 'short_name',
                 fieldLabel   : 'State',
-                bind : {
+                bind         : {
                     value : '{cartValues.OACSTSTA}'
                 }
             }, {
@@ -89,7 +88,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 gApiAddrType : 'postal_code',
                 gApiAddrAttr : 'long_name',
                 fieldLabel   : 'Post Code',
-                bind : {
+                bind         : {
                     value : '{cartValues.OACSTPST}'
                 }
             }, {
@@ -97,20 +96,20 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 gApiAddrType : 'country',
                 gApiAddrAttr : 'long_name',
                 fieldLabel   : 'Country',
-                bind : {
+                bind         : {
                     value : '{cartValues.OACSTCOU}'
                 }
             }, {
                 name       : 'OACSTPH1',
                 fieldLabel : 'Daytime Phone',
                 required   : true,
-                bind : {
+                bind       : {
                     value : '{cartValues.OACSTPH1}'
                 }
             }, {
                 name       : 'OACSTPH2',
                 fieldLabel : 'After Hours Phone',
-                bind : {
+                bind       : {
                     value : '{cartValues.OACSTPH2}'
                 }
             }, {
@@ -118,7 +117,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 fieldLabel : 'Email Address',
                 vtype      : 'email',
                 required   : true,
-                bind : {
+                bind       : {
                     value : '{cartValues.OACSTEML}'
                 }
             }]
@@ -133,8 +132,8 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
             defaults       : {
                 labelAlign : 'left',
                 labelWidth : 150,
-                anchor   : '100%',
-                disabled : true
+                anchor     : '100%',
+                disabled   : true
             },
             margin         : '0 0 0 20',
             padding        : '0 20',
@@ -144,7 +143,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
             items          : [{
                 name       : 'OADELNAM',
                 fieldLabel : 'Name',
-                bind : {
+                bind       : {
                     value : '{cartValues.OADELNAM}'
                 }
             }, {
@@ -156,13 +155,13 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 gApiAddrType : 'baseAddressLine1',
                 fieldLabel   : 'Street Address 1',
                 required     : true,
-                bind : {
+                bind         : {
                     value : '{cartValues.OADELST1}'
                 }
             }, {
                 name       : 'OADELST2',
                 fieldLabel : 'Street Address 2',
-                bind : {
+                bind       : {
                     value : '{cartValues.OADELST2}'
                 }
             }, {
@@ -171,7 +170,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 gApiAddrType : 'locality',
                 gApiAddrAttr : 'long_name',
                 fieldLabel   : 'City',
-                bind : {
+                bind         : {
                     value : '{cartValues.OADELCTY}'
                 }
             }, {
@@ -180,7 +179,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 gApiAddrType : 'administrative_area_level_1',
                 gApiAddrAttr : 'short_name',
                 fieldLabel   : 'State',
-                bind : {
+                bind         : {
                     value : '{cartValues.OADELSTA}'
                 }
             }, {
@@ -189,7 +188,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 gApiAddrType : 'postal_code',
                 gApiAddrAttr : 'long_name',
                 fieldLabel   : 'Post Code',
-                bind : {
+                bind         : {
                     value : '{cartValues.OADELPST}'
                 }
             }, {
@@ -197,26 +196,26 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 gApiAddrType : 'country',
                 gApiAddrAttr : 'long_name',
                 fieldLabel   : 'Country',
-                bind : {
+                bind         : {
                     value : '{cartValues.OADELCOU}'
                 }
             }, {
                 name       : 'OADELPH1',
                 fieldLabel : 'Daytime Phone',
-                bind : {
+                bind       : {
                     value : '{cartValues.OADELPH1}'
                 }
             }, {
                 name       : 'OADELPH2',
                 fieldLabel : 'After Hours Phone',
-                bind : {
+                bind       : {
                     value : '{cartValues.OADELPH2}'
                 }
             }, {
                 name       : 'OADELEML',
                 fieldLabel : 'Email Address',
                 vtype      : 'email',
-                bind : {
+                bind       : {
                     value : '{cartValues.OADELEML}'
                 }
             }],

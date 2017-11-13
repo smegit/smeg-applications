@@ -3,19 +3,19 @@ Ext.define('Shopping.view.cart.Release', {
     requires      : [
         'Ext.layout.container.Anchor',
         'Ext.toolbar.Fill',
-        'Shopping.view.cart.CustomerDetail',
         'Shopping.view.cart.List',
-        'Shopping.view.cart.SpecialInstructions'
+        'Shopping.view.cart.Form'
     ],
     title         : 'Release',
     height        : '90%',
     maxWidth      : 1060,
     xtype         : 'cartrelease',
-    bodyPadding   : '10 20',
+    bodyPadding   : '8 20',
     closable      : true,
     modal         : true,
     scrollable    : true,
     layout        : 'anchor',
+    defaultFocus  : '[name=OACSTREF]',
     initComponent : function () {
         var me        = this,
             bodyWidth = Ext.getBody().getWidth();
@@ -59,10 +59,8 @@ Ext.define('Shopping.view.cart.Release', {
             release   : true,
             minHeight : 100
         }, {
-            xtype   : 'cart-customerdetail',
+            xtype   : 'cartform',
             release : true
-        }, {
-            xtype : 'specialinstructions'
         }];
     }
 });
