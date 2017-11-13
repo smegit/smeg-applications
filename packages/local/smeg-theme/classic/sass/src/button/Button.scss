@@ -1,0 +1,40 @@
+@include extjs-button-toolbar-small-ui(
+        $ui: 'blue',
+        $background-color: $blue,
+        $border-color: $blue
+);
+@include extjs-button-toolbar-medium-ui(
+        $ui: 'blue',
+        $background-color: $blue,
+        $border-color: $blue
+);
+@include extjs-button-small-ui(
+        $ui: 'blue',
+        $background-color: $blue,
+        $border-color: $blue
+);
+@include extjs-button-medium-ui(
+        $ui: 'blue',
+        $background-color: $blue,
+        $border-color: $blue
+);
+@include extjs-button-toolbar-small-ui(
+        $ui: 'green',
+        $background-color: $green,
+        $border-color: $green
+);
+@include extjs-button-toolbar-medium-ui(
+        $ui: 'green',
+        $background-color: $green,
+        $border-color: $green
+);
+@include extjs-button-small-ui(
+        $ui: 'green',
+        $background-color: $green,
+        $border-color: $green
+);
+@include extjs-button-medium-ui(
+        $ui: 'green',
+        $background-color: $green,
+        $border-color: $green
+);

@@ -91,8 +91,9 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     // and centers the window
     //
     onViewportResize : function (width, height) {
-        var me  = this,
-            wdw = me.lookupReference('smegwindow'),
+        var me         = this,
+            wdw        = me.lookupReference('smegwindow'),
+            releaseWin = me.lookupReference('releasewindow'),
             wdwHeight, wdwWidth;
 
         if (!Ext.isEmpty(wdw) && wdw.isVisible()) {
@@ -117,6 +118,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             wdw.center();
             // cnx update
             wdw.updateLayout();
+        } else if (!Ext.isEmpty(releaseWin) && releaseWin.isVisible()){
+            releaseWin.updateLayout();
         }
     },
 
@@ -307,7 +310,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
         //set input background color
         //
-        input.setStyle('background-color', '#FFFF99');
+        input.setStyle('background-color', '#E3F2FD');
 
         if (cmp.itemId === 'customerSearch') {
             // Create the customer address auto complete object
@@ -718,13 +721,21 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     onClickRelease : function () {
-        var me   = this,
-            view = me.getView();
+        var me           = this,
+            form         = Ext.ComponentQuery.query('cartform')[0],
+            valid        = form.isValid(),
+            fieldInError = (!valid) ? form.down('field{isValid()===false}') : null,
+            view         = me.getView();
 
-        view.add({
-            xtype    : 'cartrelease',
-            renderTo : Ext.getBody()
-        }).show();
+        if (Ext.isEmpty(fieldInError)) {
+            view.add({
+                xtype     : 'cartrelease',
+                reference : 'releasewindow',
+                renderTo  : Ext.getBody()
+            }).show();
+        } else {
+            fieldInError.focus();
+        }
     },
 
     onMenuClickCartAction : function (menu, menuItem) {

@@ -81,32 +81,37 @@ Ext.define('Shopping.view.cart.Main', {
                     }
                 }]
             }, {
-                text     : 'Continue Shopping',
-                cls      : 'btn-shopping',
-                focusCls : 'btn-shopping',
-                overCls  : 'btn-shopping-over',
-                handler  : 'onClickGoBack'
+                text    : 'Continue Shopping',
+                // cls      : 'btn-shopping',
+                // focusCls : 'btn-shopping',
+                // overCls  : 'btn-shopping-over',
+                ui      : 'white',
+                handler : 'onClickGoBack'
             }, {
                 text    : 'Clear Order',
                 maskMsg : 'Clearing Cart',
+                ui      : 'white',
                 action  : 'clearcart'
             }, {
                 text    : 'Save',
                 action  : 'savecart',
+                ui      : 'white',
                 maskMsg : 'Saving Order'
             }, {
                 text    : 'Deposit',
                 action  : 'deposit',
+                ui      : 'white',
                 maskMsg : 'Setting up Deposit'
-            }, {
-                text     : 'Checkout',
-                action   : 'checkout',
-                maskMsg  : 'Checking Out',
-                cls      : 'btn-checkout',
-                overCls  : 'btn-checkout-over',
-                focusCls : 'btn-checkout'
+                // }, {
+                //     text     : 'Checkout',
+                //     action   : 'checkout',
+                //     maskMsg  : 'Checking Out',
+                //     cls      : 'btn-checkout',
+                //     overCls  : 'btn-checkout-over',
+                //     focusCls : 'btn-checkout'
             }, {
                 text    : 'Release',
+                ui      : 'blue',
                 handler : 'onClickRelease'
             }]
     },
@@ -117,30 +122,37 @@ Ext.define('Shopping.view.cart.Main', {
         items  : [{
             xtype : 'tbfill'
         }, {
-            text     : 'Continue Shopping',
-            cls      : 'btn-shopping',
-            focusCls : 'btn-shopping',
-            overCls  : 'btn-shopping-over',
-            handler  : 'onClickGoBack'
+            text    : 'Continue Shopping',
+            // cls      : 'btn-shopping',
+            // focusCls : 'btn-shopping',
+            // overCls  : 'btn-shopping-over',
+            ui      : 'white',
+            handler : 'onClickGoBack'
         }, {
             text    : 'Clear Order',
+            ui      : 'white',
             maskMsg : 'Clearing Cart',
             action  : 'clearcart'
         }, {
             text    : 'Save',
+            ui      : 'white',
             action  : 'savecart',
             maskMsg : 'Saving Order'
         }, {
             text    : 'Deposit',
             action  : 'deposit',
             maskMsg : 'Setting up Deposit'
+            // }, {
+            //     text     : 'Checkout',
+            //     action   : 'checkout',
+            //     maskMsg  : 'Checking Out',
+            //     cls      : 'btn-checkout',
+            //     overCls  : 'btn-checkout-over',
+            //     focusCls : 'btn-checkout'
         }, {
-            text     : 'Release',
-            action   : 'checkout',
-            maskMsg  : 'Checking Out',
-            cls      : 'btn-checkout',
-            overCls  : 'btn-checkout-over',
-            focusCls : 'btn-checkout'
+            text    : 'Release',
+            ui      : 'blue',
+            handler : 'onClickRelease'
         }]
     },
     initComponent : function () {

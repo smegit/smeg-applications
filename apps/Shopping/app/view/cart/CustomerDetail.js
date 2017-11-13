@@ -35,6 +35,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 labelAlign : 'left',
                 labelWidth : 150,
                 readOnly   : me.release,
+                disabled   : me.release,
                 width      : '100%'
             },
             items       : [{
@@ -42,6 +43,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 fieldLabel : 'Name',
                 required   : true,
                 readOnly   : me.release,
+                disabled   : me.release,
                 bind       : {
                     value : '{cartValues.OACSTNAM}'
                 }

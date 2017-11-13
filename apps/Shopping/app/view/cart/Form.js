@@ -59,13 +59,17 @@ Ext.define('Shopping.view.cart.Form', {
                     name       : 'OACSTREF',
                     fieldLabel : 'Reference *',
                     allowBlank : false,
-                    reference  : 'reffield'
+                    reference  : 'reffield',
+                    bind       : {
+                        value : '{cartValues.OACSTREF}'
+                    }
                 }, {
                     xtype          : 'combo',
                     margin         : '0 32 0 0',
                     labelWidth     : 90,
                     bind           : {
-                        store : '{cartReps}'
+                        store : '{cartReps}',
+                        value : '{cartValues.OAREP}'
                     },
                     queryMode      : 'local',
                     reference      : 'cartrepscombo',
@@ -77,7 +81,8 @@ Ext.define('Shopping.view.cart.Form', {
                     allowBlank     : false,
                     minWidth       : 200,
                     anyMatch       : true,
-                    readOnly       : me.release
+                    readOnly       : me.release,
+                    disabled       : me.release
                 }, {
                     xtype             : 'datefield',
                     name              : 'OADELD',
@@ -94,7 +99,8 @@ Ext.define('Shopping.view.cart.Form', {
                     disabledDaysText  : 'Delivery not available on weekends',
                     bind              : {
                         disabledDates : '{deliveryDisabledDates}',
-                        disabledDays  : '{deliveryDisabledDays}'
+                        disabledDays  : '{deliveryDisabledDays}',
+                        value         : '{cartValues.OADELD}'
                     }
                 }]
             }]
