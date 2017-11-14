@@ -224,7 +224,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             },
             success : function (response) {
                 if (!Ext.isEmpty(callback)) {
-                    Ext.callback(callback, (!Ext.isEmpty(scope)) ? scope : me, [true, response]);
+                    Ext.callback(callback, (!Ext.isEmpty(scope)) ? scope : me, [response.success, response]);
                 }
             },
             failure : function (response) {
@@ -923,7 +923,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     if (!Ext.isEmpty(parent.Portal)) {
                         parent.Portal.getApplication().fireEvent('smegagentchanged', selectedAgent);
                     }
-                    mainController.getOptions()
+                    mainController.getOptions(selectedAgent)
                         .then(function (content) {
                             Valence.common.util.Helper.destroyLoadMask();
                             var stockDefault = mainVm.get('STKDFT');
@@ -1124,7 +1124,12 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     Valence.common.util.Snackbar.show({text : 'The cart has been deleted'});
                 } else {
                     var resp = Ext.decode(response.responseText);
-                    Ext.Msg.alert('Error', (resp.msg ? resp.msg : 'Error deleting cart'));
+                    Valence.common.util.Dialog.show({
+                        title    : 'Error',
+                        minWidth : 300,
+                        msg      : !Ext.isEmpty(resp.msg) ? resp.msg : 'Error deleting cart',
+                        buttons  : [{text : 'Ok'}]
+                    });
                 }
             }, me);
         }

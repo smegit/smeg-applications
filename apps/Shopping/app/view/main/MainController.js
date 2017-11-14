@@ -43,11 +43,10 @@ Ext.define('Shopping.view.main.MainController', {
      * getOptions - get the options for the application. will be notified if the user is allowed to work with
      *   multiple agencies and if they can ask them what agency
      */
-    getOptions : function () {
+    getOptions : function (agent) {
         var me       = this,
             vm       = me.getViewModel(),
             deferred = Ext.create('Ext.Deferred'),
-            agency   = vm.get('agency'),
             params   = {
                 pgm    : 'EC1010',
                 action : 'getOptions'
@@ -56,9 +55,9 @@ Ext.define('Shopping.view.main.MainController', {
         //check if we are working with a specific agent because the user is allowed to work
         // with multiple agencies
         //
-        if (!Ext.isEmpty(agency)) {
+        if (!Ext.isEmpty(agent)) {
             Ext.apply(params, {
-                agency : agency
+                agent : agent
             });
         }
 
@@ -74,7 +73,10 @@ Ext.define('Shopping.view.main.MainController', {
                 if (!Ext.isEmpty(d.msg)) {
                     deferred.reject(d);
                 } else {
-                    var activeAgent = parent.smegGetCurrentAgent();
+                    var activeAgent;
+                    if (!Ext.isEmpty(parent.smegGetCurrentAgent) && typeof parent.smegGetCurrentAgent === 'function') {
+                        activeAgent = parent.smegGetCurrentAgent();
+                    }
 
                     if (!Ext.isEmpty(d.StockDft)) {
                         stockDefault = d.StockDft[0].STKDFT;
@@ -88,9 +90,11 @@ Ext.define('Shopping.view.main.MainController', {
                         'STKDFT'      : stockDefault
                     };
 
-                    Ext.apply(vmObj, {
-                        agent : activeAgent
-                    });
+                    if (!Ext.isEmpty(activeAgent)) {
+                        Ext.apply(vmObj, {
+                            agent : activeAgent
+                        });
+                    }
 
                     vm.set(vmObj);
 

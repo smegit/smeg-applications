@@ -72,7 +72,7 @@ Ext.define('Shopping.view.cart.Main', {
                     },
                     bind           : {
                         store : '{StockLocations}',
-                        value : '{STKCOD}'
+                        value : '{STKDFT}'
                     }
                 }]
             }, {

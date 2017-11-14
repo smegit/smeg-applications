@@ -25,11 +25,6 @@ Ext.define('Shopping.view.products.ProductsController', {
         this.getView().fireEvent('selectstocklocation', fld, rec);
     },
 
-    onClickExistingCarts : function(){
-        var me = this;
-        console.log('onClickExistingCarts');
-    },
-
     onClearSearch : function (fld) {
         var me  = this,
             vm  = me.getViewModel(),

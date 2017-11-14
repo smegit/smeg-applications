@@ -73,7 +73,6 @@ Ext.define('Shopping.view.products.Heading', {
             xtype   : 'button',
             action  : 'existingcarts',
             text    : 'View Saved Orders',
-            handler : 'onClickExistingCarts',
             bind    : {
                 hidden : '{!hideClearCart}'
             }

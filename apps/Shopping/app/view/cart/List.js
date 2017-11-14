@@ -19,7 +19,8 @@ Ext.define('Shopping.view.cart.List', {
     cls           : 'cart-list',
     overCls       : 'cart-list-over',
     viewConfig    : {
-        emptyText : 'No Items have been added to this Order'
+        stripeRows : true,
+        emptyText  : 'No Items have been added to this Order'
     },
     listeners     : {
         cellclick : 'onCellClickList',

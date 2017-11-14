@@ -96,10 +96,6 @@ Ext.define('Valence.Hook', {
         if (!Ext.isEmpty(basicView) && basicView === 'true') {
             me.basicView = true;
             me.overrideLaunchpad();
-
-            if (!Ext.isEmpty(window.Portal)){
-                window['smegGetCurrentAgent'] = Ext.bind(me.getCurrentAgent,me);
-            }
         }
 
         if (app) {
@@ -179,6 +175,8 @@ Ext.define('Valence.Hook', {
                 login                    : function (user, sid) {
                     if (!Ext.isEmpty(window.Portal)){
                         this.checkAgencies(user, sid);
+
+                        window['smegGetCurrentAgent'] = Ext.bind(me.getCurrentAgent,me);
                     }
                 },
                 loginfailure             : function (parms, response) {
