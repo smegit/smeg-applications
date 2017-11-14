@@ -51,7 +51,10 @@ Ext.define('Shopping.view.cart.Form', {
                 items    : [{
                     xtype  : 'textfield',
                     name   : 'OAORDKEY',
-                    hidden : true
+                    hidden : true,
+                    bind   : {
+                        value : '{activeCartNumber}'
+                    }
                 }, {
                     xtype      : 'textfield',
                     margin     : '0 32 0 0',

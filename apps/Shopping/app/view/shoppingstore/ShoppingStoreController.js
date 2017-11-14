@@ -224,7 +224,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             },
             success : function (response) {
                 if (!Ext.isEmpty(callback)) {
-                    Ext.callback(callback, (!Ext.isEmpty(scope)) ? scope : me, [response.success, response]);
+                    Ext.callback(callback, (!Ext.isEmpty(scope)) ? scope : me, [true, response]);
                 }
             },
             failure : function (response) {
@@ -1119,11 +1119,11 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
         if (!Ext.isEmpty(column.action) && column.action === 'removecart' && !regex.test(rec.get('OAOSTS'))) {
             me.deleteCart(rec.get('OAORDKEY'), function (success, response) {
-                if (success) {
+                var resp = Ext.decode(response.responseText);
+                if (success && resp.success) {
                     store.remove(rec);
                     Valence.common.util.Snackbar.show({text : 'The cart has been deleted'});
                 } else {
-                    var resp = Ext.decode(response.responseText);
                     Valence.common.util.Dialog.show({
                         title    : 'Error',
                         minWidth : 300,
