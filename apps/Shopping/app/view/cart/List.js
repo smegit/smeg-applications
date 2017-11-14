@@ -54,16 +54,6 @@ Ext.define('Shopping.view.cart.List', {
                 text      : 'Item',
                 width     : 100,
                 dataIndex : 'product_id'
-                // align     : 'center'
-                // renderer  : function (v, meta, rec) {
-                //     var smallPic = rec.get('smallpic');
-                //     if (!Ext.isEmpty(smallPic)) {
-                //         return '<div>' + v + '</div>' +
-                //             '<image class="cart-list-item-image" src="' + smallPic + '" height="50" width="50"></image>';
-                //     } else {
-                //         return v;
-                //     }
-                // }
             }, {
                 text      : 'Description',
                 cellWrap  : true,

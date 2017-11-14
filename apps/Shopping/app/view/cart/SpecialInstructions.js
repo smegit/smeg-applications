@@ -6,7 +6,7 @@ Ext.define('Shopping.view.cart.SpecialInstructions', {
     xtype    : 'specialinstructions',
     title    : 'Special Instructions',
     cls      : 'cart-fieldset',
-    padding  : '5 18 5 15',
+    padding  : '5 18 8 15',
     items    : [{
         xtype         : 'textareafield',
         name          : 'OASPI',

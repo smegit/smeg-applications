@@ -92,11 +92,21 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                     displayField    : 'PAYMDSC',
                     valueField      : 'PAYMCOD',
                     enableKeyEvents : true,
+                    value           : 'CSH',
                     listeners       : {
                         scope  : me,
                         change : function (combo, value) {
-                            var me     = this,
-                                ccInfo = me.down('#ccInfo');
+                            var me             = this,
+                                ccInfo         = me.down('#ccInfo'),
+                                approvalNumber = me.down('#approvalNumber');
+
+                            if (value === 'FIN') {
+                                approvalNumber.show();
+                            } else {
+                                approvalNumber.hide();
+                                approvalNumber.reset();
+                            }
+
                             if (value === 'CC') {
                                 if (!ccInfo.isVisible()) {
                                     me.fireEvent('showCreditInfo', me);
@@ -107,6 +117,13 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                                     me.fireEvent('hideCreditInfo', me);
                                     ccInfo.hide();
                                 }
+                            }
+                        },
+                        select : function (cmp) {
+                            var me      = this,
+                                payment = me.down('#payAmtFld');
+                            if (!Ext.isEmpty(payment)) {
+                                payment.focus();
                             }
                         }
                     }
@@ -120,6 +137,14 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                     itemId           : 'payAmtFld',
                     decimalPrecision : 2,
                     labelWidth       : 120
+                }, {
+                    xtype      : 'textfield',
+                    fieldLabel : 'Approval Number',
+                    allowBlank : false,
+                    name       : 'OAPAYAPN',
+                    hidden     : true,
+                    itemId     : 'approvalNumber',
+                    labelWidth : 120
                 }, {
                     xtype     : 'container',
                     margin    : 0,

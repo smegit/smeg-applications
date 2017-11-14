@@ -6,7 +6,6 @@ Ext.define('Shopping.view.cart.Release', {
         'Shopping.view.cart.List',
         'Shopping.view.cart.Form'
     ],
-    title         : 'Release',
     height        : '90%',
     maxWidth      : 1060,
     xtype         : 'cartrelease',
@@ -16,6 +15,9 @@ Ext.define('Shopping.view.cart.Release', {
     scrollable    : true,
     layout        : 'anchor',
     defaultFocus  : '[name=OACSTREF]',
+    bind : {
+        title : 'Release {ordKeyText}'
+    },
     initComponent : function () {
         var me        = this,
             bodyWidth = Ext.getBody().getWidth();
@@ -46,10 +48,11 @@ Ext.define('Shopping.view.cart.Release', {
                     click : me.onEsc
                 }
             }, {
-                text     : 'Confirm',
-                cls      : 'btn-checkout',
-                overCls  : 'btn-checkout-over',
-                focusCls : 'btn-checkout'
+                text : 'Confirm',
+                ui   : 'blue',
+                listeners : {
+                    click : 'onClickReleaseConfirm'
+                }
             }]
         }
     },

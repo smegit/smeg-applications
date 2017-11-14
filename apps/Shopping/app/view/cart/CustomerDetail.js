@@ -15,7 +15,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
     },
     margin         : 0,
     release        : false,
-    baseLabelWidth : 110,
+    baseLabelWidth : 90,
     initComponent  : function () {
         var me = this;
 
@@ -162,6 +162,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 name       : 'OACSTEML',
                 fieldLabel : 'Email Address',
                 vtype      : 'email',
+                margin     : '0 0 8 0',
                 allowBlank : false,
                 bind       : {
                     value : '{cartValues.OACSTEML}'
@@ -183,9 +184,16 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
             },
             margin         : '0 0 0 10',
             padding        : '0 20',
-            checkboxName   : 'dlvychbx',
             checkboxToggle : true,
             collapsable    : true,
+            checkbox       : {
+                listeners : {
+                    scope  : me,
+                    change : function (cmp, value) {
+                        this.down('#deliveryfieldset').setExpanded(value);
+                    }
+                }
+            },
             items          : [{
                 name       : 'OADELNAM',
                 fieldLabel : 'Name',
@@ -303,6 +311,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
             }, {
                 name       : 'OADELEML',
                 fieldLabel : 'Email Address',
+                margin     : '0 0 8 0',
                 vtype      : 'email',
                 bind       : {
                     value : '{cartValues.OADELEML}'
@@ -310,16 +319,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
             }],
             listeners      : {
                 afterrender    : function (cmp) {
-                    var checkbox = cmp.down('checkbox');
-                    if (!Ext.isEmpty(checkbox) && !Ext.isEmpty(checkbox.getEl())) {
-                        checkbox.setValue(false);
-                    } else {
-                        checkbox.on({
-                            afterrender : function (cmp) {
-                                cmp.setValue(false);
-                            }
-                        });
-                    }
+                    cmp.setExpanded(false);
                 },
                 beforecollapse : function (cmp) {
                     var fields     = cmp.query('field'),

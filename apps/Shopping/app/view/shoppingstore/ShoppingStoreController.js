@@ -46,53 +46,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         });
     },
 
-    // cnx update -- added global listener for window resizing
-    //
-    listen : {
-        global : {
-            resize : {
-                fn     : 'onViewportResize',
-                buffer : 200
-            }
-        }
-    },
-
-    // cnx update -- listener function that calculates the width and height if it is larger than the width
-    // and centers the window
-    //
-    onViewportResize : function (width, height) {
-        var me         = this,
-            wdw        = me.lookupReference('smegwindow'),
-            releaseWin = me.lookupReference('releasewindow'),
-            wdwHeight, wdwWidth;
-
-        if (!Ext.isEmpty(wdw) && wdw.isVisible()) {
-            wdwWidth  = wdw.getWidth();
-            wdwHeight = wdw.getHeight();
-            if (wdwWidth > width) {
-                if (Ext.isEmpty(wdw.orgWidth)) {
-                    wdw.orgWidth = wdwWidth;
-                }
-                wdw.setWidth(width * .9);
-            } else if (!Ext.isEmpty(wdw.orgWidth) && wdw.orgWidth > wdwWidth && wdw.orgWidth < width) {
-                wdw.setWidth(wdw.orgWidth);
-            }
-            if (wdwHeight > height) {
-                if (Ext.isEmpty(wdw.orgHeight)) {
-                    wdw.orgWidth = wdwHeight;
-                }
-                wdw.setHeight(height * .9);
-            } else if (!Ext.isEmpty(wdw.orgHeight) && wdw.orgHeight > wdwHeight && wdw.orgHeight < height) {
-                wdw.setHeight(wdw.orgHeight);
-            }
-            wdw.center();
-            // cnx update
-            wdw.updateLayout();
-        } else if (!Ext.isEmpty(releaseWin) && releaseWin.isVisible()) {
-            releaseWin.updateLayout();
-        }
-    },
-
     agentSelected : function (content) {
         var me           = this,
             vm           = me.getViewModel(),
@@ -620,7 +573,9 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                                 "quantity"   : prodQuantity,
                                 "allocated"  : product.OBQTYA,
                                 "price"      : product.OBUPRC,
-                                "prod_desc"  : product.I1IDSC
+                                "prod_desc"  : product.I1IDSC,
+                                "delivered"  : product.OBQTYD,
+                                "smallpic"   : product.SMALLPIC
                             });
                         }
                     }

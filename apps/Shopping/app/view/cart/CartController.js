@@ -5,6 +5,14 @@ Ext.define('Shopping.view.cart.CartController', {
         'Shopping.view.cart.PaymentForm'
     ],
     alias    : 'controller.cart',
+    listen   : {
+        global : {
+            resize : {
+                fn     : 'onViewportResize',
+                buffer : 200
+            }
+        }
+    },
 
     /**
      * init - setup app level listeners and portal application destroy listener
@@ -29,7 +37,6 @@ Ext.define('Shopping.view.cart.CartController', {
             });
         }
     },
-
 
     /**
      * autoFillAddress - auto fill the address fields if the user selected an address from the google lookup
@@ -220,7 +227,9 @@ Ext.define('Shopping.view.cart.CartController', {
                         return;
                     }
 
-                    deferred.resolve(d);
+                    deferred.resolve(Ext.apply(d, {
+                        action : action
+                    }));
                 },
                 failure : function (response) {
                     var d = Ext.decode(response.responseText);
@@ -462,9 +471,7 @@ Ext.define('Shopping.view.cart.CartController', {
 
         if (Ext.isEmpty(fieldInError)) {
             me.depositRelease(cmp, 'deposit')
-                .then(function (content) {
-                    console.log('response : ', content);
-                });
+                .then(Ext.bind(me.requestPayment, me));
         } else {
             fieldInError.focus();
         }
@@ -480,16 +487,24 @@ Ext.define('Shopping.view.cart.CartController', {
         if (Ext.isEmpty(fieldInError)) {
             me.depositRelease(cmp, 'checkout')
                 .then(function (content) {
-                    console.log('response : ', content);
+                    Valence.common.util.Helper.destroyLoadMask();
+                    view.add({
+                        xtype      : 'cartrelease',
+                        reference  : 'releasewindow',
+                        renderTo   : Ext.getBody(),
+                        chkContent : content
+                    }).show();
                 });
-            // view.add({
-            //     xtype     : 'cartrelease',
-            //     reference : 'releasewindow',
-            //     renderTo  : Ext.getBody()
-            // }).show();
         } else {
             fieldInError.focus();
         }
+    },
+
+    onClickReleaseConfirm : function () {
+        var me            = this,
+            releaseWindow = me.lookupReference('releasewindow');
+
+        console.log('do the depsit/Release : ', releaseWindow.chkContent);
     },
 
     onClickSave : function () {
@@ -576,6 +591,38 @@ Ext.define('Shopping.view.cart.CartController', {
                 fld.markInvalid('Quantity can not be greater than delivered');
                 return false;
             }
+        }
+    },
+
+    onViewportResize : function (width, height) {
+        var me         = this,
+            wdw        = me.lookupReference('smegwindow'),
+            releaseWin = me.lookupReference('releasewindow'),
+            wdwHeight, wdwWidth;
+
+        if (!Ext.isEmpty(wdw) && wdw.isVisible()) {
+            wdwWidth  = wdw.getWidth();
+            wdwHeight = wdw.getHeight();
+            if (wdwWidth > width) {
+                if (Ext.isEmpty(wdw.orgWidth)) {
+                    wdw.orgWidth = wdwWidth;
+                }
+                wdw.setWidth(width * .9);
+            } else if (!Ext.isEmpty(wdw.orgWidth) && wdw.orgWidth > wdwWidth && wdw.orgWidth < width) {
+                wdw.setWidth(wdw.orgWidth);
+            }
+            if (wdwHeight > height) {
+                if (Ext.isEmpty(wdw.orgHeight)) {
+                    wdw.orgWidth = wdwHeight;
+                }
+                wdw.setHeight(height * .9);
+            } else if (!Ext.isEmpty(wdw.orgHeight) && wdw.orgHeight > wdwHeight && wdw.orgHeight < height) {
+                wdw.setHeight(wdw.orgHeight);
+            }
+            wdw.updateLayout();
+        } else if (!Ext.isEmpty(releaseWin) && releaseWin.isVisible()) {
+            releaseWin.center();
+            releaseWin.updateLayout();
         }
     },
 
@@ -783,51 +830,76 @@ Ext.define('Shopping.view.cart.CartController', {
         return deferred.promise;
     },
 
-    requestPayment : function (action) {
-        var me   = this,
-            vm   = me.getViewModel(),
-            view = me.getView();
+    requestPayment : function (content) {
+        var me       = this,
+            deferred = Ext.create('Ext.Deferred'),
+            view     = me.getView();
 
-        view.add({
-            xtype        : 'window',
-            itemId       : 'cartPayment',
-            ui           : 'smeg',
-            bodyPadding  : 20,
-            width        : 600,
-            y            : 40,
-            height       : '80%',
-            modal        : true,
-            title        : action == 'checkout' ? 'Payment' : 'Deposit',
-            closable     : true,
-            scrollable   : true,
-            layout       : 'fit',
-            reference    : 'smegwindow',
-            defaultFocus : '#payMethCombo',
-            items        : [{
-                xtype      : 'cartpayment',
-                scrollable : 'y'
-                // paymode    : action,
-                // cartInfo   : response,
-                // maxpay     : maxPayment //johnny
-            }],
-            bbar         : ['->', {
-                text    : 'Cancel',
-                ui      : 'white',
-                handler : function (btn) {
-                    btn.up('window').close();
-                }
-            }, {
-                ui        : 'blue',
-                text      : 'Ok',
-                width     : 80,
-                scope     : me,
-                paymode   : action,
-                listeners : {
-                    scope : me,
-                    click : me.sendPayment
-                }
-            }]
-        }).show();
+        Ext.Ajax.request({
+            url     : '/valence/vvcall.pgm',
+            params  : {
+                pgm      : 'EC1050',
+                action   : 'getPayments',
+                OAORDKEY : content.OAORDKEY,
+                paymode  : content.action
+            },
+            success : function (r) {
+                var d          = Ext.decode(r.responseText),
+                    maxPayment = d.maxpay[0].maxpay;
+
+                d.OAORDKEY = content.OAORDKEY;
+                view.add({
+                    xtype        : 'window',
+                    itemId       : 'cartPayment',
+                    ui           : 'smeg',
+                    bodyPadding  : 20,
+                    width        : 600,
+                    // y            : 40,
+                    height       : '80%',
+                    modal        : true,
+                    title        : content.action == 'checkout' ? 'Payment' : 'Deposit',
+                    closable     : true,
+                    scrollable   : true,
+                    layout       : 'fit',
+                    reference    : 'smegwindow',
+                    defaultFocus : '#payMethCombo',
+                    items        : [{
+                        xtype      : 'cartpayment',
+                        scrollable : 'y',
+                        paymode    : content.action,
+                        cartInfo   : d,
+                        maxpay     : maxPayment
+                    }],
+                    bbar         : ['->', {
+                        text    : 'Cancel',
+                        scale   : 'medium',
+                        handler : function (btn) {
+                            btn.up('window').close();
+                        }
+                    }, {
+                        ui       : 'blue',
+                        scale    : 'medium',
+                        text     : 'Ok',
+                        width    : 80,
+                        scope    : me,
+                        paymode  : content.action,
+                        listener : {
+                            scope : me,
+                            click : me.sendPayment
+                        }
+                    }]
+                }).show();
+                Valence.common.util.Helper.destroyLoadMask();
+                deferred.resolve(d);
+            },
+            failure : function (response) {
+                me.showError(response);
+                Valence.common.util.Helper.destroyLoadMask();
+                deferred.reject(Ext.decode(response.responseText));
+            }
+        });
+
+        return deferred.promise;
     },
 
     sendPayment : function () {

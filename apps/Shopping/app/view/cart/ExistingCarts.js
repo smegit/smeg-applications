@@ -1,6 +1,13 @@
 Ext.define('Shopping.view.cart.ExistingCarts', {
     extend     : 'Ext.grid.Panel',
     xtype      : 'existingcarts',
+
+    requires   : [
+        'Ext.form.field.Text',
+        'Ext.toolbar.Fill',
+        'Valence.common.ux.plugin.form.field.ClearValue'
+    ],
+
     bind       : {
         store : '{existingCarts}'
     },
@@ -16,13 +23,8 @@ Ext.define('Shopping.view.cart.ExistingCarts', {
         }
     },
     tbar       : {
-        style : {
-            'z-index' : 11
-        },
-        items : [{
-            xtype : 'tbtext',
-            html  : 'Double-click to load cart'
-        }, '->', {
+        cls : 'existing-carts-srch-tb',
+        items : ['->', {
             xtype     : 'textfield',
             width     : 300,
             emptyText : 'Search Saved Orders',
