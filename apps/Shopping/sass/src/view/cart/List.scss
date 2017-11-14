@@ -1,6 +1,9 @@
 .cart-list {
   border: solid 1px #bbb;
   border-radius:0px;
+  .x-grid-cell-inner{
+    padding:3px!important;
+  }
   .cart-qty-col{
     .x-column-header-text{
       margin-right : 0px!important;

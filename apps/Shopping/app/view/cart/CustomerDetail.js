@@ -3,7 +3,10 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
     xtype  : 'cart-customerdetail',
 
     requires : [
-        'Ext.form.FieldSet'
+        'Ext.form.FieldContainer',
+        'Ext.form.FieldSet',
+        'Ext.form.field.Text',
+        'Ext.layout.container.HBox'
     ],
 
     layout        : {
@@ -105,18 +108,34 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                     value : '{cartValues.OACSTCOU}'
                 }
             }, {
-                name       : 'OACSTPH1',
-                fieldLabel : 'Daytime Phone',
-                allowBlank : false,
-                bind       : {
-                    value : '{cartValues.OACSTPH1}'
-                }
-            }, {
-                name       : 'OACSTPH2',
-                fieldLabel : 'After Hours Phone',
-                bind       : {
-                    value : '{cartValues.OACSTPH2}'
-                }
+                xtype      : 'fieldcontainer',
+                fieldLabel : 'Phone',
+                layout     : {
+                    type  : 'hbox',
+                    align : 'stretch'
+                },
+                defaults   : {
+                    xtype     : 'textfield',
+                    hideLabel : true,
+                    readOnly  : me.release,
+                    disabled  : me.release,
+                    flex      : 1
+                },
+                items      : [{
+                    name       : 'OACSTPH1',
+                    emptyText  : 'Daytime',
+                    allowBlank : false,
+                    margin     : '0 16 0 0',
+                    bind       : {
+                        value : '{cartValues.OACSTPH1}'
+                    }
+                }, {
+                    name      : 'OACSTPH2',
+                    emptyText : 'After Hours',
+                    bind      : {
+                        value : '{cartValues.OACSTPH2}'
+                    }
+                }]
             }, {
                 name       : 'OACSTEML',
                 fieldLabel : 'Email Address',
@@ -208,17 +227,32 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                     value : '{cartValues.OADELCOU}'
                 }
             }, {
-                name       : 'OADELPH1',
-                fieldLabel : 'Daytime Phone',
-                bind       : {
-                    value : '{cartValues.OADELPH1}'
-                }
-            }, {
-                name       : 'OADELPH2',
-                fieldLabel : 'After Hours Phone',
-                bind       : {
-                    value : '{cartValues.OADELPH2}'
-                }
+                xtype      : 'fieldcontainer',
+                fieldLabel : 'Phone',
+                layout     : {
+                    type  : 'hbox',
+                    align : 'stretch'
+                },
+                defaults   : {
+                    xtype     : 'textfield',
+                    hideLabel : true,
+                    flex      : 1
+                },
+                items      : [{
+                    name       : 'OADELPH1',
+                    emptyText  : 'Daytime',
+                    allowBlank : false,
+                    margin     : '0 16 0 0',
+                    bind       : {
+                        value : '{cartValues.OADELPH1}'
+                    }
+                }, {
+                    name      : 'OADELPH2',
+                    emptyText : 'After Hours',
+                    bind      : {
+                        value : '{cartValues.OADELPH2}'
+                    }
+                }]
             }, {
                 name       : 'OADELEML',
                 fieldLabel : 'Email Address',

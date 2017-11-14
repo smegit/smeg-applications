@@ -15,7 +15,8 @@ Ext.define('Shopping.view.cart.Main', {
     scrollable    : true,
     layout        : 'anchor',
     listeners     : {
-        activate : 'onActivate'
+        activate : 'onActivate',
+        updaterepsreadonly : 'onUpdateRepsReadOnly'
     },
     defaults      : {
         maxWidth : 1060,
@@ -90,9 +91,12 @@ Ext.define('Shopping.view.cart.Main', {
                 }
             }, {
                 text    : 'Save',
-                action  : 'savecart',
+                // action  : 'savecart',
                 ui      : 'white',
-                maskMsg : 'Saving Order'
+                maskMsg : 'Saving Order',
+                listeners : {
+                    click : 'onClickSave'
+                }
             }, {
                 text    : 'Deposit',
                 action  : 'deposit',
@@ -162,7 +166,7 @@ Ext.define('Shopping.view.cart.Main', {
     buildItems : function (opts) {
         return [{
             xtype     : 'cartlist',
-            minHeight : 100
+            minHeight : 80
         }, {
             xtype       : 'cartform',
             cartOptions : opts

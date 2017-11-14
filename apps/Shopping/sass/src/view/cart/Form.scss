@@ -1,5 +1,8 @@
 .cart-fieldset {
   background-color: rgba(238, 238, 238, 0.7);
+  .x-autocontainer-form-item, .x-anchor-form-item, .x-vbox-form-item, .x-table-form-item{
+    margin-bottom:5px;
+  }
 }
 
 .x-form-trigger-wrap-invalid {

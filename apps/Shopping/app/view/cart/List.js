@@ -52,7 +52,7 @@ Ext.define('Shopping.view.cart.List', {
 
         if (!me.release) {
             cols = Ext.Array.merge(cols, [{
-                text            : 'Quantity (Click to Change)',
+                text            : 'Order',
                 width           : 160,
                 align           : 'right',
                 dataIndex       : 'quantity',
@@ -61,27 +61,6 @@ Ext.define('Shopping.view.cart.List', {
                 },
                 summaryType     : 'sum',
                 summaryRenderer : function (value, summaryData, dataIndex) {
-                    return Ext.String.format('<b>{0}</b>', value);
-                }
-            }, {
-                text      : 'Allocated',
-                flex      : 1,
-                align     : 'right',
-                dataIndex : 'allocated',
-                bind      : {
-                    hidden : '{hideAllocated}'
-                }
-
-            }, {
-                text            : 'Release',
-                dataIndex       : 'release',
-                width           : 85,
-                align           : 'right',
-                editor          : {
-                    xtype : 'numberfield'
-                },
-                summaryType     : 'sum',
-                summaryRenderer : function (value) {
                     return Ext.String.format('<b>{0}</b>', value);
                 }
             }, {
@@ -103,17 +82,38 @@ Ext.define('Shopping.view.cart.List', {
                     return Ext.String.format('<b>{0}</b>', value);
                 }
             }, {
-                text      : 'Price',
+                text            : 'Release',
+                dataIndex       : 'release',
+                width           : 85,
+                align           : 'right',
+                editor          : {
+                    xtype : 'numberfield'
+                },
+                summaryType     : 'sum',
+                summaryRenderer : function (value) {
+                    return Ext.String.format('<b>{0}</b>', value);
+                }
+            }, {
+                text      : 'Allocated',
                 flex      : 1,
+                align     : 'right',
+                dataIndex : 'allocated',
+                bind      : {
+                    hidden : '{hideAllocated}'
+                }
+
+            }, {
+                text      : 'Price',
+                width     : 90,
                 align     : 'right',
                 dataIndex : 'price',
                 renderer  : function (value) {
-                    return Ext.util.Format.currency(value, null, 0);
+                    return Ext.util.Format.currency(value);
                 }
 
             }, {
                 text            : 'Total',
-                flex            : 1,
+                width           : 90,
                 align           : 'right',
                 dataIndex       : 'extended_price',
                 renderer        : function (value) {
@@ -137,7 +137,7 @@ Ext.define('Shopping.view.cart.List', {
             }]);
         } else {
             cols = Ext.Array.merge(cols, [{
-                text            : 'Quantity',
+                text            : 'Ordered',
                 width           : 85,
                 align           : 'right',
                 dataIndex       : 'quantity',

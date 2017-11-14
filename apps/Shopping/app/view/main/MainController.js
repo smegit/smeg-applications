@@ -7,6 +7,7 @@ Ext.define('Shopping.view.main.MainController', {
                 me.onSmegAgentSetPortal();
             });
 
+
         //listen for the agent change from the portal that is fired
         // from the hook
         //
@@ -20,7 +21,7 @@ Ext.define('Shopping.view.main.MainController', {
             .then(function (content) {
                 Valence.common.util.Helper.destroyLoadMask();
                 Shopping.getApplication().fireEvent('agentselected', content);
-            }, function(content){
+            }, function (content) {
                 Valence.common.util.Helper.destroyLoadMask();
 
                 Valence.common.util.Dialog.show({
@@ -68,22 +69,30 @@ Ext.define('Shopping.view.main.MainController', {
             success : function (r) {
                 var me = this,
                     d  = Ext.decode(r.responseText),
-                    stockDefault;
+                    stockDefault, vmObj;
 
                 if (!Ext.isEmpty(d.msg)) {
                     deferred.reject(d);
                 } else {
+                    var activeAgent = parent.smegGetCurrentAgent();
+
                     if (!Ext.isEmpty(d.StockDft)) {
                         stockDefault = d.StockDft[0].STKDFT;
                     }
 
                     //use the base "single" agent
                     //
-                    vm.set({
+                    vmObj = {
                         'agentName'   : d.AgentName[0].Name,
                         'cartOptions' : d.DelOpts,
                         'STKDFT'      : stockDefault
+                    };
+
+                    Ext.apply(vmObj, {
+                        agent : activeAgent
                     });
+
+                    vm.set(vmObj);
 
                     me.loadDeliveryOptions(d);
                     me.loadPaymentOptions(d);

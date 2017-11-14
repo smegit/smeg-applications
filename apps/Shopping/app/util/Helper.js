@@ -33,6 +33,24 @@ Ext.define('Shopping.util.Helper', {
         }, 500);
     },
 
+    getApp : function(){
+        var me = this,
+            appId = Ext.getUrlParam('app'),
+            portal = parent.Portal, app;
+        if (!Ext.isEmpty(portal) && !Ext.isEmpty(appId)) {
+            var activeApps = portal.util.Helper.getAllApps();
+            if (!Ext.isEmpty(activeApps)) {
+                for (var ii = 0; ii < activeApps.length; ii++) {
+                    if (activeApps[ii].app == appId) {
+                        app = activeApps[ii];
+                        break;
+                    }
+                }
+            }
+        }
+        return app;
+    },
+
     buildCartTpl : function () {
         return Ext.create("Ext.XTemplate",
             '<div class="container">',

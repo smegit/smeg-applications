@@ -1,16 +1,39 @@
 Ext.define('Shopping.view.cart.CartController', {
-    extend : 'Ext.app.ViewController',
-    alias  : 'controller.cart',
+    extend   : 'Ext.app.ViewController',
+    requires : [
+        'Shopping.util.Helper'
+    ],
+    alias    : 'controller.cart',
 
+    /**
+     * init - setup app level listeners and portal application destroy listener
+     */
     init : function () {
-        var me = this;
+        var me       = this,
+            appFrame = Shopping.util.Helper.getApp();
+
         Shopping.getApplication().on({
             scope     : me,
             resetcart : 'onResetCart'
         });
+
+        //listen for the destroy of the application and release if we have an active cart release it
+        //
+        if (!Ext.isEmpty(appFrame)) {
+            appFrame.on({
+                scope         : me,
+                beforedestroy : function(){
+                    me.releaseCart(false);
+                }
+            });
+        }
     },
 
 
+    /**
+     * autoFillAddress - auto fill the address fields if the user selected an address from the google lookup
+     * @param customer
+     */
     autoFillAddress : function (customer) {
         var me           = this,
             place        = (customer) ? me.customerAddressAutoComplete.getPlace() : me.deliveryAddressAutoComplete.getPlace(),
@@ -65,6 +88,11 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    /**
+     * depositRelease - process the deposit / release of a order
+     * @param cmp
+     * @param action
+     */
     depositRelease : function (cmp, action) {//johnny
         var me       = this,
             vm       = me.getViewModel(),
@@ -96,6 +124,10 @@ Ext.define('Shopping.view.cart.CartController', {
         return deferred.promise;
     },
 
+    /**
+     * getCartInformation - get the current cart information
+     * @returns {*}
+     */
     getCartInformation : function () {
         var me   = this,
             view = me.getView(),
@@ -161,6 +193,9 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    /**
+     * onActivate - setup the cart view.
+     */
     onActivate : function () {
         var me          = this,
             vm          = me.getViewModel(),
@@ -188,6 +223,10 @@ Ext.define('Shopping.view.cart.CartController', {
         }, 200);
     },
 
+    /**
+     * onAfterRenderAddressSearch - setup the google address lookup fields
+     * @param cmp
+     */
     onAfterRenderAddressSearch : function (cmp) {
         var me    = this,
             input = cmp.el.down('input');
@@ -223,6 +262,13 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    /**
+     * onCellClickList - check if user is requesting to remove an item from the cart
+     * @param cmp
+     * @param td
+     * @param cellIndex
+     * @param rec
+     */
     onCellClickList : function (cmp, td, cellIndex, rec) {
         var me        = this,
             grid      = cmp.grid,
@@ -238,6 +284,11 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    /**
+     * onCellEditList - update the cart values
+     * @param editor
+     * @param e
+     */
     onCellEditList : function (editor, e) {
         e.record.commit();
 
@@ -254,6 +305,9 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    /**
+     * onClickBack - request to go back to the main landing section of products
+     */
     onClickBack : function () {
         var me   = this,
             view = me.getView();
@@ -291,6 +345,34 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    onClickSave : function () {
+        var me       = this,
+            cartInfo = me.getCartInformation();
+
+        if (!Ext.isEmpty(cartInfo)) {
+            me.saveCart(cartInfo.data, cartInfo.products)
+                .then(function (content) {
+                    Valence.common.util.Snackbar.show('Your order has been saved.');
+
+                    //print the order
+                    //
+                    me.printCart(content.OAORDKEY);
+
+                    //clear/reset the cart and go back to the main section
+                    //
+                    me.onClickClear();
+                }, function (content) {
+                    Valence.common.util.Dialog.show({
+                        minWidth : 300,
+                        msg      : (!Ext.isEmpty(content.msg)) ? content.msg : 'There was an error saving your cart.',
+                        buttons  : [{
+                            text : 'Ok'
+                        }]
+                    });
+                });
+        }
+    },
+
     onResetCart : function () {
         this.resetCart();
     },
@@ -299,6 +381,10 @@ Ext.define('Shopping.view.cart.CartController', {
         var me   = this,
             view = me.getView();
         view.fireEvent('selectstocklocation', fld, rec);
+    },
+
+    onUpdateRepsReadOnly : function (value) {
+        this.lookupReference('cartrepscombo').setReadOnly(value);
     },
 
     /**
@@ -343,16 +429,119 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
-    releaseCart : function () {
+    printCart : function (key) {
+        var me     = this,
+            body   = Ext.getBody(),
+            vm     = me.getViewModel(),
+            str    = vm.getStore('cartItems'),
+            lines  = Ext.Array.pluck(str.data.items, 'data'),
+            jsDate = new Date(),
+            date   = Ext.util.Format.date(jsDate, 'Y-m-d'),
+            time   = Ext.util.Format.date(jsDate, 'g:iA'),
+            data   = {},
+            dRec, delvStr, qty, total, d2;
+
+        body.mask('Printing Order');
+
+        Ext.Ajax.request({
+            url     : '/valence/vvcall.pgm',
+            params  : {
+                pgm      : 'ec1055',
+                action   : 'readCartDetails',
+                OAORDKEY : key
+            },
+            scope   : me,
+            success : function (r) {
+                var d = Ext.decode(r.responseText);
+                if (d.success) {
+
+                    // apply header info...
+                    //
+                    Ext.apply(data, d.CartHdr[0]);
+                    Ext.apply(data, {
+                        deliveryOpts : d.DeliveryOptions
+                    });
+                    Ext.apply(data, d.OrderInfo[0]);
+
+                    // translate the delivery method...
+                    //
+                    delvStr = vm.getStore('DeliveryOptions');
+                    dRec    = str.findRecord('DELMCOD', data.OADELM);
+
+                    if (dRec) {
+                        Ext.apply(data, {
+                            OADELM : dRec.get('DELMDSC')
+                        });
+                    }
+
+                    lines = d.CartDtl;
+
+                    // total the lines...
+                    //
+                    qty   = 0;
+                    total = 0;
+                    for (var ii = 0; ii < lines.length; ii++) {
+                        lines[ii].extended_price = (lines[ii].OBQTYO * lines[ii].OBUPRC);
+                        qty += lines[ii].OBQTYO;
+                        total += lines[ii].extended_price;
+                    }
+                    lines.push({
+                        OBITM          : '',
+                        OBQTYO         : qty,
+                        extended_price : total
+                    });
+
+                    Ext.apply(data, {
+                        lines : lines,
+                        date  : date,
+                        time  : time
+                    });
+                    Ext.Ajax.request({
+                        url     : '/valence/vvcall.pgm',
+                        params  : {
+                            action   : 'getPayments',
+                            pgm      : 'EC1050',
+                            OAORDKEY : key,
+                            paymode  : 'print'
+                        },
+                        success : function (r) {
+                            d2 = Ext.decode(r.responseText);
+                            if (d2.success) {
+                                Ext.apply(data, {
+                                    PaySum : Ext.isEmpty(d2.PaySum) ? null : d2.PaySum
+                                });
+                                Shopping.util.Helper.printCart({
+                                    data : data
+                                });
+                            } else {
+                                me.showError(d2);
+                            }
+                            body.unmask();
+                        },
+                        failure : function (resp) {
+                            me.showError(resp);
+                            body.unmask();
+                        }
+                    });
+                }
+            }
+        });
+    },
+
+    releaseCart : function (async) {
         var me         = this,
             vm         = me.getViewModel(),
             activeCart = vm.get('activeCartNumber');
+
+        if (Ext.isEmpty(async)){
+            async = true;
+        }
 
         if (!Ext.isEmpty(activeCart)) {
             // No success callback because we do nothing with the response
             Ext.Ajax.request({
                 url    : '/valence/vvcall.pgm',
-                async  : false,
+                async  : async,
                 params : {
                     pgm      : 'EC1050',
                     action   : 'releaseCart',
@@ -369,11 +558,60 @@ Ext.define('Shopping.view.cart.CartController', {
         me.releaseCart();
 
         vm.getStore('cartItems').removeAll();
-        Ext.ComponentQuery.query('cartform')[0].reset();
 
         vm.set({
             cartCount        : 0,
-            activeCartNumber : null
+            activeCartNumber : null,
+            cartValues       : null
         });
+
+        vm.notify();
+
+        Ext.ComponentQuery.query('cartform')[0].reset();
+    },
+
+    saveCart : function (formData, products, maskText) {
+        var me       = this,
+            vm       = me.getViewModel(),
+            deferred = Ext.create('Ext.Deferred'),
+            maskText = (Ext.isEmpty(maskText)) ? 'Saving' : maskText,
+            params   = {
+                pgm      : 'EC1050',
+                action   : 'saveCart',
+                products : Ext.encode(products),
+                stkloc   : vm.get('stkLocation')
+            }, rep;
+
+        Valence.common.util.Helper.loadMask(maskText);
+
+        rep = vm.getStore('cartReps').findRecord('REP', formData.OAREP, 0, false, false, true);
+
+        if (!Ext.isEmpty(rep)) {
+            Ext.apply(params, {
+                OAREPC : rep.get('CODE')
+            });
+        }
+        Ext.apply(params, formData);
+        Ext.Ajax.request({
+            url     : '/valence/vvcall.pgm',
+            method  : 'POST',
+            params  : params,
+            success : function (response) {
+                var resp = Ext.decode(response.responseText);
+                if (resp.success) {
+                    Valence.common.util.Helper.destroyLoadMask();
+                    deferred.resolve(resp);
+                } else {
+                    deferred.reject(resp);
+                }
+            },
+
+            failure : function (response) {
+                var resp = Ext.decode(response.responseText);
+                deferred.reject(resp);
+            }
+        });
+
+        return deferred.promise;
     }
 });

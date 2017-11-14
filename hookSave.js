@@ -96,6 +96,10 @@ Ext.define('Valence.Hook', {
         if (!Ext.isEmpty(basicView) && basicView === 'true') {
             me.basicView = true;
             me.overrideLaunchpad();
+
+            if (!Ext.isEmpty(window.Portal)){
+                window['smegGetCurrentAgent'] = Ext.bind(me.getCurrentAgent,me);
+            }
         }
 
         if (app) {
@@ -252,6 +256,13 @@ Ext.define('Valence.Hook', {
                 me.startAutoStartApps();
             }
         });
+    },
+
+    /**
+     * getCurrentAgent - get the current active agent
+     */
+    getCurrentAgent : function(){
+        return this.activeAgent;
     },
 
     /**

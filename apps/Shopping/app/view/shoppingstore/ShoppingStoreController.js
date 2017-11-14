@@ -51,15 +51,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             }
         });
 
-        //need to work on destroy
-        // johnny
-        // window.beforeDestroy = Ext.bind(function () {
-        //     this.releaseCart();
-        // }, me);
-        //
-        // // cnx update
-        // Shopping.getApplication().on('beforelogout', me.resetCart);
-
         Shopping.getApplication().on({
             scope         : me,
             agentselected : me.agentSelected,
@@ -145,102 +136,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         }
 
         vm.getStore('categories').load();
-    },
-
-    depositRelease : function (cmp, action) {//johnny
-        var me       = this,
-            vm       = me.getViewModel(),
-            deferred = Ext.create('Ext.Deferred'),
-            cartInfo = me.getCartInformation(),
-            params   = {
-                pgm      : 'EC1050',
-                action   : action,
-                products : (!Ext.isEmpty(cartInfo) && !Ext.isEmpty(cartInfo.products)) ? Ext.encode(cartInfo.products) : null,
-                stkloc   : vm.get('stkLocation')
-            }, rep;
-
-        if (!Ext.isEmpty(cartInfo)) {
-            // Valence.util.Helper.loadMask(cmp.maskMsg);
-
-            // rep = vm.getStore('cartReps').findRecord('REP', cartInfo.data.OAREP, 0, false, false, true);
-
-            // if (!Ext.isEmpty(rep)) {
-            //     Ext.apply(params, {
-            //         OAREPC : rep.get('CODE')
-            //     });
-            // }
-
-            Ext.apply(params, cartInfo.data);
-            console.log('would call : ', params);
-            deferred.resolve(null);
-        }
-
-        return deferred.promise;
-    },
-
-    getCartInformation : function () {
-        var me   = this,
-            vm   = me.getViewModel(),
-            form = me.lookupReference('cartcontainer').down('cartform');
-
-        if (!form.isValid()) {
-            Valence.util.Helper.showSnackbar('Please fill in all required sections');
-            var fieldInError = form.down('field{isValid()===false}');
-            if (!Ext.isEmpty(fieldInError)) {
-                fieldInError.focus();
-            }
-            return null;
-        } else {
-            var formData         = form.getValues(),
-                store            = vm.getStore('cartItems'),
-                storeCount       = store.getCount(),
-                outstandingItems = store.queryBy(function (rec) {
-                    if (!Ext.isEmpty(rec.get('outstanding')) && rec.get('outstanding') > 0) {
-                        return true;
-                    }
-                }),
-                releaseZeroItems = store.query('release', 0, 0, false, false, true),
-                standardOrder    = (outstandingItems.getCount() === releaseZeroItems.getCount()) ? true : false,
-                prodArray        = [],
-                product;
-
-            for (var i = 0; i < storeCount; i++) {
-                product = store.getAt(i).getData();
-                if (product.quantity !== product.delivered) {
-                    prodArray.push({
-                        OBITM  : product.product_id,
-                        OBQTYO : product.quantity,
-                        OBUPRC : product.price,
-                        OBQTYR : (standardOrder) ? product.quantity : product.release
-                    });
-                }
-            }
-
-            //remove the address search fields if in the values object
-            //
-            //customer
-            //
-            if (typeof formData.customerSearch !== 'undefined') {
-                delete formData.customerSearch;
-            }
-
-            //delivery
-            //
-            if (typeof formData.deliverySearch !== 'undefined') {
-                delete formData.deliverySearch;
-            }
-
-            // Remove fieldset collapsible checkbox from formData
-            var checkboxName = form.down('#deliveryfieldset').down('checkbox').name;
-            if (checkboxName && typeof formData[checkboxName] !== 'undefined') {
-                delete formData[checkboxName];
-            }
-
-            return {
-                data     : formData,
-                products : prodArray
-            };
-        }
     },
 
     onAfterRenderSearchSavedOrders : function (cmp) {
@@ -629,28 +524,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         }
     },
 
-    onClickRelease : function (cmp) {
-        var me           = this,
-            form         = Ext.ComponentQuery.query('cartform')[0],
-            valid        = form.isValid(),
-            fieldInError = (!valid) ? form.down('field{isValid()===false}') : null,
-            view         = me.getView();
-
-        if (Ext.isEmpty(fieldInError)) {
-            me.depositRelease(cmp, 'checkout')
-                .then(function (content) {
-                    console.log('response : ', content);
-                });
-            // view.add({
-            //     xtype     : 'cartrelease',
-            //     reference : 'releasewindow',
-            //     renderTo  : Ext.getBody()
-            // }).show();
-        } else {
-            fieldInError.focus();
-        }
-    },
-
     onMenuClickCartAction : function (menu, menuItem) {
         var me = this;
         me.onCartButtonClick(menuItem);
@@ -917,7 +790,115 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             url     : '/valence/vvcall.pgm',
             params  : params,
             success : function (r) {
-                obj = Ext.decode(r.responseText);
+                obj             = Ext.decode(r.responseText);
+                var continueFnc = function () {
+                    var products           = obj.CartDtl,
+                        formPanel          = Ext.ComponentQuery.query('cartform')[0],
+                        form               = formPanel.getForm(),
+                        fieldset           = formPanel.query('#deliveryfieldset')[0],
+                        fields             = fieldset.query('field'),
+                        cartItemStore      = vm.getStore('cartItems'),
+                        cartItemStoreItems = [],
+                        cartItemCount      = 0,
+                        repStr             = vm.getStore('cartReps'),
+                        formValues         = {},
+                        repRec, product, field, fldValue, prodQuantity,
+                        delvDate, ninetyDate, todayDate;
+
+                    if (!Ext.isEmpty(obj.CartHdr)) {
+                        Ext.apply(formValues, obj.CartHdr[0]);
+                    }
+
+                    if (!Ext.isEmpty(obj.DeliveryOptions)) {
+                        delvOptsArray = obj.DeliveryOptions;
+                        for (var i = 0; i < delvOptsArray.length; i++) {
+                            delvOpt                  = delvOptsArray[i];
+                            delvOpts[delvOpt.ODDELC] = delvOpt.ODDELV;
+                        }
+                        Ext.apply(formValues, delvOpts);
+                    }
+
+                    // Validate rep to be sure it still exists
+                    //
+                    repStr.load(function () {
+                        var cartContainer = me.lookupReference('cartcontainer');
+                        repRec            = repStr.findRecord('REP', formValues.OAREP);
+
+                        if (!Ext.isEmpty(cartContainer)) {
+                            cartContainer.fireEvent('updaterepsreadonly', !Ext.isEmpty(repRec));
+                        }
+
+                        if (Ext.isEmpty(repRec)) {
+                            form.setValues({
+                                OAREP : ''
+                            });
+                        }
+                    });
+
+                    // validate date to be sure it is within the timeframe of today and 90 days from now
+                    //
+                    delvDate   = Ext.Date.parse(formValues.OADELD, 'Y-m-d');
+                    todayDate  = Ext.Date.parse(Ext.util.Format.date(new Date(), 'Y-m-d'), 'Y-m-d');
+                    ninetyDate = new Date();
+                    ninetyDate.setDate(ninetyDate.getDate() + 90);
+
+                    // convert to time since epoch
+                    delvDate   = delvDate.getTime();
+                    todayDate  = todayDate.getTime();
+                    ninetyDate = ninetyDate.getTime();
+
+                    if (delvDate < todayDate || delvDate > ninetyDate) {
+                        formValues.OADELD = null;
+                    }
+
+                    // get stock location
+                    //
+                    vm.set('STKLOC', formValues.OASTKLOC);
+
+                    //Update form values
+                    vm.set('cartValues', formValues);
+
+                    // Check to see if Delivery Address is set and should be "expanded"
+                    for (var i = 0; i < fields.length; i++) {
+                        field    = fields[i];
+                        fldValue = field.getValue();
+
+                        if (field.xtype !== 'checkboxfield' && !Ext.isEmpty(fldValue)) {
+                            fieldset.expand();
+                            break;
+                        }
+                    }
+
+                    // Reset Cart Item Store
+                    cartItemStore.removeAll();
+
+                    if (!Ext.isEmpty(products)) {
+                        for (var ii = 0; ii < products.length; ii++) {
+                            product       = products[ii];
+                            prodQuantity  = product.OBQTYO;
+                            cartItemCount = cartItemCount + prodQuantity;
+                            cartItemStoreItems.push({
+                                "product_id" : product.OBITM,
+                                "quantity"   : prodQuantity,
+                                "allocated"  : product.OBQTYA,
+                                "price"      : product.OBUPRC,
+                                "prod_desc"  : product.I1IDSC
+                            });
+                        }
+                    }
+
+                    cartItemStore.add(cartItemStoreItems);
+
+                    // vm.set('cartCount', cartItemCount);
+                    vm.set({
+                        cartCount        : cartItemCount,
+                        activeCartNumber : cartKey
+                    });
+                    me.onViewCart();
+
+                    vm.notify();
+                };
+
                 if (!obj.success) {
                     me.showError(obj);
                     exCartListWindow.unmask();
@@ -927,107 +908,47 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 // Close Existing Cart List Window
                 exCartListWindow.unmask();
                 exCartListWindow.close();
-                var products           = obj.CartDtl,
-                    viewModel          = me.getViewModel(),
-                    formPanel          = Ext.ComponentQuery.query('cartform')[0],
-                    form               = formPanel.getForm(),
-                    fieldset           = formPanel.query('#deliveryfieldset')[0],
-                    fields             = fieldset.query('field'),
-                    cartItemStore      = vm.getStore('cartItems'),
-                    cartItemStoreItems = [],
-                    cartItemCount      = 0,
-                    repStr             = vm.getStore('cartReps'),
-                    formValues         = {},
-                    repRec, product, field, fldValue, prodQuantity,
-                    delvDate, ninetyDate, todayDate;
 
-                if (!Ext.isEmpty(obj.CartHdr)) {
-                    Ext.apply(formValues, obj.CartHdr[0]);
-                }
-
-                if (!Ext.isEmpty(obj.DeliveryOptions)) {
-                    delvOptsArray = obj.DeliveryOptions;
-                    for (var i = 0; i < delvOptsArray.length; i++) {
-                        delvOpt                  = delvOptsArray[i];
-                        delvOpts[delvOpt.ODDELC] = delvOpt.ODDELV;
-                    }
-                    Ext.apply(formValues, delvOpts);
-                }
-
-                // Validate rep to be sure it still exists
+                //check if the agent/customer is different than the current agent/customer
                 //
-                repStr.load(function () {
-                    repRec = repStr.findRecord('REP', formValues.OAREP);
+                var header         = (!Ext.isEmpty(obj.CartHdr)) ? obj.CartHdr[0] : null,
+                    selectedAgent  = (!Ext.isEmpty(header)) ? header.OACSTN : null,
+                    mainController = me.getView().up('app-main').getController(),
+                    mainVm         = me.getView().lookupViewModel(true),
+                    activeAgent    = mainVm.get('agent');
 
-                    me.lookupReference('cartrepscombo').setReadOnly(!Ext.isEmpty(repRec));
+                //check if the agent is different form the one we are currently working with
+                // if so update the portal and get the options
+                if (!Ext.isEmpty(selectedAgent) && selectedAgent != activeAgent) {
+                    if (!Ext.isEmpty(parent.Portal)) {
+                        parent.Portal.getApplication().fireEvent('smegagentchanged', selectedAgent);
+                    }
+                    mainController.getOptions()
+                        .then(function (content) {
+                            Valence.common.util.Helper.destroyLoadMask();
+                            var stockDefault = mainVm.get('STKDFT');
 
-                    if (Ext.isEmpty(repRec)) {
-                        form.setValues({
-                            OAREP : ''
+                            if (!Ext.isEmpty(stockDefault)) {
+                                var productsStore = vm.getStore('products');
+                                Ext.apply(productsStore.getProxy().extraParams, {
+                                    stkloc : stockDefault
+                                });
+                            }
+                            continueFnc();
+                        }, function (content) {
+                            Valence.common.util.Helper.destroyLoadMask();
+                            Valence.common.util.Dialog.show({
+                                title    : 'Error',
+                                msg      : content.msg,
+                                minWidth : 210,
+                                buttons  : [{
+                                    text : Valence.lang.lit.ok
+                                }]
+                            });
                         });
-                    }
-                });
-
-                // validate date to be sure it is within the timeframe of today and 90 days from now
-                //
-                delvDate   = Ext.Date.parse(formValues.OADELD, 'Y-m-d');
-                todayDate  = Ext.Date.parse(Ext.util.Format.date(new Date(), 'Y-m-d'), 'Y-m-d');
-                ninetyDate = new Date();
-                ninetyDate.setDate(ninetyDate.getDate() + 90);
-
-                // convert to time since epoch
-                delvDate   = delvDate.getTime();
-                todayDate  = todayDate.getTime();
-                ninetyDate = ninetyDate.getTime();
-
-                if (delvDate < todayDate || delvDate > ninetyDate) {
-                    formValues.OADELD = null;
+                } else {
+                    continueFnc();
                 }
-
-                // get stock location
-                //
-                vm.set('STKLOC', formValues.OASTKLOC);
-
-                //Update form values
-                vm.set('cartValues', formValues);
-
-                // Check to see if Delivery Address is set and should be "expanded"
-                for (var i = 0; i < fields.length; i++) {
-                    field    = fields[i];
-                    fldValue = field.getValue();
-
-                    if (field.xtype !== 'checkboxfield' && !Ext.isEmpty(fldValue)) {
-                        fieldset.expand();
-                        break;
-                    }
-                }
-
-                // Reset Cart Item Store
-                cartItemStore.removeAll();
-
-                if (!Ext.isEmpty(products)) {
-                    for (var ii = 0; ii < products.length; ii++) {
-                        product       = products[ii];
-                        prodQuantity  = product.OBQTYO;
-                        cartItemCount = cartItemCount + prodQuantity;
-                        cartItemStoreItems.push({
-                            "product_id" : product.OBITM,
-                            "quantity"   : prodQuantity,
-                            "allocated"  : product.OBQTYA,
-                            "price"      : product.OBUPRC,
-                            "prod_desc"  : product.I1IDSC
-                        });
-                    }
-                }
-
-                cartItemStore.add(cartItemStoreItems);
-
-                viewModel.set('cartCount', cartItemCount);
-                viewModel.set({
-                    cartCount        : cartItemCount,
-                    activeCartNumber : cartKey
-                });
-                me.onViewCart();
             },
             failure : me.showError
         });
