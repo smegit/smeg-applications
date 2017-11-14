@@ -337,7 +337,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             viewOnly = false;
         }
 
-        cmp.mask('Loading');
+        Valence.common.util.Helper.loadMask({
+            renderTo : cmp.el,
+            text : 'Loading'
+        });
 
         Ext.Ajax.request({
             url     : '/valence/vvcall.pgm',
@@ -348,7 +351,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 stkloc : vm.get('STKLOC')
             },
             success : function (response, opts) {
-                cmp.unmask();
+                Valence.common.util.Helper.destroyLoadMask(cmp.el);
                 obj = Ext.decode(response.responseText);
                 me.getViewModel().set('product', obj);
                 var windowCfg = {
@@ -466,14 +469,17 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             vm    = me.getViewModel(),
             store = vm.getStore('existingCarts');
 
-        body.mask('Loading');
+        Valence.common.util.Helper.loadMask({
+            renderTo : body,
+            text : 'Loading'
+        });
 
         store.clearFilter();
 
         store.load({
             scope    : me,
             callback : function () {
-                body.unmask();
+                Valence.common.util.Helper.destroyLoadMask(body);
                 view.add({
                     xtype     : 'window',
                     itemId    : 'exCartWindow',
@@ -509,7 +515,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 OAORDKEY : cartKey
             }, obj, delvOpt, delvOpts = {}, delvOptsArray = [];
 
-        exCartListWindow.mask('Loading Cart');
+        Valence.common.util.Helper.loadMask({
+            renderTo : exCartListWindow.el,
+            text : 'Loading Cart'
+        });
 
         // Add active cart number if exists to release cart on the server
         if (activeCart) {
@@ -630,12 +639,12 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
                 if (!obj.success) {
                     me.showError(obj);
-                    exCartListWindow.unmask();
+                    Valence.common.util.Helper.destroyLoadMask(exCartListWindow.el);
                     return;
                 }
 
                 // Close Existing Cart List Window
-                exCartListWindow.unmask();
+                Valence.common.util.Helper.destroyLoadMask(exCartListWindow.el);
                 exCartListWindow.close();
 
                 //check if the agent/customer is different than the current agent/customer

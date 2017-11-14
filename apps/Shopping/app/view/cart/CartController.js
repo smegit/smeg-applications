@@ -86,6 +86,59 @@ Ext.define('Shopping.view.cart.CartController', {
                 }
             }
 
+            //set the name if the location search is not a standard address
+            //
+            if (!Ext.isEmpty(place.types) && !Ext.Array.contains(place.types, 'street_address') && !Ext.isEmpty(place.name)) {
+                if (customer) {
+                    var name = fieldset.down('[name=OACSTNAM]');
+                    if (!Ext.isEmpty(name) && Ext.isEmpty(name.getValue())) {
+                        name.setValue(place.name)
+                    }
+                } else {
+                    var name = fieldset.down('[name=OADELNAM]');
+                    if (!Ext.isEmpty(name) && Ext.isEmpty(name.getValue())) {
+                        name.setValue(place.name)
+                    }
+                }
+            }
+
+            //set the phone number if the location search is not a standard address and its provided
+            //
+            if (!Ext.isEmpty(place.international_phone_number)) {
+                //format the number
+                //
+                var addressPhone = place.international_phone_number,
+                    plusFound    = addressPhone.indexOf('+');
+                if (plusFound !== -1) {
+                    var firstSpace = addressPhone.indexOf(' ');
+                    if (firstSpace !== -1) {
+                        addressPhone = addressPhone.substring(firstSpace);
+                    }
+                }
+
+                //remove spaces and only keep numbers
+                //
+                addressPhone = addressPhone.replace(/\s/g, '').replace(/\D+/g, '');
+
+                if (!Ext.isEmpty(addressPhone)) {
+                    //make sure its a length of 10
+                    //
+                    addressPhone = '0000000000'.substr(addressPhone.length) + addressPhone;
+                }
+
+                if (customer) {
+                    var phoneNumber = fieldset.down('[name=OACSTPH1]');
+                    if (!Ext.isEmpty(phoneNumber)) {
+                        phoneNumber.setValue(addressPhone)
+                    }
+                } else {
+                    var phoneNumber = fieldset.down('[name=OADELPH1]');
+                    if (!Ext.isEmpty(phoneNumber)) {
+                        phoneNumber.setValue(addressPhone)
+                    }
+                }
+            }
+
             if (!Ext.isEmpty(addressLine2)) {
                 addressLine2.focus();
             }
@@ -306,8 +359,8 @@ Ext.define('Shopping.view.cart.CartController', {
             // Create the customer address auto complete object
             //
             me.customerAddressAutoComplete = new google.maps.places.Autocomplete(
-                (document.getElementById(input.id)),
-                {types : ['geocode']});
+                document.getElementById(input.id),
+                {types : ['geocode', 'establishment']});
 
             // When the user selects an address from the dropdown, populate the address
             // fields in the form.
@@ -316,8 +369,8 @@ Ext.define('Shopping.view.cart.CartController', {
             // Create the customer address auto complete object
             //
             me.deliveryAddressAutoComplete = new google.maps.places.Autocomplete(
-                (document.getElementById(input.id)),
-                {types : ['geocode']});
+                document.getElementById(input.id),
+                {types : ['geocode', 'establishment']});
 
             // When the user selects an address from the dropdown, populate the address
             // fields in the form.
@@ -334,7 +387,7 @@ Ext.define('Shopping.view.cart.CartController', {
      */
     onCellClickList : function (cmp, td, cellIndex, rec, tr, rowIndex, e) {
         var me        = this,
-            view = me.getView(),
+            view      = me.getView(),
             grid      = cmp.grid,
             store     = grid.getStore(),
             column    = grid.headerCt.items.getAt(cellIndex),
@@ -347,11 +400,11 @@ Ext.define('Shopping.view.cart.CartController', {
             grid.getView().refresh();
         } else {
             var target = e.getTarget(),
-                item = (!Ext.isEmpty(target)) ? Ext.get(target) : null;
+                item   = (!Ext.isEmpty(target)) ? Ext.get(target) : null;
 
-            if (!Ext.isEmpty(item) && item.hasCls('cart-list-item-image')){
+            if (!Ext.isEmpty(item) && item.hasCls('cart-list-item-image')) {
                 view.fireEvent('showdetail', view, {
-                    getData : function(){
+                    getData : function () {
                         return {
                             MODEL : rec.get('product_id')
                         }
@@ -553,7 +606,10 @@ Ext.define('Shopping.view.cart.CartController', {
             data   = {},
             dRec, delvStr, qty, total, d2;
 
-        body.mask('Printing Order');
+        Valence.common.util.Helper.loadMask({
+            renderTo : body,
+            text     : 'Printing Order'
+        });
 
         Ext.Ajax.request({
             url     : '/valence/vvcall.pgm',
@@ -628,11 +684,11 @@ Ext.define('Shopping.view.cart.CartController', {
                             } else {
                                 me.showError(d2);
                             }
-                            body.unmask();
+                            Valence.common.util.Helper.destroyLoadMask(body);
                         },
                         failure : function (resp) {
                             me.showError(resp);
-                            body.unmask();
+                            Valence.common.util.Helper.destroyLoadMask(body);
                         }
                     });
                 }
@@ -783,6 +839,7 @@ Ext.define('Shopping.view.cart.CartController', {
             maxPayment  = formPanel.maxpay,
             payAmt      = formValues.OAPAYAMT,
             blankStr    = 'This field is required.',
+            paymentWin  = formPanel.up('window').el,
             invalidForm = false,
             wdw, resp, params, payAmtCnt, keepGoing, maxpay;
 
@@ -846,6 +903,10 @@ Ext.define('Shopping.view.cart.CartController', {
         if (invalidForm) {
             return;
         }
+        Valence.common.util.Helper.loadMask({
+            renderTo : paymentWin.el,
+            text     : 'Confirming Payment'
+        });
 
         params = {
             pgm     : 'EC1050',
@@ -854,7 +915,6 @@ Ext.define('Shopping.view.cart.CartController', {
         };
 
         Ext.apply(params, formValues);
-        formPanel.up('window').el.mask('Confirming Payment');
         Ext.Ajax.request({
             url     : '/valence/vvcall.pgm',
             params  : params,
@@ -910,18 +970,18 @@ Ext.define('Shopping.view.cart.CartController', {
                                 setTimeout(function () {
                                     me.lookupReference('tacchbx').setValue('on');
                                 }, 200);
-                                formPanel.up('window').el.unmask();
+                                Valence.common.util.Helper.destroyLoadMask(paymentWin.el);
                             },
                             failure : me.showError
                         });
                     }
                 } else {
                     me.showError(resp);
-                    formPanel.up('window').el.unmask();
+                    Valence.common.util.Helper.destroyLoadMask(paymentWin.el);
                 }
             },
             failure : function (response) {
-                formPanel.up('window').el.unmask();
+                Valence.common.util.Helper.destroyLoadMask(paymentWin.el);
                 me.showError(response);
             }
         });

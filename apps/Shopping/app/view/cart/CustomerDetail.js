@@ -33,7 +33,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
             flex        : 1,
             itemId      : 'customerfieldset',
             defaultType : 'textfield',
-            margin      : '0 18 0 0',
+            margin      : '0 10 0 0',
             padding     : '0 20',
             defaults    : {
                 labelAlign : 'left',
@@ -181,7 +181,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 anchor     : '100%',
                 disabled   : true
             },
-            margin         : '0 0 0 20',
+            margin         : '0 0 0 10',
             padding        : '0 20',
             checkboxName   : 'dlvychbx',
             checkboxToggle : true,
