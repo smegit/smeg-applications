@@ -22,7 +22,7 @@ Ext.define('Shopping.view.cart.CartController', {
         if (!Ext.isEmpty(appFrame)) {
             appFrame.on({
                 scope         : me,
-                beforedestroy : function(){
+                beforedestroy : function () {
                     me.releaseCart(false);
                 }
             });
@@ -39,6 +39,7 @@ Ext.define('Shopping.view.cart.CartController', {
             place        = (customer) ? me.customerAddressAutoComplete.getPlace() : me.deliveryAddressAutoComplete.getPlace(),
             fieldset     = (customer) ? Ext.ComponentQuery.query('cartform #customerfieldset')[0] : Ext.ComponentQuery.query('cartform #deliveryfieldset')[0],
             fields       = fieldset.query('field[gApiAddrType]'),
+            addressLine2 = fieldset.down('[addressLine2=true]'),
             addressLine1 = '',
             type, field, value;
 
@@ -75,15 +76,17 @@ Ext.define('Shopping.view.cart.CartController', {
             }
 
             if (customer) {
-                Ext.ComponentQuery.query('cartform #customerSearch')[0].setValue('');
                 if (!Ext.isEmpty(addressLine1)) {
                     Ext.ComponentQuery.query('cartform [name=OACSTST1]')[0].setValue(addressLine1);
                 }
             } else {
-                Ext.ComponentQuery.query('cartform #deliverySearch')[0].setValue('');
                 if (!Ext.isEmpty(addressLine1)) {
                     Ext.ComponentQuery.query('cartform [name=OADELST1]')[0].setValue(addressLine1);
                 }
+            }
+
+            if (!Ext.isEmpty(addressLine2)) {
+                addressLine2.focus();
             }
         }
     },
@@ -233,11 +236,11 @@ Ext.define('Shopping.view.cart.CartController', {
 
         //google api auto places a place holder on the element. Stop it by adding the attribute
         //
-        input.dom.placeholder = ' ';
+        input.dom.placeholder = 'Street Address 1';
 
         //set input background color
         //
-        input.setStyle('background-color', '#E3F2FD');
+        // input.setStyle('background-color', '#E3F2FD');
 
         if (cmp.itemId === 'customerSearch') {
             // Create the customer address auto complete object
@@ -533,7 +536,7 @@ Ext.define('Shopping.view.cart.CartController', {
             vm         = me.getViewModel(),
             activeCart = vm.get('activeCartNumber');
 
-        if (Ext.isEmpty(async)){
+        if (Ext.isEmpty(async)) {
             async = true;
         }
 
