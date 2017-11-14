@@ -21,6 +21,37 @@
   .x-column-header-align-right .x-column-header-text{
     margin-right:1px;
   }
+  .x-grid-item-selected{
+    color: inherit!important;
+    background-color: #fff!important;
+  }
+  .x-grid-item-over{
+    color: inherit!important;
+    background-color: #fff!important;
+  }
+  .x-grid-with-row-lines{
+    .x-grid-item.x-grid-item-selected{
+      color: inherit!important;
+      background-color: #fff!important;
+    }
+    .x-grid-item.x-grid-item-over{
+      color: inherit!important;
+      background-color: #fff!important;
+    }
+  }
+  .editable-column{
+    .x-grid-cell-inner{
+      border-bottom: 1px solid rgba(0, 0, 0, 0.26);
+    }
+  }
+  .image-column{
+    .x-grid-cell-inner{
+      padding:0px!important;
+    }
+    .cart-list-item-image{
+      cursor:pointer!important;
+    }
+  }
 }
 
 .x-grid-row-summary .x-grid-cell {

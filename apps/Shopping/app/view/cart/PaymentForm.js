@@ -1,14 +1,21 @@
 Ext.define('Shopping.view.cart.PaymentForm', {
-    extend    : 'Ext.form.Panel',
-    requires  : [
+    extend        : 'Ext.form.Panel',
+    requires      : [
+        'Ext.container.Container',
+        'Ext.form.FieldContainer',
         'Ext.form.FieldSet',
-        'Ext.form.field.Text',
+        'Ext.form.field.Checkbox',
+        'Ext.form.field.ComboBox',
         'Ext.form.field.Display',
-        'Ext.form.field.ComboBox'
+        'Ext.form.field.Number',
+        'Ext.form.field.Text',
+        'Ext.layout.container.HBox'
     ],
-    xtype     : 'cartpayment',
-    reference : 'cartpayform',
-
+    xtype         : 'cartpayment',
+    reference     : 'cartpayform',
+    listeners     : {
+        hideCreditInfo : 'onHideCreditInfo'
+    },
     initComponent : function () {
         var me = this;
         Ext.apply(me, {
@@ -24,7 +31,6 @@ Ext.define('Shopping.view.cart.PaymentForm', {
         var me       = this,
             cartInfo = me.cartInfo,
             terms    = '/Product/Smegtermsandconditions.pdf';
-
         return [
             {
                 xtype    : 'fieldset',
@@ -39,13 +45,13 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                     reference : 'payamountcnt',
                     tpl       : new Ext.XTemplate(
                         '<div class="payment-table">',
-                        '<tpl for="PaySum">',
-                        '<div class="payment-line {[this.getItemClass(values)]}">',
-                        '<div class="payment-field">{LABEL}</div>',
-                        '<div class="payment-amount">{[Ext.util.Format.currency(values.AMOUNT)]}</div>',
-                        '<div class="payment-desc">{NOTE}</div>',
-                        '</div>',
-                        '</tpl>',
+                        '  <tpl for="PaySum">',
+                        '    <div class="payment-line {[this.getItemClass(values)]}">',
+                        '      <div class="payment-field">{LABEL}</div>',
+                        '      <div class="payment-amount">{[Ext.util.Format.currency(values.AMOUNT)]}</div>',
+                        '      <div class="payment-desc">{NOTE}</div>',
+                        '    </div>',
+                        '  </tpl>',
                         '</div>', {
                             getItemClass : function (values) {
                                 var total   = new RegExp('total', 'i'),
@@ -59,12 +65,9 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                                 }
                                 return 'payment-line-item';
                             }
-                        }
-                    )
+                        })
                 }]
-
-            },
-            {
+            }, {
                 xtype    : 'fieldset',
                 title    : 'Payment',
                 padding  : '5 5 10 20',
@@ -105,10 +108,6 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                                     ccInfo.hide();
                                 }
                             }
-                        },
-                        keyup  : function () {
-                            var me = this;
-                            me.fireEvent('paymentkeyup', arguments);
                         }
                     }
                 }, {
@@ -153,7 +152,7 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                         width           : '100%',
                         enableKeyEvents : true,
                         listeners       : {
-                            keyup : 'onKeyUpPaymentForm'
+                            specialkey : 'onSpecialKeyPaymentForm'
                         }
                     }, {
                         name            : 'CCNUM',
@@ -161,7 +160,7 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                         width           : '100%',
                         enableKeyEvents : true,
                         listeners       : {
-                            keyup : 'onKeyUpPaymentForm'
+                            specialkey : 'onSpecialKeyPaymentForm'
                         }
                     }, {
                         xtype      : 'fieldcontainer',
@@ -170,30 +169,27 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                         defaults   : {
                             enableKeyEvents : true,
                             listeners       : {
-                                keyup : 'onKeyUpPaymentForm'
+                                specialkey : 'onSpecialKeyPaymentForm'
                             }
                         },
-                        items      : [
-                            {
-                                xtype     : 'numberfield',
-                                name      : 'CCEM',
-                                reference : 'ccmonth',
-                                minValue  : 1,
-                                maxValue  : 12,
-                                value     : new Date().getMonth() + 1,
-                                width     : 70,
-                                margin    : '0 5 0 0'
-                            },
-                            {
-                                xtype     : 'numberfield',
-                                name      : 'CCEY',
-                                reference : 'ccyear',
-                                minValue  : new Date().getFullYear(),
-                                maxValue  : 9999,
-                                value     : new Date().getFullYear(),
-                                width     : 95
-                            }
-                        ]
+                        items      : [{
+                            xtype     : 'numberfield',
+                            name      : 'CCEM',
+                            reference : 'ccmonth',
+                            minValue  : 1,
+                            maxValue  : 12,
+                            value     : new Date().getMonth() + 1,
+                            width     : 70,
+                            margin    : '0 5 0 0'
+                        }, {
+                            xtype     : 'numberfield',
+                            name      : 'CCEY',
+                            reference : 'ccyear',
+                            minValue  : new Date().getFullYear(),
+                            maxValue  : 9999,
+                            value     : new Date().getFullYear(),
+                            width     : 95
+                        }]
                     }, {
                         name            : 'CVS',
                         fieldLabel      : 'CCV',
@@ -202,41 +198,33 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                         maxLengthText   : 'This field is limited to 4 characters.',
                         enableKeyEvents : true,
                         listeners       : {
-                            keyup : 'onKeyUpPaymentForm'
+                            specialkey : 'onSpecialKeyPaymentForm'
                         }
                     }]
                 }]
-            },
-            {
+            }, {
                 xtype     : 'checkbox',
                 boxLabel  : 'Confirm acceptance of <a href="' + window.location.origin + terms + '" target="_blank">terms and conditions</a>.',
                 name      : 'OAPAYCHKBX',
                 reference : 'tacchbx',
                 margin    : '10 0 10 0'
-            },
-            {
+            }, {
                 xtype       : 'fieldset',
                 hidden      : true,
                 defaultType : 'textfield',
-                items       : [
-                    {
-                        name  : 'OAORDTOTAL',
-                        value : me.cartInfo.OAORDTOT
-                    },
-                    {
-                        name  : 'OAORDNET',
-                        value : me.cartInfo.OAORDNET
-                    },
-                    {
-                        name  : 'OAORDTAX',
-                        value : me.cartInfo.OAORDTAX
-                    },
-                    {
-                        name  : 'OAORDKEY',
-                        value : me.cartInfo.OAORDKEY
-                    }
-                ]
-            }
-        ];
+                items       : [{
+                    name  : 'OAORDTOTAL',
+                    value : me.cartInfo.OAORDTOT
+                }, {
+                    name  : 'OAORDNET',
+                    value : me.cartInfo.OAORDNET
+                }, {
+                    name  : 'OAORDTAX',
+                    value : me.cartInfo.OAORDTAX
+                }, {
+                    name  : 'OAORDKEY',
+                    value : me.cartInfo.OAORDKEY
+                }]
+            }];
     }
 });

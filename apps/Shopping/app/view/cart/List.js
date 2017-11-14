@@ -19,8 +19,7 @@ Ext.define('Shopping.view.cart.List', {
     cls           : 'cart-list',
     overCls       : 'cart-list-over',
     viewConfig    : {
-        stripeRows : true,
-        emptyText  : 'No Items have been added to this Order'
+        emptyText : 'No Items have been added to this Order'
     },
     listeners     : {
         cellclick : 'onCellClickList',
@@ -39,11 +38,32 @@ Ext.define('Shopping.view.cart.List', {
     buildColumns  : function () {
         var me   = this,
             cols = [{
+                text      : '',
+                minWidth  : 0,
+                maxWidth  : 50,
+                dataIndex : 'smallpic',
+                align     : 'center',
+                renderer  : function (v, meta) {
+                    if (!Ext.isEmpty(v)) {
+                        meta.tdCls += ' image-column';
+                        return '<image class="cart-list-item-image" src="' + v + '" height="50" width="50"></image>';
+                    }
+                    return '';
+                }
+            }, {
                 text      : 'Item',
-                cellWrap  : true,
-                flex      : 1,
-                maxWidth  : 110,
+                width     : 100,
                 dataIndex : 'product_id'
+                // align     : 'center'
+                // renderer  : function (v, meta, rec) {
+                //     var smallPic = rec.get('smallpic');
+                //     if (!Ext.isEmpty(smallPic)) {
+                //         return '<div>' + v + '</div>' +
+                //             '<image class="cart-list-item-image" src="' + smallPic + '" height="50" width="50"></image>';
+                //     } else {
+                //         return v;
+                //     }
+                // }
             }, {
                 text      : 'Description',
                 cellWrap  : true,
@@ -54,11 +74,15 @@ Ext.define('Shopping.view.cart.List', {
         if (!me.release) {
             cols = Ext.Array.merge(cols, [{
                 text            : 'Order',
-                width           : 160,
+                width           : 70,
                 align           : 'right',
                 dataIndex       : 'quantity',
                 editor          : {
                     xtype : 'numberfield'
+                },
+                renderer        : function (v, meta) {
+                    meta.tdCls += ' editable-column';
+                    return v;
                 },
                 summaryType     : 'sum',
                 summaryRenderer : function (value, summaryData, dataIndex) {
@@ -67,7 +91,7 @@ Ext.define('Shopping.view.cart.List', {
             }, {
                 text            : 'Delivered',
                 dataIndex       : 'delivered',
-                width           : 85,
+                width           : 75,
                 align           : 'right',
                 summaryType     : 'sum',
                 summaryRenderer : function (value) {
@@ -76,7 +100,7 @@ Ext.define('Shopping.view.cart.List', {
             }, {
                 text            : 'Outstanding',
                 dataIndex       : 'outstanding',
-                width           : 100,
+                width           : 90,
                 align           : 'right',
                 summaryType     : 'sum',
                 summaryRenderer : function (value) {
@@ -85,10 +109,14 @@ Ext.define('Shopping.view.cart.List', {
             }, {
                 text            : 'Release',
                 dataIndex       : 'release',
-                width           : 85,
+                width           : 70,
                 align           : 'right',
                 editor          : {
                     xtype : 'numberfield'
+                },
+                renderer        : function (v, meta) {
+                    meta.tdCls += ' editable-column';
+                    return v;
                 },
                 summaryType     : 'sum',
                 summaryRenderer : function (value) {
@@ -105,20 +133,20 @@ Ext.define('Shopping.view.cart.List', {
 
             }, {
                 text      : 'Price',
-                width     : 90,
+                width     : 80,
                 align     : 'right',
                 dataIndex : 'price',
                 renderer  : function (value) {
-                    return Ext.util.Format.currency(value);
+                    return Ext.util.Format.number(value, '0,0.00');
                 }
 
             }, {
                 text            : 'Total',
-                width           : 90,
+                width           : 85,
                 align           : 'right',
                 dataIndex       : 'extended_price',
                 renderer        : function (value) {
-                    return Ext.util.Format.currency(value);
+                    return Ext.util.Format.number(value, '0,0.00');
                 },
                 summaryType     : 'sum',
                 summaryRenderer : function (value) {
@@ -139,7 +167,7 @@ Ext.define('Shopping.view.cart.List', {
         } else {
             cols = Ext.Array.merge(cols, [{
                 text            : 'Ordered',
-                width           : 85,
+                width           : 75,
                 align           : 'right',
                 dataIndex       : 'quantity',
                 summaryType     : 'sum',
@@ -152,7 +180,7 @@ Ext.define('Shopping.view.cart.List', {
                 align     : 'right',
                 dataIndex : 'price',
                 renderer  : function (value) {
-                    return Ext.util.Format.currency(value, null, 0);
+                    return Ext.util.Format.number(value, '0,0.00');
                 }
 
             }, {
@@ -161,7 +189,7 @@ Ext.define('Shopping.view.cart.List', {
                 align           : 'right',
                 dataIndex       : 'extended_price',
                 renderer        : function (value) {
-                    return Ext.util.Format.currency(value);
+                    return Ext.util.Format.number(value, '0,0.00');
                 },
                 summaryType     : 'sum',
                 summaryRenderer : function (value) {

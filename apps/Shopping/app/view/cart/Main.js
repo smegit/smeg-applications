@@ -15,7 +15,7 @@ Ext.define('Shopping.view.cart.Main', {
     scrollable    : true,
     layout        : 'anchor',
     listeners     : {
-        activate : 'onActivate',
+        activate           : 'onActivate',
         updaterepsreadonly : 'onUpdateRepsReadOnly'
     },
     defaults      : {
@@ -90,28 +90,23 @@ Ext.define('Shopping.view.cart.Main', {
                     click : 'onClickClear'
                 }
             }, {
-                text    : 'Save',
-                // action  : 'savecart',
-                ui      : 'white',
-                maskMsg : 'Saving Order',
+                text      : 'Save',
+                ui        : 'white',
+                maskMsg   : 'Saving Order',
                 listeners : {
                     click : 'onClickSave'
                 }
             }, {
-                text    : 'Deposit',
-                action  : 'deposit',
-                ui      : 'white',
-                maskMsg : 'Setting up Deposit'
-                // }, {
-                //     text     : 'Checkout',
-                //     action   : 'checkout',
-                //     maskMsg  : 'Checking Out',
-                //     cls      : 'btn-checkout',
-                //     overCls  : 'btn-checkout-over',
-                //     focusCls : 'btn-checkout'
+                text      : 'Deposit',
+                ui        : 'white',
+                maskMsg   : 'Setting up Deposit',
+                listeners : {
+                    click : 'onClickDeposit'
+                }
             }, {
                 text    : 'Release',
                 ui      : 'blue',
+                maskMsg : 'Setting up Release',
                 handler : 'onClickRelease'
             }]
     },

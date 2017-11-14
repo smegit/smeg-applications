@@ -4,16 +4,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     requires : [
         'Ext.form.field.Number',
         'Ext.window.Window',
-        'Shopping.util.Helper',
         'Shopping.view.cart.ExistingCarts',
-        'Shopping.view.cart.List',
         'Shopping.view.cart.Main',
-        'Shopping.view.cart.PaymentForm',
-        'Shopping.view.cart.Release',
-        'Shopping.view.products.Heading',
         'Shopping.view.products.detail.ImageMain',
         'Shopping.view.products.detail.Main',
-        'Shopping.view.products.detail.View',
         'Valence.common.util.Dialog',
         'Valence.common.util.Snackbar'
     ],
@@ -40,15 +34,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             'dtlimagemain #dtlImgAddToCart' : {
                 click : me.onAddToCartFromDetail
             },
-            // 'cartmain button'               : {
-            //     click : me.onCartButtonClick
-            // },
-            'cartpayment'                   : {
-                hideCreditInfo : me.onHideCreditInfo
-            },
             'existingcarts'                 : {
-                celldblclick : me.loadExistingCart,
-                cellclick    : me.onCellClickExistCart
+                cellclick : me.onCellClickExistCart
             }
         });
 
@@ -128,7 +115,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     scope               : me,
                     back                : 'onClickGoBack',
                     resetcart           : 'onResetCart',
-                    selectstocklocation : 'onSelectStockLocation'
+                    selectstocklocation : 'onSelectStockLocation',
+                    showdetail          : 'onShowDetail'
                 }
             });
             card.add(mainCart);
@@ -144,19 +132,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         setTimeout(function () {
             cmp.focus();
         }, 100);
-    },
-
-    onBeforeShowCartMenu : function (menu) {
-        var me               = this,
-            vm               = me.getViewModel(),
-            activeCartNumber = vm.get('activeCartNumber'),
-            menuItem         = menu.down('#invoiceitem');
-
-        if (!Ext.isEmpty(activeCartNumber)) {
-
-        }
-        menuItem.setText(!Ext.isEmpty(activeCartNumber) ? 'Update Invoice' : 'Create Invoice')
-        menuItem.maskMsg = !Ext.isEmpty(activeCartNumber) ? 'Updating Invoice' : 'Creating Invoice';
     },
 
     onSelectStockLocation : function (fld, rec) {
@@ -195,22 +170,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             str = vm.getStore('existingCarts');
 
         str.clearFilter();
-    },
-
-    onHideCreditInfo   : function (cmp) {
-        cmp.getForm().setValues({
-            CCEM   : new Date().getMonth() + 1,
-            CCEY   : new Date().getFullYear(),
-            CCNAME : '',
-            CCNUM  : '',
-            CVS    : ''
-        });
-    },
-    onKeyUpPaymentForm : function (fld, e) {
-        var me = this;
-        if (e.keyCode == '13') {
-            me.sendPayment();
-        }
     },
 
     deleteCart : function (orderKey, callback, scope) {
@@ -288,7 +247,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 product_id : product.MODEL,
                 prod_desc  : product.PRODDESC,
                 quantity   : quantity,
-                price      : product.PRICE
+                price      : product.PRICE,
+                smallpic   : product.SMALLPIC
             },
             existingRec   = cartItemStore.findRecord('product_id', product.MODEL, 0, false, true, true),
             snackbarEl    = Ext.getBody().query('.w-snackbar-outer')[0],
@@ -367,12 +327,17 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         }
     },
 
-    onShowDetail : function (cmp, rec) {
+    onShowDetail : function (cmp, rec, viewOnly) {
         var me   = this,
             view = me.getView(),
             vm   = me.getViewModel(),
             obj;
-        cmp.mask("Loading");
+
+        if (Ext.isEmpty(viewOnly) || !Ext.isBoolean(viewOnly)) {
+            viewOnly = false;
+        }
+
+        cmp.mask('Loading');
 
         Ext.Ajax.request({
             url     : '/valence/vvcall.pgm',
@@ -386,8 +351,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 cmp.unmask();
                 obj = Ext.decode(response.responseText);
                 me.getViewModel().set('product', obj);
-
-                view.add({
+                var windowCfg = {
                     xtype       : 'window',
                     frame       : true,
                     closable    : true,
@@ -408,31 +372,54 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                         height   : '100%',
                         minWidth : 400
                     }],
-                    autoShow    : true,
-                    dockedItems : [{
-                        xtype  : 'toolbar',
-                        dock   : 'bottom',
-                        cls    : 'detail-bbar',
-                        height : 65,
-                        items  : ['->', {
-                            xtype      : 'numberfield',
-                            name       : 'quantity',
-                            itemId     : 'dtl-quantity',
-                            fieldLabel : 'Quantity',
-                            labelWidth : 54,
-                            width      : 150,
-                            minValue   : 0,
-                            value      : 1
-                        }, {
-                            text    : 'ADD TO CART',
-                            ui      : 'primary',
-                            scale   : 'medium',
-                            itemId  : 'addtocartbutton',
-                            cls     : 'btn-detail-add-cart',
-                            handler : 'onAddToCartFromDetail'
+                    autoShow    : true
+                };
+
+                if (viewOnly) {
+                    Ext.apply(windowCfg, {
+                        dockedItems : [{
+                            xtype : 'toolbar',
+                            dock  : 'bottom',
+                            cls   : 'detail-bbar',
+                            items : ['->', {
+                                text      : 'Ok',
+                                ui        : 'blue',
+                                scale     : 'medium',
+                                listeners : {
+                                    click : function (cmp) {
+                                        cmp.up('window').onEsc();
+                                    }
+                                }
+                            }]
                         }]
-                    }]
-                }).show();
+                    });
+                } else {
+                    Ext.apply(windowCfg, {
+                        dockedItems : [{
+                            xtype : 'toolbar',
+                            dock  : 'bottom',
+                            cls   : 'detail-bbar',
+                            items : ['->', {
+                                xtype      : 'numberfield',
+                                name       : 'quantity',
+                                itemId     : 'dtl-quantity',
+                                fieldLabel : 'Quantity',
+                                labelWidth : 54,
+                                width      : 150,
+                                minValue   : 0,
+                                value      : 1
+                            }, {
+                                text    : 'ADD TO CART',
+                                ui      : 'blue',
+                                scale   : 'medium',
+                                itemId  : 'addtocartbutton',
+                                handler : 'onAddToCartFromDetail'
+                            }]
+                        }]
+                    });
+                }
+
+                view.add(windowCfg).show();
             },
 
             failure : function (response, opts) {
@@ -449,268 +436,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             cmp = Ext.widget('dtlimagemain');
         }
         Ext.ComponentQuery.query('detailview')[0].up('window').getLayout().setActiveItem(cmp);
-    },
-
-    onCartButtonClick : function (cmp) {
-        var me         = this,
-            body       = Ext.getBody(),
-            vm         = me.getViewModel(),
-            action     = cmp.action,
-            activeCart = vm.get('activeCartNumber');
-
-        if (!Ext.isEmpty(action)) {
-            // Process Form Data - Delete (Clear), Save, and Checkout
-
-            var cartForm = Ext.ComponentQuery.query('cartform')[0];
-
-            if (action === 'clearcart') {
-                me.resetCart();
-            } else if (action === 'savecart' || action === 'checkout' || action === 'deposit') {
-                var formErrorMsg = function () {
-                    Valence.util.Helper.showSnackbar('Please fill in all required sections');
-                    var fieldInError = cartForm.down('field{isValid()===false}');
-                    if (!Ext.isEmpty(fieldInError)) {
-                        fieldInError.focus();
-                    }
-                };
-
-                if (!cartForm.isValid()) {
-                    formErrorMsg();
-                    return;
-                }
-
-                // Get Form Data and Products from Store
-                var formData  = cartForm.getValues(),
-                    store     = vm.getStore('cartItems'),
-                    prodArray = [];
-
-                //remove the address search fields if in the values object
-                //
-
-                //customer
-                //
-                if (typeof formData.customerSearch !== 'undefined') {
-                    delete formData.customerSearch;
-                }
-
-                //delivery
-                //
-                if (typeof formData.deliverySearch !== 'undefined') {
-                    delete formData.deliverySearch;
-                }
-
-                // Remove fieldset collapsible checkbox from formData
-                var checkboxName = Ext.ComponentQuery.query('cartform #deliveryfieldset')[0].down('checkbox').name;
-                if (checkboxName && typeof formData[checkboxName] !== 'undefined') {
-                    delete formData[checkboxName];
-                }
-
-                for (var i = 0; i < store.getCount(); i++) {
-                    var product = store.getAt(i).getData();
-                    prodArray.push({
-                        OBITM  : product.product_id,
-                        OBQTYO : product.quantity,
-                        OBUPRC : product.price
-                    });
-                }
-
-                if (action === 'savecart' || action == 'printcart') {
-                    me.saveCart(cmp, formData, prodArray);
-                } else {
-                    me.checkout(cmp, formData, prodArray, action);
-                }
-            } else if (action == 'existingcarts') {
-                me.showExistingCarts();
-            }
-        }
-    },
-
-    onMenuClickCartAction : function (menu, menuItem) {
-        var me = this;
-        me.onCartButtonClick(menuItem);
-    },
-
-    saveCart : function (cmp, formData, products) {
-        var me     = this,
-            vm     = me.getViewModel(),
-            body   = Ext.getBody(),
-            params = {
-                pgm      : 'EC1050',
-                action   : 'saveCart',
-                products : Ext.encode(products),
-                stkloc   : vm.get('stkLocation')
-            }, resp, rep;
-
-
-        body.mask(cmp.maskMsg);
-
-        rep = vm.getStore('cartReps').findRecord('REP', formData.OAREP, 0, false, false, true);
-
-        if (!Ext.isEmpty(rep)) {
-            Ext.apply(params, {
-                OAREPC : rep.get('CODE')
-            });
-        }
-        Ext.apply(params, formData);
-        Ext.Ajax.request({
-            url     : '/valence/vvcall.pgm',
-            method  : 'POST',
-            params  : params,
-            success : function (response) {
-                resp = Ext.decode(response.responseText);
-                if (resp.success) {
-                    Valence.common.util.Snackbar.show({text : 'Your order has been saved.'});
-                    me.onPrintCart(resp.OAORDKEY);
-                    me.resetCart();
-                } else {
-                    Ext.Msg.alert('Error', (resp.msg ? resp.msg : 'There was an error saving your cart.'));
-                }
-                body.unmask();
-            },
-
-            failure : function (response) {
-                resp = Ext.decode(response.responseText);
-                Ext.Msg.alert('Error', (resp.msg ? resp.msg : 'There was an error saving your cart.'));
-                body.unmask();
-            }
-        });
-    },
-
-    checkout : function (cmp, formData, products, action) {
-        var me                = this,
-            body              = Ext.getBody(),
-            vm                = me.getViewModel(),
-            cartList          = Ext.ComponentQuery.query('cartlist')[0],
-            cartItemsStore    = vm.getStore('cartItems'),
-            formPanel         = Ext.ComponentQuery.query('cartform')[0],
-            orderInfoFieldset = formPanel.query('#orderInfoFieldSet')[0],
-            params            = {
-                pgm      : 'EC1050',
-                action   : action,
-                products : Ext.encode(products),
-                stkloc   : vm.get('stkLocation')
-            }, response, orderKey, ordField, respProducts, rec, rep, cartPayment, maxPayment;
-
-        // if there are products in the cart
-        if (products.length == 0) {
-            Ext.Msg.alert('Cart Error', 'Must have at least 1 product');
-            return;
-        }
-
-        body.mask(cmp.maskMsg);
-
-        rep = vm.getStore('cartReps').findRecord('REP', formData.OAREP, 0, false, false, true);
-
-        if (!Ext.isEmpty(rep)) {
-            Ext.apply(params, {
-                OAREPC : rep.get('CODE')
-            });
-        }
-        Ext.apply(params, formData);
-        Ext.Ajax.request({
-            url     : '/valence/vvcall.pgm',
-            method  : 'POST',
-            params  : params,
-            success : function (r) {
-                response = Ext.decode(r.responseText);
-                orderKey = response.OAORDKEY;
-
-                if (orderKey) {
-                    vm.set('activeCartNumber', orderKey);
-                    ordField = orderInfoFieldset.query('[name=OAORDKEY]')[0].setValue(orderKey);
-                }
-                if (!response.success || response.success === "false") {
-                    respProducts = response.CartDtl;
-                    if (respProducts && respProducts.length > 0) {
-                        for (var i = 0; i < respProducts.length; i++) {
-                            rec = cartItemsStore.findRecord('product_id', respProducts[i].OBITM);
-                            rec.set('allocated', respProducts[i].OBQTYA);
-                            rec.commit();
-                        }
-                    }
-
-                    vm.set('hideAllocated', false);
-
-                    body.unmask();
-                    if (Ext.isEmpty(response.msg)) {
-                        response.msg = 'Some product(s) not available in selected stock location. Try alternative stock location.';
-                    }
-                    me.showError(response);
-                    return;
-                }
-
-                Ext.Ajax.request({
-                    url     : '/valence/vvcall.pgm',
-                    params  : {
-                        pgm      : 'EC1050',
-                        action   : 'getPayments',
-                        OAORDKEY : orderKey,
-                        paymode  : action
-                    },
-                    success : function (r) {
-                        response          = Ext.decode(r.responseText);
-                        response.OAORDKEY = orderKey;
-                        maxPayment        = response.maxpay[0].maxpay;
-                        cartPayment       = {
-                            xtype        : 'window',
-                            itemId       : 'cartPayment',
-                            ui           : 'smeg',
-                            bodyPadding  : 20,
-                            width        : 600,
-                            y            : 40,
-                            height       : '80%',
-                            modal        : true,
-                            title        : action == 'checkout' ? 'Payment' : 'Deposit',
-                            closable     : true,
-                            scrollable   : true,
-                            layout       : 'fit',
-                            // cnx update
-                            reference    : 'smegwindow',
-                            // cnx update -- default focus
-                            defaultFocus : '#payMethCombo',
-                            items        : [{
-                                xtype      : 'cartpayment',
-                                scrollable : 'y',
-                                paymode    : action,
-                                cartInfo   : response,
-                                maxpay     : maxPayment
-                            }],
-                            bbar         : ['->', {
-                                text    : 'Cancel',
-                                ui      : 'primary',
-                                scale   : 'medium',
-                                cls     : 'btn-cancel',
-                                handler : function (btn) {
-                                    btn.up('window').close();
-                                }
-                            }, {
-                                cls      : 'btn-checkout',
-                                overCls  : 'btn-checkout-over',
-                                focusCls : 'btn-checkout',
-                                ui       : 'primary',
-                                scale    : 'medium',
-                                text     : 'Ok',
-                                width    : 80,
-                                scope    : me,
-                                paymode  : action,
-                                handler  : me.sendPayment
-                            }]
-                        };
-                        me.getView().add(cartPayment).show();
-                        body.unmask();
-                    },
-                    failure : function (response) {
-                        me.showError(response);
-                        body.unmask();
-                    }
-                });
-            },
-
-            failure : function (response) {
-                Ext.Msg.alert('Error', Ext.decode(response.responseText));
-                body.unmask();
-            }
-        });
     },
 
     onResetCart : function () {
@@ -735,14 +460,17 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     showExistingCarts : function () {
-        var me   = this,
-            body = Ext.getBody(),
-            view = me.getView(),
-            vm   = me.getViewModel();
+        var me    = this,
+            body  = Ext.getBody(),
+            view  = me.getView(),
+            vm    = me.getViewModel(),
+            store = vm.getStore('existingCarts');
 
         body.mask('Loading');
 
-        vm.getStore('existingCarts').load({
+        store.clearFilter();
+
+        store.load({
             scope    : me,
             callback : function () {
                 body.unmask();
@@ -955,162 +683,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         });
     },
 
-    sendPayment : function () {
-        var me          = this,
-            formPanel   = Ext.ComponentQuery.query('cartpayment')[0],
-            form        = formPanel.getForm(),
-            formValues  = form.getValues(),
-            orderKey    = formValues.OAORDKEY,
-            maxPayment  = formPanel.maxpay,
-            payAmt      = formValues.OAPAYAMT,
-            blankStr    = 'This field is required.',
-            // cnx update
-            invalidForm = false,
-            wdw, resp, params, payAmtCnt, keepGoing, maxpay;
-
-        if (formValues.OAPAYCHKBX != 'on') {
-            Valence.common.util.Dialog.show({
-                title   : 'Terms & Conditions',
-                msg     : 'Please confirm acceptance of terms and conditions.',
-                buttons : [{text : 'Ok'}]
-            });
-            invalidForm = true;
-        }
-
-        invalidForm = !form.isValid();
-
-        if (Ext.isEmpty(formValues.OAPAYM)) {
-            formPanel.down('#payMethCombo').markInvalid('This field is required');
-            // cnx update
-            invalidForm = true;
-        }
-        if (parseFloat(payAmt) > parseFloat(maxPayment)) {
-            formPanel.down('#payAmtFld').markInvalid('Payment is greater than balance.');
-            // cnx update
-            invalidForm = true;
-        }
-        if (Ext.isEmpty(payAmt) || !Ext.isEmpty(payAmt) && parseFloat(payAmt) < -4000.00) {
-            formPanel.down('#payAmtFld').markInvalid('Payment amount required and must not be negative.');
-            // cnx update
-            invalidForm = true;
-        }
-        // add validation for credit card
-        //
-        if (formValues.OAPAYM == 'CC') {
-            if (Ext.isEmpty(formValues.CCNAME)) {
-                formPanel.down('[name=CCNAME]').markInvalid(blankStr);
-                // cnx update
-                invalidForm = true;
-            }
-            if (Ext.isEmpty(formValues.CCNUM)) {
-                formPanel.down('[name=CCNUM]').markInvalid(blankStr);
-                // cnx update
-                invalidForm = true;
-            }
-            if (Ext.isEmpty(formValues.CCEM)) {
-                formPanel.down('[name=CCEM]').markInvalid(blankStr);
-                // cnx update
-                invalidForm = true;
-            }
-            if (Ext.isEmpty(formValues.CCEY)) {
-                formPanel.down('[name=CCEY]').markInvalid(blankStr);
-                // cnx update
-                invalidForm = true;
-            }
-            if (Ext.isEmpty(formValues.CVS)) {
-                formPanel.down('[name=CVS]').markInvalid(blankStr);
-                // cnx update
-                invalidForm = true;
-            }
-        }
-
-
-        if (invalidForm) {
-            return;
-        }
-
-        params = {
-            pgm     : 'EC1050',
-            action  : 'pay',
-            paymode : formPanel.paymode
-        };
-
-        Ext.apply(params, formValues);
-        formPanel.up('window').el.mask('Confirming Payment');
-        Ext.Ajax.request({
-            url     : '/valence/vvcall.pgm',
-            params  : params,
-            success : function (response) {
-                resp = Ext.decode(response.responseText);
-                if (resp.success) {
-                    wdw       = formPanel.up('window');
-                    keepGoing = resp['continue'];
-
-                    if (keepGoing != 'yes') {
-                        wdw.close();
-                        Valence.common.util.Snackbar.show({
-                            text : !Ext.isEmpty(resp.msg) ? 'Your order has been processed.' : resp.msg
-                        });
-                        me.resetCart();
-                        me.onPrintCart(orderKey);
-                    } else {
-                        Valence.common.util.Snackbar.show({
-                            text : !Ext.isEmpty(resp.msg) ? 'Payment accepted, thank you.' : resp.msg
-                        });
-                        Ext.Ajax.request({
-                            url     : '/valence/vvcall.pgm',
-                            params  : {
-                                pgm      : 'EC1050',
-                                action   : 'getPayments',
-                                OAORDKEY : orderKey,
-                                paymode  : formPanel.paymode
-                            },
-                            success : function (r) {
-                                resp      = Ext.decode(r.responseText);
-                                payAmtCnt = me.lookupReference('payamountcnt');
-                                payAmtCnt.setData(resp);
-                                maxpay           = resp.maxpay[0].maxpay
-                                formPanel.maxpay = maxpay;
-                                // manually setting values to reset form. CC fields are hidden
-                                // and are not resetting when form.reset() is used
-                                form.setValues({
-                                    CCEM       : new Date().getMonth() + 1,
-                                    CCEY       : new Date().getFullYear(),
-                                    CCNAME     : '',
-                                    CCNUM      : '',
-                                    CVS        : '',
-                                    OAORDKEY   : orderKey,
-                                    OAORDNET   : maxpay,
-                                    OAORDTAX   : '',
-                                    OAORDTOTAL : maxpay,
-                                    OAPAYAMT   : '',
-                                    OAPAYM     : ''
-                                });
-                                // cnx update -- focus payment combo
-                                //
-                                formPanel.down('#payMethCombo').focus();
-                                form.reset();
-                                setTimeout(function () {
-                                    me.lookupReference('tacchbx').setValue('on');
-                                }, 200);
-                                formPanel.up('window').el.unmask();
-                            },
-                            failure : me.showError
-                        });
-                    }
-                } else {
-                    me.showError(resp);
-                    formPanel.up('window').el.unmask();
-                }
-            },
-            failure : function (response) {
-                formPanel.up('window').el.unmask();
-                me.showError(response);
-            }
-        });
-
-    },
-
     onCellClickExistCart : function (cmp, td, cellIndex, rec) {
         var me     = this,
             grid   = cmp.grid,
@@ -1133,126 +705,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     });
                 }
             }, me);
+        } else {
+            me.loadExistingCart(cmp, td, cellIndex, rec);
         }
     },
-
-    onPrintCart : function (key) {
-        var me                              = this,
-            body                            = Ext.getBody(),
-            vm                              = me.getViewModel(),
-            str                             = vm.getStore('cartItems'),
-            lines                           = Ext.Array.pluck(str.data.items, 'data'),
-            jsDate                          = new Date(),
-            date                            = Ext.util.Format.date(jsDate, 'Y-m-d'),
-            time                            = Ext.util.Format.date(jsDate, 'g:iA'),
-            dRec, delvStr, qty, total, data = {}, d2;
-
-        body.mask('Printing Order');
-
-        Ext.Ajax.request({
-            url     : '/valence/vvcall.pgm',
-            params  : {
-                pgm      : 'ec1055',
-                action   : 'readCartDetails',
-                OAORDKEY : key
-            },
-            scope   : me,
-            success : function (r) {
-                var d = Ext.decode(r.responseText);
-
-                if (d.success) {
-
-                    // apply header info...
-                    //
-                    Ext.apply(data, d.CartHdr[0]);
-                    Ext.apply(data, {
-                        deliveryOpts : d.DeliveryOptions
-                    });
-                    Ext.apply(data, d.OrderInfo[0]);
-
-                    // translate the delivery method...
-                    //
-                    delvStr = vm.getStore('DeliveryOptions');
-                    dRec    = str.findRecord('DELMCOD', data.OADELM);
-
-                    if (dRec) {
-                        Ext.apply(data, {
-                            OADELM : dRec.get('DELMDSC')
-                        });
-                    }
-
-                    lines = d.CartDtl;
-
-                    // total the lines...
-                    //
-                    qty   = 0;
-                    total = 0;
-                    for (var ii = 0; ii < lines.length; ii++) {
-                        lines[ii].extended_price = (lines[ii].OBQTYO * lines[ii].OBUPRC);
-                        qty += lines[ii].OBQTYO;
-                        total += lines[ii].extended_price;
-                    }
-                    lines.push({
-                        OBITM          : '',
-                        OBQTYO         : qty,
-                        extended_price : total
-                    });
-
-                    Ext.apply(data, {
-                        lines : lines,
-                        date  : date,
-                        time  : time
-                    });
-                    Ext.Ajax.request({
-                        url     : '/valence/vvcall.pgm',
-                        params  : {
-                            action   : 'getPayments',
-                            pgm      : 'EC1050',
-                            OAORDKEY : key,
-                            paymode  : 'print'
-                        },
-                        success : function (r) {
-                            d2 = Ext.decode(r.responseText);
-                            if (d2.success) {
-                                Ext.apply(data, {
-                                    PaySum : Ext.isEmpty(d2.PaySum) ? null : d2.PaySum
-                                });
-                                Shopping.util.Helper.printCart({
-                                    data : data
-                                });
-                            } else {
-                                me.showError(d2);
-                            }
-                            body.unmask();
-                        },
-                        failure : function (resp) {
-                            me.showError(resp);
-                            body.unmask();
-                        }
-                    });
-                }
-            }
-        });
-    },
-
-    // releaseCart : function () {
-    //     var me         = this,
-    //         vm         = me.getViewModel(),
-    //         activeCart = vm.get('activeCartNumber');
-    //
-    //     if (!Ext.isEmpty(activeCart)) {
-    //         // No success callback because we do nothing with the response
-    //         Ext.Ajax.request({
-    //             url    : '/valence/vvcall.pgm',
-    //             async  : false,
-    //             params : {
-    //                 pgm      : 'EC1050',
-    //                 action   : 'releaseCart',
-    //                 OAORDKEY : activeCart
-    //             }
-    //         });
-    //     }
-    // },
 
     showError : function (r) {
         var d = {};
