@@ -6,3 +6,15 @@
 .vv-readonly.x-form-item-default.x-item-disabled{
   opacity: 1;
 }
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  opacity: 0.8;
+}
+::-moz-placeholder { /* Firefox 19+ */
+  opacity: 0.8;
+}
+:-ms-input-placeholder { /* IE 10+ */
+  opacity: 0.8;
+}
+:-moz-placeholder { /* Firefox 18- */
+  opacity: 0.8;
+}
