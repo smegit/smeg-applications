@@ -152,6 +152,10 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    /**
+     * closeShowReleaseWindow - close or show the release window
+     * @param action
+     */
     closeShowReleaseWindow : function (action) {
         var me  = this,
             wdw = me.lookupReference('releasewindow');
@@ -321,6 +325,58 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    /**
+     * getPayments - get the order payments
+     * @param content
+     */
+    getPayments : function (content) {
+        var me       = this,
+            vm       = me.getViewModel(),
+            deferred = Ext.create('Ext.Deferred'),
+            view     = me.getView(),
+            checkout = (content.action === 'checkout') ? true : false;
+
+        vm.set('orderPayments', null);
+
+        Ext.Ajax.request({
+            url     : '/valence/vvcall.pgm',
+            params  : {
+                pgm      : 'EC1050',
+                action   : 'getPayments',
+                OAORDKEY : content.OAORDKEY,
+                paymode  : content.action
+            },
+            success : function (r) {
+                var d = Ext.decode(r.responseText);
+                if (d.success) {
+                    d.OAORDKEY = content.OAORDKEY;
+                    vm.set('orderPayments', d);
+                    deferred.resolve(content);
+                } else {
+                    Valence.common.util.Helper.destroyLoadMask();
+                    me.showError(d)
+                        .then(function () {
+                            deferred.reject(d);
+                        });
+                }
+            },
+            failure : function (response) {
+                Valence.common.util.Helper.destroyLoadMask();
+                me.showError(response)
+                    .then(function () {
+                        deferred.reject(Ext.decode(response.responseText));
+                    });
+            }
+        });
+
+        return deferred.promise;
+    },
+
+    /**
+     * isStandardOrder - determine if this is a standard order. meaning all the release fields are 0 and
+     *    outstanding is greater than 0.
+     * @returns {boolean}
+     */
     isStandardOrder : function () {
         var me               = this,
             view             = me.getView(),
@@ -404,6 +460,25 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    onBeforeActivate : function () {
+        var me               = this,
+            vm               = me.getViewModel(),
+            orderPayments    = vm.get('orderPayments'),
+            activeCartNumber = vm.get('activeCartNumber');
+
+        if (Ext.isEmpty(orderPayments) && !Ext.isEmpty(activeCartNumber)) {
+            Valence.common.util.Helper.loadMask('Loading');
+
+            me.getPayments({
+                action   : 'checkout',
+                OAORDKEY : activeCartNumber
+            })
+                .then(function () {
+                    Valence.common.util.Helper.destroyLoadMask();
+                });
+        }
+    },
+
     /**
      * onCellClickList - check if user is requesting to remove an item from the cart
      * @param cmp
@@ -479,6 +554,10 @@ Ext.define('Shopping.view.cart.CartController', {
         me.onClickBack();
     },
 
+    /**
+     * onClickDeposit - request start depositing on this order, get the payments and show the payment entery window
+     * @param cmp
+     */
     onClickDeposit : function (cmp) {
         var me           = this,
             view         = me.getView(),
@@ -488,12 +567,17 @@ Ext.define('Shopping.view.cart.CartController', {
 
         if (Ext.isEmpty(fieldInError)) {
             me.depositRelease(cmp, 'deposit')
+                .then(Ext.bind(me.getPayments, me))
                 .then(Ext.bind(me.requestPayment, me));
         } else {
             fieldInError.focus();
         }
     },
 
+    /**
+     * onClickRelease - start the release of the selected products.
+     * @param cmp
+     */
     onClickRelease : function (cmp) {
         var me           = this,
             view         = me.getView(),
@@ -536,6 +620,9 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    /**
+     * onClickReleaseConfirm - process the release of products requesting payment if needed.
+     */
     onClickReleaseConfirm : function () {
         var me            = this,
             releaseWindow = me.lookupReference('releasewindow');
@@ -544,14 +631,15 @@ Ext.define('Shopping.view.cart.CartController', {
 
         Valence.common.util.Helper.loadMask('Processing');
 
-        me.requestPayment(releaseWindow.chkContent)
-            .then(function () {
-                // releaseWindow.close();
-            }, function () {
+        me.getPayments(releaseWindow.chkContent)
+            .then(Ext.bind(me.requestPayment, me), function () {
                 releaseWindow.show();
             });
     },
 
+    /**
+     * onClickSave - save the current order
+     */
     onClickSave : function () {
         var me       = this,
             cartInfo = me.getCartInformation();
@@ -580,6 +668,10 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    /**
+     * onHideCreditInfo - reset the credit information when hidden
+     * @param cmp
+     */
     onHideCreditInfo : function (cmp) {
         cmp.getForm().setValues({
             CCEM   : new Date().getMonth() + 1,
@@ -590,16 +682,29 @@ Ext.define('Shopping.view.cart.CartController', {
         });
     },
 
+    /**
+     * onResetCart - reset the cart
+     */
     onResetCart : function () {
         this.resetCart();
     },
 
+    /**
+     * onSelectStockLocation - stock location selected, let the shopping store know...
+     * @param fld
+     * @param rec
+     */
     onSelectStockLocation : function (fld, rec) {
         var me   = this,
             view = me.getView();
         view.fireEvent('selectstocklocation', fld, rec);
     },
 
+    /**
+     * onSpecialKeyPaymentForm - check for enter key on the payment form and attempt to send payment
+     * @param fld
+     * @param e
+     */
     onSpecialKeyPaymentForm : function (fld, e) {
         var me = this;
 
@@ -608,6 +713,10 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    /**
+     * onUpdateRepsReadOnly - set the reps combo read only value
+     * @param value
+     */
     onUpdateRepsReadOnly : function (value) {
         this.lookupReference('cartrepscombo').setReadOnly(value);
     },
@@ -639,6 +748,11 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    /**
+     * onViewportResize - adjust the smegwindow/release window based of viewport width/height
+     * @param width
+     * @param height
+     */
     onViewportResize : function (width, height) {
         var me         = this,
             wdw        = me.lookupReference('smegwindow'),
@@ -671,6 +785,10 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    /**
+     * onViewReadyList - when the cart items list is ready set a dummy record in the store.
+     * @param cmp
+     */
     onViewReadyList : function (cmp) {
         if (!cmp.release) {
             var me    = this,
@@ -686,6 +804,10 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    /**
+     * printCart - Print the active order/cart
+     * @param key
+     */
     printCart : function (key) {
         var me     = this,
             body   = Ext.getBody(),
@@ -788,6 +910,10 @@ Ext.define('Shopping.view.cart.CartController', {
         });
     },
 
+    /**
+     * releaseCart - relase the cart
+     * @param async
+     */
     releaseCart : function (async) {
         var me         = this,
             vm         = me.getViewModel(),
@@ -811,6 +937,9 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    /**
+     * resetCart - reset the cart "list, form, view model"
+     */
     resetCart : function () {
         var me = this,
             vm = me.getViewModel();
@@ -822,7 +951,8 @@ Ext.define('Shopping.view.cart.CartController', {
         vm.set({
             cartCount        : 0,
             activeCartNumber : null,
-            cartValues       : null
+            cartValues       : null,
+            orderPayments    : null
         });
 
         vm.notify();
@@ -830,6 +960,12 @@ Ext.define('Shopping.view.cart.CartController', {
         Ext.ComponentQuery.query('cartform')[0].reset();
     },
 
+    /**
+     * saveCart - save the actiev cart
+     * @param formData
+     * @param products
+     * @param maskText
+     */
     saveCart : function (formData, products, maskText) {
         var me       = this,
             vm       = me.getViewModel(),
@@ -875,94 +1011,74 @@ Ext.define('Shopping.view.cart.CartController', {
         return deferred.promise;
     },
 
+    /**
+     * requestPayment - show window so payment cant be placed on active cart
+     * @param content
+     */
     requestPayment : function (content) {
-        var me       = this,
-            deferred = Ext.create('Ext.Deferred'),
-            view     = me.getView(),
-            checkout = (content.action === 'checkout') ? true : false;
+        var me            = this,
+            deferred      = Ext.create('Ext.Deferred'),
+            view          = me.getView(),
+            vm            = me.getViewModel(),
+            orderPayments = vm.get('orderPayments'),
+            checkout      = (content.action === 'checkout') ? true : false,
+            maxPayment    = orderPayments.maxpay[0].maxpay;
 
-        Ext.Ajax.request({
-            url     : '/valence/vvcall.pgm',
-            params  : {
-                pgm      : 'EC1050',
-                action   : 'getPayments',
-                OAORDKEY : content.OAORDKEY,
-                paymode  : content.action
-            },
-            success : function (r) {
-                var d = Ext.decode(r.responseText),
-                    maxPayment;
+        Valence.common.util.Helper.destroyLoadMask();
 
-                Valence.common.util.Helper.destroyLoadMask();
-
-                if (d.success) {
-                    maxPayment = d.maxpay[0].maxpay;
-                    d.OAORDKEY = content.OAORDKEY;
-                    view.add({
-                        xtype        : 'window',
-                        itemId       : 'cartPayment',
-                        ui           : 'smeg',
-                        bodyPadding  : 20,
-                        width        : 600,
-                        height       : '80%',
-                        modal        : true,
-                        checkout     : checkout,
-                        title        : checkout ? 'Payment' : 'Deposit',
-                        closable     : true,
-                        scrollable   : true,
-                        layout       : 'fit',
-                        reference    : 'smegwindow',
-                        defaultFocus : '[name=OAPAYAMT]',
-                        items        : [{
-                            xtype      : 'cartpayment',
-                            scrollable : 'y',
-                            paymode    : content.action,
-                            cartInfo   : d,
-                            maxpay     : maxPayment
-                        }],
-                        bbar         : ['->', {
-                            text    : 'Cancel',
-                            scale   : 'medium',
-                            handler : function (btn) {
-                                btn.up('window').close();
-                                if (checkout) {
-                                    me.closeShowReleaseWindow('show');
-                                }
-                            }
-                        }, {
-                            ui        : 'blue',
-                            scale     : 'medium',
-                            text      : 'Ok',
-                            width     : 80,
-                            scope     : me,
-                            paymode   : content.action,
-                            listeners : {
-                                scope : me,
-                                click : me.sendPayment
-                            }
-                        }]
-                    }).show();
-                    deferred.resolve(d);
-                } else {
-                    Valence.common.util.Helper.destroyLoadMask();
-                    me.showError(d)
-                        .then(function () {
-                            deferred.reject(d);
-                        });
+        view.add({
+            xtype        : 'window',
+            itemId       : 'cartPayment',
+            ui           : 'smeg',
+            bodyPadding  : 20,
+            width        : 600,
+            height       : '80%',
+            modal        : true,
+            checkout     : checkout,
+            title        : checkout ? 'Payment' : 'Deposit',
+            closable     : true,
+            scrollable   : true,
+            layout       : 'fit',
+            reference    : 'smegwindow',
+            defaultFocus : '[name=OAPAYAMT]',
+            items        : [{
+                xtype      : 'cartpayment',
+                scrollable : 'y',
+                paymode    : content.action,
+                cartInfo   : orderPayments,
+                maxpay     : maxPayment
+            }],
+            bbar         : ['->', {
+                text    : 'Cancel',
+                scale   : 'medium',
+                handler : function (btn) {
+                    btn.up('window').close();
+                    if (checkout) {
+                        me.closeShowReleaseWindow('show');
+                    }
                 }
-            },
-            failure : function (response) {
-                Valence.common.util.Helper.destroyLoadMask();
-                me.showError(response)
-                    .then(function () {
-                        deferred.reject(Ext.decode(response.responseText));
-                    });
-            }
-        });
+            }, {
+                ui        : 'blue',
+                scale     : 'medium',
+                text      : 'Ok',
+                width     : 80,
+                scope     : me,
+                paymode   : content.action,
+                listeners : {
+                    scope : me,
+                    click : me.sendPayment
+                }
+            }]
+        }).show();
+
+        deferred.resolve(content);
 
         return deferred.promise;
     },
 
+    /**
+     * sendPayment - send the payment on the active cart
+     */
     sendPayment : function () {
         var me          = this,
             formPanel   = Ext.ComponentQuery.query('cartpayment')[0],
@@ -1133,6 +1249,10 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    /**
+     * showError - show error from the backend to the user
+     * @param r
+     */
     showError : function (r) {
         var d        = {},
             deferred = Ext.create('Ext.Deferred');
