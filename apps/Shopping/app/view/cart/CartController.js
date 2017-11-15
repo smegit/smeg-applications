@@ -43,10 +43,11 @@ Ext.define('Shopping.view.cart.CartController', {
      * autoFillAddress - auto fill the address fields if the user selected an address from the google lookup
      * @param customer
      */
-    autoFillAddress : function (customer) {
+    autoFillAddress : function (cmp) {
         var me           = this,
-            place        = (customer) ? me.customerAddressAutoComplete.getPlace() : me.deliveryAddressAutoComplete.getPlace(),
-            fieldset     = (customer) ? Ext.ComponentQuery.query('cartform #customerfieldset')[0] : Ext.ComponentQuery.query('cartform #deliveryfieldset')[0],
+            place        = cmp.googleAutoComplete.getPlace(),
+            customer     = (cmp.name === 'OACSTST1') ? true : false,
+            fieldset     = (customer) ? cmp.up('#customerfieldset') : cmp.up('#deliveryfieldset'),
             fields       = fieldset.query('field[gApiAddrType]'),
             addressLine2 = fieldset.down('[addressLine2=true]'),
             addressLine1 = '',
@@ -86,11 +87,11 @@ Ext.define('Shopping.view.cart.CartController', {
 
             if (customer) {
                 if (!Ext.isEmpty(addressLine1)) {
-                    Ext.ComponentQuery.query('cartform [name=OACSTST1]')[0].setValue(addressLine1);
+                    fieldset.down('[name=OACSTST1]').setValue(addressLine1);
                 }
             } else {
                 if (!Ext.isEmpty(addressLine1)) {
-                    Ext.ComponentQuery.query('cartform [name=OADELST1]')[0].setValue(addressLine1);
+                    fieldset.down('[name=OADELST1]').setValue(addressLine1);
                 }
             }
 
@@ -435,31 +436,13 @@ Ext.define('Shopping.view.cart.CartController', {
         //
         input.dom.placeholder = 'Street Address 1';
 
-        //set input background color
-        //
-        // input.setStyle('background-color', '#E3F2FD');
+        cmp.googleAutoComplete = new google.maps.places.Autocomplete(
+            document.getElementById(input.id),
+            {types : ['geocode', 'establishment']});
 
-        if (cmp.itemId === 'customerSearch') {
-            // Create the customer address auto complete object
-            //
-            me.customerAddressAutoComplete = new google.maps.places.Autocomplete(
-                document.getElementById(input.id),
-                {types : ['geocode', 'establishment']});
-
-            // When the user selects an address from the dropdown, populate the address
-            // fields in the form.
-            me.customerAddressAutoComplete.addListener('place_changed', Ext.bind(me.autoFillAddress, me, [true]));
-        } else {
-            // Create the customer address auto complete object
-            //
-            me.deliveryAddressAutoComplete = new google.maps.places.Autocomplete(
-                document.getElementById(input.id),
-                {types : ['geocode', 'establishment']});
-
-            // When the user selects an address from the dropdown, populate the address
-            // fields in the form.
-            me.deliveryAddressAutoComplete.addListener('place_changed', Ext.bind(me.autoFillAddress, me, [false]));
-        }
+        // When the user selects an address from the dropdown, populate the address
+        // fields in the form.
+        cmp.googleAutoComplete.addListener('place_changed', Ext.bind(me.autoFillAddress, me, [cmp]));
     },
 
     onBeforeActivate : function () {
@@ -498,7 +481,7 @@ Ext.define('Shopping.view.cart.CartController', {
             cartCount = viewModel.get('cartCount');
 
         if (!Ext.isEmpty(column.action) && column.action === 'removecartitem' && store.getCount() > 1) {
-            if (Ext.isEmpty(rec.get('delivered')) || rec.get('delivered') == 0){
+            if (Ext.isEmpty(rec.get('delivered')) || rec.get('delivered') == 0) {
                 viewModel.set('cartCount', cartCount - rec.get('quantity'));
                 store.remove(rec);
                 grid.getView().refresh();
@@ -672,13 +655,13 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
-    onClickViewPayments : function(event, el){
-        var me = this,
+    onClickViewPayments : function (event, el) {
+        var me      = this,
             element = Ext.get(el);
-        
-        if (!Ext.isEmpty(element) && element.hasCls('pym-info-icon')){
+
+        if (!Ext.isEmpty(element) && element.hasCls('pym-info-icon')) {
             me.getView().add({
-                xtype : 'payments',
+                xtype    : 'payments',
                 renderTo : Ext.getBody()
             }).show();
         }
@@ -800,7 +783,7 @@ Ext.define('Shopping.view.cart.CartController', {
             releaseWin.updateLayout();
         } else {
             var visibleWindow = Ext.ComponentQuery.query('window{isVisible()===true}')[0];
-            if (!Ext.isEmpty(visibleWindow)){
+            if (!Ext.isEmpty(visibleWindow)) {
                 visibleWindow.center();
             }
         }
@@ -1061,7 +1044,7 @@ Ext.define('Shopping.view.cart.CartController', {
             scrollable   : true,
             layout       : 'fit',
             reference    : 'smegwindow',
-            defaultFocus : '[name=OAPAYAMT]',
+            defaultFocus : '[name=OAPAYM]',
             items        : [{
                 xtype      : 'cartpayment',
                 scrollable : 'y',

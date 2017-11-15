@@ -92,7 +92,6 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                     displayField    : 'PAYMDSC',
                     valueField      : 'PAYMCOD',
                     enableKeyEvents : true,
-                    value           : 'CC',
                     listeners       : {
                         scope  : me,
                         change : function (combo, value) {
@@ -161,7 +160,7 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                 }, {
                     xtype     : 'container',
                     margin    : 0,
-                    hidden    : false,
+                    hidden    : true,
                     defaults  : {
                         xtype      : 'textfield',
                         margin     : '5 0 5 0',

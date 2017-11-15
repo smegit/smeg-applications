@@ -560,14 +560,11 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     vm.set('cartValues', formValues);
 
                     // Check to see if Delivery Address is set and should be "expanded"
-                    for (var i = 0; i < fields.length; i++) {
-                        field    = fields[i];
-                        fldValue = field.getValue();
-
-                        if (field.xtype !== 'checkboxfield' && !Ext.isEmpty(fldValue)) {
-                            fieldset.expand();
-                            break;
-                        }
+                    fieldset.down('#deliveryChkbox').setValue(false);
+                    if (!Ext.isEmpty(formValues.OADELST1) || !Ext.isEmpty(formValues.OADELCTY) || !Ext.isEmpty(formValues.OADELSTA) || !Ext.isEmpty(formValues.OADELPST) ||!Ext.isEmpty(formValues.OADELPH1)){
+                        setTimeout(function(){
+                            fieldset.down('#deliveryChkbox').setValue(true);
+                        },0);
                     }
 
                     // Reset Cart Item Store

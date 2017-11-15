@@ -20,7 +20,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
         var me = this;
 
         Ext.apply(me, {
-            items : me.buildItems(me.cartOptions)
+            items     : me.buildItems(me.cartOptions)
         });
         me.callParent(arguments);
     },
@@ -191,6 +191,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
             checkboxToggle : true,
             collapsable    : true,
             checkbox       : {
+                itemId    : 'deliveryChkbox',
                 listeners : {
                     scope  : me,
                     change : function (cmp, value) {
@@ -201,8 +202,11 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
             items          : [{
                 name       : 'OADELNAM',
                 fieldLabel : 'Name',
-                bind       : {
-                    value : '{cartValues.OADELNAM}'
+                bind : {
+                    value : {
+                        single : me.release,
+                        bindTo : '{cartValues.OADELNAM}'
+                    }
                 }
             }, {
                 itemId       : 'deliverySearch',
@@ -211,8 +215,11 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 fieldLabel   : 'Address',
                 emptyText    : 'Street Address 1',
                 allowBlank   : false,
-                bind         : {
-                    value : '{cartValues.OADELST1}'
+                bind : {
+                    value : {
+                        single : me.release,
+                        bindTo : '{cartValues.OADELST1}'
+                    }
                 },
                 listeners    : {
                     afterrender : 'onAfterRenderAddressSearch'
@@ -223,8 +230,11 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 labelSeparator : '',
                 addressLine2   : true,
                 emptyText      : 'Street Address 2',
-                bind           : {
-                    value : '{cartValues.OADELST2}'
+                bind : {
+                    value : {
+                        single : me.release,
+                        bindTo : '{cartValues.OADELST2}'
+                    }
                 }
             }, {
                 xtype          : 'fieldcontainer',
@@ -247,8 +257,11 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                     gApiAddrAttr : 'long_name',
                     emptyText    : 'City',
                     flex         : 1,
-                    bind         : {
-                        value : '{cartValues.OADELCTY}'
+                    bind : {
+                        value : {
+                            single : me.release,
+                            bindTo : '{cartValues.OADELCTY}'
+                        }
                     }
                 }, {
                     name         : 'OADELSTA',
@@ -258,8 +271,11 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                     gApiAddrAttr : 'short_name',
                     emptyText    : 'State',
                     width        : 50,
-                    bind         : {
-                        value : '{cartValues.OADELSTA}'
+                    bind : {
+                        value : {
+                            single : me.release,
+                            bindTo : '{cartValues.OADELSTA}'
+                        }
                     }
                 }, {
                     name         : 'OADELPST',
@@ -268,8 +284,11 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                     gApiAddrAttr : 'long_name',
                     emptyText    : 'Post Code',
                     width        : 73,
-                    bind         : {
-                        value : '{cartValues.OADELPST}'
+                    bind : {
+                        value : {
+                            single : me.release,
+                            bindTo : '{cartValues.OADELPST}'
+                        }
                     }
                 }]
             }, {
@@ -279,8 +298,11 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 fieldLabel     : '&nbsp;',
                 labelSeparator : '',
                 emptyText      : 'Country',
-                bind           : {
-                    value : '{cartValues.OADELCOU}'
+                bind : {
+                    value : {
+                        single : me.release,
+                        bindTo : '{cartValues.OADELCOU}'
+                    }
                 }
             }, {
                 xtype     : 'fieldcontainer',
@@ -302,14 +324,20 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                     labelWidth : me.baseLabelWidth,
                     allowBlank : false,
                     margin     : '0 16 0 0',
-                    bind       : {
-                        value : '{cartValues.OADELPH1}'
+                    bind : {
+                        value : {
+                            single : me.release,
+                            bindTo : '{cartValues.OADELPH1}'
+                        }
                     }
                 }, {
                     name      : 'OADELPH2',
                     emptyText : 'After Hours',
-                    bind      : {
-                        value : '{cartValues.OADELPH2}'
+                    bind : {
+                        value : {
+                            single : me.release,
+                            bindTo : '{cartValues.OADELPH2}'
+                        }
                     }
                 }]
             }, {
@@ -317,13 +345,21 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 fieldLabel : 'Email Address',
                 margin     : '0 0 8 0',
                 vtype      : 'email',
-                bind       : {
-                    value : '{cartValues.OADELEML}'
+                bind : {
+                    value : {
+                        single : me.release,
+                        bindTo : '{cartValues.OADELEML}'
+                    }
                 }
             }],
             listeners      : {
+                scope          : me,
                 afterrender    : function (cmp) {
-                    cmp.setExpanded(false);
+                    var cartValues = this.lookupViewModel().get('cartValues');
+
+                    if (!Ext.isEmpty(cartValues) && !Ext.isEmpty(cartValues.OADELST1)) {
+                        cmp.setExpanded(true);
+                    }
                 },
                 beforecollapse : function (cmp) {
                     var fields     = cmp.query('field'),
@@ -344,14 +380,18 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                     return false;
                 },
                 beforeexpand   : function (cmp) {
-                    var fields = cmp.query('field'),
-                        regex  = new RegExp('checkbox', "i"),
+                    var fields     = cmp.query('field'),
+                        containers = cmp.query('fieldcontainer'),
+                        regex      = new RegExp('checkbox', "i"),
                         field;
                     for (var i = 0; i < fields.length; i++) {
                         field = fields[i];
                         if (!regex.test(field.xtype)) {
                             field.setDisabled(false);
                         }
+                    }
+                    for (var ii = 0; ii < containers.length; ii++) {
+                        containers[ii].setDisabled(false);
                     }
                     return false;
                 }
