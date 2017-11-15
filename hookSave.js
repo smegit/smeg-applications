@@ -500,8 +500,8 @@ Ext.define('Valence.Hook', {
                 var originalQuery = plan.query;
                 if (!Ext.isEmpty(originalQuery)) {
                     var items = Ext.Array.clean(originalQuery.split(' '));
-                    // plan.query = new RegExp('(?=.*' + items.join(')(?=.*') + ')', 'gi');
-                    plan.query = new RegExp('(.*' + items.join(')(.*') + ')', 'gi');
+                    plan.query = new RegExp('(?=.*' + items.join(')(?=.*') + ')', 'gi');
+                    // plan.query = new RegExp('(.*' + items.join(')(.*') + ')', 'gi');
                 }
                 return plan;
             },
