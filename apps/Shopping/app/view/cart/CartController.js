@@ -2,7 +2,8 @@ Ext.define('Shopping.view.cart.CartController', {
     extend   : 'Ext.app.ViewController',
     requires : [
         'Shopping.util.Helper',
-        'Shopping.view.cart.PaymentForm'
+        'Shopping.view.cart.PaymentForm',
+        'Shopping.view.cart.Payments'
     ],
     alias    : 'controller.cart',
     listen   : {
@@ -668,6 +669,18 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    onClickViewPayments : function(event, el){
+        var me = this,
+            element = Ext.get(el);
+        
+        if (!Ext.isEmpty(element) && element.hasCls('pym-info-icon')){
+            me.getView().add({
+                xtype : 'payments',
+                renderTo : Ext.getBody()
+            }).show();
+        }
+    },
+
     /**
      * onHideCreditInfo - reset the credit information when hidden
      * @param cmp
@@ -782,6 +795,11 @@ Ext.define('Shopping.view.cart.CartController', {
         } else if (!Ext.isEmpty(releaseWin) && releaseWin.isVisible()) {
             releaseWin.center();
             releaseWin.updateLayout();
+        } else {
+            var visibleWindow = Ext.ComponentQuery.query('window{isVisible()===true}')[0];
+            if (!Ext.isEmpty(visibleWindow)){
+                visibleWindow.center();
+            }
         }
     },
 

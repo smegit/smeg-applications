@@ -2,7 +2,7 @@
   //border-top:2px solid #dcdcdc;
   //background-color:#fafafa !important;
   overflow-x: hidden !important;
-  border-radius : 0px!important;
+  border-radius: 0px !important;
 }
 
 //.cart > .x-toolbar {
@@ -17,7 +17,7 @@
 
 .btn-checkout {
   @extend .depth-1;
-  background-color:#2196F3;
+  background-color: #2196F3;
   background-image: none;
 }
 
@@ -26,10 +26,10 @@
 }
 
 .btn-shopping-over {
-  background-color:#777;
+  background-color: #777;
 }
 
-.btn-checkout .x-btn-inner, .btn-shopping .x-btn-inner{
+.btn-checkout .x-btn-inner, .btn-shopping .x-btn-inner {
   color: white;
 }
 
@@ -37,13 +37,13 @@
   border: 1px solid $black-3-color;
   .x-panel-header-inset {
     padding: 8px;
-    height : 32px;
+    height: 32px;
     .x-title-text {
-      color : $black-1-color;
+      color: $black-1-color;
     }
   }
   .x-panel-body-inset {
-    border-top : 1px solid $black-3-color !important;
+    border-top: 1px solid $black-3-color !important;
     background: #fff;
   }
 }
@@ -52,5 +52,36 @@
   .x-form-item-label-text {
     position: relative;
     top: 2px;
+  }
+}
+
+.cart-pym-info {
+  margin-top: 12px;
+  padding:3px;
+  text-align: right;
+  min-width: 300px;
+  .pym-lbl {
+    font-weight: 400;
+    margin-right: 8px;
+    margin-left: 8px;
+  }
+  .pym-val {
+    font-weight: 600;
+  }
+  .pym-info-cnt {
+    width: 28px;
+    display: inline-block;
+    .pym-info-icon {
+      position: absolute;
+      right: 1px;
+      top: 12px;
+      margin-right: 8px;
+      margin-top:3px;
+      font-size: 16px !important;
+      text-align: center;
+      line-height: 16px !important;
+      cursor: pointer;
+      color: rgba(0, 0, 0, 0.54);
+    }
   }
 }

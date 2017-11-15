@@ -23,17 +23,41 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
     },
 
     formulas : {
-        hideOrdKey    : function (get) {
+        hideOrdKey        : function (get) {
             return Ext.isEmpty(get('activeCartNumber'));
         },
-        ordKeyText    : function (get) {
+        ordKeyText        : function (get) {
             return 'Order: ' + get('activeCartNumber');
         },
-        stkLocation   : function (get) {
+        stkLocation       : function (get) {
             return get('STKLOC') || get('STKDFT');
         },
-        hideClearCart : function (get) {
+        hideClearCart     : function (get) {
             return get('cartCount') == 0;
+        },
+        orderPaymentsInfo : function (get) {
+            var paymentsResp = get('orderPayments'),
+                payments     = (!Ext.isEmpty(paymentsResp) && !Ext.isEmpty(paymentsResp.PaySum)) ? paymentsResp.PaySum : null,
+                balance      = 0,
+                paid         = 0;
+            if (!Ext.isEmpty(payments)) {
+                for (var ii = 0; ii < payments.length; ii++) {
+                    if (payments[ii].LABEL.toUpperCase() === 'PAID') {
+                        paid += payments[ii].AMOUNT;
+                    } else if (payments[ii].LABEL.toUpperCase() === 'BALANCE') {
+                        balance = payments[ii].AMOUNT;
+                    }
+                }
+            }
+            return '<div class="cart-pym-info">'+
+                   '  <span class="pym-lbl">Paid:</span><span class="pym-val">' + Ext.util.Format.currency(paid) + '</span>'+
+                   '  <span class="pym-lbl">Balance:</span><span class="pym-val">' + Ext.util.Format.currency(balance) + '</span>'+
+                   '  <span data-qtip="View Payments" class="pym-info-cnt"><span class="pym-info-icon vvicon-info"></span></span>'+
+                   '</div>';
+        },
+        orderHasPayments : function(get){
+            var paymentsResp = get('orderPayments');
+            return (!Ext.isEmpty(paymentsResp) && !Ext.isEmpty(paymentsResp.PaySum));
         }
     },
 

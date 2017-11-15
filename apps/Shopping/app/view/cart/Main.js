@@ -146,6 +146,29 @@ Ext.define('Shopping.view.cart.Main', {
             },
             minHeight : 80
         }, {
+            xtype  : 'container',
+            layout : {
+                type  : 'hbox',
+                align : 'stretch'
+            },
+            bind : {
+                hidden : '{!orderHasPayments}'
+            },
+            items  : [{
+                xtype : 'component',
+                flex  : 1
+            }, {
+                xtype : 'component',
+                bind  : {
+                    html : '{orderPaymentsInfo}'
+                },
+                listeners : {
+                    el : {
+                        click : 'onClickViewPayments'
+                    }
+                }
+            }]
+        }, {
             xtype       : 'cartform',
             cartOptions : opts
         }]
