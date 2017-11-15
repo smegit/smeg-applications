@@ -294,7 +294,7 @@ Ext.define('Shopping.view.cart.CartController', {
                         OBITM  : product.product_id,
                         OBQTYO : product.quantity,
                         OBUPRC : product.price,
-                        OBQTYR : (standardOrder) ? product.quantity : product.release
+                        OBQTYR : (standardOrder) ? product.outstanding : product.release
                     });
                 }
             }
@@ -352,6 +352,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 if (d.success) {
                     d.OAORDKEY = content.OAORDKEY;
                     vm.set('orderPayments', d);
+                    vm.notify();
                     deferred.resolve(content);
                 } else {
                     Valence.common.util.Helper.destroyLoadMask();
@@ -599,7 +600,7 @@ Ext.define('Shopping.view.cart.CartController', {
                     for (var ii = 0; ii < count; ii++) {
                         rec = store.getAt(ii);
                         if (standardOrder) {
-                            rec.set('viewReleaseQty', rec.get('quantity'));
+                            rec.set('viewReleaseQty', rec.get('outstanding'));
                             rec.commit();
                         } else {
                             rec.set('viewReleaseQty', rec.get('release'));

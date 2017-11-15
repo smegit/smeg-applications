@@ -83,6 +83,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             card.add(mainCart);
         } else {
             me.resetCart();
+            me.onClickGoBack();
         }
 
         vm.getStore('categories').load();

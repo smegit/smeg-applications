@@ -50,14 +50,25 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
                 }
             }
             return '<div class="cart-pym-info">'+
-                   '  <span class="pym-lbl">Paid:</span><span class="pym-val">' + Ext.util.Format.currency(paid) + '</span>'+
-                   '  <span class="pym-lbl">Balance:</span><span class="pym-val">' + Ext.util.Format.currency(balance) + '</span>'+
+                   '  <span class="x-form-item-label-default pym-lbl">Paid:</span><span class="pym-val">' + Ext.util.Format.currency(paid) + '</span>'+
+                   '  <span class="x-form-item-label-default pym-lbl">Balance:</span><span class="pym-val">' + Ext.util.Format.currency(balance) + '</span>'+
                    '  <span data-qtip="View Payments" class="pym-info-cnt"><span class="pym-info-icon vvicon-info"></span></span>'+
                    '</div>';
         },
         orderHasPayments : function(get){
-            var paymentsResp = get('orderPayments');
-            return (!Ext.isEmpty(paymentsResp) && !Ext.isEmpty(paymentsResp.PaySum));
+            var paymentsResp = get('orderPayments'),
+                payments     = (!Ext.isEmpty(paymentsResp) && !Ext.isEmpty(paymentsResp.PaySum)) ? paymentsResp.PaySum : null,
+                paymentFound = false;
+
+            if (!Ext.isEmpty(payments)) {
+                for (var ii = 0; ii < payments.length; ii++) {
+                    if (payments[ii].LABEL.toUpperCase() === 'PAID') {
+                        paymentFound = true;
+                        break;
+                    }
+                }
+            }
+            return paymentFound;
         }
     },
 

@@ -61,7 +61,7 @@
   text-align: right;
   min-width: 300px;
   .pym-lbl {
-    font-weight: 400;
+    font-weight: 500;
     margin-right: 8px;
     margin-left: 8px;
   }
@@ -69,11 +69,11 @@
     font-weight: 600;
   }
   .pym-info-cnt {
-    width: 27px;
+    width: 28px;
     display: inline-block;
     .pym-info-icon {
       position: absolute;
-      right: 1px;
+      right: -1px;
       top: 12px;
       margin-right: 8px;
       margin-top:3px;

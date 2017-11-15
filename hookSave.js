@@ -173,10 +173,10 @@ Ext.define('Valence.Hook', {
                 lock                     : function () {
                 },
                 login                    : function (user, sid) {
-                    if (!Ext.isEmpty(window.Portal)){
+                    if (!Ext.isEmpty(window.Portal)) {
                         this.checkAgencies(user, sid);
 
-                        window['smegGetCurrentAgent'] = Ext.bind(me.getCurrentAgent,me);
+                        window['smegGetCurrentAgent'] = Ext.bind(me.getCurrentAgent, me);
                     }
                 },
                 loginfailure             : function (parms, response) {
@@ -207,8 +207,8 @@ Ext.define('Valence.Hook', {
                         }
                     }
                 },
-                smegagentchanged : function(agent){
-                    if (!Ext.isEmpty(agent)){
+                smegagentchanged         : function (agent) {
+                    if (!Ext.isEmpty(agent)) {
                         me.activeAgent = agent;
                         me.silentlySetAgent();
                     }
@@ -259,7 +259,7 @@ Ext.define('Valence.Hook', {
     /**
      * getCurrentAgent - get the current active agent
      */
-    getCurrentAgent : function(){
+    getCurrentAgent : function () {
         return this.activeAgent;
     },
 
@@ -487,11 +487,23 @@ Ext.define('Valence.Hook', {
             allowBlank     : false,
             forceSelection : true,
             anyMatch       : true,
+            caseSensitive  : false,
             readOnly       : (!Ext.isEmpty(agencies) && agencies.length === 1) ? true : false,
             hidden         : (Ext.isEmpty(agencies)) ? true : false,
             value          : me.activeAgent,
             listConfig     : {
                 cls : 'smeg-agency-sel-list'
+            },
+            beforeQuery    : function (plan) {
+                //overriding the query plan so we can filter agents by words entered
+                //
+                var originalQuery = plan.query;
+                if (!Ext.isEmpty(originalQuery)) {
+                    var items = Ext.Array.clean(originalQuery.split(' '));
+                    // plan.query = new RegExp('(?=.*' + items.join(')(?=.*') + ')', 'gi');
+                    plan.query = new RegExp('(.*' + items.join(')(.*') + ')', 'gi');
+                }
+                return plan;
             },
             listeners      : {
                 scope       : me,
