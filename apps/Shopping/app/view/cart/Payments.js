@@ -28,11 +28,13 @@ Ext.define('Shopping.view.cart.Payments', {
         var me = this;
         return [{
             xtype      : 'grid',
+            frame      : true,
+            margin     : '8 16 0 16',
             store      : Ext.create('Ext.data.Store', {
                 fields : ['action', 'amount', 'note'],
                 data   : me.buildStoreData()
             }),
-            features      : [{
+            features   : [{
                 ftype : 'summary'
             }],
             viewConfig : {
@@ -45,11 +47,11 @@ Ext.define('Shopping.view.cart.Payments', {
                     menuDisabled : true
                 },
                 items    : [{
-                    text      : 'Amount',
-                    dataIndex : 'amount',
-                    align     : 'right',
-                    flex      : 1,
-                    renderer  : function (v) {
+                    text            : 'Amount',
+                    dataIndex       : 'amount',
+                    align           : 'right',
+                    flex            : 1,
+                    renderer        : function (v) {
                         return Ext.util.Format.currency(v);
                     },
                     summaryType     : 'sum',
