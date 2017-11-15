@@ -114,15 +114,19 @@ Ext.define('Shopping.view.cart.Main', {
         items  : [{
             xtype : 'tbfill'
         }, {
-            text    : 'Clear Order',
-            ui      : 'white',
-            maskMsg : 'Clearing Cart',
-            action  : 'clearcart'
+            text      : 'Clear Order',
+            maskMsg   : 'Clearing Cart',
+            ui        : 'white',
+            listeners : {
+                click : 'onClickClear'
+            }
         }, {
-            text    : 'Save',
-            ui      : 'white',
-            action  : 'savecart',
-            maskMsg : 'Saving Order'
+            text      : 'Save',
+            ui        : 'white',
+            maskMsg   : 'Saving Order',
+            listeners : {
+                click : 'onClickSave'
+            }
         }]
     },
     initComponent : function () {
