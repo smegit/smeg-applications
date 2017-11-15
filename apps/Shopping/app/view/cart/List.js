@@ -167,7 +167,7 @@ Ext.define('Shopping.view.cart.List', {
                 align    : 'center',
                 sortable : false,
                 renderer : function (value, meta, rec, rowIndex, colIndex, store) {
-                    if (store.getCount() > 1) {
+                    if (store.getCount() > 1 && (Ext.isEmpty(rec.get('delivered')) || rec.get('delivered') == 0)) {
                         return '<span data-qtip="Remove" class="vvicon-in-cell vvicon-cross"><span>';
                     }
                     return '';

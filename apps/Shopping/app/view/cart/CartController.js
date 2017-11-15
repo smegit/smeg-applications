@@ -182,7 +182,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 pgm      : 'EC1050',
                 action   : action,
                 products : (!Ext.isEmpty(cartInfo) && !Ext.isEmpty(cartInfo.products)) ? Ext.encode(cartInfo.products) : null,
-                stkloc   : vm.get('stkLocation')
+                stkloc   : vm.get('STKDFT')
             }, rep;
 
         if (!Ext.isEmpty(cartInfo)) {
@@ -498,9 +498,11 @@ Ext.define('Shopping.view.cart.CartController', {
             cartCount = viewModel.get('cartCount');
 
         if (!Ext.isEmpty(column.action) && column.action === 'removecartitem' && store.getCount() > 1) {
-            viewModel.set('cartCount', cartCount - rec.get('quantity'));
-            store.remove(rec);
-            grid.getView().refresh();
+            if (Ext.isEmpty(rec.get('delivered')) || rec.get('delivered') == 0){
+                viewModel.set('cartCount', cartCount - rec.get('quantity'));
+                store.remove(rec);
+                grid.getView().refresh();
+            }
         } else {
             var target = e.getTarget(),
                 item   = (!Ext.isEmpty(target)) ? Ext.get(target) : null;
@@ -994,7 +996,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 pgm      : 'EC1050',
                 action   : 'saveCart',
                 products : Ext.encode(products),
-                stkloc   : vm.get('stkLocation')
+                stkloc   : vm.get('STKDFT')
             }, rep;
 
         Valence.common.util.Helper.loadMask(maskText);
