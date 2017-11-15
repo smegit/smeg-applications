@@ -152,6 +152,15 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    closeShowReleaseWindow : function (action) {
+        var me  = this,
+            wdw = me.lookupReference('releasewindow');
+
+        if (!Ext.isEmpty(action) && !Ext.isEmpty(wdw)) {
+            wdw[action]();
+        }
+    },
+
     /**
      * depositRelease - process the deposit / release of a order
      * @param cmp
@@ -504,7 +513,16 @@ Ext.define('Shopping.view.cart.CartController', {
         var me            = this,
             releaseWindow = me.lookupReference('releasewindow');
 
-        console.log('do the depsit/Release : ', releaseWindow.chkContent);
+        releaseWindow.hide();
+
+        Valence.common.util.Helper.loadMask('Processing');
+
+        me.requestPayment(releaseWindow.chkContent)
+            .then(function () {
+                // releaseWindow.close();
+            }, function () {
+                releaseWindow.show();
+            });
     },
 
     onClickSave : function () {
@@ -833,7 +851,8 @@ Ext.define('Shopping.view.cart.CartController', {
     requestPayment : function (content) {
         var me       = this,
             deferred = Ext.create('Ext.Deferred'),
-            view     = me.getView();
+            view     = me.getView(),
+            checkout = (content.action === 'checkout') ? true : false;
 
         Ext.Ajax.request({
             url     : '/valence/vvcall.pgm',
@@ -844,58 +863,73 @@ Ext.define('Shopping.view.cart.CartController', {
                 paymode  : content.action
             },
             success : function (r) {
-                var d          = Ext.decode(r.responseText),
-                    maxPayment = d.maxpay[0].maxpay;
+                var d = Ext.decode(r.responseText),
+                    maxPayment;
 
-                d.OAORDKEY = content.OAORDKEY;
-                view.add({
-                    xtype        : 'window',
-                    itemId       : 'cartPayment',
-                    ui           : 'smeg',
-                    bodyPadding  : 20,
-                    width        : 600,
-                    // y            : 40,
-                    height       : '80%',
-                    modal        : true,
-                    title        : content.action == 'checkout' ? 'Payment' : 'Deposit',
-                    closable     : true,
-                    scrollable   : true,
-                    layout       : 'fit',
-                    reference    : 'smegwindow',
-                    defaultFocus : '#payMethCombo',
-                    items        : [{
-                        xtype      : 'cartpayment',
-                        scrollable : 'y',
-                        paymode    : content.action,
-                        cartInfo   : d,
-                        maxpay     : maxPayment
-                    }],
-                    bbar         : ['->', {
-                        text    : 'Cancel',
-                        scale   : 'medium',
-                        handler : function (btn) {
-                            btn.up('window').close();
-                        }
-                    }, {
-                        ui       : 'blue',
-                        scale    : 'medium',
-                        text     : 'Ok',
-                        width    : 80,
-                        scope    : me,
-                        paymode  : content.action,
-                        listener : {
-                            scope : me,
-                            click : me.sendPayment
-                        }
-                    }]
-                }).show();
                 Valence.common.util.Helper.destroyLoadMask();
-                deferred.resolve(d);
+
+                if (d.success) {
+                    maxPayment = d.maxpay[0].maxpay;
+                    d.OAORDKEY = content.OAORDKEY;
+                    view.add({
+                        xtype        : 'window',
+                        itemId       : 'cartPayment',
+                        ui           : 'smeg',
+                        bodyPadding  : 20,
+                        width        : 600,
+                        height       : '80%',
+                        modal        : true,
+                        checkout     : checkout,
+                        title        : checkout ? 'Payment' : 'Deposit',
+                        closable     : true,
+                        scrollable   : true,
+                        layout       : 'fit',
+                        reference    : 'smegwindow',
+                        defaultFocus : '#payMethCombo',
+                        items        : [{
+                            xtype      : 'cartpayment',
+                            scrollable : 'y',
+                            paymode    : content.action,
+                            cartInfo   : d,
+                            maxpay     : maxPayment
+                        }],
+                        bbar         : ['->', {
+                            text    : 'Cancel',
+                            scale   : 'medium',
+                            handler : function (btn) {
+                                btn.up('window').close();
+                                if (checkout) {
+                                    me.closeShowReleaseWindow('show');
+                                }
+                            }
+                        }, {
+                            ui       : 'blue',
+                            scale    : 'medium',
+                            text     : 'Ok',
+                            width    : 80,
+                            scope    : me,
+                            paymode  : content.action,
+                            listener : {
+                                scope : me,
+                                click : me.sendPayment
+                            }
+                        }]
+                    }).show();
+                    deferred.resolve(d);
+                } else {
+                    Valence.common.util.Helper.destroyLoadMask();
+                    me.showError(d)
+                        .then(function () {
+                            deferred.reject(d);
+                        });
+                }
             },
             failure : function (response) {
-                me.showError(response);
                 Valence.common.util.Helper.destroyLoadMask();
-                deferred.reject(Ext.decode(response.responseText));
+                me.showError(response)
+                    .then(function () {
+                        deferred.reject(Ext.decode(response.responseText));
+                    });
             }
         });
 
@@ -1001,6 +1035,9 @@ Ext.define('Shopping.view.cart.CartController', {
                         Valence.common.util.Snackbar.show({
                             text : !Ext.isEmpty(resp.msg) ? 'Your order has been processed.' : resp.msg
                         });
+                        if (wdw.checkout) {
+                            me.closeShowReleaseWindow('close');
+                        }
                         me.resetCart();
                         me.printCart(orderKey);
                     } else {
@@ -1061,7 +1098,8 @@ Ext.define('Shopping.view.cart.CartController', {
     },
 
     showError : function (r) {
-        var d = {};
+        var d        = {},
+            deferred = Ext.create('Ext.Deferred');
 
         if (!Ext.isEmpty(r) && !Ext.isEmpty(r.responseText)) {
             d = Ext.decode(r.responseText);
@@ -1073,7 +1111,14 @@ Ext.define('Shopping.view.cart.CartController', {
             title    : 'Error',
             minWidth : 300,
             msg      : Ext.isEmpty(d.msg) ? 'Error' : d.msg,
-            buttons  : [{text : 'Ok'}]
+            buttons  : [{
+                text : 'Ok'
+            }],
+            handler  : function () {
+                deferred.resolve();
+            }
         });
+
+        return deferred.promise;
     }
 });

@@ -78,6 +78,8 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 labelWidth     : me.baseLabelWidth,
                 labelSeparator : '',
                 fieldLabel     : '&nbsp;',
+                readOnly       : false,
+                disabled       : false,
                 layout         : {
                     type  : 'hbox',
                     align : 'stretch'
@@ -138,6 +140,8 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                     type  : 'hbox',
                     align : 'stretch'
                 },
+                readOnly   : false,
+                disabled   : false,
                 defaults   : {
                     xtype     : 'textfield',
                     hideLabel : true,
