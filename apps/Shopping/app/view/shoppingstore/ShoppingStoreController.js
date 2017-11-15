@@ -341,6 +341,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
                 if (viewOnly) {
                     Ext.apply(windowCfg, {
+                        defaultFocus : 'button',
                         dockedItems : [{
                             xtype : 'toolbar',
                             dock  : 'bottom',
