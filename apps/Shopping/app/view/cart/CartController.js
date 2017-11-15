@@ -269,9 +269,10 @@ Ext.define('Shopping.view.cart.CartController', {
      * @returns {*}
      */
     getCartInformation : function () {
-        var me   = this,
-            view = me.getView(),
-            form = view.down('cartform');
+        var me           = this,
+            view         = me.getView(),
+            releaseItems = view.down('cartrelease'),
+            form         = (Ext.isEmpty(releaseItems)) ? view.down('cartform') : releaseItems.down('cartform');
 
         if (!form.isValid()) {
             Valence.util.Helper.showSnackbar('Please fill in all required sections');
