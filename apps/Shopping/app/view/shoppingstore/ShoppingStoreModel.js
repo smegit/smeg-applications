@@ -2,6 +2,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
     extend   : 'Ext.app.ViewModel',
     alias    : 'viewmodel.shoppingstore',
     requires : [
+        'Ext.data.Store',
         'Shopping.model.CartItem',
         'Shopping.model.CartRep',
         'Shopping.model.Category',
@@ -59,6 +60,15 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
             model    : 'Shopping.model.Product',
             autoLoad : false,
             pageSize : 0
+        },
+        ReleaseItems  : {
+            type    : 'chained',
+            source  : new Ext.create('Ext.data.Store'),
+            filters : [
+                function (rec) {
+                    return (rec.get('viewReleaseQty') > 0);
+                }
+            ]
         }
     }
 });

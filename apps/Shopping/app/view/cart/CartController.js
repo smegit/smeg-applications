@@ -275,17 +275,11 @@ Ext.define('Shopping.view.cart.CartController', {
             }
             return null;
         } else {
-            var formData         = form.getValues(),
-                store            = view.lookupViewModel(true).getStore('cartItems'),
-                storeCount       = store.getCount(),
-                outstandingItems = store.queryBy(function (rec) {
-                    if (!Ext.isEmpty(rec.get('outstanding')) && rec.get('outstanding') > 0) {
-                        return true;
-                    }
-                }),
-                releaseZeroItems = store.query('release', 0, 0, false, false, true),
-                standardOrder    = (outstandingItems.getCount() === releaseZeroItems.getCount()) ? true : false,
-                prodArray        = [],
+            var formData      = form.getValues(),
+                store         = view.lookupViewModel(true).getStore('cartItems'),
+                storeCount    = store.getCount(),
+                standardOrder = me.isStandardOrder(),
+                prodArray     = [],
                 product;
 
             for (var i = 0; i < storeCount; i++) {
@@ -325,6 +319,20 @@ Ext.define('Shopping.view.cart.CartController', {
                 products : prodArray
             };
         }
+    },
+
+    isStandardOrder : function () {
+        var me               = this,
+            view             = me.getView(),
+            store            = view.lookupViewModel(true).getStore('cartItems'),
+            outstandingItems = store.queryBy(function (rec) {
+                if (!Ext.isEmpty(rec.get('outstanding')) && rec.get('outstanding') > 0) {
+                    return true;
+                }
+            }),
+            releaseZeroItems = store.query('release', 0, 0, false, false, true);
+
+        return (outstandingItems.getCount() === releaseZeroItems.getCount()) ? true : false;
     },
 
     /**
@@ -420,7 +428,7 @@ Ext.define('Shopping.view.cart.CartController', {
             var target = e.getTarget(),
                 item   = (!Ext.isEmpty(target)) ? Ext.get(target) : null;
 
-            if (!Ext.isEmpty(item) && item.hasCls('cart-list-item-image')) {
+            if (!Ext.isEmpty(item) && (item.hasCls('cart-list-prd-detail') || item.up('.cart-list-prd-detail'))) {
                 view.fireEvent('showdetail', view, {
                     getData : function () {
                         return {
@@ -496,6 +504,25 @@ Ext.define('Shopping.view.cart.CartController', {
         if (Ext.isEmpty(fieldInError)) {
             me.depositRelease(cmp, 'checkout')
                 .then(function (content) {
+                    //check if all release values are zero
+                    var standardOrder = me.isStandardOrder(),
+                        store         = view.lookupViewModel(true).getStore('cartItems'),
+                        count         = store.getCount(),
+                        rec;
+
+                    store.suspendEvents(true);
+                    for (var ii = 0; ii < count; ii++) {
+                        rec = store.getAt(ii);
+                        if (standardOrder) {
+                            rec.set('viewReleaseQty', rec.get('quantity'));
+                            rec.commit();
+                        } else {
+                            rec.set('viewReleaseQty', rec.get('release'));
+                            rec.commit();
+                        }
+                    }
+                    store.resumeEvents();
+
                     Valence.common.util.Helper.destroyLoadMask();
                     view.add({
                         xtype      : 'cartrelease',
@@ -885,7 +912,7 @@ Ext.define('Shopping.view.cart.CartController', {
                         scrollable   : true,
                         layout       : 'fit',
                         reference    : 'smegwindow',
-                        defaultFocus : '#payMethCombo',
+                        defaultFocus : '[name=OAPAYAMT]',
                         items        : [{
                             xtype      : 'cartpayment',
                             scrollable : 'y',
@@ -903,13 +930,13 @@ Ext.define('Shopping.view.cart.CartController', {
                                 }
                             }
                         }, {
-                            ui       : 'blue',
-                            scale    : 'medium',
-                            text     : 'Ok',
-                            width    : 80,
-                            scope    : me,
-                            paymode  : content.action,
-                            listener : {
+                            ui        : 'blue',
+                            scale     : 'medium',
+                            text      : 'Ok',
+                            width     : 80,
+                            scope     : me,
+                            paymode   : content.action,
+                            listeners : {
                                 scope : me,
                                 click : me.sendPayment
                             }
@@ -949,152 +976,161 @@ Ext.define('Shopping.view.cart.CartController', {
             invalidForm = false,
             wdw, resp, params, payAmtCnt, keepGoing, maxpay;
 
-        if (formValues.OAPAYCHKBX != 'on') {
-            Valence.common.util.Dialog.show({
-                title   : 'Terms & Conditions',
-                msg     : 'Please confirm acceptance of terms and conditions.',
-                buttons : [{text : 'Ok'}]
-            });
-            invalidForm = true;
-        }
-
         invalidForm = !form.isValid();
 
-        if (Ext.isEmpty(formValues.OAPAYM)) {
-            formPanel.down('#payMethCombo').markInvalid('This field is required');
-            // cnx update
-            invalidForm = true;
-        }
-        if (parseFloat(payAmt) > parseFloat(maxPayment)) {
-            formPanel.down('#payAmtFld').markInvalid('Payment is greater than balance.');
-            // cnx update
-            invalidForm = true;
-        }
-        if (Ext.isEmpty(payAmt) || !Ext.isEmpty(payAmt) && parseFloat(payAmt) < -4000.00) {
-            formPanel.down('#payAmtFld').markInvalid('Payment amount required and must not be negative.');
-            // cnx update
-            invalidForm = true;
-        }
-        // add validation for credit card
-        //
-        if (formValues.OAPAYM == 'CC') {
-            if (Ext.isEmpty(formValues.CCNAME)) {
-                formPanel.down('[name=CCNAME]').markInvalid(blankStr);
+        if (!invalidForm) {
+            if (Ext.isEmpty(formValues.OAPAYM)) {
+                formPanel.down('#payMethCombo').markInvalid('This field is required');
                 // cnx update
                 invalidForm = true;
             }
-            if (Ext.isEmpty(formValues.CCNUM)) {
-                formPanel.down('[name=CCNUM]').markInvalid(blankStr);
+            if (parseFloat(payAmt) > parseFloat(maxPayment)) {
+                formPanel.down('#payAmtFld').markInvalid('Payment is greater than balance.');
                 // cnx update
                 invalidForm = true;
             }
-            if (Ext.isEmpty(formValues.CCEM)) {
-                formPanel.down('[name=CCEM]').markInvalid(blankStr);
+            if (Ext.isEmpty(payAmt) || !Ext.isEmpty(payAmt) && parseFloat(payAmt) < -4000.00) {
+                formPanel.down('#payAmtFld').markInvalid('Payment amount required and must not be negative.');
                 // cnx update
                 invalidForm = true;
             }
-            if (Ext.isEmpty(formValues.CCEY)) {
-                formPanel.down('[name=CCEY]').markInvalid(blankStr);
-                // cnx update
-                invalidForm = true;
-            }
-            if (Ext.isEmpty(formValues.CVS)) {
-                formPanel.down('[name=CVS]').markInvalid(blankStr);
-                // cnx update
-                invalidForm = true;
-            }
-        }
-
-
-        if (invalidForm) {
-            return;
-        }
-        Valence.common.util.Helper.loadMask({
-            renderTo : paymentWin.el,
-            text     : 'Confirming Payment'
-        });
-
-        params = {
-            pgm     : 'EC1050',
-            action  : 'pay',
-            paymode : formPanel.paymode
-        };
-
-        Ext.apply(params, formValues);
-        Ext.Ajax.request({
-            url     : '/valence/vvcall.pgm',
-            params  : params,
-            success : function (response) {
-                resp = Ext.decode(response.responseText);
-                if (resp.success) {
-                    wdw       = formPanel.up('window');
-                    keepGoing = resp['continue'];
-
-                    if (keepGoing != 'yes') {
-                        wdw.close();
-                        Valence.common.util.Snackbar.show({
-                            text : !Ext.isEmpty(resp.msg) ? 'Your order has been processed.' : resp.msg
-                        });
-                        if (wdw.checkout) {
-                            me.closeShowReleaseWindow('close');
-                        }
-                        me.resetCart();
-                        me.printCart(orderKey);
-                    } else {
-                        Valence.common.util.Snackbar.show({
-                            text : !Ext.isEmpty(resp.msg) ? 'Payment accepted, thank you.' : resp.msg
-                        });
-                        Ext.Ajax.request({
-                            url     : '/valence/vvcall.pgm',
-                            params  : {
-                                pgm      : 'EC1050',
-                                action   : 'getPayments',
-                                OAORDKEY : orderKey,
-                                paymode  : formPanel.paymode
-                            },
-                            success : function (r) {
-                                resp      = Ext.decode(r.responseText);
-                                payAmtCnt = me.lookupReference('payamountcnt');
-                                payAmtCnt.setData(resp);
-                                maxpay           = resp.maxpay[0].maxpay;
-                                formPanel.maxpay = maxpay;
-                                // manually setting values to reset form. CC fields are hidden
-                                // and are not resetting when form.reset() is used
-                                form.setValues({
-                                    CCEM       : new Date().getMonth() + 1,
-                                    CCEY       : new Date().getFullYear(),
-                                    CCNAME     : '',
-                                    CCNUM      : '',
-                                    CVS        : '',
-                                    OAORDKEY   : orderKey,
-                                    OAORDNET   : maxpay,
-                                    OAORDTAX   : '',
-                                    OAORDTOTAL : maxpay,
-                                    OAPAYAMT   : '',
-                                    OAPAYM     : ''
-                                });
-
-                                formPanel.down('#payMethCombo').focus();
-                                form.reset();
-                                setTimeout(function () {
-                                    me.lookupReference('tacchbx').setValue('on');
-                                }, 200);
-                                Valence.common.util.Helper.destroyLoadMask(paymentWin.el);
-                            },
-                            failure : me.showError
-                        });
-                    }
-                } else {
-                    me.showError(resp);
-                    Valence.common.util.Helper.destroyLoadMask(paymentWin.el);
+            // add validation for credit card
+            //
+            if (formValues.OAPAYM == 'CC') {
+                if (Ext.isEmpty(formValues.CCNAME)) {
+                    formPanel.down('[name=CCNAME]').markInvalid(blankStr);
+                    // cnx update
+                    invalidForm = true;
                 }
-            },
-            failure : function (response) {
-                Valence.common.util.Helper.destroyLoadMask(paymentWin.el);
-                me.showError(response);
+                if (Ext.isEmpty(formValues.CCNUM)) {
+                    formPanel.down('[name=CCNUM]').markInvalid(blankStr);
+                    // cnx update
+                    invalidForm = true;
+                }
+                if (Ext.isEmpty(formValues.CCEM)) {
+                    formPanel.down('[name=CCEM]').markInvalid(blankStr);
+                    // cnx update
+                    invalidForm = true;
+                }
+                if (Ext.isEmpty(formValues.CCEY)) {
+                    formPanel.down('[name=CCEY]').markInvalid(blankStr);
+                    // cnx update
+                    invalidForm = true;
+                }
+                if (Ext.isEmpty(formValues.CVS)) {
+                    formPanel.down('[name=CVS]').markInvalid(blankStr);
+                    // cnx update
+                    invalidForm = true;
+                }
+            } else if (formValues.OAPAYM === 'FIN') {
+                formValues['CCNUM'] = formValues.OAPAYAPN;
+                delete formValues.OAPAYAPN;
             }
-        });
 
+            if (!invalidForm) {
+                if (formValues.OAPAYCHKBX != 'on') {
+                    Valence.common.util.Dialog.show({
+                        title   : 'Terms & Conditions',
+                        msg     : 'Please confirm acceptance of terms and conditions.',
+                        buttons : [{text : 'Ok'}]
+                    });
+                    invalidForm = true;
+                }
+            }
+
+            if (invalidForm) {
+                var invalidField = formPanel.down('field{hasCls("x-form-invalid")===true}');
+                if (!Ext.isEmpty(invalidField)) {
+                    invalidField.focus();
+                }
+                return;
+            }
+            Valence.common.util.Helper.loadMask({
+                renderTo : paymentWin.el,
+                text     : 'Confirming Payment'
+            });
+
+            params = {
+                pgm     : 'EC1050',
+                action  : 'pay',
+                paymode : formPanel.paymode
+            };
+
+            Ext.apply(params, formValues);
+            Ext.Ajax.request({
+                url     : '/valence/vvcall.pgm',
+                params  : params,
+                success : function (response) {
+                    resp = Ext.decode(response.responseText);
+                    if (resp.success) {
+                        wdw       = formPanel.up('window');
+                        keepGoing = resp['continue'];
+
+                        if (keepGoing != 'yes') {
+                            wdw.close();
+                            Valence.common.util.Snackbar.show({
+                                text : !Ext.isEmpty(resp.msg) ? 'Your order has been processed.' : resp.msg
+                            });
+                            if (wdw.checkout) {
+                                me.closeShowReleaseWindow('close');
+                            }
+                            me.printCart(orderKey);
+                            me.onClickClear();
+                        } else {
+                            Valence.common.util.Snackbar.show({
+                                text : !Ext.isEmpty(resp.msg) ? 'Payment accepted, thank you.' : resp.msg
+                            });
+                            Ext.Ajax.request({
+                                url     : '/valence/vvcall.pgm',
+                                params  : {
+                                    pgm      : 'EC1050',
+                                    action   : 'getPayments',
+                                    OAORDKEY : orderKey,
+                                    paymode  : formPanel.paymode
+                                },
+                                success : function (r) {
+                                    resp      = Ext.decode(r.responseText);
+                                    payAmtCnt = me.lookupReference('payamountcnt');
+                                    payAmtCnt.setData(resp);
+                                    maxpay           = resp.maxpay[0].maxpay;
+                                    formPanel.maxpay = maxpay;
+                                    // manually setting values to reset form. CC fields are hidden
+                                    // and are not resetting when form.reset() is used
+                                    form.setValues({
+                                        CCEM       : new Date().getMonth() + 1,
+                                        CCEY       : new Date().getFullYear(),
+                                        CCNAME     : '',
+                                        CCNUM      : '',
+                                        CVS        : '',
+                                        OAORDKEY   : orderKey,
+                                        OAORDNET   : maxpay,
+                                        OAORDTAX   : '',
+                                        OAORDTOTAL : maxpay,
+                                        OAPAYAMT   : '',
+                                        OAPAYM     : ''
+                                    });
+
+                                    formPanel.down('#payMethCombo').focus();
+                                    form.reset();
+                                    setTimeout(function () {
+                                        me.lookupReference('tacchbx').setValue('on');
+                                    }, 200);
+                                    Valence.common.util.Helper.destroyLoadMask(paymentWin.el);
+                                },
+                                failure : me.showError
+                            });
+                        }
+                    } else {
+                        me.showError(resp);
+                        Valence.common.util.Helper.destroyLoadMask(paymentWin.el);
+                    }
+                },
+                failure : function (response) {
+                    Valence.common.util.Helper.destroyLoadMask(paymentWin.el);
+                    me.showError(response);
+                }
+            });
+        }
     },
 
     showError : function (r) {

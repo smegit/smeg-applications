@@ -15,7 +15,7 @@ Ext.define('Shopping.view.cart.Release', {
     scrollable    : true,
     layout        : 'anchor',
     defaultFocus  : '[name=OACSTREF]',
-    bind : {
+    bind          : {
         title : 'Release {ordKeyText}'
     },
     initComponent : function () {
@@ -48,8 +48,8 @@ Ext.define('Shopping.view.cart.Release', {
                     click : me.onEsc
                 }
             }, {
-                text : 'Confirm',
-                ui   : 'blue',
+                text      : 'Confirm',
+                ui        : 'blue',
                 listeners : {
                     click : 'onClickReleaseConfirm'
                 }
@@ -59,6 +59,9 @@ Ext.define('Shopping.view.cart.Release', {
     buildItems    : function () {
         return [{
             xtype     : 'cartlist',
+            bind      : {
+                store : '{ReleaseItems}'
+            },
             release   : true,
             minHeight : 100
         }, {

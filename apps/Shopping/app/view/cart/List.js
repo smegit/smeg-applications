@@ -2,15 +2,11 @@ Ext.define('Shopping.view.cart.List', {
     extend : 'Ext.grid.Panel',
     xtype  : 'cartlist',
 
-    requires : [
+    requires      : [
         'Ext.form.field.Number',
         'Ext.grid.feature.Summary',
         'Ext.grid.plugin.CellEditing'
     ],
-
-    bind          : {
-        store : '{cartItems}'
-    },
     countInTitle  : false,
     ui            : 'background',
     features      : [{
@@ -43,22 +39,31 @@ Ext.define('Shopping.view.cart.List', {
                 maxWidth  : 50,
                 dataIndex : 'smallpic',
                 align     : 'center',
+                sortable  : false,
                 renderer  : function (v, meta) {
                     if (!Ext.isEmpty(v)) {
                         meta.tdCls += ' image-column';
-                        return '<image class="cart-list-item-image" src="' + v + '" height="50" width="50"></image>';
+                        return '<image class="cart-list-prd-detail" src="' + v + '" height="50" width="50"></image>';
                     }
                     return '';
                 }
             }, {
                 text      : 'Item',
                 width     : 100,
-                dataIndex : 'product_id'
+                dataIndex : 'product_id',
+                renderer  : function (v, meta) {
+                    meta.tdCls += ' cart-list-prd-detail';
+                    return v;
+                }
             }, {
                 text      : 'Description',
                 cellWrap  : true,
                 dataIndex : 'prod_desc',
-                flex      : 2
+                flex      : 2,
+                renderer  : function (v, meta) {
+                    meta.tdCls += ' cart-list-prd-detail';
+                    return v;
+                }
             }];
 
         if (!me.release) {
@@ -67,6 +72,7 @@ Ext.define('Shopping.view.cart.List', {
                 width           : 70,
                 align           : 'right',
                 dataIndex       : 'quantity',
+                sortable        : false,
                 editor          : {
                     xtype : 'numberfield'
                 },
@@ -81,6 +87,7 @@ Ext.define('Shopping.view.cart.List', {
             }, {
                 text            : 'Delivered',
                 dataIndex       : 'delivered',
+                sortable        : false,
                 width           : 75,
                 align           : 'right',
                 summaryType     : 'sum',
@@ -90,6 +97,7 @@ Ext.define('Shopping.view.cart.List', {
             }, {
                 text            : 'Outstanding',
                 dataIndex       : 'outstanding',
+                sortable        : false,
                 width           : 90,
                 align           : 'right',
                 summaryType     : 'sum',
@@ -99,6 +107,7 @@ Ext.define('Shopping.view.cart.List', {
             }, {
                 text            : 'Release',
                 dataIndex       : 'release',
+                sortable        : false,
                 width           : 70,
                 align           : 'right',
                 editor          : {
@@ -117,6 +126,7 @@ Ext.define('Shopping.view.cart.List', {
                 flex      : 1,
                 align     : 'right',
                 dataIndex : 'allocated',
+                sortable  : false,
                 bind      : {
                     hidden : '{hideAllocated}'
                 }
@@ -126,6 +136,7 @@ Ext.define('Shopping.view.cart.List', {
                 width     : 80,
                 align     : 'right',
                 dataIndex : 'price',
+                sortable  : false,
                 renderer  : function (value) {
                     return Ext.util.Format.number(value, '0,0.00');
                 }
@@ -135,6 +146,7 @@ Ext.define('Shopping.view.cart.List', {
                 width           : 85,
                 align           : 'right',
                 dataIndex       : 'extended_price',
+                sortable        : false,
                 renderer        : function (value) {
                     return Ext.util.Format.number(value, '0,0.00');
                 },
@@ -147,6 +159,7 @@ Ext.define('Shopping.view.cart.List', {
                 action   : 'removecartitem',
                 width    : 30,
                 align    : 'center',
+                sortable : false,
                 renderer : function (value, meta, rec, rowIndex, colIndex, store) {
                     if (store.getCount() > 1) {
                         return '<span data-qtip="Remove" class="vvicon-in-cell vvicon-cross"><span>';
@@ -156,11 +169,12 @@ Ext.define('Shopping.view.cart.List', {
             }]);
         } else {
             cols = Ext.Array.merge(cols, [{
-                text            : 'Ordered',
+                text            : 'Release',
                 width           : 75,
                 align           : 'right',
-                dataIndex       : 'quantity',
+                dataIndex       : 'viewReleaseQty',
                 summaryType     : 'sum',
+                sortable        : false,
                 summaryRenderer : function (value) {
                     return Ext.String.format('<b>{0}</b>', value);
                 }
@@ -169,6 +183,7 @@ Ext.define('Shopping.view.cart.List', {
                 flex      : 1,
                 align     : 'right',
                 dataIndex : 'price',
+                sortable  : false,
                 renderer  : function (value) {
                     return Ext.util.Format.number(value, '0,0.00');
                 }
@@ -178,6 +193,7 @@ Ext.define('Shopping.view.cart.List', {
                 flex            : 1,
                 align           : 'right',
                 dataIndex       : 'extended_price',
+                sortable        : false,
                 renderer        : function (value) {
                     return Ext.util.Format.number(value, '0,0.00');
                 },

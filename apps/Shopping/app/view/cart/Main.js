@@ -77,25 +77,22 @@ Ext.define('Shopping.view.cart.Main', {
                 }]
             }, {
                 text    : 'Continue Shopping',
-                // cls      : 'btn-shopping',
-                // focusCls : 'btn-shopping',
-                // overCls  : 'btn-shopping-over',
                 ui      : 'white',
                 handler : 'onClickBack'
-            }, {
-                text      : 'Clear Order',
-                maskMsg   : 'Clearing Cart',
-                ui        : 'white',
-                listeners : {
-                    click : 'onClickClear'
-                }
-            }, {
-                text      : 'Save',
-                ui        : 'white',
-                maskMsg   : 'Saving Order',
-                listeners : {
-                    click : 'onClickSave'
-                }
+            // }, {
+            //     text      : 'Clear Order',
+            //     maskMsg   : 'Clearing Cart',
+            //     ui        : 'white',
+            //     listeners : {
+            //         click : 'onClickClear'
+            //     }
+            // }, {
+            //     text      : 'Save',
+            //     ui        : 'white',
+            //     maskMsg   : 'Saving Order',
+            //     listeners : {
+            //         click : 'onClickSave'
+            //     }
             }, {
                 text      : 'Deposit',
                 ui        : 'white',
@@ -117,13 +114,6 @@ Ext.define('Shopping.view.cart.Main', {
         items  : [{
             xtype : 'tbfill'
         }, {
-            text    : 'Continue Shopping',
-            // cls      : 'btn-shopping',
-            // focusCls : 'btn-shopping',
-            // overCls  : 'btn-shopping-over',
-            ui      : 'white',
-            handler : 'onClickBack'
-        }, {
             text    : 'Clear Order',
             ui      : 'white',
             maskMsg : 'Clearing Cart',
@@ -133,21 +123,6 @@ Ext.define('Shopping.view.cart.Main', {
             ui      : 'white',
             action  : 'savecart',
             maskMsg : 'Saving Order'
-        }, {
-            text    : 'Deposit',
-            action  : 'deposit',
-            maskMsg : 'Setting up Deposit'
-            // }, {
-            //     text     : 'Checkout',
-            //     action   : 'checkout',
-            //     maskMsg  : 'Checking Out',
-            //     cls      : 'btn-checkout',
-            //     overCls  : 'btn-checkout-over',
-            //     focusCls : 'btn-checkout'
-        }, {
-            text    : 'Release',
-            ui      : 'blue',
-            handler : 'onClickRelease'
         }]
     },
     initComponent : function () {
@@ -161,6 +136,9 @@ Ext.define('Shopping.view.cart.Main', {
     buildItems : function (opts) {
         return [{
             xtype     : 'cartlist',
+            bind      : {
+                store : '{cartItems}'
+            },
             minHeight : 80
         }, {
             xtype       : 'cartform',

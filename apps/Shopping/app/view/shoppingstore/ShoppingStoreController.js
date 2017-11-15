@@ -46,6 +46,14 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         });
     },
 
+    initViewModel : function (vm) {
+        var me               = this,
+            releaseCartItems = vm.getStore('ReleaseItems'),
+            cartItems        = vm.getStore('cartItems');
+
+        releaseCartItems.setSource(cartItems);
+    },
+
     agentSelected : function (content) {
         var me           = this,
             vm           = me.getViewModel(),
@@ -292,7 +300,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
         Valence.common.util.Helper.loadMask({
             renderTo : cmp.el,
-            text : 'Loading'
+            text     : 'Loading'
         });
 
         Ext.Ajax.request({
@@ -424,7 +432,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
         Valence.common.util.Helper.loadMask({
             renderTo : body,
-            text : 'Loading'
+            text     : 'Loading'
         });
 
         store.clearFilter();
@@ -470,7 +478,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
         Valence.common.util.Helper.loadMask({
             renderTo : exCartListWindow.el,
-            text : 'Loading Cart'
+            text     : 'Loading Cart'
         });
 
         // Add active cart number if exists to release cart on the server

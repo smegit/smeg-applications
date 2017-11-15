@@ -46,6 +46,10 @@ Ext.define('Shopping.model.CartItem', {
                     delivered = rec.get('delivered');
                 return qty - delivered;
             }
+        },
+        {
+            name    : 'viewReleaseQty',
+            type    : 'int'
         }
     ],
     proxy      : {

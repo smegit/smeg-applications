@@ -92,7 +92,7 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                     displayField    : 'PAYMDSC',
                     valueField      : 'PAYMCOD',
                     enableKeyEvents : true,
-                    value           : 'CSH',
+                    value           : 'CC',
                     listeners       : {
                         scope  : me,
                         change : function (combo, value) {
@@ -136,19 +136,32 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                     hideTrigger      : true,
                     itemId           : 'payAmtFld',
                     decimalPrecision : 2,
-                    labelWidth       : 120
+                    labelWidth       : 120,
+                    listeners        : {
+                        specialkey : 'onSpecialKeyPaymentForm'
+                    }
                 }, {
                     xtype      : 'textfield',
                     fieldLabel : 'Approval Number',
                     allowBlank : false,
                     name       : 'OAPAYAPN',
                     hidden     : true,
+                    disabled   : true,
                     itemId     : 'approvalNumber',
-                    labelWidth : 120
+                    labelWidth : 120,
+                    listeners  : {
+                        hide       : function (cmp) {
+                            cmp.disable();
+                        },
+                        show       : function (cmp) {
+                            cmp.enable();
+                        },
+                        specialkey : 'onSpecialKeyPaymentForm'
+                    }
                 }, {
                     xtype     : 'container',
                     margin    : 0,
-                    hidden    : true,
+                    hidden    : false,
                     defaults  : {
                         xtype      : 'textfield',
                         margin     : '5 0 5 0',
@@ -205,7 +218,10 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                             maxValue  : 12,
                             value     : new Date().getMonth() + 1,
                             width     : 70,
-                            margin    : '0 5 0 0'
+                            margin    : '0 5 0 0',
+                            listeners       : {
+                                specialkey : 'onSpecialKeyPaymentForm'
+                            }
                         }, {
                             xtype     : 'numberfield',
                             name      : 'CCEY',
@@ -213,7 +229,10 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                             minValue  : new Date().getFullYear(),
                             maxValue  : 9999,
                             value     : new Date().getFullYear(),
-                            width     : 95
+                            width     : 95,
+                            listeners       : {
+                                specialkey : 'onSpecialKeyPaymentForm'
+                            }
                         }]
                     }, {
                         name            : 'CVS',
