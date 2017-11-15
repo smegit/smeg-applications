@@ -22,6 +22,12 @@ Ext.define('Shopping.view.cart.List', {
         edit      : 'onCellEditList',
         viewready : 'onViewReadyList'
     },
+    header : {
+        bind : {
+            hidden : '{hideOrdKey}',
+            title  : '{ordKeyText}'
+        }
+    },
     initComponent : function () {
         var me = this;
 
@@ -123,7 +129,7 @@ Ext.define('Shopping.view.cart.List', {
                 }
             }, {
                 text      : 'Allocated',
-                flex      : 1,
+                width     : 70,
                 align     : 'right',
                 dataIndex : 'allocated',
                 sortable  : false,

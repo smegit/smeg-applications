@@ -56,6 +56,15 @@
       cursor:pointer!important;
     }
   }
+  .x-panel-header-background-horizontal.x-header-noborder{
+    padding: 3px 17px 0px 17px;
+  }
+  .x-panel-header-title-background{
+    font-size:14px;
+  }
+  .x-column-header-over{
+    background-color: inherit!important;
+  }
 }
 
 .x-grid-row-summary .x-grid-cell {

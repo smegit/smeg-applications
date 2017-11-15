@@ -27,7 +27,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
             return Ext.isEmpty(get('activeCartNumber'));
         },
         ordKeyText        : function (get) {
-            return 'Order: ' + get('activeCartNumber');
+            return 'Order - ' + get('activeCartNumber');
         },
         stkLocation       : function (get) {
             return get('STKLOC') || get('STKDFT');

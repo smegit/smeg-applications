@@ -45,18 +45,18 @@ Ext.define('Shopping.view.cart.Main', {
                     flex : 1
                 },
                 items    : [{
-                    xtype   : 'tbtext',
-                    cls     : 'fld-in-header',
-                    padding : 6,
-                    style   : {
-                        'font-weight' : 500,
-                        'font-size'   : '16px'
-                    },
-                    bind    : {
-                        hidden : '{hideOrdKey}',
-                        html   : '{ordKeyText}'
-                    }
-                }, {
+                    //     xtype   : 'tbtext',
+                    //     cls     : 'fld-in-header',
+                    //     padding : 6,
+                    //     style   : {
+                    //         'font-weight' : 500,
+                    //         'font-size'   : '16px'
+                    //     },
+                    //     bind    : {
+                    //         hidden : '{hideOrdKey}',
+                    //         html   : '{ordKeyText}'
+                    //     }
+                    // }, {
                     xtype          : 'combo',
                     cls            : 'fld-in-header',
                     queryMode      : 'local',
@@ -76,7 +76,7 @@ Ext.define('Shopping.view.cart.Main', {
                         value : '{STKDFT}'
                     }
                 }]
-            }, {
+            }, '->', {
                 text    : 'Continue Shopping',
                 ui      : 'white',
                 handler : 'onClickBack'
@@ -151,15 +151,15 @@ Ext.define('Shopping.view.cart.Main', {
                 type  : 'hbox',
                 align : 'stretch'
             },
-            bind : {
+            bind   : {
                 hidden : '{!orderHasPayments}'
             },
             items  : [{
                 xtype : 'component',
                 flex  : 1
             }, {
-                xtype : 'component',
-                bind  : {
+                xtype     : 'component',
+                bind      : {
                     html : '{orderPaymentsInfo}'
                 },
                 listeners : {
