@@ -61,7 +61,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         },
         orderNotesInfo : function (get) {
             return '<div class="cart-ord-info">' +
-                '  <span data-qtip="Notes" class="ord-info-cnt"><span class="ord-info-icon vvicon-notebook"></span><span class="ord-info-lbl">Notes</span></span>' +
+                '  <span data-qtip="Notes" class="ord-info-cnt"><span class="ord-info-icon vvicon-notebook"></span><span class="x-form-item-label-default ord-info-lbl">Notes</span></span>' +
                 '</div>';
         },
         orderHasPayments  : function (get) {
