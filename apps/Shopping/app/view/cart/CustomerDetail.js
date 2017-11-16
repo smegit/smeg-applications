@@ -5,6 +5,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
     requires : [
         'Ext.form.FieldContainer',
         'Ext.form.FieldSet',
+        'Ext.form.Label',
         'Ext.form.field.Text',
         'Ext.layout.container.HBox'
     ],
@@ -20,7 +21,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
         var me = this;
 
         Ext.apply(me, {
-            items     : me.buildItems(me.cartOptions)
+            items : me.buildItems(me.cartOptions)
         });
         me.callParent(arguments);
     },
@@ -56,7 +57,6 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 name         : 'OACSTST1',
                 gApiAddrType : 'baseAddressLine1',
                 fieldLabel   : 'Address',
-                emptyText    : 'Street Address 2',
                 allowBlank   : false,
                 bind         : {
                     value : '{cartValues.OACSTST1}'
@@ -69,7 +69,6 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 fieldLabel     : '&nbsp;',
                 labelSeparator : '',
                 addressLine2   : true,
-                emptyText      : 'Street Address 2',
                 bind           : {
                     value : '{cartValues.OACSTST2}'
                 }
@@ -164,7 +163,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 }]
             }, {
                 name       : 'OACSTEML',
-                fieldLabel : 'Email Address',
+                fieldLabel : 'Email',
                 vtype      : 'email',
                 margin     : '0 0 8 0',
                 allowBlank : false,
@@ -202,7 +201,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
             items          : [{
                 name       : 'OADELNAM',
                 fieldLabel : 'Name',
-                bind : {
+                bind       : {
                     value : {
                         single : me.release,
                         bindTo : '{cartValues.OADELNAM}'
@@ -213,9 +212,8 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 name         : 'OADELST1',
                 gApiAddrType : 'baseAddressLine1',
                 fieldLabel   : 'Address',
-                emptyText    : 'Street Address 1',
                 allowBlank   : false,
-                bind : {
+                bind         : {
                     value : {
                         single : me.release,
                         bindTo : '{cartValues.OADELST1}'
@@ -229,8 +227,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 fieldLabel     : '&nbsp;',
                 labelSeparator : '',
                 addressLine2   : true,
-                emptyText      : 'Street Address 2',
-                bind : {
+                bind           : {
                     value : {
                         single : me.release,
                         bindTo : '{cartValues.OADELST2}'
@@ -257,7 +254,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                     gApiAddrAttr : 'long_name',
                     emptyText    : 'City',
                     flex         : 1,
-                    bind : {
+                    bind         : {
                         value : {
                             single : me.release,
                             bindTo : '{cartValues.OADELCTY}'
@@ -271,7 +268,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                     gApiAddrAttr : 'short_name',
                     emptyText    : 'State',
                     width        : 50,
-                    bind : {
+                    bind         : {
                         value : {
                             single : me.release,
                             bindTo : '{cartValues.OADELSTA}'
@@ -284,7 +281,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                     gApiAddrAttr : 'long_name',
                     emptyText    : 'Post Code',
                     width        : 73,
-                    bind : {
+                    bind         : {
                         value : {
                             single : me.release,
                             bindTo : '{cartValues.OADELPST}'
@@ -298,7 +295,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 fieldLabel     : '&nbsp;',
                 labelSeparator : '',
                 emptyText      : 'Country',
-                bind : {
+                bind           : {
                     value : {
                         single : me.release,
                         bindTo : '{cartValues.OADELCOU}'
@@ -306,33 +303,34 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 }
             }, {
                 xtype     : 'fieldcontainer',
-                hideLabel : true,
                 layout    : {
                     type  : 'hbox',
                     align : 'stretch'
                 },
+                hideLabel : true,
                 defaults  : {
                     xtype     : 'textfield',
                     hideLabel : true,
                     flex      : 1
                 },
                 items     : [{
+                    flex  : 0,
+                    xtype : 'label',
+                    text  : 'Phone:',
+                    cls   : 'x-form-item-label x-form-item-label-default',
+                    width : me.baseLabelWidth + 5
+                }, {
                     name       : 'OADELPH1',
-                    emptyText  : 'Daytime',
-                    hideLabel  : false,
-                    fieldLabel : 'Phone',
-                    labelWidth : me.baseLabelWidth,
                     allowBlank : false,
                     margin     : '0 16 0 0',
-                    bind : {
+                    bind       : {
                         value : {
                             single : me.release,
                             bindTo : '{cartValues.OADELPH1}'
                         }
                     }
                 }, {
-                    name      : 'OADELPH2',
-                    emptyText : 'After Hours',
+                    name : 'OADELPH2',
                     bind : {
                         value : {
                             single : me.release,
@@ -342,10 +340,10 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 }]
             }, {
                 name       : 'OADELEML',
-                fieldLabel : 'Email Address',
+                fieldLabel : 'Email',
                 margin     : '0 0 8 0',
                 vtype      : 'email',
-                bind : {
+                bind       : {
                     value : {
                         single : me.release,
                         bindTo : '{cartValues.OADELEML}'
@@ -355,15 +353,21 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
             listeners      : {
                 scope          : me,
                 afterrender    : function (cmp) {
-                    var cartValues = this.lookupViewModel().get('cartValues');
+                    var cartValues = this.lookupViewModel().get('cartValues'),
+                        checkbox   = this.down('#deliveryChkbox');
 
                     if (!Ext.isEmpty(cartValues) && !Ext.isEmpty(cartValues.OADELST1)) {
+                        checkbox.setValue(true);
                         cmp.setExpanded(true);
+                    } else {
+                        checkbox.setValue(false);
+                        cmp.setExpanded(false);
                     }
                 },
                 beforecollapse : function (cmp) {
                     var fields     = cmp.query('field'),
                         containers = cmp.query('fieldcontainer'),
+                        labels     = cmp.query('label'),
                         regex      = new RegExp('checkbox', "i"),
                         field;
 
@@ -374,6 +378,10 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                         }
                     }
 
+                    for (var ii = 0; ii < labels.length; ii++) {
+                        labels[ii].addCls('cart-del-lbl-disabled');
+                    }
+
                     for (var ii = 0; ii < containers.length; ii++) {
                         containers[ii].setDisabled(false);
                     }
@@ -382,6 +390,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 beforeexpand   : function (cmp) {
                     var fields     = cmp.query('field'),
                         containers = cmp.query('fieldcontainer'),
+                        labels     = cmp.query('label'),
                         regex      = new RegExp('checkbox', "i"),
                         field;
                     for (var i = 0; i < fields.length; i++) {
@@ -389,6 +398,9 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                         if (!regex.test(field.xtype)) {
                             field.setDisabled(false);
                         }
+                    }
+                    for (var ii = 0; ii < labels.length; ii++) {
+                        labels[ii].removeCls('cart-del-lbl-disabled');
                     }
                     for (var ii = 0; ii < containers.length; ii++) {
                         containers[ii].setDisabled(false);

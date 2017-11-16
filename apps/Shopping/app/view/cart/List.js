@@ -22,7 +22,7 @@ Ext.define('Shopping.view.cart.List', {
         edit      : 'onCellEditList',
         viewready : 'onViewReadyList'
     },
-    header : {
+    header        : {
         bind : {
             hidden : '{hideOrdKey}',
             title  : '{ordKeyText}'
@@ -111,7 +111,7 @@ Ext.define('Shopping.view.cart.List', {
                     return Ext.String.format('<b>{0}</b>', value);
                 }
             }, {
-                text            : 'Release',
+                text            : '<div data-qtip="Enter partial delivery.">Release</div>',
                 dataIndex       : 'release',
                 sortable        : false,
                 width           : 70,
@@ -119,9 +119,13 @@ Ext.define('Shopping.view.cart.List', {
                 editor          : {
                     xtype : 'numberfield'
                 },
-                renderer        : function (v, meta) {
-                    meta.tdCls += ' editable-column';
-                    return v;
+                renderer        : function (v, meta, rec) {
+                    var outstanding = rec.get('outstanding');
+                    if (!Ext.isEmpty(outstanding) && outstanding > 0){
+                        meta.tdCls += ' editable-column';
+                        return '<div data-qtip="Enter partial delivery.">' + v + '</div>';
+                    }
+                    return 0;
                 },
                 summaryType     : 'sum',
                 summaryRenderer : function (value) {
@@ -224,6 +228,7 @@ Ext.define('Shopping.view.cart.List', {
                 ptype        : 'cellediting',
                 clicksToEdit : 1,
                 listeners    : {
+                    beforeedit : 'onBeforeEditList',
                     validateedit : 'onValidateEditList'
                 }
             }];

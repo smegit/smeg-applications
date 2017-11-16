@@ -291,14 +291,12 @@ Ext.define('Shopping.view.cart.CartController', {
 
             for (var i = 0; i < storeCount; i++) {
                 product = store.getAt(i).getData();
-                if (product.quantity !== product.delivered) {
-                    prodArray.push({
-                        OBITM  : product.product_id,
-                        OBQTYO : product.quantity,
-                        OBUPRC : product.price,
-                        OBQTYR : (standardOrder) ? product.outstanding : product.release
-                    });
-                }
+                prodArray.push({
+                    OBITM  : product.product_id,
+                    OBQTYO : product.quantity,
+                    OBUPRC : product.price,
+                    OBQTYR : (standardOrder) ? product.outstanding : product.release
+                });
             }
 
             //remove the address search fields if in the values object
@@ -386,11 +384,17 @@ Ext.define('Shopping.view.cart.CartController', {
             view             = me.getView(),
             store            = view.lookupViewModel(true).getStore('cartItems'),
             outstandingItems = store.queryBy(function (rec) {
-                if (!Ext.isEmpty(rec.get('outstanding')) && rec.get('outstanding') > 0) {
+                var outstanding = rec.get('outstanding');
+                if (!Ext.isEmpty(outstanding) && outstanding > 0) {
                     return true;
                 }
             }),
-            releaseZeroItems = store.query('release', 0, 0, false, false, true);
+            releaseZeroItems = store.queryBy(function (rec) {
+                var outstanding = rec.get('outstanding');
+                    if (!Ext.isEmpty(outstanding) && outstanding > 0 && rec.get('release') == 0) {
+                        return true;
+                    }
+            });
 
         return (outstandingItems.getCount() === releaseZeroItems.getCount()) ? true : false;
     },
@@ -398,7 +402,7 @@ Ext.define('Shopping.view.cart.CartController', {
     /**
      * onActivate - setup the cart view.
      */
-    onActivate : function () {
+    onActivate : function () { //johnny!
         var me          = this,
             vm          = me.getViewModel(),
             view        = me.getView(),
@@ -435,7 +439,7 @@ Ext.define('Shopping.view.cart.CartController', {
 
         //google api auto places a place holder on the element. Stop it by adding the attribute
         //
-        input.dom.placeholder = 'Street Address 1';
+        input.dom.placeholder = 'Street';
 
         cmp.googleAutoComplete = new google.maps.places.Autocomplete(
             document.getElementById(input.id),
@@ -462,6 +466,17 @@ Ext.define('Shopping.view.cart.CartController', {
                 .then(function () {
                     Valence.common.util.Helper.destroyLoadMask();
                 });
+        }
+    },
+
+    onBeforeEditList : function(editor, context){
+        var me = this,
+            field = context.field,
+            rec = context.record,
+            outstanding = rec.get('outstanding');
+
+        if (field === 'release' && (Ext.isEmpty(outstanding) || outstanding == 0)){
+            return false;
         }
     },
 
@@ -734,9 +749,14 @@ Ext.define('Shopping.view.cart.CartController', {
             fld   = context.column.field;
 
         if (context.field === 'release') {
+            var outstanding = rec.get('outstanding');
             fld.markInvalid(null);
-            if (!Ext.isEmpty(value) && value > rec.get('quantity')) {
-                fld.markInvalid('Quantity is greater than release');
+            if (!Ext.isEmpty(value) && Ext.isEmpty(outstanding)) {
+                fld.markInvalid('No outstanding items');
+                return false;
+            }
+            if (!Ext.isEmpty(value) && value > outstanding) {
+                fld.markInvalid('Value must be equal or less than outstanding');
                 return false;
             }
         } else if (context.field === 'quantity') {
@@ -946,8 +966,9 @@ Ext.define('Shopping.view.cart.CartController', {
      * resetCart - reset the cart "list, form, view model"
      */
     resetCart : function () {
-        var me = this,
-            vm = me.getViewModel();
+        var me       = this,
+            vm       = me.getViewModel(),
+            cartForm = Ext.ComponentQuery.query('cartform')[0];
 
         me.releaseCart();
 
@@ -961,8 +982,8 @@ Ext.define('Shopping.view.cart.CartController', {
         });
 
         vm.notify();
-
-        Ext.ComponentQuery.query('cartform')[0].reset();
+        cartForm.down('#deliveryChkbox').setValue(false);
+        cartForm.reset();
     },
 
     /**

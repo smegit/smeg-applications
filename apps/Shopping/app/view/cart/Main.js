@@ -102,9 +102,9 @@ Ext.define('Shopping.view.cart.Main', {
                     click : 'onClickDeposit'
                 }
             }, {
-                text    : 'Release',
+                text    : 'Checkout',
                 ui      : 'blue',
-                maskMsg : 'Setting up Release',
+                maskMsg : 'Setting up Checkout',
                 handler : 'onClickRelease'
             }]
     },
