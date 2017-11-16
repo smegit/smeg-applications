@@ -19,7 +19,11 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         hideBannerText        : true,
         bannerText            : '',
         deliveryDisabledDates : null, //Example exclude one day ['25/12/2017']
-        deliveryDisabledDays  : null //Example [0, 6] would be excluding weekends
+        deliveryDisabledDays  : null, //Example [0, 6] would be excluding weekends
+        orderNotes            : {
+            notes : ['do it']
+        },
+        orderPayments         : null
     },
 
     formulas : {
@@ -49,13 +53,18 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
                     }
                 }
             }
-            return '<div class="cart-pym-info">'+
-                   '  <span class="x-form-item-label-default pym-lbl">Paid:</span><span class="pym-val">' + Ext.util.Format.currency(paid) + '</span>'+
-                   '  <span class="x-form-item-label-default pym-lbl">Balance:</span><span class="pym-val">' + Ext.util.Format.currency(balance) + '</span>'+
-                   '  <span data-qtip="View Payments" class="pym-info-cnt"><span class="pym-info-icon vvicon-info"></span></span>'+
-                   '</div>';
+            return '<div class="cart-pym-info">' +
+                '  <span class="x-form-item-label-default pym-lbl">Paid:</span><span class="pym-val">' + Ext.util.Format.currency(paid) + '</span>' +
+                '  <span class="x-form-item-label-default pym-lbl">Balance:</span><span class="pym-val">' + Ext.util.Format.currency(balance) + '</span>' +
+                '  <span data-qtip="View Payments" class="pym-info-cnt"><span class="pym-info-icon vvicon-info"></span></span>' +
+                '</div>';
         },
-        orderHasPayments : function(get){
+        orderNotesInfo : function (get) {
+            return '<div class="cart-ord-info">' +
+                '  <span data-qtip="Notes" class="ord-info-cnt"><span class="ord-info-icon vvicon-notebook"></span><span class="ord-info-lbl">Notes</span></span>' +
+                '</div>';
+        },
+        orderHasPayments  : function (get) {
             var paymentsResp = get('orderPayments'),
                 payments     = (!Ext.isEmpty(paymentsResp) && !Ext.isEmpty(paymentsResp.PaySum)) ? paymentsResp.PaySum : null,
                 paymentFound = false;

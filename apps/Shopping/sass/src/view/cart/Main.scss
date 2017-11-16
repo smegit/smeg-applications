@@ -57,7 +57,7 @@
 
 .cart-pym-info {
   margin-top: 12px;
-  padding:3px;
+  padding: 3px;
   text-align: right;
   min-width: 300px;
   .pym-lbl {
@@ -76,7 +76,7 @@
       right: -1px;
       top: 12px;
       margin-right: 8px;
-      margin-top:3px;
+      margin-top: 3px;
       font-size: 16px !important;
       text-align: center;
       line-height: 16px !important;
@@ -85,7 +85,31 @@
     }
   }
 }
+
+.cart-ord-info {
+  margin-top: 12px;
+  padding: 3px;
+  .ord-info-cnt {
+    display: inline-block;
+    .ord-info-icon {
+      position: absolute;
+      top: 12px;
+      margin-right: 8px;
+      margin-top: 3px;
+      font-size: 16px !important;
+      text-align: center;
+      line-height: 16px !important;
+      cursor: pointer;
+      color: rgba(0, 0, 0, 0.54);
+    }
+    .ord-info-lbl {
+      margin-left: 24px;
+      font-weight: 500;
+    }
+  }
+}
+
 /*google address lookup */
-.pac-container{
-  z-index:99999;
+.pac-container {
+  z-index: 99999;
 }

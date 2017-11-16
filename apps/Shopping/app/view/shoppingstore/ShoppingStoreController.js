@@ -541,14 +541,14 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     delvDate   = Ext.Date.parse(formValues.OADELD, 'Y-m-d');
                     todayDate  = Ext.Date.parse(Ext.util.Format.date(new Date(), 'Y-m-d'), 'Y-m-d');
                     ninetyDate = new Date();
-                    ninetyDate.setDate(ninetyDate.getDate() + 90);
+                    ninetyDate.setDate(ninetyDate.getDate() + 200);
 
                     // convert to time since epoch
                     delvDate   = delvDate.getTime();
                     todayDate  = todayDate.getTime();
                     ninetyDate = ninetyDate.getTime();
 
-                    if (delvDate < todayDate || delvDate > ninetyDate) {
+                    if (delvDate > ninetyDate) {
                         formValues.OADELD = null;
                     }
 

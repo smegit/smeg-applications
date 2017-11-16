@@ -118,15 +118,27 @@ Ext.define('Shopping.view.cart.Main', {
                 align : 'stretch'
             },
             bind   : {
-                hidden : '{!orderHasPayments}'
+                hidden : '{!orderHasInfo}'
             },
             items  : [{
+                xtype     : 'component',
+                bind      : {
+                    hidden : '{!orderHasNotes}',
+                    html   : '{orderNotesInfo}'
+                },
+                listeners : {
+                    el : {
+                        click : 'onClickNotes'
+                    }
+                }
+            }, {
                 xtype : 'component',
                 flex  : 1
             }, {
                 xtype     : 'component',
                 bind      : {
-                    html : '{orderPaymentsInfo}'
+                    hidden : '{!orderHasPayments}',
+                    html   : '{orderPaymentsInfo}'
                 },
                 listeners : {
                     el : {
