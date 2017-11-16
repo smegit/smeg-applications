@@ -23,6 +23,8 @@ Ext.define('Shopping.view.cart.CartController', {
         var me       = this,
             appFrame = Shopping.util.Helper.getApp();
 
+        me.requiredFieldMsg = 'Please fill in all required sections';
+
         Shopping.getApplication().on({
             scope     : me,
             resetcart : 'onResetCart'
@@ -272,15 +274,12 @@ Ext.define('Shopping.view.cart.CartController', {
     getCartInformation : function () {
         var me           = this,
             view         = me.getView(),
+            valid        = me.isFormValid(),
             releaseItems = view.down('cartrelease'),
             form         = (Ext.isEmpty(releaseItems)) ? view.down('cartform') : releaseItems.down('cartform');
 
-        if (!form.isValid()) {
-            Valence.util.Helper.showSnackbar('Please fill in all required sections');
-            var fieldInError = form.down('field{isValid()===false}');
-            if (!Ext.isEmpty(fieldInError)) {
-                fieldInError.focus();
-            }
+        if (!valid) {
+            Valence.util.Helper.showSnackbar(me.requiredFieldMsg);
             return null;
         } else {
             var formData      = form.getValues(),
@@ -373,6 +372,39 @@ Ext.define('Shopping.view.cart.CartController', {
         });
 
         return deferred.promise;
+    },
+
+    isFormValid : function () {
+        var me           = this,
+            view         = me.getView(),
+            releaseItems = view.down('cartrelease'),
+            form         = (Ext.isEmpty(releaseItems)) ? view.down('cartform') : releaseItems,
+            valid        = form.isValid(),
+            fieldInError = (!valid) ? form.down('field{isValid()===false}') : null;
+
+        if (Ext.isEmpty(fieldInError)) {
+            var flwDate      = me.lookupReference('followUpDte'),
+                flwDateValue = flwDate.getValue(),
+                flwMsg       = me.lookupReference('followUpMsg'),
+                flwMsgValue  = flwMsg.getValue(),
+                msg          = 'This field is required',
+                markInvaild  = function (fld) {
+                    fld.markInvalid(msg);
+                    fld.focus();
+                    valid = false;
+                }
+            //check to see if followup info was set and set correctly
+            //
+            if (!Ext.isEmpty(flwDateValue) && Ext.isEmpty(flwMsgValue)) {
+                markInvaild(flwMsg);
+            } else if (Ext.isEmpty(flwDateValue) && !Ext.isEmpty(flwMsgValue)) {
+                markInvaild(flwDate);
+            }
+        } else {
+            fieldInError.focus();
+        }
+
+        return valid;
     },
 
     /**
@@ -563,18 +595,15 @@ Ext.define('Shopping.view.cart.CartController', {
      * @param cmp
      */
     onClickDeposit : function (cmp) {
-        var me           = this,
-            view         = me.getView(),
-            form         = view.down('cartform'),
-            valid        = form.isValid(),
-            fieldInError = (!valid) ? form.down('field{isValid()===false}') : null;
+        var me    = this,
+            valid = me.isFormValid();
 
-        if (Ext.isEmpty(fieldInError)) {
+        if (valid) {
             me.depositRelease(cmp, 'deposit')
                 .then(Ext.bind(me.getPayments, me))
                 .then(Ext.bind(me.requestPayment, me));
         } else {
-            fieldInError.focus();
+            Valence.util.Helper.showSnackbar(me.requiredFieldMsg);
         }
     },
 
@@ -583,13 +612,11 @@ Ext.define('Shopping.view.cart.CartController', {
      * @param cmp
      */
     onClickRelease : function (cmp) {
-        var me           = this,
-            view         = me.getView(),
-            form         = view.down('cartform'),
-            valid        = form.isValid(),
-            fieldInError = (!valid) ? form.down('field{isValid()===false}') : null;
+        var me    = this,
+            view  = me.getView(),
+            valid = me.isFormValid();
 
-        if (Ext.isEmpty(fieldInError)) {
+        if (valid) {
             me.depositRelease(cmp, 'checkout')
                 .then(function (content) {
                     //check if all release values are zero
@@ -620,7 +647,7 @@ Ext.define('Shopping.view.cart.CartController', {
                     }).show();
                 });
         } else {
-            fieldInError.focus();
+            Valence.util.Helper.showSnackbar(me.requiredFieldMsg);
         }
     },
 

@@ -116,7 +116,7 @@ Ext.define('Shopping.view.cart.Print', {
     onEmailOrder : function (emailWindow, emailInfo) {
         var me        = this,
             params    = {
-                pgm      : 'EC1050',
+                pgm      : 'EC1065',
                 action   : 'emailOrder',
                 OAORDKEY : me.orderData.OAORDKEY
             },
@@ -132,30 +132,28 @@ Ext.define('Shopping.view.cart.Print', {
             };
 
         Ext.apply(params, emailInfo);
-        console.log('would send : ', params);
-        emailWindow.close();
 
-        // Valence.common.util.Helper.loadMask('Emailing');
-        //
-        // Ext.Ajax.request({
-        //     url     : '/valence/vvcall.pgm',
-        //     params  : params,
-        //     scope   : me,
-        //     success : function (r) {
-        //         var d = Ext.decode(r.responseText);
-        //         if (d.success) {
-        //             emailWindow.close();
-        //             Valence.util.Helper.showSnackbar('Email sent');
-        //         } else {
-        //             showError(d);
-        //             Valence.common.util.Helper.destroyLoadMask();
-        //         }
-        //     },
-        //     failure : function (r) {
-        //         var d = Ext.decode(r.responseText);
-        //         Valence.common.util.Helper.destroyLoadMask();
-        //         showError(d);
-        //     }
-        // });
+        Valence.common.util.Helper.loadMask('Emailing');
+
+        Ext.Ajax.request({
+            url     : '/valence/vvcall.pgm',
+            params  : params,
+            scope   : me,
+            success : function (r) {
+                var d = Ext.decode(r.responseText);
+                Valence.common.util.Helper.destroyLoadMask();
+                if (d.success) {
+                    emailWindow.close();
+                    Valence.util.Helper.showSnackbar('Email sent');
+                } else {
+                    showError(d);
+                }
+            },
+            failure : function (r) {
+                var d = Ext.decode(r.responseText);
+                Valence.common.util.Helper.destroyLoadMask();
+                showError(d);
+            }
+        });
     }
 });

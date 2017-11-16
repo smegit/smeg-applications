@@ -552,6 +552,12 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                         formValues.OADELD = null;
                     }
 
+                    //check for follow-up date and if null clear it
+                    //
+                    if (!Ext.isEmpty(formValues.OAFUDT) && formValues.OAFUDT === '0001-01-01'){
+                        formValues.OAFUDT = null;
+                    }
+
                     // get stock location
                     //
                     vm.set('STKLOC', formValues.OASTKLOC);
