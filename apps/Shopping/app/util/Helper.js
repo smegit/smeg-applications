@@ -51,6 +51,12 @@ Ext.define('Shopping.util.Helper', {
         return app;
     },
 
+    getOutstanding : function(rec){
+        var qty       = rec.get('quantity'),
+            delivered = rec.get('delivered');
+        return qty - delivered;
+    },
+
     buildCartTpl : function () {
         return Ext.create("Ext.XTemplate",
             '<div class="container">',

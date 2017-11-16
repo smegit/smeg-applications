@@ -41,13 +41,16 @@ Ext.define('Shopping.view.cart.Payments', {
                 stripRows   : true,
                 columnLines : true
             },
+            hideHeaders : true,
             columns    : {
                 defaults : {
                     sortable     : false,
                     menuDisabled : true
                 },
                 items    : [{
-                    text            : 'Amount',
+                    dataIndex : 'note',
+                    flex      : 3
+                },{
                     dataIndex       : 'amount',
                     align           : 'right',
                     flex            : 1,
@@ -58,9 +61,6 @@ Ext.define('Shopping.view.cart.Payments', {
                     summaryRenderer : function (value) {
                         return Ext.String.format('<b>{0}</b>', Ext.util.Format.currency(value));
                     }
-                }, {
-                    dataIndex : 'note',
-                    flex      : 3
                 }]
             }
         }];

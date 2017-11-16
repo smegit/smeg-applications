@@ -5,7 +5,8 @@ Ext.define('Shopping.view.cart.List', {
     requires      : [
         'Ext.form.field.Number',
         'Ext.grid.feature.Summary',
-        'Ext.grid.plugin.CellEditing'
+        'Ext.grid.plugin.CellEditing',
+        'Shopping.util.Helper'
     ],
     countInTitle  : false,
     ui            : 'background',
@@ -106,6 +107,9 @@ Ext.define('Shopping.view.cart.List', {
                 sortable        : false,
                 width           : 90,
                 align           : 'right',
+                // renderer        : function(v, meta, rec){
+                //     return Shopping.util.Helper.getOutstanding(rec);
+                // },
                 summaryType     : 'sum',
                 summaryRenderer : function (value) {
                     return Ext.String.format('<b>{0}</b>', value);
@@ -120,8 +124,8 @@ Ext.define('Shopping.view.cart.List', {
                     xtype : 'numberfield'
                 },
                 renderer        : function (v, meta, rec) {
-                    var outstanding = rec.get('outstanding');
-                    if (!Ext.isEmpty(outstanding) && outstanding > 0){
+                    var outstanding = Shopping.util.Helper.getOutstanding(rec);
+                    if (!Ext.isEmpty(outstanding) && outstanding > 0) {
                         meta.tdCls += ' editable-column';
                         return '<div data-qtip="Enter partial delivery.">' + v + '</div>';
                     }
@@ -228,7 +232,8 @@ Ext.define('Shopping.view.cart.List', {
                 ptype        : 'cellediting',
                 clicksToEdit : 1,
                 listeners    : {
-                    beforeedit : 'onBeforeEditList',
+                    beforeedit   : 'onBeforeEditList',
+                    edit         : 'onEditList',
                     validateedit : 'onValidateEditList'
                 }
             }];

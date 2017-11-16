@@ -273,6 +273,7 @@ Ext.define('Shopping.view.cart.CartController', {
      */
     getCartInformation : function () {
         var me           = this,
+            vm = me.getViewModel(),
             view         = me.getView(),
             valid        = me.isFormValid(),
             releaseItems = view.down('cartrelease'),
@@ -282,20 +283,23 @@ Ext.define('Shopping.view.cart.CartController', {
             Valence.util.Helper.showSnackbar(me.requiredFieldMsg);
             return null;
         } else {
-            var formData      = form.getValues(),
+            var formData      = vm.get('cartValues'),
                 store         = view.lookupViewModel(true).getStore('cartItems'),
                 storeCount    = store.getCount(),
                 standardOrder = me.isStandardOrder(),
                 prodArray     = [],
-                product;
+                product, rec;
+
+            Ext.apply(formData, form.getValues());
 
             for (var i = 0; i < storeCount; i++) {
-                product = store.getAt(i).getData();
+                rec = store.getAt(i);
+                product = rec.getData();
                 prodArray.push({
                     OBITM  : product.product_id,
                     OBQTYO : product.quantity,
                     OBUPRC : product.price,
-                    OBQTYR : (standardOrder) ? product.outstanding : product.release
+                    OBQTYR : (standardOrder) ? Shopping.util.Helper.getOutstanding(rec) : product.release
                 });
             }
 
@@ -378,7 +382,7 @@ Ext.define('Shopping.view.cart.CartController', {
         var me           = this,
             view         = me.getView(),
             releaseItems = view.down('cartrelease'),
-            form         = (Ext.isEmpty(releaseItems)) ? view.down('cartform') : releaseItems,
+            form         = (Ext.isEmpty(releaseItems)) ? view.down('cartform') : releaseItems.down('cartform'),
             valid        = form.isValid(),
             fieldInError = (!valid) ? form.down('field{isValid()===false}') : null;
 
@@ -417,13 +421,13 @@ Ext.define('Shopping.view.cart.CartController', {
             view             = me.getView(),
             store            = view.lookupViewModel(true).getStore('cartItems'),
             outstandingItems = store.queryBy(function (rec) {
-                var outstanding = rec.get('outstanding');
+                var outstanding = Shopping.util.Helper.getOutstanding(rec);
                 if (!Ext.isEmpty(outstanding) && outstanding > 0) {
                     return true;
                 }
             }),
             releaseZeroItems = store.queryBy(function (rec) {
-                var outstanding = rec.get('outstanding');
+                var outstanding = Shopping.util.Helper.getOutstanding(rec);
                 if (!Ext.isEmpty(outstanding) && outstanding > 0 && rec.get('release') == 0) {
                     return true;
                 }
@@ -506,7 +510,7 @@ Ext.define('Shopping.view.cart.CartController', {
         var me          = this,
             field       = context.field,
             rec         = context.record,
-            outstanding = rec.get('outstanding');
+            outstanding = Shopping.util.Helper.getOutstanding(rec);
 
         if (field === 'release' && (Ext.isEmpty(outstanding) || outstanding == 0)) {
             return false;
@@ -629,7 +633,7 @@ Ext.define('Shopping.view.cart.CartController', {
                     for (var ii = 0; ii < count; ii++) {
                         rec = store.getAt(ii);
                         if (standardOrder) {
-                            rec.set('viewReleaseQty', rec.get('outstanding'));
+                            rec.set('viewReleaseQty', Shopping.util.Helper.getOutstanding(rec));
                             rec.commit();
                         } else {
                             rec.set('viewReleaseQty', rec.get('release'));
@@ -711,6 +715,10 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    onEditList : function(editor, e) {
+        e.record.commit();
+    },
+
     /**
      * onHideCreditInfo - reset the credit information when hidden
      * @param cmp
@@ -777,7 +785,7 @@ Ext.define('Shopping.view.cart.CartController', {
             fld   = context.column.field;
 
         if (context.field === 'release') {
-            var outstanding = rec.get('outstanding');
+            var outstanding = Shopping.util.Helper.getOutstanding(rec);
             fld.markInvalid(null);
             if (!Ext.isEmpty(value) && Ext.isEmpty(outstanding)) {
                 fld.markInvalid('No outstanding items');
@@ -1150,6 +1158,7 @@ Ext.define('Shopping.view.cart.CartController', {
                         keepGoing = resp['continue'];
 
                         if (keepGoing != 'yes') {
+                            var cartInfo = me.getCartInformation();
                             wdw.close();
                             Valence.common.util.Snackbar.show({
                                 text : !Ext.isEmpty(resp.msg) ? 'Your order has been processed.' : resp.msg
@@ -1157,7 +1166,7 @@ Ext.define('Shopping.view.cart.CartController', {
                             if (wdw.checkout) {
                                 me.closeShowReleaseWindow('close');
                             }
-                            me.printCart(orderKey);
+                            me.printCart(orderKey, cartInfo.data);
                             me.onClickClear();
                         } else {
                             Valence.common.util.Snackbar.show({
