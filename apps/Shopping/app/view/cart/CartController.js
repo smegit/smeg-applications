@@ -3,7 +3,8 @@ Ext.define('Shopping.view.cart.CartController', {
     requires : [
         'Shopping.util.Helper',
         'Shopping.view.cart.PaymentForm',
-        'Shopping.view.cart.Payments'
+        'Shopping.view.cart.Payments',
+        'Shopping.view.cart.Print'
     ],
     alias    : 'controller.cart',
     listen   : {
@@ -391,9 +392,9 @@ Ext.define('Shopping.view.cart.CartController', {
             }),
             releaseZeroItems = store.queryBy(function (rec) {
                 var outstanding = rec.get('outstanding');
-                    if (!Ext.isEmpty(outstanding) && outstanding > 0 && rec.get('release') == 0) {
-                        return true;
-                    }
+                if (!Ext.isEmpty(outstanding) && outstanding > 0 && rec.get('release') == 0) {
+                    return true;
+                }
             });
 
         return (outstandingItems.getCount() === releaseZeroItems.getCount()) ? true : false;
@@ -469,13 +470,13 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
-    onBeforeEditList : function(editor, context){
-        var me = this,
-            field = context.field,
-            rec = context.record,
+    onBeforeEditList : function (editor, context) {
+        var me          = this,
+            field       = context.field,
+            rec         = context.record,
             outstanding = rec.get('outstanding');
 
-        if (field === 'release' && (Ext.isEmpty(outstanding) || outstanding == 0)){
+        if (field === 'release' && (Ext.isEmpty(outstanding) || outstanding == 0)) {
             return false;
         }
     },
@@ -654,7 +655,7 @@ Ext.define('Shopping.view.cart.CartController', {
 
                     //print the order
                     //
-                    me.printCart(content.OAORDKEY);
+                    me.printCart(content.OAORDKEY, cartInfo.data);
 
                     //clear/reset the cart and go back to the main section
                     //
@@ -805,6 +806,7 @@ Ext.define('Shopping.view.cart.CartController', {
         } else {
             var visibleWindow = Ext.ComponentQuery.query('window{isVisible()===true}')[0];
             if (!Ext.isEmpty(visibleWindow)) {
+                visibleWindow.updateLayout();
                 visibleWindow.center();
             }
         }
@@ -833,106 +835,16 @@ Ext.define('Shopping.view.cart.CartController', {
      * printCart - Print the active order/cart
      * @param key
      */
-    printCart : function (key) {
-        var me     = this,
-            body   = Ext.getBody(),
-            vm     = me.getViewModel(),
-            str    = vm.getStore('cartItems'),
-            lines  = Ext.Array.pluck(str.data.items, 'data'),
-            jsDate = new Date(),
-            date   = Ext.util.Format.date(jsDate, 'Y-m-d'),
-            time   = Ext.util.Format.date(jsDate, 'g:iA'),
-            data   = {},
-            dRec, delvStr, qty, total, d2;
+    printCart : function (key, orderData) {
+        var me           = this,
+            iframeSource = '/Product/ORD' + key + '.pdf';
 
-        Valence.common.util.Helper.loadMask({
-            renderTo : body,
-            text     : 'Printing Order'
-        });
-
-        Ext.Ajax.request({
-            url     : '/valence/vvcall.pgm',
-            params  : {
-                pgm      : 'ec1055',
-                action   : 'readCartDetails',
-                OAORDKEY : key
-            },
-            scope   : me,
-            success : function (r) {
-                var d = Ext.decode(r.responseText);
-                if (d.success) {
-
-                    // apply header info...
-                    //
-                    Ext.apply(data, d.CartHdr[0]);
-                    Ext.apply(data, {
-                        deliveryOpts : d.DeliveryOptions
-                    });
-                    Ext.apply(data, d.OrderInfo[0]);
-
-                    // translate the delivery method...
-                    //
-                    delvStr = vm.getStore('DeliveryOptions');
-                    dRec    = str.findRecord('DELMCOD', data.OADELM);
-
-                    if (dRec) {
-                        Ext.apply(data, {
-                            OADELM : dRec.get('DELMDSC')
-                        });
-                    }
-
-                    lines = d.CartDtl;
-
-                    // total the lines...
-                    //
-                    qty   = 0;
-                    total = 0;
-                    for (var ii = 0; ii < lines.length; ii++) {
-                        lines[ii].extended_price = (lines[ii].OBQTYO * lines[ii].OBUPRC);
-                        qty += lines[ii].OBQTYO;
-                        total += lines[ii].extended_price;
-                    }
-                    lines.push({
-                        OBITM          : '',
-                        OBQTYO         : qty,
-                        extended_price : total
-                    });
-
-                    Ext.apply(data, {
-                        lines : lines,
-                        date  : date,
-                        time  : time
-                    });
-                    Ext.Ajax.request({
-                        url     : '/valence/vvcall.pgm',
-                        params  : {
-                            action   : 'getPayments',
-                            pgm      : 'EC1050',
-                            OAORDKEY : key,
-                            paymode  : 'print'
-                        },
-                        success : function (r) {
-                            d2 = Ext.decode(r.responseText);
-                            if (d2.success) {
-                                Ext.apply(data, {
-                                    PaySum : Ext.isEmpty(d2.PaySum) ? null : d2.PaySum
-                                });
-                                Shopping.util.Helper.printCart({
-                                    data : data
-                                });
-                            } else {
-                                me.showError(d2);
-                            }
-                            Valence.common.util.Helper.destroyLoadMask(body);
-                        },
-                        failure : function (resp) {
-                            me.showError(resp);
-                            Valence.common.util.Helper.destroyLoadMask(body);
-                        }
-                    });
-                }
-            }
-        });
+        Ext.create('Shopping.view.cart.Print', {
+            iframeSource : iframeSource,
+            title        : 'Order - ' + key,
+            orderData    : orderData,
+            renderTo     : Ext.getBody()
+        }).show();
     },
 
     /**
@@ -968,7 +880,7 @@ Ext.define('Shopping.view.cart.CartController', {
     resetCart : function () {
         var me       = this,
             vm       = me.getViewModel(),
-            cartForm = Ext.ComponentQuery.query('cartform')[0];
+            cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform');
 
         me.releaseCart();
 
@@ -983,6 +895,7 @@ Ext.define('Shopping.view.cart.CartController', {
 
         vm.notify();
         cartForm.down('#deliveryChkbox').setValue(false);
+        cartForm.down('#deliveryfieldset').setExpanded(false);
         cartForm.reset();
     },
 
@@ -1029,6 +942,7 @@ Ext.define('Shopping.view.cart.CartController', {
             },
 
             failure : function (response) {
+                Valence.common.util.Helper.destroyLoadMask();
                 var resp = Ext.decode(response.responseText);
                 deferred.reject(resp);
             }

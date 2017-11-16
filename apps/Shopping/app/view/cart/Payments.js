@@ -69,7 +69,7 @@ Ext.define('Shopping.view.cart.Payments', {
         var me = this;
         return {
             items : ['->', {
-                text      : 'Ok',
+                text      : 'Cancel',
                 listeners : {
                     scope : me,
                     click : function () {

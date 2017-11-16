@@ -64,7 +64,10 @@ Ext.define('Shopping.view.cart.Form', {
                     allowBlank : false,
                     reference  : 'reffield',
                     bind       : {
-                        value : '{cartValues.OACSTREF}'
+                        value : {
+                            single : me.release,
+                            bindTo : '{cartValues.OACSTREF}'
+                        }
                     }
                 }, {
                     xtype          : 'combo',
@@ -103,7 +106,10 @@ Ext.define('Shopping.view.cart.Form', {
                     bind              : {
                         disabledDates : '{deliveryDisabledDates}',
                         disabledDays  : '{deliveryDisabledDays}',
-                        value         : '{cartValues.OADELD}'
+                        value         : {
+                            single : me.release,
+                            bindTo : '{cartValues.OADELD}'
+                        }
                     }
                 }]
             }]

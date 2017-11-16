@@ -56,7 +56,7 @@ Ext.define('Shopping.view.products.Heading', {
             itemId          : 'search',
             width           : 200,
             height          : 32,
-            emptyText       : 'Filter Results',
+            emptyText       : 'Filter Products',
             margin          : '0 8 0 0',
             enableKeyEvents : true,
             plugins         : [{
