@@ -250,7 +250,10 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                 boxLabel  : 'Confirm acceptance of <a href="' + window.location.origin + terms + '" target="_blank">terms and conditions</a>.',
                 name      : 'OAPAYCHKBX',
                 reference : 'tacchbx',
-                margin    : '10 0 10 0'
+                margin    : '10 0 10 0',
+                listeners        : {
+                    specialkey : 'onSpecialKeyPaymentForm'
+                }
             }, {
                 xtype       : 'fieldset',
                 hidden      : true,

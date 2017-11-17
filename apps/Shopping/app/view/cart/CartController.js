@@ -492,7 +492,7 @@ Ext.define('Shopping.view.cart.CartController', {
         var me          = this,
             vm          = me.getViewModel(),
             view        = me.getView(),
-            dlvFieldSet = me.lookupReference('deliveryfieldset'),
+            dlvFieldSet = view.down('cart-customerdetail').down('#deliveryfieldset'),
             dlvName     = dlvFieldSet.down('[name=OADELNAM]').getValue();
 
         vm.set('hideAllocated', true);
@@ -1248,9 +1248,6 @@ Ext.define('Shopping.view.cart.CartController', {
                         if (keepGoing != 'yes') {
                             var cartInfo = me.getCartInformation();
                             wdw.close();
-                            Valence.common.util.Snackbar.show({
-                                text : !Ext.isEmpty(resp.msg) ? 'Your order has been processed.' : resp.msg
-                            });
                             if (wdw.checkout) {
                                 //process release confirmation
                                 //
@@ -1264,6 +1261,10 @@ Ext.define('Shopping.view.cart.CartController', {
                                         me.onClickClear();
                                     });
                             } else {
+                                Valence.common.util.Snackbar.show({
+                                    text : !Ext.isEmpty(resp.msg) ? 'Your order has been processed.' : resp.msg
+                                });
+
                                 me.printCart(orderKey, cartInfo.data);
                                 me.onClickClear();
                             }
