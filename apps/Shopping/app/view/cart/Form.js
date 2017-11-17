@@ -24,7 +24,7 @@ Ext.define('Shopping.view.cart.Form', {
     },
 
     buildItems : function () {
-        var me = this,
+        var me        = this,
             baseItems = [{
                 xtype       : 'fieldset',
                 title       : 'Order Info',
@@ -65,6 +65,7 @@ Ext.define('Shopping.view.cart.Form', {
                         fieldLabel : 'Reference',
                         allowBlank : false,
                         reference  : 'reffield',
+                        itemId     : 'reffield',
                         bind       : {
                             value : {
                                 single : me.release,
@@ -81,6 +82,7 @@ Ext.define('Shopping.view.cart.Form', {
                         },
                         queryMode      : 'local',
                         reference      : 'cartrepscombo',
+                        itemId         : 'cartrepscombo',
                         displayField   : 'REP',
                         valueField     : 'REP',
                         name           : 'OAREP',
@@ -120,11 +122,11 @@ Ext.define('Shopping.view.cart.Form', {
                 release : me.release
             }];
 
-        if (me.release){
+        if (me.release) {
             var options = me.lookupViewModel(true).get('deliveryOptions');
-            if (!Ext.isEmpty(options)){
+            if (!Ext.isEmpty(options)) {
                 baseItems.push({
-                    xtype   : 'deliveryoptions'
+                    xtype : 'deliveryoptions'
                 });
             }
         }
@@ -134,9 +136,9 @@ Ext.define('Shopping.view.cart.Form', {
             release : me.release
         });
 
-        if (!me.release){
+        if (!me.release) {
             baseItems.push({
-                xtype   : 'followup'
+                xtype : 'followup'
             });
         }
         return baseItems;

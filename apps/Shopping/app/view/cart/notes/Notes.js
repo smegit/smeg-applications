@@ -48,9 +48,9 @@ Ext.define('Shopping.view.cart.notes.Notes', {
             },
             autoLoad    : true,
             viewConfig  : {
-                markDirty       : false,
-                stripRows       : true,
-                columnLines     : true
+                markDirty   : false,
+                stripRows   : true,
+                columnLines : true
             },
             columns     : {
                 items : [{
@@ -60,10 +60,10 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                     width     : 100
                 }, {
                     text      : 'Time',
-                    dataIndex : 'CRTTIME',
+                    dataIndex : 'OFCRTTIME',
                     align     : 'center',
                     width     : 100,
-                    renderer  : function(v){
+                    renderer  : function (v) {
                         if (!Ext.isEmpty(v)) {
                             return Ext.util.Format.date(Ext.Date.parse(v, 'H:i:s'), 'H:i');
                         }
@@ -71,12 +71,17 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                     }
                 }, {
                     text      : 'Note',
-                    dataIndex : 'NOTE',
+                    dataIndex : 'OFNOTE',
                     cellWrap  : true,
                     flex      : 1,
-                    renderer : function(v){
-                        return v.replace(new RegExp('\r?\n','g'), '<br/>');
+                    renderer  : function (v) {
+                        return v.replace(new RegExp('\r?\n', 'g'), '<br/>');
                     }
+                }, {
+                    text      : 'By',
+                    align     : 'center',
+                    dataIndex : 'OFCRTUSER',
+                    width     : '100'
                 }]
             },
             dockedItems : [{
@@ -105,7 +110,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                     emptyText : 'Note',
                     flex      : 1,
                     listeners : {
-                        change     : 'onChangeNote'
+                        change : 'onChangeNote'
                     }
                 }]
             }],

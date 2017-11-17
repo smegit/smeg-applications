@@ -41,7 +41,7 @@ Ext.define('Shopping.view.cart.notes.Update', {
             flex      : 1,
             maxLength : 200,
             bind      : {
-                value : '{selectedRec.NOTE}'
+                value : '{selectedRec.OFNOTE}'
             },
             listeners : {
                 change : 'onChangeUpdateText'

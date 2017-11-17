@@ -1,6 +1,7 @@
 Ext.define('Shopping.view.cart.notes.NotesController', {
     extend        : 'Ext.app.ViewController',
     requires      : [
+        'Shopping.model.Note',
         'Shopping.view.cart.notes.Update'
     ],
     alias         : 'controller.notes',
@@ -28,18 +29,14 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
     onClickAdd : function () {
         var me      = this,
             vm      = me.getViewModel(),
-            addNote = me.lookupReference('noteText'),
-            rec     = Ext.create('Shopping.model.Note', {
-                NOTE : addNote.getValue()
-            });
+            addNote = me.lookupReference('noteText');
 
         me.processNote(Ext.clone(rec.data, 'Updating'))
-            .then(function () {
-                rec.set({
-                    CRTDATE : Ext.util.Format.date(new Date(), 'Y-m-d')
-                });
-                rec.commit();
-                vm.getStore('Notes').add(rec);
+            .then(function (data) {
+                if (!Ext.isEmpty(data.success)){
+                    delete data.success;
+                }
+                vm.getStore('Notes').add(Ext.create('Shopping.model.Note', data));
                 addNote.reset();
                 Valence.util.Helper.showSnackbar('Added');
             });

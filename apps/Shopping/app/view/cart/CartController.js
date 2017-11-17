@@ -492,12 +492,14 @@ Ext.define('Shopping.view.cart.CartController', {
         var me          = this,
             vm          = me.getViewModel(),
             view        = me.getView(),
-            dlvFieldSet = view.down('cart-customerdetail').down('#deliveryfieldset'),
+            mainForm    = view.down('cartform'),
+            custDetail = view.down('cart-customerdetail'),
+            dlvFieldSet = custDetail.down('#deliveryfieldset'),
             dlvName     = dlvFieldSet.down('[name=OADELNAM]').getValue();
 
         vm.set('hideAllocated', true);
         if (vm.get('hideOrdKey')) {
-            me.lookupReference('cartrepscombo').setReadOnly(false);
+            mainForm.down('#cartrepscombo').setReadOnly(false);
         }
 
         view.lookupViewModel(true).getStore('cartReps').load();
@@ -511,7 +513,7 @@ Ext.define('Shopping.view.cart.CartController', {
         view.setScrollY(0);
 
         setTimeout(function () {
-            me.lookupReference('reffield').focus();
+            mainForm.down('#reffield').focus();
         }, 200);
     },
 
