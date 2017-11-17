@@ -19,17 +19,6 @@ Ext.define('Shopping.view.products.Heading', {
     buildItems : function () {
         var me = this;
         return [{
-        //     xtype : 'tbtext',
-        //     style : {
-        //         'font-weight' : 500,
-        //         'font-size'   : '16px'
-        //     },
-        //     bind  : {
-        //         html : '{agentName}'
-        //     }
-        // }, {
-        //     xtype : 'tbfill'
-        // }, {
             xtype          : 'combo',
             cls            : 'fld-in-header',
             queryMode      : 'local',
@@ -94,15 +83,17 @@ Ext.define('Shopping.view.products.Heading', {
                 }
             },
             tpl       : me.buildTpl()
-        }, {
-            xtype  : 'button',
-            text   : 'Clear',
-            action : 'resetcart',
-            itemId : 'newOrderBtn',
-            hidden : true,
-            bind   : {
-                hidden : '{hideClearCart}'
-            }
+            //commenting out the reset cart since its available inside the cart but can easily be added back
+            // if users request it
+        // }, {
+        //     xtype  : 'button',
+        //     text   : 'Clear',
+        //     action : 'resetcart',
+        //     itemId : 'newOrderBtn',
+        //     hidden : true,
+        //     bind   : {
+        //         hidden : '{hideClearCart}'
+        //     }
         }];
     },
 

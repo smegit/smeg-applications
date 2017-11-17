@@ -11,7 +11,7 @@ Ext.define('Shopping.view.cart.SpecialInstructions', {
         var me = this;
 
         Ext.apply(me, {
-            items : me.buildItems(me.cartOptions)
+            items : me.buildItems()
         });
         me.callParent(arguments);
     },

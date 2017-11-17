@@ -4,7 +4,8 @@ Ext.define('Shopping.view.cart.CartController', {
         'Shopping.util.Helper',
         'Shopping.view.cart.PaymentForm',
         'Shopping.view.cart.Payments',
-        'Shopping.view.cart.Print'
+        'Shopping.view.cart.Print',
+        'Shopping.view.cart.notes.Notes'
     ],
     alias    : 'controller.cart',
     listen   : {
@@ -170,6 +171,54 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    confirmRelease : function () {
+        var me       = this,
+            vm       = me.getViewModel(),
+            deferred = Ext.create('Ext.Deferred'),
+            cartInfo = me.getCartInformation(),
+            params   = {
+                pgm      : 'EC1050',
+                action   : 'confirm',
+                products : (!Ext.isEmpty(cartInfo) && !Ext.isEmpty(cartInfo.products)) ? Ext.encode(cartInfo.products) : null,
+                stkloc   : vm.get('STKDFT')
+            };
+
+        Valence.common.util.Helper.loadMask('Processing');
+
+        Ext.apply(params, cartInfo.data);
+
+        Ext.Ajax.request({
+            url     : '/valence/vvcall.pgm',
+            method  : 'POST',
+            params  : params,
+            success : function (r) {
+                var d = Ext.decode(r.responseText);
+                Valence.common.util.Helper.destroyLoadMask();
+                if (!d.success || d.success === "false") {
+                    me.showError(d);
+                    deferred.reject(d);
+                    return;
+                } else {
+                    deferred.resolve(d);
+                }
+            },
+            failure : function () {
+                Valence.common.util.Helper.destroyLoadMask();
+                Valence.common.util.Dialog.show({
+                    title    : 'Error',
+                    minWidth : 300,
+                    msg      : 'Not able to process at this time.',
+                    buttons  : [{
+                        text : 'Ok'
+                    }]
+                });
+                deferred.reject();
+            }
+        });
+
+        return deferred.promise;
+    },
+
     /**
      * depositRelease - process the deposit / release of a order
      * @param cmp
@@ -273,7 +322,7 @@ Ext.define('Shopping.view.cart.CartController', {
      */
     getCartInformation : function () {
         var me           = this,
-            vm = me.getViewModel(),
+            vm           = me.getViewModel(),
             view         = me.getView(),
             valid        = me.isFormValid(),
             releaseItems = view.down('cartrelease'),
@@ -293,7 +342,7 @@ Ext.define('Shopping.view.cart.CartController', {
             Ext.apply(formData, form.getValues());
 
             for (var i = 0; i < storeCount; i++) {
-                rec = store.getAt(i);
+                rec     = store.getAt(i);
                 product = rec.getData();
                 prodArray.push({
                     OBITM  : product.product_id,
@@ -439,7 +488,7 @@ Ext.define('Shopping.view.cart.CartController', {
     /**
      * onActivate - setup the cart view.
      */
-    onActivate : function () { //johnny!
+    onActivate : function () {
         var me          = this,
             vm          = me.getViewModel(),
             view        = me.getView(),
@@ -507,14 +556,24 @@ Ext.define('Shopping.view.cart.CartController', {
     },
 
     onBeforeEditList : function (editor, context) {
-        var me          = this,
-            field       = context.field,
-            rec         = context.record,
-            outstanding = Shopping.util.Helper.getOutstanding(rec);
+        var me             = this,
+            field          = context.field,
+            rec            = context.record,
+            outstanding    = Shopping.util.Helper.getOutstanding(rec),
+            checkoutButton = me.lookupReference('checkoutButton');
 
         if (field === 'release' && (Ext.isEmpty(outstanding) || outstanding == 0)) {
             return false;
         }
+
+        checkoutButton.disable();
+    },
+
+    onCancelEditList : function () {
+        var me             = this,
+            checkoutButton = me.lookupReference('checkoutButton');
+
+        checkoutButton.enable();
     },
 
     /**
@@ -611,12 +670,28 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
+    onClickNotes : function () {
+        var me   = this,
+            vm   = me.getViewModel(),
+            view = me.getView();
+
+        Ext.ComponentQuery.query('app-main')[0].add({
+            xtype     : 'notes',
+            viewModel : {
+                data : {
+                    orderKey : vm.get('activeCartNumber')
+                }
+            }
+        }).show();
+    },
+
     /**
      * onClickRelease - start the release of the selected products.
      * @param cmp
      */
     onClickRelease : function (cmp) {
         var me    = this,
+            vm    = me.getViewModel(),
             view  = me.getView(),
             valid = me.isFormValid();
 
@@ -642,6 +717,14 @@ Ext.define('Shopping.view.cart.CartController', {
                     }
                     store.resumeEvents();
 
+                    //setup delivery options
+                    //
+                    if (!Ext.isEmpty(content.DeliveryOptions)) {
+                        vm.set('deliveryOptions', content.DeliveryOptions);
+                    } else {
+                        vm.set('deliveryOptions', null);
+                    }
+                    vm.notify();
                     Valence.common.util.Helper.destroyLoadMask();
                     view.add({
                         xtype      : 'cartrelease',
@@ -715,8 +798,13 @@ Ext.define('Shopping.view.cart.CartController', {
         }
     },
 
-    onEditList : function(editor, e) {
+    onEditList : function (editor, e) {
+        var me             = this,
+            checkoutButton = me.lookupReference('checkoutButton');
+
         e.record.commit();
+
+        checkoutButton.enable();
     },
 
     /**
@@ -1011,7 +1099,7 @@ Ext.define('Shopping.view.cart.CartController', {
             modal        : true,
             checkout     : checkout,
             title        : checkout ? 'Payment' : 'Deposit',
-            closable     : true,
+            closable     : false,
             scrollable   : true,
             layout       : 'fit',
             reference    : 'smegwindow',
@@ -1164,10 +1252,21 @@ Ext.define('Shopping.view.cart.CartController', {
                                 text : !Ext.isEmpty(resp.msg) ? 'Your order has been processed.' : resp.msg
                             });
                             if (wdw.checkout) {
-                                me.closeShowReleaseWindow('close');
+                                //process release confirmation
+                                //
+                                me.confirmRelease()
+                                    .then(function () {
+                                        me.closeShowReleaseWindow('close');
+                                        me.printCart(orderKey, cartInfo.data);
+                                        me.onClickClear();
+                                    }, function () {
+                                        me.closeShowReleaseWindow('close');
+                                        me.onClickClear();
+                                    });
+                            } else {
+                                me.printCart(orderKey, cartInfo.data);
+                                me.onClickClear();
                             }
-                            me.printCart(orderKey, cartInfo.data);
-                            me.onClickClear();
                         } else {
                             Valence.common.util.Snackbar.show({
                                 text : !Ext.isEmpty(resp.msg) ? 'Payment accepted, thank you.' : resp.msg

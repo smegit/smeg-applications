@@ -5,9 +5,7 @@ Ext.define('Shopping.view.cart.Main', {
     requires      : [
         'Shopping.view.cart.List',
         'Shopping.view.cart.Form',
-        'Shopping.view.cart.CartController',
-        'Ext.button.Split',
-        'Ext.layout.container.VBox'
+        'Shopping.view.cart.CartController'
     ],
     controller    : 'cart',
     cls           : 'cart',
@@ -90,10 +88,11 @@ Ext.define('Shopping.view.cart.Main', {
                     click : 'onClickDeposit'
                 }
             }, {
-                text    : 'Checkout',
-                ui      : 'blue',
-                maskMsg : 'Setting up Checkout',
-                handler : 'onClickRelease'
+                text      : 'Checkout',
+                reference : 'checkoutButton',
+                ui        : 'blue',
+                maskMsg   : 'Setting up Checkout',
+                handler   : 'onClickRelease'
             }]
     },
     initComponent : function () {
@@ -118,13 +117,12 @@ Ext.define('Shopping.view.cart.Main', {
                 align : 'stretch'
             },
             bind   : {
-                hidden : '{!orderHasInfo}'
+                hidden : '{hideOrdKey}'
             },
             items  : [{
                 xtype     : 'component',
                 bind      : {
-                    hidden : '{!orderHasNotes}',
-                    html   : '{orderNotesInfo}'
+                    html : '{orderNotesInfo}'
                 },
                 listeners : {
                     el : {

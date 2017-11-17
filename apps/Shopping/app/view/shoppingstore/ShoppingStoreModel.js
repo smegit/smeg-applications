@@ -20,9 +20,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         bannerText            : '',
         deliveryDisabledDates : null, //Example exclude one day ['25/12/2017']
         deliveryDisabledDays  : null, //Example [0, 6] would be excluding weekends
-        orderNotes            : {
-            notes : ['do it']
-        },
+        deliveryOptions       : null,
         orderPayments         : null
     },
 

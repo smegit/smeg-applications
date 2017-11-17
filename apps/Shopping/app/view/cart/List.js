@@ -1,7 +1,6 @@
 Ext.define('Shopping.view.cart.List', {
     extend : 'Ext.grid.Panel',
     xtype  : 'cartlist',
-
     requires      : [
         'Ext.form.field.Number',
         'Ext.grid.feature.Summary',
@@ -107,9 +106,9 @@ Ext.define('Shopping.view.cart.List', {
                 sortable        : false,
                 width           : 90,
                 align           : 'right',
-                // renderer        : function(v, meta, rec){
-                //     return Shopping.util.Helper.getOutstanding(rec);
-                // },
+                renderer        : function(v, meta, rec){
+                    return Shopping.util.Helper.getOutstanding(rec);
+                },
                 summaryType     : 'sum',
                 summaryRenderer : function (value) {
                     return Ext.String.format('<b>{0}</b>', value);
@@ -233,6 +232,7 @@ Ext.define('Shopping.view.cart.List', {
                 clicksToEdit : 1,
                 listeners    : {
                     beforeedit   : 'onBeforeEditList',
+                    canceledit   : 'onCancelEditList',
                     edit         : 'onEditList',
                     validateedit : 'onValidateEditList'
                 }

@@ -98,7 +98,7 @@ Ext.define('Shopping.view.main.MainController', {
 
                     vm.set(vmObj);
 
-                    me.loadDeliveryOptions(d);
+                    // me.loadDeliveryOptions(d);
                     me.loadPaymentOptions(d);
                     me.loadStockLocations(d);
 

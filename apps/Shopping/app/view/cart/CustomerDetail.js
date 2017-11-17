@@ -191,6 +191,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
             collapsable    : true,
             checkbox       : {
                 itemId    : 'deliveryChkbox',
+                value     : false,
                 listeners : {
                     scope  : me,
                     change : function (cmp, value) {

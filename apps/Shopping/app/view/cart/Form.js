@@ -9,7 +9,8 @@ Ext.define('Shopping.view.cart.Form', {
         'Ext.layout.container.Table',
         'Shopping.view.cart.CustomerDetail',
         'Shopping.view.cart.SpecialInstructions',
-        'Shopping.view.cart.FollowUp'
+        'Shopping.view.cart.FollowUp',
+        'Shopping.view.cart.DeliveryOptions'
     ],
     xtype         : 'cartform',
     release       : false,
@@ -117,10 +118,22 @@ Ext.define('Shopping.view.cart.Form', {
             }, {
                 xtype   : 'cart-customerdetail',
                 release : me.release
-            }, {
-                xtype   : 'specialinstructions',
-                release : me.release
             }];
+
+        if (me.release){
+            var options = me.lookupViewModel(true).get('deliveryOptions');
+            if (!Ext.isEmpty(options)){
+                baseItems.push({
+                    xtype   : 'deliveryoptions'
+                });
+            }
+        }
+
+        baseItems.push({
+            xtype   : 'specialinstructions',
+            release : me.release
+        });
+
         if (!me.release){
             baseItems.push({
                 xtype   : 'followup'
