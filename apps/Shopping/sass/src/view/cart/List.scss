@@ -65,6 +65,11 @@
   .x-column-header-over{
     background-color: inherit!important;
   }
+  .cart-list-alc-error{
+    .x-grid-cell-inner{
+      color: $red!important;
+    }
+  }
 }
 
 .x-grid-row-summary .x-grid-cell {

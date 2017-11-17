@@ -1,27 +1,28 @@
 Ext.define('Shopping.view.cart.notes.Update', {
-    extend        : 'Ext.window.Window',
-    xtype         : 'notes-update',
-    requires      : [
+    extend           : 'Ext.window.Window',
+    xtype            : 'notes-update',
+    requires         : [
         'Ext.button.Button',
         'Ext.form.field.Display',
         'Ext.form.field.TextArea',
         'Ext.layout.container.VBox',
         'Ext.toolbar.Fill'
     ],
-    header        : false,
-    layout        : {
+    closeOnBodyClick : true,
+    header           : false,
+    layout           : {
         type  : 'vbox',
         align : 'stretch'
     },
-    height        : 220,
-    width         : 420,
-    modal         : true,
-    defaultFocus  : 'textarea',
-    bodyPadding   : '16 16 0 16',
-    listeners     : {
+    height           : 220,
+    width            : 420,
+    modal            : true,
+    defaultFocus     : 'textarea',
+    bodyPadding      : '16 16 0 16',
+    listeners        : {
         beforeclose : 'onBeforeCloseUpdate'
     },
-    initComponent : function () {
+    initComponent    : function () {
         var me = this;
         Ext.apply(me, {
             items : me.buildItems(),
@@ -29,7 +30,7 @@ Ext.define('Shopping.view.cart.notes.Update', {
         });
         me.callParent(arguments);
     },
-    buildItems    : function () {
+    buildItems       : function () {
         return [{
             xtype     : 'displayfield',
             hideLabel : true,
@@ -48,7 +49,7 @@ Ext.define('Shopping.view.cart.notes.Update', {
             }
         }];
     },
-    buildBBar     : function () {
+    buildBBar        : function () {
         var me = this;
         return {
             items : ['->', {

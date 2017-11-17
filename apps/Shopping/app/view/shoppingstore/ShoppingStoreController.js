@@ -343,7 +343,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 if (viewOnly) {
                     Ext.apply(windowCfg, {
                         defaultFocus : 'button',
-                        dockedItems : [{
+                        dockedItems  : [{
                             xtype : 'toolbar',
                             dock  : 'bottom',
                             cls   : 'detail-bbar',
@@ -548,13 +548,13 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     todayDate  = todayDate.getTime();
                     ninetyDate = ninetyDate.getTime();
 
-                    if (delvDate > ninetyDate) {
+                    if (delvDate < todayDate || delvDate > ninetyDate) {
                         formValues.OADELD = null;
                     }
 
                     //check for follow-up date and if null clear it
                     //
-                    if (!Ext.isEmpty(formValues.OAFUDT) && formValues.OAFUDT === '0001-01-01'){
+                    if (!Ext.isEmpty(formValues.OAFUDT) && formValues.OAFUDT === '0001-01-01') {
                         formValues.OAFUDT = null;
                     }
 
@@ -567,10 +567,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
                     // Check to see if Delivery Address is set and should be "expanded"
                     fieldset.down('#deliveryChkbox').setValue(false);
-                    if (!Ext.isEmpty(formValues.OADELST1) || !Ext.isEmpty(formValues.OADELCTY) || !Ext.isEmpty(formValues.OADELSTA) || !Ext.isEmpty(formValues.OADELPST) ||!Ext.isEmpty(formValues.OADELPH1)){
-                        setTimeout(function(){
+                    if (!Ext.isEmpty(formValues.OADELST1) || !Ext.isEmpty(formValues.OADELCTY) || !Ext.isEmpty(formValues.OADELSTA) || !Ext.isEmpty(formValues.OADELPST) || !Ext.isEmpty(formValues.OADELPH1)) {
+                        setTimeout(function () {
                             fieldset.down('#deliveryChkbox').setValue(true);
-                        },0);
+                        }, 0);
                     }
 
                     // Reset Cart Item Store

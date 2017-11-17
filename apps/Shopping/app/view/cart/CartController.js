@@ -480,9 +480,19 @@ Ext.define('Shopping.view.cart.CartController', {
                 if (!Ext.isEmpty(outstanding) && outstanding > 0 && rec.get('release') == 0) {
                     return true;
                 }
-            });
+            }), standard;
 
-        return (outstandingItems.getCount() === releaseZeroItems.getCount()) ? true : false;
+        if (outstandingItems.getCount() === releaseZeroItems.getCount()) {
+            standard = true;
+            releaseZeroItems.each(function (rec) {
+                rec.set('release', Shopping.util.Helper.getOutstanding(rec));
+                rec.commit();
+            })
+        } else {
+            standard = false;
+        }
+
+        return standard;
     },
 
     /**
@@ -493,7 +503,7 @@ Ext.define('Shopping.view.cart.CartController', {
             vm          = me.getViewModel(),
             view        = me.getView(),
             mainForm    = view.down('cartform'),
-            custDetail = view.down('cart-customerdetail'),
+            custDetail  = view.down('cart-customerdetail'),
             dlvFieldSet = custDetail.down('#deliveryfieldset'),
             dlvName     = dlvFieldSet.down('[name=OADELNAM]').getValue();
 
@@ -719,6 +729,8 @@ Ext.define('Shopping.view.cart.CartController', {
                     }
                     store.resumeEvents();
 
+                    vm.set('hideAllocated', true);
+
                     //setup delivery options
                     //
                     if (!Ext.isEmpty(content.DeliveryOptions)) {
@@ -771,6 +783,10 @@ Ext.define('Shopping.view.cart.CartController', {
 
                     //print the order
                     //
+                    Ext.apply(cartInfo.data,{
+                        OAORDKEY : content.OAORDKEY
+                    });
+
                     me.printCart(content.OAORDKEY, cartInfo.data);
 
                     //clear/reset the cart and go back to the main section

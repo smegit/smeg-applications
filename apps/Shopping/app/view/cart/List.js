@@ -142,8 +142,13 @@ Ext.define('Shopping.view.cart.List', {
                 sortable  : false,
                 bind      : {
                     hidden : '{hideAllocated}'
+                },
+                renderer : function(v, meta, rec){
+                    if (v < rec.get('release')){
+                        meta.tdCls += ' cart-list-alc-error';
+                    }
+                    return v;
                 }
-
             }, {
                 text      : 'Price',
                 width     : 80,
