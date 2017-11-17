@@ -31,11 +31,17 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             vm      = me.getViewModel(),
             addNote = me.lookupReference('noteText');
 
-        me.processNote(Ext.clone(rec.data, 'Updating'))
+        me.processNote(Ext.clone({
+            OFNOTE : addNote.getValue()
+        }, 'Updating'))
             .then(function (data) {
                 if (!Ext.isEmpty(data.success)){
                     delete data.success;
                 }
+                Ext.apply(data,{
+                    OFTYPE : 'U',
+                    OFCRTTIME : data.OFCRTTIME.replace(/\./g,':')
+                });
                 vm.getStore('Notes').add(Ext.create('Shopping.model.Note', data));
                 addNote.reset();
                 Valence.util.Helper.showSnackbar('Added');
@@ -77,7 +83,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             vm   = me.getViewModel(),
             view = me.getView();
 
-        if (rec.get('TYPE') === 'U') {
+        if (rec.get('OFTYPE') === 'U') {
             vm.set('selectedRec', rec);
             view.add({
                 xtype     : 'notes-update',
@@ -97,8 +103,8 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             };
 
         Ext.apply(params, data);
-        if (!Ext.isEmpty(params.friendlyDate)) {
-            delete params.friendlyDate;
+        if (!Ext.isEmpty(params.dateTime)) {
+            delete params.dateTime;
         }
         if (!Ext.isEmpty(params.id)) {
             delete params.id;

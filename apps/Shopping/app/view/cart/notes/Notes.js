@@ -18,7 +18,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
     controller    : 'notes',
     title         : 'Notes',
     height        : 500,
-    width         : 700,
+    width         : 730,
     layout        : {
         type  : 'vbox',
         align : 'stretch'
@@ -54,21 +54,10 @@ Ext.define('Shopping.view.cart.notes.Notes', {
             },
             columns     : {
                 items : [{
-                    text      : 'Date',
-                    dataIndex : 'friendlyDate',
+                    text      : 'Date/Time',
+                    dataIndex : 'dateTime',
                     align     : 'center',
-                    width     : 100
-                }, {
-                    text      : 'Time',
-                    dataIndex : 'OFCRTTIME',
-                    align     : 'center',
-                    width     : 100,
-                    renderer  : function (v) {
-                        if (!Ext.isEmpty(v)) {
-                            return Ext.util.Format.date(Ext.Date.parse(v, 'H:i:s'), 'H:i');
-                        }
-                        return '';
-                    }
+                    width     : 150
                 }, {
                     text      : 'Note',
                     dataIndex : 'OFNOTE',
@@ -81,7 +70,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                     text      : 'By',
                     align     : 'center',
                     dataIndex : 'OFCRTUSER',
-                    width     : '100'
+                    width     : 100
                 }]
             },
             dockedItems : [{

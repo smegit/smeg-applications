@@ -34,7 +34,7 @@ Ext.define('Shopping.view.cart.notes.Update', {
             xtype     : 'displayfield',
             hideLabel : true,
             bind      : {
-                value : '{selectedRec.friendlyDate}'
+                value : '{selectedRec.dateTime}'
             }
         }, {
             xtype     : 'textarea',
