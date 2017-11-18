@@ -978,7 +978,7 @@ Ext.define('Shopping.view.cart.CartController', {
      */
     printCart : function (key, orderData) {
         var me           = this,
-            iframeSource = '/Product/ORD' + key + '.pdf';
+            iframeSource = '/Product/ord' + key + '.pdf';
 
         Ext.create('Shopping.view.cart.Print', {
             iframeSource : iframeSource,
