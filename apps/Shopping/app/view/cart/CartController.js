@@ -783,7 +783,7 @@ Ext.define('Shopping.view.cart.CartController', {
 
                     //print the order
                     //
-                    Ext.apply(cartInfo.data,{
+                    Ext.apply(cartInfo.data, {
                         OAORDKEY : content.OAORDKEY
                     });
 
@@ -1028,10 +1028,11 @@ Ext.define('Shopping.view.cart.CartController', {
         vm.getStore('cartItems').removeAll();
 
         vm.set({
-            cartCount        : 0,
-            activeCartNumber : null,
-            cartValues       : null,
-            orderPayments    : null
+            cartCount          : 0,
+            disableSalesPerson : false,
+            activeCartNumber   : null,
+            cartValues         : null,
+            orderPayments      : null
         });
 
         vm.notify();
@@ -1265,16 +1266,18 @@ Ext.define('Shopping.view.cart.CartController', {
 
                         if (keepGoing != 'yes') {
                             var cartInfo = me.getCartInformation();
-                            wdw.close();
+                            wdw.hide();
                             if (wdw.checkout) {
                                 //process release confirmation
                                 //
                                 me.confirmRelease()
                                     .then(function () {
+                                        wdw.close();
                                         me.closeShowReleaseWindow('close');
                                         me.printCart(orderKey, cartInfo.data);
                                         me.onClickClear();
                                     }, function () {
+                                        wdw.close();
                                         me.closeShowReleaseWindow('close');
                                         me.onClickClear();
                                     });
@@ -1282,7 +1285,7 @@ Ext.define('Shopping.view.cart.CartController', {
                                 Valence.common.util.Snackbar.show({
                                     text : !Ext.isEmpty(resp.msg) ? 'Your order has been processed.' : resp.msg
                                 });
-
+                                wdw.close();
                                 me.printCart(orderKey, cartInfo.data);
                                 me.onClickClear();
                             }

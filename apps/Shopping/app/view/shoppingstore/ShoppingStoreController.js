@@ -558,12 +558,11 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                         formValues.OAFUDT = null;
                     }
 
-                    // get stock location
-                    //
-                    vm.set('STKLOC', formValues.OASTKLOC);
-
-                    //Update form values
-                    vm.set('cartValues', formValues);
+                    vm.set({
+                        STKLOC             : formValues.OASTKLOC,
+                        cartValues         : formValues,
+                        disableSalesPerson : (!Ext.isEmpty(obj.lockSalesPerson) && obj.lockSalesPerson === 'true' && !Ext.isEmpty(formValues.OAREP)) ? true : false
+                    });
 
                     // Check to see if Delivery Address is set and should be "expanded"
                     fieldset.down('#deliveryChkbox').setValue(false);
@@ -595,7 +594,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
                     cartItemStore.add(cartItemStoreItems);
 
-                    // vm.set('cartCount', cartItemCount);
                     vm.set({
                         cartCount        : cartItemCount,
                         activeCartNumber : cartKey

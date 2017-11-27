@@ -24,8 +24,42 @@ Ext.define('Shopping.view.cart.Form', {
     },
 
     buildItems : function () {
-        var me        = this,
-            baseItems = [{
+        var me              = this,
+            getRepComponent = function () {
+                var repConfig = {
+                    xtype          : 'combo',
+                    margin         : '0 32 0 0',
+                    labelWidth     : 90,
+                    bind           : {
+                        store : '{cartReps}',
+                        value : '{cartValues.OAREP}'
+                    },
+                    queryMode      : 'local',
+                    reference      : 'cartrepscombo',
+                    itemId         : 'cartrepscombo',
+                    displayField   : 'REP',
+                    valueField     : 'REP',
+                    name           : 'OAREP',
+                    forceSelection : true,
+                    fieldLabel     : 'Sales Person',
+                    allowBlank     : false,
+                    minWidth       : 200,
+                    anyMatch       : true
+                };
+
+                if (me.release) {
+                    Ext.apply(repConfig, {
+                        readOnly : true,
+                        disabled : true
+                    });
+                } else {
+                    Ext.apply(repConfig.bind, {
+                        disabled : '{disableSalesPerson}'
+                    });
+                }
+                return repConfig;
+            },
+            baseItems       = [{
                 xtype       : 'fieldset',
                 title       : 'Order Info',
                 defaultType : 'textfield',
@@ -72,28 +106,7 @@ Ext.define('Shopping.view.cart.Form', {
                                 bindTo : '{cartValues.OACSTREF}'
                             }
                         }
-                    }, {
-                        xtype          : 'combo',
-                        margin         : '0 32 0 0',
-                        labelWidth     : 90,
-                        bind           : {
-                            store : '{cartReps}',
-                            value : '{cartValues.OAREP}'
-                        },
-                        queryMode      : 'local',
-                        reference      : 'cartrepscombo',
-                        itemId         : 'cartrepscombo',
-                        displayField   : 'REP',
-                        valueField     : 'REP',
-                        name           : 'OAREP',
-                        forceSelection : true,
-                        fieldLabel     : 'Sales Person',
-                        allowBlank     : false,
-                        minWidth       : 200,
-                        anyMatch       : true,
-                        readOnly       : me.release,
-                        disabled       : me.release
-                    }, {
+                    }, getRepComponent(), {
                         xtype             : 'datefield',
                         name              : 'OADELD',
                         allowBlank        : false,

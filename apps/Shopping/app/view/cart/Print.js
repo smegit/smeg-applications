@@ -1,9 +1,14 @@
 Ext.define('Shopping.view.cart.Print', {
     extend        : 'Ext.window.Window',
     requires      : [
+        'Ext.form.Panel',
+        'Ext.form.field.HtmlEditor',
+        'Ext.form.field.Text',
         'Ext.layout.container.Fit',
+        'Ext.layout.container.VBox',
         'Ext.toolbar.Fill',
-        'Ext.ux.IFrame'
+        'Ext.ux.IFrame',
+        'Ext.window.Window'
     ],
     xtype         : 'print',
     height        : '90%',
@@ -52,14 +57,16 @@ Ext.define('Shopping.view.cart.Print', {
     onClickEmail : function () {
         var me          = this,
             emailWindow = Ext.create('Ext.window.Window', {
-                header       : false,
-                layout       : 'fit',
-                height       : 255,
-                width        : 500,
-                modal        : true,
-                defaultFocus : '[name=to]',
-                bodyPadding  : '16 32 0 32',
-                items        : [{
+                header           : false,
+                layout           : 'fit',
+                height           : 325,
+                width            : 500,
+                modal            : true,
+                itemId           : 'emailWindow',
+                defaultFocus     : '[name=to]',
+                closeOnBodyClick : true,
+                bodyPadding      : '16 32 0 32',
+                items            : [{
                     xtype    : 'form',
                     itemId   : 'emailForm',
                     layout   : {
@@ -83,12 +90,27 @@ Ext.define('Shopping.view.cart.Print', {
                         name       : 'subject',
                         value      : 'Order ' + me.orderData.OAORDKEY
                     }, {
-                        xtype      : 'textarea',
-                        fieldLabel : 'Message',
-                        name       : 'message'
+                        xtype         : 'htmleditor',
+                        createToolbar : function () {
+                            this.toolbar = Ext.widget(Ext.apply(this.getToolbarCfg(), {
+                                hidden : true
+                            }));
+                            return this.toolbar;
+                        },
+                        fieldLabel    : 'Message',
+                        name          : 'message',
+                        listeners     : {
+                            initialize : function (cmp) {
+                                var body = cmp.getEditorBody(),
+                                    bd   = (!Ext.isEmpty(body)) ? Ext.get(body) : null;
+                                if (!Ext.isEmpty(bd)) {
+                                    bd.setStyle('opacity', '0.6');
+                                }
+                            }
+                        }
                     }]
                 }],
-                bbar         : {
+                bbar             : {
                     items : ['->', {
                         text      : 'Cancel',
                         listeners : {
@@ -121,10 +143,14 @@ Ext.define('Shopping.view.cart.Print', {
                 OAORDKEY : me.orderData.OAORDKEY
             },
             showError = function (d) {
+                var msg = 'Error';
+                if (!Ext.isEmpty(d) && !Ext.isEmpty(d.msg)) {
+                    msg = d.msg;
+                }
                 Valence.common.util.Dialog.show({
                     title    : 'Error',
                     minWidth : 300,
-                    msg      : Ext.isEmpty(d.msg) ? 'Error' : d.msg,
+                    msg      : msg,
                     buttons  : [{
                         text : 'Ok'
                     }]
@@ -138,6 +164,7 @@ Ext.define('Shopping.view.cart.Print', {
         Ext.Ajax.request({
             url     : '/valence/vvcall.pgm',
             params  : params,
+            timeout : 60000,
             scope   : me,
             success : function (r) {
                 var d = Ext.decode(r.responseText);
@@ -149,10 +176,9 @@ Ext.define('Shopping.view.cart.Print', {
                     showError(d);
                 }
             },
-            failure : function (r) {
-                var d = Ext.decode(r.responseText);
+            failure : function () {
                 Valence.common.util.Helper.destroyLoadMask();
-                showError(d);
+                showError();
             }
         });
     }

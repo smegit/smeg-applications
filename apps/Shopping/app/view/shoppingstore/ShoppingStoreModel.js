@@ -14,6 +14,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         activeCartNumber      : null,
         cartCount             : 0,
         cartValues            : {},
+        disableSalesPerson    : false,
         loadProducts          : true, //was originally false then set but this looks like the cause of the timing issue
         hideAllocated         : true,
         hideBannerText        : true,

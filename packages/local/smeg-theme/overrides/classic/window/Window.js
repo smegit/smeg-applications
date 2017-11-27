@@ -8,17 +8,17 @@ Ext.define('Ext.overrides.classic.window.Window', {
             me.on({
                 scope : me,
                 show  : function () {
-                    setTimeout(function(){
+                    setTimeout(function () {
                         Ext.getBody().on({
                             scope : me,
                             click : function (event) {
                                 var me = this;
-                                if (!me.el.contains(event.target)) {
+                                if (Ext.WindowManager.getActive() === me && !me.el.contains(event.target)) {
                                     me.close();
                                 }
                             }
                         });
-                    },200);
+                    }, 200);
                 }
             });
         }
