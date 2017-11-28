@@ -10,7 +10,6 @@ Ext.define('Shopping.view.cart.Release', {
     maxWidth      : 1060,
     xtype         : 'cartrelease',
     bodyPadding   : '8 20',
-    closable      : true,
     modal         : true,
     scrollable    : true,
     layout        : 'anchor',
