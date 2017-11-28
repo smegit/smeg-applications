@@ -757,6 +757,7 @@ Ext.define('Shopping.view.cart.CartController', {
      */
     onClickReleaseConfirm : function () {
         var me            = this,
+            vm            = me.getViewModel(),
             releaseWindow = me.lookupReference('releasewindow');
 
         releaseWindow.hide();
@@ -764,6 +765,35 @@ Ext.define('Shopping.view.cart.CartController', {
         Valence.common.util.Helper.loadMask('Processing');
 
         me.getPayments(releaseWindow.chkContent)
+            .then(Ext.bind(function (content) {
+                //first check if we need to request payment
+                //
+                var requestPay = true,
+                    orderPay   = vm.get('orderPayments');
+                //check if max pay is equal to 0 and if so we do not have to request payment
+                //
+                if (!Ext.isEmpty(orderPay.maxpay) && !Ext.isEmpty(orderPay.maxpay[0].maxpay) && parseFloat(orderPay.maxpay[0].maxpay) == 0) {
+                    requestPay = false;
+                }
+
+                if (requestPay) {
+                    me.requestPayment(content);
+                } else {
+                    var cartInfo = me.getCartInformation();
+
+                    // confirm release because they have a max pay of 0 meaning they already deposited the full amount.
+                    //
+                    me.confirmRelease()
+                        .then(function () {
+                            me.closeShowReleaseWindow('close');
+                            me.printCart(content.OAORDKEY, cartInfo.data);
+                            me.onClickClear();
+                        }, function () {
+                            me.closeShowReleaseWindow('close');
+                            me.onClickClear();
+                        });
+                }
+            }, me))
             .then(Ext.bind(me.requestPayment, me), function () {
                 releaseWindow.show();
             });
@@ -1135,9 +1165,6 @@ Ext.define('Shopping.view.cart.CartController', {
                 scale   : 'medium',
                 handler : function (btn) {
                     btn.up('window').close();
-                    if (checkout) {
-                        me.closeShowReleaseWindow('show');
-                    }
                 }
             }, {
                 ui        : 'blue',
@@ -1150,7 +1177,15 @@ Ext.define('Shopping.view.cart.CartController', {
                     scope : me,
                     click : me.sendPayment
                 }
-            }]
+            }],
+            listeners : {
+                scope : me,
+                close : function(){
+                    if (checkout) {
+                        me.closeShowReleaseWindow('show');
+                    }
+                }
+            }
         }).show();
 
         deferred.resolve(content);
