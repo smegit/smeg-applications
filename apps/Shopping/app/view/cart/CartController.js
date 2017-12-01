@@ -784,9 +784,9 @@ Ext.define('Shopping.view.cart.CartController', {
                     // confirm release because they have a max pay of 0 meaning they already deposited the full amount.
                     //
                     me.confirmRelease()
-                        .then(function () {
+                        .then(function (content) {
                             me.closeShowReleaseWindow('close');
-                            me.printCart(content.OAORDKEY, cartInfo.data);
+                            me.printCart(content.OAORDKEY, cartInfo.data, content.printURL);
                             me.onClickClear();
                         }, function () {
                             me.closeShowReleaseWindow('close');
@@ -817,7 +817,7 @@ Ext.define('Shopping.view.cart.CartController', {
                         OAORDKEY : content.OAORDKEY
                     });
 
-                    me.printCart(content.OAORDKEY, cartInfo.data);
+                    me.printCart(content.OAORDKEY, cartInfo.data, content.printURL);
 
                     //clear/reset the cart and go back to the main section
                     //
@@ -1006,9 +1006,9 @@ Ext.define('Shopping.view.cart.CartController', {
      * printCart - Print the active order/cart
      * @param key
      */
-    printCart : function (key, orderData) {
+    printCart : function (key, orderData, url) {
         var me           = this,
-            iframeSource = '/Product/ord' + key + '.pdf';
+            iframeSource = url;
 
         Ext.create('Shopping.view.cart.Print', {
             iframeSource : iframeSource,
@@ -1141,6 +1141,7 @@ Ext.define('Shopping.view.cart.CartController', {
         view.add({
             xtype        : 'window',
             itemId       : 'cartPayment',
+            printURL     : content.printURL,
             ui           : 'smeg',
             bodyPadding  : 20,
             width        : 600,
@@ -1306,10 +1307,10 @@ Ext.define('Shopping.view.cart.CartController', {
                                 //process release confirmation
                                 //
                                 me.confirmRelease()
-                                    .then(function () {
+                                    .then(function (content) {
                                         wdw.close();
                                         me.closeShowReleaseWindow('close');
-                                        me.printCart(orderKey, cartInfo.data);
+                                        me.printCart(orderKey, cartInfo.data, content.printURL);
                                         me.onClickClear();
                                     }, function () {
                                         wdw.close();
@@ -1321,7 +1322,7 @@ Ext.define('Shopping.view.cart.CartController', {
                                     text : !Ext.isEmpty(resp.msg) ? 'Your order has been processed.' : resp.msg
                                 });
                                 wdw.close();
-                                me.printCart(orderKey, cartInfo.data);
+                                me.printCart(orderKey, cartInfo.data, wdw.printURL);
                                 me.onClickClear();
                             }
                         } else {
