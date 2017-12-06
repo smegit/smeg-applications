@@ -49,6 +49,10 @@ Ext.define('Ext.overrides.classic.grid.Panel', {
             title = me.getOrgTitle() || me.title,
             hdr;
 
+        if (!me.countInTitle){
+            return;
+        }
+
         if (!Ext.isEmpty(title)) {
             me.setTitle(title);
             return;
