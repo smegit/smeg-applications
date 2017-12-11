@@ -5,5 +5,10 @@ Ext.define('Shopping.model.Note', {
         convert : function (v, rec) {
             return Ext.util.Format.date(new Date(rec.get('OFCRTDATE') + ' ' + rec.get('OFCRTTIME')), 'd/m/Y H:i');
         }
+    },{
+        name    : 'OFNOTE',
+        convert : function (v) {
+            return v.replace(new RegExp('<br/>', 'g'), '\r\n')
+        }
     }]
 });
