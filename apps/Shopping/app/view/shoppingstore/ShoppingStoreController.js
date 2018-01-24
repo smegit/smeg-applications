@@ -310,7 +310,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 pgm    : 'EC1010',
                 action : 'getProdDtl',
                 prod   : rec.getData().MODEL,
-                stkloc : vm.get('STKLOC')
+                stkloc : vm.get('STKLOC') || vm.get('STKDFT')
             },
             success : function (response, opts) {
                 Valence.common.util.Helper.destroyLoadMask(cmp.el);
@@ -559,7 +559,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     }
 
                     vm.set({
-                        STKLOC             : formValues.OASTKLOC,
+                        STKLOC             : obj.OASTKLOC,
                         cartValues         : formValues,
                         disableSalesPerson : (!Ext.isEmpty(obj.lockSalesPerson) && obj.lockSalesPerson === 'true' && !Ext.isEmpty(formValues.OAREP)) ? true : false
                     });
