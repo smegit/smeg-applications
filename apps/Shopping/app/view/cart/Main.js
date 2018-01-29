@@ -48,6 +48,7 @@ Ext.define('Shopping.view.cart.Main', {
                     queryMode      : 'local',
                     flex           : 0,
                     width          : 305,
+                    height         : 32,
                     labelWidth     : 95,
                     valueField     : 'STKCOD',
                     displayField   : 'STKDSC',
@@ -59,7 +60,7 @@ Ext.define('Shopping.view.cart.Main', {
                     },
                     bind           : {
                         store : '{StockLocations}',
-                        value : '{STKDFT}'
+                        value : '{STKLOC}'
                     }
                 }]
             }, '->', {

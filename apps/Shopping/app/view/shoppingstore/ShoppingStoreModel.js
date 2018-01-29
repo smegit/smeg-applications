@@ -32,8 +32,16 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         ordKeyText        : function (get) {
             return 'Order - ' + get('activeCartNumber');
         },
-        stkLocation       : function (get) {
-            return get('STKLOC') || get('STKDFT');
+        currentStockLoc: {
+            get: function (get) {
+                return get('STKLOC');
+            },
+
+            set: function (value) {
+                this.set({
+                    STKLOC: value
+                });
+            }
         },
         hideClearCart     : function (get) {
             return get('cartCount') == 0;

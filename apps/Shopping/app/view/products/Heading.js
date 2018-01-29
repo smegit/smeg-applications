@@ -31,11 +31,12 @@ Ext.define('Shopping.view.products.Heading', {
             fieldLabel     : 'Stock Location',
             forceSelection : true,
             listeners      : {
-                select : 'onSelectStockLocation'
+                select : 'onSelectStockLocation',
+                change : 'onChangeStockLocation'
             },
             bind           : {
                 store : '{StockLocations}',
-                value : '{STKDFT}'
+                value : '{currentStockLoc}'
             }
         }, {
             xtype : 'tbfill'

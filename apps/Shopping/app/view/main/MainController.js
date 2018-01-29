@@ -87,7 +87,9 @@ Ext.define('Shopping.view.main.MainController', {
                     vmObj = {
                         'agentName'   : d.AgentName[0].Name,
                         'cartOptions' : d.DelOpts,
-                        'STKDFT'      : stockDefault
+                        // 'STKDFT'      : stockDefault,
+                        'STKLOC' : stockDefault,
+                        'defaultStockLocation' : stockDefault
                     };
 
                     if (!Ext.isEmpty(activeAgent)) {

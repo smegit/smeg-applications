@@ -60,7 +60,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             mainVm       = me.getView().lookupViewModel(true),
             card         = me.lookupReference('card'),
             mainCart     = me.lookupReference('cartcontainer'),
-            stockDefault = mainVm.get('STKDFT');
+            stockDefault = mainVm.get('defaultStockLocation');
 
         if (!Ext.isEmpty(stockDefault)) {
             var productsStore = vm.getStore('products');
@@ -310,7 +310,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 pgm    : 'EC1010',
                 action : 'getProdDtl',
                 prod   : rec.getData().MODEL,
-                stkloc : vm.get('STKLOC') || vm.get('STKDFT')
+                stkloc : vm.get('STKLOC')
             },
             success : function (response, opts) {
                 Valence.common.util.Helper.destroyLoadMask(cmp.el);
@@ -630,7 +630,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     mainController.getOptions(selectedAgent)
                         .then(function (content) {
                             Valence.common.util.Helper.destroyLoadMask();
-                            var stockDefault = mainVm.get('STKDFT');
+                            var stockDefault = mainVm.get('STKLOC');
 
                             if (!Ext.isEmpty(stockDefault)) {
                                 var productsStore = vm.getStore('products');

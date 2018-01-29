@@ -25,6 +25,17 @@ Ext.define('Shopping.view.products.ProductsController', {
         this.getView().fireEvent('selectstocklocation', fld, rec);
     },
 
+    onChangeStockLocation : function(cmp, value){
+        var me = this,
+            store = me.getView().lookupViewModel(true).getStore('products');
+
+        if (!Ext.isEmpty(value)){
+            Ext.apply(store.getProxy().extraParams, {
+                stkloc : value
+            });
+        }
+    },
+
     onClearSearch : function (fld) {
         var me  = this,
             vm  = me.getViewModel(),

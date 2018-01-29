@@ -180,7 +180,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 pgm      : 'EC1050',
                 action   : 'confirm',
                 products : (!Ext.isEmpty(cartInfo) && !Ext.isEmpty(cartInfo.products)) ? Ext.encode(cartInfo.products) : null,
-                stkloc   : vm.get('STKDFT')
+                stkloc   : vm.get('STKLOC')
             };
 
         Valence.common.util.Helper.loadMask('Processing');
@@ -235,7 +235,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 pgm      : 'EC1050',
                 action   : action,
                 products : (!Ext.isEmpty(cartInfo) && !Ext.isEmpty(cartInfo.products)) ? Ext.encode(cartInfo.products) : null,
-                stkloc   : vm.get('STKDFT')
+                stkloc   : vm.get('STKLOC')
             }, rep;
 
         if (!Ext.isEmpty(cartInfo)) {
@@ -1062,7 +1062,8 @@ Ext.define('Shopping.view.cart.CartController', {
             disableSalesPerson : false,
             activeCartNumber   : null,
             cartValues         : null,
-            orderPayments      : null
+            orderPayments      : null,
+            STKLOC             : vm.get('defaultStockLocation')
         });
 
         vm.notify();
@@ -1086,7 +1087,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 pgm      : 'EC1050',
                 action   : 'saveCart',
                 products : Ext.encode(products),
-                stkloc   : vm.get('STKDFT')
+                stkloc   : vm.get('STKLOC')
             }, rep;
 
         Valence.common.util.Helper.loadMask(maskText);
