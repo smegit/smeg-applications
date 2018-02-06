@@ -164,7 +164,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
         str.clearFilter();
 
-        Valence.util.Helper.processTypedInputFilter(str, ['OAORDKEY', 'OAMNTD', 'OAMNTT', 'OACSTREF', 'OAREP', 'OAORDKEY', 'OACSTNAM'], val);
+        Valence.util.Helper.processTypedInputFilter(str, ['OAORDKEY', 'OAMNTD', 'OAMNTT', 'OACSTREF', 'OAREP', 'OAORDKEY', 'OACSTNAM', 'OACSTEML', 'OACSTPH1', 'OACSTPH2' ], val);
     },
     onClearSearch             : function (fld) {
         var me  = this,
