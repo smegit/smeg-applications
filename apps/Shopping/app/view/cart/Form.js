@@ -40,6 +40,7 @@ Ext.define('Shopping.view.cart.Form', {
                     displayField   : 'REP',
                     valueField     : 'REP',
                     name           : 'OAREP',
+                    cls            : 'sales-rep',
                     forceSelection : true,
                     fieldLabel     : 'Sales Person',
                     allowBlank     : false,
