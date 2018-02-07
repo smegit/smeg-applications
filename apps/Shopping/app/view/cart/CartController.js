@@ -31,6 +31,8 @@ Ext.define('Shopping.view.cart.CartController', {
             resetcart : 'onResetCart'
         });
 
+        // window.smegCleanup = Ext.bind(me.releaseCart, me, [true]);
+
         //listen for the destroy of the application and release if we have an active cart release it
         //
         if (!Ext.isEmpty(appFrame)) {
@@ -1042,6 +1044,8 @@ Ext.define('Shopping.view.cart.CartController', {
                     OAORDKEY : activeCart
                 }
             });
+
+            vm.set('activeCartNumber', null);
         }
     },
 
