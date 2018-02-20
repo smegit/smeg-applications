@@ -253,8 +253,19 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     onItemClickProduct : function (cmp, record, el, index, e) {
-        var me   = this,
-            attr = Ext.get(e.getTarget()).getAttribute('data-event');
+        var me           = this,
+            attr         = Ext.get(e.getTarget()).getAttribute('data-event'),
+            selectedText = document.getSelection();
+
+        //check if the element has selected text. If so user is selecting text "model" so don't show the details
+        // window
+        //
+        if (!Ext.isEmpty(selectedText) && !selectedText.isCollapsed && !Ext.isEmpty(selectedText.extentNode)){
+            if (!Ext.isEmpty(selectedText.extentNode.parentElement) && el.contains(selectedText.extentNode.parentElement)){
+                return;
+            }
+        }
+
         if (attr) {
             cmp.fireEvent(attr, record);
         } else {
@@ -320,6 +331,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     xtype       : 'window',
                     frame       : true,
                     closable    : true,
+                    draggable   : false,
                     ui          : 'smeg',
                     width       : 600,
                     height      : "80%",
@@ -337,7 +349,17 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                         height   : '100%',
                         minWidth : 400
                     }],
-                    autoShow    : true
+                    autoShow    : true,
+                    listeners : {
+                        afterrender : function(cmp){
+                            var header = cmp.getHeader(),
+                                title = (!Ext.isEmpty(header)) ? header.getTitle() : null;
+
+                            if (!Ext.isEmpty(title) && !Ext.isEmpty(title.textEl)){
+                                title.textEl.selectable();
+                            }
+                        }
+                    }
                 };
 
                 if (viewOnly) {
