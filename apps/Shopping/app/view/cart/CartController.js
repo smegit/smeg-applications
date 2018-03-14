@@ -545,6 +545,12 @@ Ext.define('Shopping.view.cart.CartController', {
             document.getElementById(input.id),
             {types : ['geocode', 'establishment']});
 
+        //limit auto complete to Australia
+        //
+        cmp.googleAutoComplete.setComponentRestrictions({
+            country : ['au']
+        });
+
         // When the user selects an address from the dropdown, populate the address
         // fields in the form.
         cmp.googleAutoComplete.addListener('place_changed', Ext.bind(me.autoFillAddress, me, [cmp]));
