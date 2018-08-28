@@ -85,11 +85,18 @@ describe("Ext.app.Controller", function() {
         
         ctrl = null;
 
-        if (Ext.isIE) {
+        if (Ext.isIE8) {
             window.TestController = undefined;
             window.NonexistingNamespace = undefined;
             window.AnotherNonexistingNamespace = undefined;
             window.YetAnotherNonexistingNamespace = undefined;
+            
+            addGlobal([
+                'TestController',
+                'NonexistingNamespace',
+                'AnotherNonexistingNamespace',
+                'YetAnotherNonexistingNamespace'
+            ]);
         }
         else {
             delete window.TestController;

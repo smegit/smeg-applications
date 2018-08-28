@@ -3,13 +3,23 @@
   //border-top:2px solid #dcdcdc;
 }
 
+//.category-text {
+//  font-size: 21px;
+//  background-color: #eee;
+//  padding: 16px 16px 8px 16px;
+//  line-height: 22px;
+//  color: $black-2-color;
+//  max-height: 160px;
+//}
+
 .category-text {
-  font-size: 21px;
+  font-size: 30px;
   background-color: #eee;
-  padding: 16px 16px 8px 16px;
-  line-height: 22px;
-  color: $black-2-color;
+  padding: 17px 17px 16px 17px;
+  color: black;
   max-height: 160px;
+  line-height: 24px;
+  font-weight: 500;
 }
 
 .prd-wrap{
@@ -20,7 +30,7 @@
   color:$black-12-color;
   .special {
     //@include box-shadow(0 3px 7px 0 $black-2-color, 0 3px 15px 0 $black-3-color);
-    color : $black-1-color;
+    color : rgba(0, 0, 0, 0.7);
   }
   .normal,.special {
     @include box-shadow(0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12));
@@ -38,53 +48,150 @@
     padding:13px;
     width: 90%;
     margin: 0 auto;
-    height:212px;
+    //height:212px;
+    height: 220px;
     background-color:#fff;
     img{
-      max-height:125px;
+      max-height:150px;
       position:absolute;
-      right:13px;
-      top: 36px;
+      //right:13px;
+      //top: 36px;
+      bottom: 10px;
+
     }
     .add-to-cart{
       position:absolute;
       bottom:13px;
-      left:13px;
-      background-color:#2196F3;
+      right:13px;
+      //background-color:#03a9f4;
       color:#fff;
-      font-weight:500;
-      padding:10px;
+      //font-weight:500;
+      //padding:10px;
+    }
+
+    // add button
+    .button {
+      background-color: #4CAF50; /* Green */
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      -webkit-transition-duration: 0.4s; /* Safari */
+      transition-duration: 0.4s;
+      cursor: pointer;
+      border-radius: 12px;
+      font-weight: 400;
+    }
+    .button2 {
+      background-color: white; 
+      color: #03a9f4; 
+      border: 1px solid #03a9f4;
+    }
+
+    .button2:hover {
+        background-color: #03a9f4;
+        color: white;
+    }
+
+    .prd-info-group{
+      display: block;
+      float: right;
+      position: relative;
+      top: -17px;
+      height: 120px;
+      width: 120px;
+    }
+    // Add show info css
+    .show-info {
+      position:absolute;
+      bottom:13px;
+      right:93px;
     }
     .prd-price,.prd-price-normal{
-      margin-top:8px;
+      //margin-top:8px;
+
+      // Add
+      //border: 1px solid;
+      display: block;
+      position: relative;
+      //right: 10px;
+      //top: 2px;
+      //margin-top: 2px;
+      /* left: 160px; */
+      text-align: right;
+
     }
     .prd-price,.prd-price-spc {
-      padding: 4px;
+      //padding: 4px;
+
+      // Add
+      text-align: right;
+      display: block;
+      position: relative;
+      //right: 10px;
+      //top: 2px;
+      //border: 1px solid;
     }
     .prd-price-normal {
-      padding: 4px 2px;
+      //padding: 4px 2px;
+
+      // Add
+      padding: 0 0;
     }
 
     .prd-expire {
       margin-top : 2px!important;
       margin-left: 4px!important;
       font-style: italic;
+
+      position: relative;
+      top: 2px;
+      //right: 10px;
+      //border: 1px solid;
+      text-align: right;
     }
 
     .prd-price-normal {
-      color : $black-3-color;
+      //color : $black-3-color;
+      color: rgba(0, 0, 0, 0.7);
       text-decoration: line-through;
+
+      // add 
+
     }
 
     .prd-price-spc {
-      color : $smeg-red;
+      //color : $smeg-red;
+      color : black;
     }
 
     .prd-general {
-      margin-top: 5px;
-      margin-left: 2px;
-      font-size: 12px;
-      font-weight: 300;
+      //margin-top: 5px;
+      //margin-left: 2px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    // Add
+    .prd-model {
+      //text-align: right;
+    }
+
+    .prd-desc{
+      margin-bottom: 3px;
+    }
+    // Add
+    .prd-stock {
+      position: absolute;
+      bottom: 10px;
+      //right: 10px;
+      //border: 1px solid;
+      text-align: right;
+      right: 0px;
     }
     .stock-lvl-g,.stock-lvl-o,.stock-lvl-r{
       width:100%;
@@ -113,3 +220,8 @@
   }
 }
 
+
+.x-item-disabled {
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+  opacity: 0.6 !important;
+}

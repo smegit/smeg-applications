@@ -1154,7 +1154,7 @@ describe("Ext.data.proxy.Direct", function() {
                     
                     it("should pass correct params to the fn", function() {
                         expectArgs(destroySpy, [
-                            { id: 7 }, { id: 8 }
+                            { id: 8 }, { id: 7 }
                         ]);
                     });
                 });
@@ -1167,7 +1167,7 @@ describe("Ext.data.proxy.Direct", function() {
                     });
                     
                     it("should pass correct params to the fn", function() {
-                        expectArgs(destroySpy, [7, 8]);
+                        expectArgs(destroySpy, [8, 7]);
                     });
                 });
             });

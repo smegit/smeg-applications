@@ -13,7 +13,7 @@
  *     @example
  *     Ext.create('Ext.panel.Panel', {
  *         title: 'Choose a future date:',
- *         width: 200,
+ *         width: 330,
  *         bodyPadding: 10,
  *         renderTo: Ext.getBody(),
  *         items: [{
@@ -214,9 +214,8 @@ Ext.define('Ext.picker.Date', {
      * @cfg {Number} [startDay=undefined]
      * Day index at which the week should begin, 0-based.
      *
-     * Defaults to `0` (Sunday).
+     * Defaults to the value of {@link Ext.Date.firstDayOfWeek}.
      */
-    startDay: 0,
     //</locale>
 
     //<locale>
@@ -411,9 +410,15 @@ Ext.define('Ext.picker.Date', {
         if (!me.format) {
             me.format = Ext.Date.defaultFormat;
         }
+        
         if (!me.dayNames) {
             me.dayNames = Ext.Date.dayNames;
         }
+        
+        if (me.startDay == null) {
+            me.startDay = Ext.Date.firstDayOfWeek;
+        }
+        
         me.dayNames = me.dayNames.slice(me.startDay).concat(me.dayNames.slice(0, me.startDay));
 
         me.callParent();

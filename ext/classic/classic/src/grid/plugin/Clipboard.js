@@ -86,7 +86,8 @@ Ext.define('Ext.grid.plugin.Clipboard', {
             }
         });
 
-        return Ext.util.TSV.encode(ret);
+        // See decode() comment below
+        return Ext.util.TSV.encode(ret, undefined, null);
     },
 
     getCells: function (format, erase) {
@@ -125,7 +126,11 @@ Ext.define('Ext.grid.plugin.Clipboard', {
     },
 
     putCellData: function (data, format) {
-        var values = Ext.util.TSV.decode(data),
+        // We pass null as field quote here to override default TSV decoding behavior
+        // that will try to unquote fields and break if double quote character is
+        // encountered in the data. TSV format does not support any kind of field quoting
+        // but Ext.util.TSV mistakenly assumed otherwise before this fix.
+        var values = Ext.util.TSV.decode(data, undefined, null),
             row,
             recCount = values.length,
             colCount = recCount ? values[0].length : 0,

@@ -1,5 +1,48 @@
 /**
- * A lightweight component to display data in a simple tree structure.
+ * A lightweight component to display data in a simple tree structure using a
+ * {@link Ext.data.TreeStore}.
+ *
+ * Simple Treelist using inline data:
+ *
+ *     @example
+ *     Ext.create({
+ *         xtype: 'treelist',
+ *         store: {
+ *             root: {
+ *             expanded: true,
+ *                 children: [{
+ *                     text: 'detention',
+ *                     leaf: true,
+ *                     iconCls: 'x-fa fa-frown-o'
+ *                 }, {
+ *                     text: 'homework',
+ *                     expanded: true,
+ *                     iconCls: 'x-fa fa-folder',
+ *                     children: [{
+ *                         text: 'book report',
+ *                         leaf: true,
+ *                         iconCls: 'x-fa fa-book'
+ *                     }, {
+ *                         text: 'algebra',
+ *                         leaf: true,
+ *                         iconCls: 'x-fa fa-graduation-cap'
+ *                     }]
+ *                 }, {
+ *                     text: 'buy lottery tickets',
+ *                     leaf: true,
+ *                     iconCls: 'x-fa fa-usd'
+ *                 }]
+ *             }
+ *         },
+ *         renderTo: Ext.getBody()
+ *     });
+ *
+ * To collapse the Treelist for use in a smaller navigation view see {@link #micro}.
+ * Parent Treelist node expansion may be refined using the {@link #singleExpand} and
+ * {@link #expanderOnly} config options.  Treelist nodes will be selected when clicked /
+ * tapped excluding clicks on the expander unless {@link #selectOnExpander} is set to
+ * `true`.
+ *
  * @since 6.0.0
  */
 Ext.define('Ext.list.Tree', {
@@ -66,12 +109,25 @@ Ext.define('Ext.list.Tree', {
             xtype: 'treelistitem'
         },
 
+        /**
+         * @cfg {Boolean}
+         * Set as `true` to highlight all items on the path to the currently selected
+         * node.
+         */
         highlightPath: null,
 
         iconSize: null,
 
         indent: null,
 
+        /**
+         * @cfg {Boolean}
+         *
+         * Set to `true` to collapse the Treelist UI to display only the
+         * {@link Ext.data.NodeInterface#cfg-iconCls icons} of the root nodes.  Hovering
+         * the cursor (or tapping on a touch-enabled device) shows the child nodes beside
+         * the icon.
+         */
         micro: false,
 
         overItem: null,
@@ -103,6 +159,13 @@ Ext.define('Ext.list.Tree', {
 
         ui: null
     },
+
+    /**
+     * @event selectionchange
+     * This event fires when {@link #selection} changes
+     * @param {Ext.mixin.Selectable} this
+     * @param {Ext.data.TreeModel} record The currently selected node.
+     */
 
     twoWayBindable: {
         selection: 1
@@ -148,7 +211,10 @@ Ext.define('Ext.list.Tree', {
             state = 1;
         }
 
-        if (wasOver) {
+        // There are some cases, like tree filtering where it's possible that the whole tree
+        // gets refreshed on expand, so wasOver may be destroyed. In that case, we have nothing to
+        // do since the nodes are in a new state
+        if (wasOver && !wasOver.destroyed) {
             // If we wasOver something else previously, walk up that node hierarchy and
             // set their "over" to 0... until we encounter some node that we are still
             // "over" (as determined in previous loop).

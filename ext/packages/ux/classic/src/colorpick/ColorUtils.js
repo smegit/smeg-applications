@@ -66,10 +66,10 @@ Ext.define('Ext.ux.colorpick.ColorUtils', function (ColorUtils) {
             }
         },
 
-        hexRe: /#?([0-9a-f]{3,8})/i,
-        rgbaAltRe: /rgba\(\s*([\w#\d]+)\s*,\s*([\d\.]+)\s*\)/,
-        rgbaRe: /rgba\(\s*([\d\.]+)\s*,\s*([\d\.]+)\s*,\s*([\d\.]+)\s*,\s*([\d\.]+)\s*\)/,
-        rgbRe: /rgb\(\s*([\d\.]+)\s*,\s*([\d\.]+)\s*,\s*([\d\.]+)\s*\)/,
+        hexRe: /^#?([0-9a-f]{3,8})$/i,
+        rgbaAltRe: /^rgba\(\s*([\w#\d]+)\s*,\s*([\d\.]+)\s*\)$/,
+        rgbaRe: /^rgba\(\s*([\d\.]+)\s*,\s*([\d\.]+)\s*,\s*([\d\.]+)\s*,\s*([\d\.]+)\s*\)$/,
+        rgbRe: /^rgb\(\s*([\d\.]+)\s*,\s*([\d\.]+)\s*,\s*([\d\.]+)\s*\)$/,
 
         /**
          * Turn a string to a color object. Supports these formats:
@@ -77,7 +77,7 @@ Ext.define('Ext.ux.colorpick.ColorUtils', function (ColorUtils) {
          * - "#ABC" (HEX short)
          * - "#ABCDEF" (HEX)
          * - "#ABCDEFDD" (HEX with opacity)
-         * - "red" (named colors - see 
+         * - "red" (named colors - see
          * [Web Colors](http://en.wikipedia.org/wiki/Web_colors) for a full list)
          * - "rgba(r,g,b,a)" i.e "rgba(255,0,0,1)" (a == alpha == 0-1)
          * - "rgba(red, 0.4)"

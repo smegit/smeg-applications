@@ -104,13 +104,13 @@ describe('Ext.draw.Surface', function () {
             id = sprite.getId();
             result = surface.remove(sprite);
             expect(result).toEqual(sprite);
-            expect(sprite.isDestroyed).toBe(undefined);
+            expect(sprite.destroyed).toBe(false);
             expect(surface.getItems().length).toBe(1);
             expect(surface.get(id)).toBe(undefined);
 
             result = surface.remove(givenId);
             expect(result).toEqual(spriteId);
-            expect(spriteId.isDestroyed).toBe(undefined);
+            expect(spriteId.destroyed).toBe(false);
             expect(surface.getItems().length).toBe(0);
             expect(surface.get(givenId)).toBe(undefined);
 
@@ -130,12 +130,12 @@ describe('Ext.draw.Surface', function () {
 
             result = surface.remove(sprite, true);
             expect(result).toEqual(sprite);
-            expect(result.isDestroyed).toBe(true);
+            expect(result.destroyed).toBe(true);
             expect(surface.getItems().length).toBe(1);
 
             result = surface.remove('testing', true);
             expect(result).toEqual(spriteId);
-            expect(result.isDestroyed).toBe(true);
+            expect(result.destroyed).toBe(true);
             expect(surface.getItems().length).toBe(0);
 
             surface.destroy();
@@ -198,11 +198,11 @@ describe('Ext.draw.Surface', function () {
 
             result = surface2.remove(sprite);
             expect(result).toEqual(sprite);
-            expect(result.isDestroyed).toBe(undefined);
+            expect(result.destroyed).toBe(false);
 
             result = surface2.remove(sprite, true);
             expect(result).toEqual(sprite);
-            expect(result.isDestroyed).toBe(true);
+            expect(result.destroyed).toBe(true);
 
             surface1.destroy();
             surface2.destroy();

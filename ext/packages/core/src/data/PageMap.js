@@ -76,11 +76,12 @@ Ext.define('Ext.data.PageMap', {
     * Returns the first record in this page map which elicits a true return value from the
     * passed selection function.
     *
-    * **IMPORTANT
-    * This can ONLY find records which happen to be cached in the page cache. This will be parts of the dataset around the currently
-    * visible zone, or recently visited zones if the pages have not yet been purged from the cache.
+    * **IMPORTANT**
+    *
+    * **This can ONLY find records which happen to be cached in the page cache. This will be parts of the dataset around the currently
+    * visible zone, or recently visited zones if the pages have not yet been purged from the cache.**
     * 
-    * This CAN NOT find records which have not been loaded into the cache.**
+    * **This CAN NOT find records which have not been loaded into the cache.**
     *
     * If full client side searching is required, do not use a buffered store, instead use a regular, fully loaded store and
     * use the {@link Ext.grid.plugin.BufferedRenderer BufferedRenderer} plugin to minimize DOM footprint.
@@ -109,11 +110,12 @@ Ext.define('Ext.data.PageMap', {
     * Returns the index *in the whole dataset* of the first record in this page map which elicits a true return value from the
     * passed selection function.
     *
-    * **IMPORTANT
-    * This can ONLY find records which happen to be cached in the page cache. This will be parts of the dataset around the currently
-    * visible zone, or recently visited zones if the pages have not yet been purged from the cache.
+    * **IMPORTANT**
+    *
+    * **This can ONLY find records which happen to be cached in the page cache. This will be parts of the dataset around the currently
+    * visible zone, or recently visited zones if the pages have not yet been purged from the cache.**
     * 
-    * This CAN NOT find records which have not been loaded into the cache.**
+    * **This CAN NOT find records which have not been loaded into the cache.**
     *
     * If full client side searching is required, do not use a buffered store, instead use a regular, fully loaded store and
     * use the {@link Ext.grid.plugin.BufferedRenderer BufferedRenderer} plugin to minimize DOM footprint.
@@ -300,8 +302,10 @@ Ext.define('Ext.data.PageMap', {
 
     getRange: function(start, end) {
         // Store's backing Collection now uses EXCLUSIVE endIndex
-        // So store will always pass the endIndex+1
-        end--;
+        // So store will always pass the endIndex+1 unless it's 0
+        if (end) {
+            end--;
+        }
 
         if (!this.hasRange(start, end)) {
             Ext.raise('PageMap asked for range which it does not have');

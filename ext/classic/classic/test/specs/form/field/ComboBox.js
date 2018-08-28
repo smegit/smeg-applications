@@ -2178,6 +2178,22 @@ describe("Ext.form.field.ComboBox", function() {
             });
         });
 
+        it("should not clear the lastSelectedRecords when calling setValue", function() {
+            makeComponent({
+                displayField: 'text',
+                valueField: 'val',
+                forceSelection: true,
+                queryMode: 'local',
+                renderTo: Ext.getBody()
+            });
+
+            component.setValue('value 2');
+
+            component.setValue('value 2');
+
+            expect(component.lastSelectedRecords).not.toBe(null);
+        });
+
         describe("setting value to a value not in the Store with forceSelection: false", function() {
             it("should set passed value", function() {
                 makeComponent({
@@ -2720,6 +2736,82 @@ describe("Ext.form.field.ComboBox", function() {
                 component.doQuery('foob');
                 completeWithData();
                 expect(component.inputEl.dom.value).toBe('foob');
+            });
+
+            it("should not clear an unmatched value while paging and forceSelection is true", function() {
+                var paging, next;
+
+                store.destroy();
+                store = new Ext.data.Store({
+                    model: CBTestModel,
+                    proxy: {
+                        type: 'ajax',
+                        url: 'foo',
+                        reader: {
+                            rootProperty: 'data',
+                            totalProperty: 'total'
+                        }
+                    },
+                    autoLoad: true,
+                    pageSize: 2
+                });
+
+                makeComponent({
+                    store: store,
+                    displayField: 'text',
+                    valueField: 'val',
+                    forceSelection: true,
+                    queryMode: 'remote',
+                    pageSize: 2,
+                    renderTo: Ext.getBody()
+                });
+
+                spyOn(component, 'loadPage').andCallThrough();
+
+                paging = component.getPicker().down('pagingtoolbar');
+                next = paging.down('#next');
+
+                component.setRawValue('foobar');
+                component.doQuery('foobar');
+
+                // first page of data
+                completeWithData({
+                    total: 10,
+                    data: [{
+                        text: 'foobar1',
+                        val: 'foobar1'
+                    },{
+                        text: 'foobar2',
+                        val: 'foobar2'
+                    }]
+                });
+                
+                // focus "next"; this will simulate what happens when button is clicked and hasFocus on combo is set to false
+                next.focus();
+                paging.moveNext();
+
+                // second page of data
+                completeWithData({
+                    total: 10,
+                    data: [{
+                        text: 'foobar3',
+                        val: 'foobar3'
+                    },{
+                        text: 'foobar4',
+                        val: 'foobar4'
+                    }]
+                });
+
+                // combo.loadPage should be called twice, once for initial load, once for "next"
+                expect(component.loadPage.callCount).toBe(2);
+                // store's last options should reflect 2nd page, preserving the query param
+                expect(store.lastOptions.page).toBe(2);
+                expect(store.lastOptions.params.query).toBe('foobar');
+                // combo should have lost focus because of interaction with toolbar
+                expect(component.hasFocus).toBe(false);
+                // rawValue should be perserved
+                expect(component.inputEl.dom.value).toBe('foobar'); 
+                expect(component.isPaging).toBe(false);               
             });
         });
     });

@@ -561,7 +561,7 @@ Ext.define('Ext.ZIndexManager', {
                 // If we're masking the body, subtract the border/padding so we don't cause scrollbar.
                 return {
                     height: Math.max(document.body.scrollHeight, Ext.dom.Element.getDocumentHeight()),
-                    width: Math.max(document.body.scrollWidth, document.documentElement.clientWidth),
+                    width: Math.max(document.body.scrollWidth,  Ext.dom.Element.getDocumentWidth()),
                     x: 0,
                     y: 0
                 };

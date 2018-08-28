@@ -11,7 +11,7 @@
 Ext.define('Ext.grid.feature.GroupStore', {
     extend: 'Ext.util.Observable',
 
-    isStore: true,
+    isStore: true, 
 
     // Number of records to load into a buffered grid before it has been bound to a view of known size
     defaultViewSize: 100,
@@ -336,9 +336,11 @@ Ext.define('Ext.grid.feature.GroupStore', {
     // If it's in a collapsed group, then it's -1, not present
     indexOf: function(record) {
         var ret = -1;
-        if (!record.isCollapsedPlaceholder) {
+
+        if (record && !record.isCollapsedPlaceholder) {
             ret = this.data.indexOf(record);
         }
+
         return ret;
     },
 

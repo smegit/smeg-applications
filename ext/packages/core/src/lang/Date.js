@@ -982,12 +982,13 @@ utilDate = {
      * @private
      */
     parseCodes : {
-        /*
-         * Notes:
-         * g = {Number} calculation group (0 or 1. only group 1 contributes to date calculations.)
-         * c = {String} calculation method (required for group 1. null for group 0. {0} = currentGroup - position in regex result array)
-         * s = {String} regex pattern. all matches are stored in results[], and are accessible by the calculation mapped to 'c'
-         */
+        // Notes:
+        // g = {Number} calculation group (0 or 1. only group 1 contributes to
+        // date calculations.)
+        // c = {String} calculation method (required for group 1. null for group 0.
+        // {0} = currentGroup - position in regex result array)
+        // s = {String} regex pattern. all matches are stored in results[], and are
+        // accessible by the calculation mapped to 'c'
         d: {
             g:1,
             c:"d = parseInt(results[{0}], 10);\n",
@@ -1401,11 +1402,10 @@ utilDate = {
      * is the numeric day index within the week (0-6) which can be used in conjunction with
      * the {@link #monthNames} array to retrieve the textual day name.
      *
-     *    @example
-     *    var dt = new Date('1/10/2007'),
-     *        firstDay = Ext.Date.getFirstDayOfMonth(dt);
+     *     var dt = new Date('1/10/2007'),
+     *         firstDay = Ext.Date.getFirstDayOfMonth(dt);
      *
-     *    console.log(Ext.Date.dayNames[firstDay]); // output: 'Monday'
+     *     console.log(Ext.Date.dayNames[firstDay]); // output: 'Monday'
      *
      * @param {Date} date The date
      * @return {Number} The day number (0-6).
@@ -1420,11 +1420,10 @@ utilDate = {
      * is the numeric day index within the week (0-6) which can be used in conjunction with
      * the {@link #monthNames} array to retrieve the textual day name.
      *
-     *    @example
-     *    var dt = new Date('1/10/2007'),
-     *        lastDay = Ext.Date.getLastDayOfMonth(dt);
+     *     var dt = new Date('1/10/2007'),
+     *         lastDay = Ext.Date.getLastDayOfMonth(dt);
      *
-     *    console.log(Ext.Date.dayNames[lastDay]); // output: 'Wednesday'
+     *     console.log(Ext.Date.dayNames[lastDay]); // output: 'Wednesday'
      *
      * @param {Date} date The date
      * @return {Number} The day number (0-6).
@@ -1432,7 +1431,6 @@ utilDate = {
     getLastDayOfMonth : function(date) {
         return utilDate.getLastDateOfMonth(date).getDay();
     },
-
 
     /**
      * Get the date of the first day of the month in which this date resides.

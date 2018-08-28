@@ -2,12 +2,22 @@
   "name": "ext",
   "namespace": "Ext",
   "format": "1",
-  "version": "6.2.1.167",
+  "version": "6.2.2.479",
   "compatVersion": "6.2.0",
   "creator": "Sencha",
   "summary": "Ext JS",
   "detailedDescription": "Sencha Ext JS JavaScript Framework",
   "type": "framework",
+  "signatures": [
+    {
+      "name": "Sencha",
+      "uuid": "1d6b0d9c-3333-4e65-885f-5b07a1fc3198",
+      "created": "2018-03-10T00:34:03Z",
+      "algorithm": "SHA1withRSA",
+      "nonce": "udL40GdJ5Pw\u003d",
+      "signature": "mCd+WbpAISbJFyZ+eDpOmdUU6GqAgm2ENzt4zyZ4wuPxGiormak5NMx37RDY/FjsAboJDhGIbeaLQvqDOL4CEMjKKbnmJdY+iyFGL9SV92mQCUTL8E0JDlMd4jwM0KOWR9HFaFjBQ6iWhzezCwHvMgT4JzkAovEbFHp+bpDq6Vs5TC3Ro56xdZx1g+fMgidy/IcqKHTFWXFxSohwYipKrBtE2ELBDrBA1wF3PFybAg2LiUUGpYsirrhD9tQDIc8JsV0J45izoOXmlskJLtB2IIvurh+g/LSaxwRyPbAFwxZqUQAa6hWwmShJuhS9J7zXBr35Psthg9YyZ0Iserqr3Q\u003d\u003d"
+    }
+  ],
   "output": "${package.dir}/build",
   "build": {
     "dir": "${package.output.base}"

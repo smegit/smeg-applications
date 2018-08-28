@@ -11,7 +11,7 @@ describe('Ext.chart.series.Area', function () {
         it('should work on markers with style.step = false', function () {
             var red = '#ff0000',
                 green = '#ff0000',
-                redrawCount = 0;
+                layoutDone;
 
             run(function () {
                 chart = new Ext.chart.CartesianChart({
@@ -55,23 +55,16 @@ describe('Ext.chart.series.Area', function () {
                         marker: true
                     }],
                     listeners: {
-                        redraw: function () {
-                            redrawCount++;
+                        layout: function () {
+                            layoutDone = true;
                         }
                     }
                 });
             });
 
-            waits(500);
-            // TODO: Vitaly there'll have to be something more reliable than this.
-            // "normally" doesn't work in all cases. This test fails on platforms which
-            // do not have RAF because charts coalesce performLayout calls into
-            // the next animation frame, so when that is done is not deterinistic.
-            // For now, simply waiting a while works.
-            //
-            // Chart normally renders twice:
-            // 1) to measure things
-            // 2) to adjust layout
+            waitFor(function () {
+                return layoutDone;
+            });
 
             runs(function () {
                 var seriesSprite = chart.getSeries()[0].getSprites()[0],
@@ -88,7 +81,7 @@ describe('Ext.chart.series.Area', function () {
         it('should work on markers with style.step = true', function () {
             var red = '#ff0000',
                 green = '#ff0000',
-                redrawCount = 0;
+                layoutDone;
 
             run(function () {
                 chart = new Ext.chart.CartesianChart({
@@ -135,18 +128,15 @@ describe('Ext.chart.series.Area', function () {
                         marker: true
                     }],
                     listeners: {
-                        redraw: function () {
-                            redrawCount++;
+                        layout: function () {
+                            layoutDone = true;
                         }
                     }
                 });
             });
 
             waitFor(function () {
-                // Chart normally renders twice:
-                // 1) to measure things
-                // 2) to adjust layout
-                return redrawCount === 2;
+                return layoutDone;
             });
 
             run(function () {

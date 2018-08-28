@@ -1725,7 +1725,7 @@ describe("Ext.util.FocusableContainer", function() {
             beforeBtn, afterBtn, fooBtn, barBtn, fooInput, barInput, slider,
             disabledBtn1, disabledBtn2;
         
-        function tabAndExpect(from, direction, to, debug) {
+        function tabAndExpect(from, direction, to) {
             pressTabKey(from, direction);
             
             expectFocused(to);
@@ -1774,43 +1774,171 @@ describe("Ext.util.FocusableContainer", function() {
                 upSpy = downSpy = rightSpy = leftSpy = null;
             });
             
-            it("should preventDefault on the Up arrow key", function() {
-                pressKey(barBtn, 'up');
+            describe("Up arrow", function() {
+                it("should preventDefault on the Up arrow key", function() {
+                    pressKey(barBtn, 'up');
+                    
+                    waitForFocus(fooBtn);
+                    
+                    runs(function() {
+                        expect(upSpy.mostRecentCall.args[0].defaultPrevented).toBe(true);
+                    });
+                });
                 
-                waitForFocus(fooBtn);
+                it("should not preventDefault on Shift-Up arrow key", function() {
+                    pressKey(barBtn, 'up', { shift: true });
+                    
+                    waitForFocus(barBtn);
+                    
+                    runs(function() {
+                        expect(upSpy).not.toHaveBeenCalled();
+                    });
+                });
                 
-                runs(function() {
-                    expect(upSpy.mostRecentCall.args[0].defaultPrevented).toBe(true);
+                it("should not preventDefault on Ctrl-Up arrow key", function() {
+                    pressKey(barBtn, 'up', { ctrl: true });
+                    
+                    waitForFocus(barBtn);
+                    
+                    runs(function() {
+                        expect(upSpy).not.toHaveBeenCalled();
+                    });
+                });
+                
+                it("should not preventDefault on Alt-Up arrow key", function() {
+                    pressKey(barBtn, 'up', { alt: true });
+                    
+                    waitForFocus(barBtn);
+                    
+                    runs(function() {
+                        expect(upSpy).not.toHaveBeenCalled();
+                    });
                 });
             });
             
-            it("should preventDefault on the Down arrow key", function() {
-                pressKey(fooBtn, 'down');
+            describe("Down arrow", function() {
+                it("should preventDefault on the Down arrow key", function() {
+                    pressKey(fooBtn, 'down');
+                    
+                    waitForFocus(barBtn);
+                    
+                    runs(function() {
+                        expect(downSpy.mostRecentCall.args[0].defaultPrevented).toBe(true);
+                    });
+                });
                 
-                waitForFocus(barBtn);
+                it("should not preventDefault on Shift-Down arrow key", function() {
+                    pressKey(fooBtn, 'down', { shift: true });
+                    
+                    waitForFocus(fooBtn);
+                    
+                    runs(function() {
+                        expect(downSpy).not.toHaveBeenCalled();
+                    });
+                });
                 
-                runs(function() {
-                    expect(downSpy.mostRecentCall.args[0].defaultPrevented).toBe(true);
+                it("should not preventDefault on Ctrl-Down arrow key", function() {
+                    pressKey(fooBtn, 'down', { ctrl: true });
+                    
+                    waitForFocus(fooBtn);
+                    
+                    runs(function() {
+                        expect(downSpy).not.toHaveBeenCalled();
+                    });
+                });
+                
+                it("should not preventDefault on Alt-Down arrow key", function() {
+                    pressKey(fooBtn, 'down', { alt: true });
+                    
+                    waitForFocus(fooBtn);
+                    
+                    runs(function() {
+                        expect(downSpy).not.toHaveBeenCalled();
+                    });
                 });
             });
             
-            it("should preventDefault on the Right arrow key", function() {
-                pressKey(fooBtn, 'right');
+            describe("Right arrow", function() {
+                it("should preventDefault on the Right arrow key", function() {
+                    pressKey(fooBtn, 'right');
+                    
+                    waitForFocus(barBtn);
+                    
+                    runs(function() {
+                        expect(rightSpy.mostRecentCall.args[0].defaultPrevented).toBe(true);
+                    });
+                });
                 
-                waitForFocus(barBtn);
+                it("should not preventDefault on Shift-Right arrow key", function() {
+                    pressKey(fooBtn, 'right', { shift: true });
+                    
+                    waitForFocus(fooBtn);
+                    
+                    runs(function() {
+                        expect(rightSpy).not.toHaveBeenCalled();
+                    });
+                });
                 
-                runs(function() {
-                    expect(rightSpy.mostRecentCall.args[0].defaultPrevented).toBe(true);
+                it("should not preventDefault on Ctrl-Right arrow key", function() {
+                    pressKey(fooBtn, 'right', { ctrl: true });
+                    
+                    waitForFocus(fooBtn);
+                    
+                    runs(function() {
+                        expect(rightSpy).not.toHaveBeenCalled();
+                    });
+                });
+                
+                it("should not preventDefault on Alt-Right arrow key", function() {
+                    pressKey(fooBtn, 'right', { alt: true });
+                    
+                    waitForFocus(fooBtn);
+                    
+                    runs(function() {
+                        expect(rightSpy).not.toHaveBeenCalled();
+                    });
                 });
             });
             
-            it("should preventDefault on the Left arrow key", function() {
-                pressKey(barBtn, 'left');
+            describe("Left arrow", function() {
+                it("should preventDefault on the Left arrow key", function() {
+                    pressKey(barBtn, 'left');
+                    
+                    waitForFocus(fooBtn);
+                    
+                    runs(function() {
+                        expect(leftSpy.mostRecentCall.args[0].defaultPrevented).toBe(true);
+                    });
+                });
                 
-                waitForFocus(fooBtn);
+                it("should not preventDefault on Shift-Left arrow key", function() {
+                    pressKey(barBtn, 'left', { shift: true });
+                    
+                    waitForFocus(barBtn);
+                    
+                    runs(function() {
+                        expect(upSpy).not.toHaveBeenCalled();
+                    });
+                });
                 
-                runs(function() {
-                    expect(leftSpy.mostRecentCall.args[0].defaultPrevented).toBe(true);
+                it("should not preventDefault on Ctrl-Left arrow key", function() {
+                    pressKey(barBtn, 'left', { ctrl: true });
+                    
+                    waitForFocus(barBtn);
+                    
+                    runs(function() {
+                        expect(upSpy).not.toHaveBeenCalled();
+                    });
+                });
+                
+                it("should not preventDefault on Alt-Left arrow key", function() {
+                    pressKey(barBtn, 'left', { alt: true });
+                    
+                    waitForFocus(barBtn);
+                    
+                    runs(function() {
+                        expect(upSpy).not.toHaveBeenCalled();
+                    });
                 });
             });
         });

@@ -1929,6 +1929,8 @@ describe("Ext", function() {
                 delete window.ExtBox1;
             } catch(e) {
                 window.ExtBox1 = undefined;
+                
+                addGlobal('ExtBox1');
             }
         });
     });

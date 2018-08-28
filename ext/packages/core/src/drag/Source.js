@@ -9,7 +9,7 @@
  * - Snap to grid
  * - Constrain to an element or region.
  *
- * See {@link Ext.drag.Constrain} for detailed options.
+ * See {@link Ext.drag.Constraint} for detailed options.
  *
  *
  *      new Ext.drag.Source({
@@ -27,11 +27,11 @@
  *
  * Data representing the underlying drag is driven by the {@link #describe} method. This method
  * is called once at the beginning of the drag. It should populate the info object with data using
- * the {@link Ext.data.Info#setData setData} method. It accepts 2 arguments. 
+ * the {@link Ext.drag.Info#setData setData} method. It accepts 2 arguments. 
  * 
  * - The `type` is used to indicate to {@link Ext.drag.Target targets} the type(s) of data being provided. 
  * This allows the {@link Ext.drag.Target target} to decide whether it is able to interact with the source. 
- * All types added are available in {@link Ext.data.Info#types types}.
+ * All types added are available in {@link Ext.drag.Info#types types}.
  * - The value can be a static value, or a function reference. In the latter case, the function is evaluated
  * when the data is requested.
  *
@@ -139,7 +139,7 @@ Ext.define('Ext.drag.Source', {
          * `true` to always begin a drag with longpress. `false` to
          * never drag with longpress. If a string (or strings) are passed, it should
          * correspond to the pointer event type that should initiate a a drag on
-         * longpress. See {@Ext.event.Event#pointerType} for available types.
+         * longpress. See {@link Ext.event.Event#pointerType} for available types.
          */
         activateOnLongPress: false,
         
@@ -175,7 +175,7 @@ Ext.define('Ext.drag.Source', {
          * the alias, a config, or instance of a proxy.
          *
          * See {@link Ext.drag.proxy.None None}, {@link Ext.drag.proxy.Original Original}, 
-         * {@link Ext.drag.proxy.Status Status}.
+         * {@link Ext.drag.proxy.Placeholder Placeholder}.
          */
         proxy: 'original',
 
@@ -293,7 +293,7 @@ Ext.define('Ext.drag.Source', {
     /**
      * @method
      * Called before a drag starts. Return `false` to veto the drag.
-     * @param {Ext.data.Info} The drag info.
+     * @param {Ext.drag.Info} The drag info.
      *
      * @return {Boolean} `false` to veto the drag.
      *

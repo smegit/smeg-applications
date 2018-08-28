@@ -5,7 +5,6 @@
  *
  * The axis sprite. Currently all types of the axis will be rendered with this sprite.
  */
-
 Ext.define('Ext.chart.axis.sprite.Axis', {
     extend: 'Ext.draw.sprite.Sprite',
     alias: 'sprite.axis',
@@ -30,7 +29,7 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
                 axisLine: 'bool',
 
                 /**
-                 * @cfg {Boolean} minorTricks 'true' if the axis has sub ticks.
+                 * @cfg {Boolean} minorTicks 'true' if the axis has sub ticks.
                  */
                 minorTicks: 'bool',
 
@@ -297,8 +296,10 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
         var attr = me.attr,
             layout = me.getLayout(),
             isRtl = chart.getInherited().rtl,
-            min = attr.dataMin + (attr.dataMax - attr.dataMin) * attr.visibleMin,
-            max = attr.dataMin + (attr.dataMax - attr.dataMin) * attr.visibleMax,
+            dataRange = attr.dataMax - attr.dataMin,
+            min = attr.dataMin + dataRange * attr.visibleMin,
+            max = attr.dataMin + dataRange * attr.visibleMax,
+            range = max - min,
             position = attr.position,
             context = {
                 attr: attr,
@@ -308,20 +309,20 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
 
         if (position === 'left' || position === 'right') {
             attr.translationX = 0;
-            attr.translationY = max * attr.length / (max - min);
+            attr.translationY = max * attr.length / range;
             attr.scalingX = 1;
-            attr.scalingY = -attr.length / (max - min);
+            attr.scalingY = -attr.length / range;
             attr.scalingCenterY = 0;
             attr.scalingCenterX = 0;
             me.applyTransformations(true);
         } else if (position === 'top' || position === 'bottom') {
             if (isRtl) {
-                attr.translationX = attr.length + min * attr.length / (max - min) + 1;
+                attr.translationX = attr.length + min * attr.length / range + 1;
             } else {
-                attr.translationX = -min * attr.length / (max - min);
+                attr.translationX = -min * attr.length / range;
             }
             attr.translationY = 0;
-            attr.scalingX = (isRtl ? -1 : 1) * attr.length / (max - min);
+            attr.scalingX = (isRtl ? -1 : 1) * attr.length / range;
             attr.scalingY = 1;
             attr.scalingCenterY = 0;
             attr.scalingCenterX = 0;

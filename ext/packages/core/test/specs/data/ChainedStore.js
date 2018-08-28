@@ -41,10 +41,7 @@ describe("Ext.data.ChainedStore", function() {
     }
     
     function completeWithData(data) {
-        Ext.Ajax.mockComplete({
-            status: 200,
-            responseText: Ext.JSON.encode(data)
-        });
+        Ext.Ajax.mockCompleteWithData(data);
     }
     
     function expectOrder(recs, s) {
@@ -1777,6 +1774,86 @@ describe("Ext.data.ChainedStore", function() {
             // if all went as planned, the chained store's collection should have been notified of the removal as well
             expect(store.getCount()).toBe(0);
             expect(spy).toHaveBeenCalled();
+        });
+    });
+
+    describe("session", function() {
+        beforeEach(function() {
+            source = Ext.destroy(source);
+        });
+
+        it("should return the session from the source", function() {
+            source = Ext.destroy(source);
+
+            var s = new Ext.data.Session();
+            createSource({
+                session: s
+            });
+            createStore();
+            expect(store.getSession()).toBe(s);
+        });
+
+        it("should return null when there is no source", function() {
+            createStore();
+            expect(store.getSession()).toBeNull();
+        });
+    });
+
+    describe("getModel", function() {
+        it("should return the model from the source", function() {
+            createStore();
+            expect(store.getModel()).toBe(User);
+        });
+
+        it("should return null when there is no source", function() {
+            source = Ext.destroy(source);
+            createStore();
+            expect(store.getModel()).toBeNull();
+        });
+    });
+
+    describe("hasPendingLoad", function() {
+        it("should return the hasPendingLoad from the source", function() {
+            createStore();
+            source.load();
+            expect(store.hasPendingLoad()).toBe(true);
+            completeWithData([]);
+        });
+
+        it("should return false when there is no source", function() {
+            source = Ext.destroy(source);
+            createStore();
+            expect(store.hasPendingLoad()).toBe(false);
+        });
+    });
+
+    describe("isLoaded", function() {
+        it("should return the isLoaded from the source", function() {
+            createStore();
+            source.load();
+            completeWithData([]);
+            expect(store.isLoaded()).toBe(true);
+        });
+
+        it("should return false when there is no source", function() {
+            source = Ext.destroy(source);
+            createStore();
+            expect(store.isLoaded()).toBe(false);
+        });
+    });
+
+    describe("isLoading", function() {
+        it("should return the isLoading from the source", function() {
+            createStore();
+            source.load();
+            expect(store.isLoading()).toBe(true);
+            completeWithData([]);
+        });
+
+        it("should return false when there is no source", function() {
+            source = Ext.destroy(source);
+            createStore();
+            expect(store.isLoading()).toBe(false);
         });
     });
 });

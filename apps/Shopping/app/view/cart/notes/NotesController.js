@@ -110,12 +110,6 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             delete params.id;
         }
 
-        //replace carriage return/line feeds with br's
-        //
-        Ext.apply(params,{
-            OFNOTE : params.OFNOTE.replace(new RegExp('\n', 'g'), '<br/>')
-        });
-
         Valence.common.util.Helper.loadMask(maskMessage);
 
         Ext.Ajax.request({

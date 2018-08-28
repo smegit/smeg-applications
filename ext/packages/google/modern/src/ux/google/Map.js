@@ -19,7 +19,7 @@ Ext.define('Ext.ux.google.Map', {
     mixins: ['Ext.mixin.Mashup'],
 
     requiredScripts: [
-        '//maps.googleapis.com/maps/api/js'
+        '//maps.googleapis.com/maps/api/js?key={key}'
     ],
 
     isMap: true,

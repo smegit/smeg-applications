@@ -88,24 +88,6 @@ Ext.define('Ext.grid.filters.filter.Base', {
     filterIdPrefix: Ext.baseCSSPrefix + 'gridfilter',
 
     /**
-     * @event activate
-     * Fires when an inactive filter becomes active
-     * @param {Ext.grid.filters.Filters} this
-     */
-
-    /**
-     * @event deactivate
-     * Fires when an active filter becomes inactive
-     * @param {Ext.grid.filters.Filters} this
-     */
-
-    /**
-     * @event update
-     * Fires when a filter configuration has changed
-     * @param {Ext.grid.filters.Filters} this The filter object.
-     */
-
-    /**
      * Initializes the filter given its configuration.
      * @param {Object} config
      */
@@ -291,7 +273,7 @@ Ext.define('Ext.grid.filters.filter.Base', {
      * @private
      * @method setValue
      * Template method to be implemented by all subclasses that is to
-     * set the value of the filter and fire the 'update' event.
+     * set the value of the filter.
      * @param {Object} data The value to set the filter
      * @template
      */
@@ -324,7 +306,6 @@ Ext.define('Ext.grid.filters.filter.Base', {
             }
 
             me.setColumnActive(active);
-            // TODO: fire activate/deactivate
         }
     },
 

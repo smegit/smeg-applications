@@ -159,7 +159,7 @@ describe("Ext.tree.TreeGrid", function() {
             }
             return this;
         };
-    
+
     function makeTreeGrid(cfg, storeCfg) {
         tree = new Ext.tree.Panel(Ext.apply({
             animate: false,
@@ -196,7 +196,7 @@ describe("Ext.tree.TreeGrid", function() {
 
         Ext.destroy(tree);
     });
-
+    
     describe('tabbability', function() {
         it('should keep all elements untabbable when not in actionable mode', function() {
             makeTreeGrid({
@@ -214,7 +214,7 @@ describe("Ext.tree.TreeGrid", function() {
                     xtype: 'actioncolumn'
                 }]
             });
-
+            
             tree.getNavigationModel().setPosition(0, 0);
             waitsFor(function() {
                 return tree.view.containsFocus;
@@ -570,7 +570,83 @@ describe("Ext.tree.TreeGrid", function() {
             });
         });
     });
-    
+
+    describe('locking and variableRowHeight', function () {
+        beforeEach(function () {
+            makeTreeGrid({
+                preciseHeight: true,
+                rootVisible: false,
+                lockedGridConfig: {
+                    syncRowHeight: true
+                },
+                width: 500,
+                height: 250,
+                columns: [{
+                    xtype: 'treecolumn',
+                    text: 'F1',
+                    dataIndex: 'f1',
+                    locked: true
+                }, {
+                    locked: true,
+                    variableRowHeight: true,
+                    dataIndex: 'f1',
+                    renderer: function(v) {
+                        return "<img height='24' width='24' src='resources/images/foo.gif' />" + v;
+                    }
+                },{
+                    text: 'F2',
+                    dataIndex: 'f2',
+                    variableRowHeight: true
+                }]
+            });
+            tree.expandAll();
+        });
+
+        it('should synchronize row heights', function () {
+            function getRectHeight(el) {
+                var rect = el.getBoundingClientRect();
+                return rect.height || (rect.bottom - rect.top);
+            }
+
+            var lockedTree = tree.lockedGrid,
+                normalGrid = tree.normalGrid,
+                lockedView = lockedTree.view,
+                normalView = normalGrid.view,
+                scrollable = lockedView.getScrollable().getLockingScroller(),
+                scrollComplete = false,
+                store = tree.getStore(),
+                record, regNode, lockedNode,
+                regNodeHeight, lockedNodeHeight;
+
+            scrollable.on('scrollend', function () {
+                scrollComplete = true;
+            });
+
+            record = store.findRecord('f1', '3.3');
+            regNode = normalView.getNode(record);
+            lockedNode = lockedView.getNode(record);
+
+            scrollable.scrollIntoView(regNode);
+
+            waitsFor(function () {
+                return scrollComplete;
+            });
+            runs(function () {
+                regNodeHeight = getRectHeight(regNode);
+                lockedNodeHeight = getRectHeight(lockedNode);
+
+                // This may be calculated differently between different rows that are
+                // actually the "same height" despite deviation of a few thousandths
+                // of a pixel, specifically in IE/Edge. Fix the value so it's within
+                // 1/10th of a pixel.
+                regNodeHeight = Ext.Number.toFixed(regNodeHeight, 1);
+                lockedNodeHeight = Ext.Number.toFixed(lockedNodeHeight, 1);
+
+                expect(regNodeHeight).toBe(lockedNodeHeight);
+            });
+        });
+    });
+
     describe('reconfigure', function() {
         it('should allow reconfigure', function() {
             var cols = [{
@@ -703,10 +779,14 @@ describe("Ext.tree.TreeGrid", function() {
             expect(root.childNodes[1].data.new_url).toEqual('new-url2');
             expect(root.childNodes[1].childNodes[0].data.new_task).toEqual('new-task2.1');
             expect(root.childNodes[1].childNodes[0].data.new_url).toEqual('new-url2.1');
-            
+
             myTree.destroy();
             Ext.undefine('ReconfigureTestTask');
             Ext.undefine('ReconfigureTestNewTask');
+            
+            if (Ext.isIE8) {
+                addGlobal(['ReconfigureTestTask', 'ReconfigureTestNewTask']);
+            }
         });
     });
 

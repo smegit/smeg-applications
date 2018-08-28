@@ -236,8 +236,14 @@ Ext.define('Ext.data.schema.Association', {
     isManyToMany: false,
 
     /**
+     * @cfg {String} associationKey
+     * The name of the property in the data to read the association from. Defaults to the
+     * name of the associated model.
+     */
+
+    /**
      * @method storeGetter
-     * ** This is not a real method, it is placeholder documentation for a generated method on a `Ext.data.Model`. **
+     * **This is not a real method, it is placeholder documentation for a generated method on a `Ext.data.Model`.**
      *
      * Gets a store configured with the model of the "many" record.
      * @param {Object/Function} [options] The options for the getter, or a callback function to execute. If specified as
@@ -274,7 +280,7 @@ Ext.define('Ext.data.schema.Association', {
     
     /**
      * @method recordGetter
-     * ** This is not a real method, it is placeholder documentation for a generated method on a `Ext.data.Model`. **
+     * **This is not a real method, it is placeholder documentation for a generated method on a `Ext.data.Model`.**
      *
      * Gets a model of the "one" type.
      * @param {Object/Function} [options] The options for the getter, or a callback function to execute. If specified as
@@ -309,7 +315,7 @@ Ext.define('Ext.data.schema.Association', {
      */
     
     /**
-     * @method recordSetter ** This is not a real method, it is placeholder documentation for a generated method on a `Ext.data.Model`. **
+     * @method recordSetter **This is not a real method, it is placeholder documentation for a generated method on a `Ext.data.Model`.**
      *
      * Sets a model of the "one" type.
      * @param {Ext.data.Model/Object} value The value to set. This can be a model instance, a key value (if a keyed association) or `null`

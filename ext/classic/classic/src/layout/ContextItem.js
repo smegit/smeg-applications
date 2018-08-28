@@ -558,7 +558,7 @@ Ext.define('Ext.layout.ContextItem', {
             count = 0;
 
         if (x !== undefined) {
-            styles.left = x + 'px';
+            styles[this.translateProps.x] = x + 'px';
             ++count;
         }
         if (y !== undefined) {

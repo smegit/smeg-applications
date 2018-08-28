@@ -16,8 +16,8 @@ describe('Ext.chart.MarkerHolder', function () {
 
             surface.destroy();
 
-            expect(markerHolder.isDestroyed).toBe(true);
-            expect(template.isDestroyed).toBe(true);
+            expect(markerHolder.destroyed).toBe(true);
+            expect(template.destroyed).toBe(true);
         });
     });
 });

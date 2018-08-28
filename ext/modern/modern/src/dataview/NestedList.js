@@ -213,8 +213,7 @@ Ext.define('Ext.dataview.NestedList', {
          * A detailContainer is a reference to the container where a detail card
          * displays.
          *
-         * See http://docs.sencha.com/touch/2-2/#!/guide/nested_list-section-4
-         * and http://en.wikipedia.org/wiki/Miller_columns
+         * See http://en.wikipedia.org/wiki/Miller_columns
          *
          * The two possible values for a detailContainer are undefined (default),
          * which indicates that a detailCard appear in the same container, or you
@@ -247,8 +246,7 @@ Ext.define('Ext.dataview.NestedList', {
          * about the item in the list. The detailCard lists the information at
          * the leaf.
          *
-         * See http://docs.sencha.com/touch/2-2/#!/guide/nested_list-section-3
-         * and http://en.wikipedia.org/wiki/Miller_columns
+         * See http://en.wikipedia.org/wiki/Miller_columns
          *
          * @accessor
          */

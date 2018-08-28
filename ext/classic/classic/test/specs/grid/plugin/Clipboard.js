@@ -105,7 +105,8 @@ describe('Ext.grid.plugin.Clipboard', function () {
         it("system clipboard should take precedence when actionableMode is true", function() {
             spyOn(clipboard, 'validateAction').andCallThrough();
 
-            startEdit(0,0);
+            // Column 1 here is Name (0 is row numberer)
+            startEdit(0, 1);
             
             runs(function() {
                 field.selectText();
@@ -125,4 +126,3 @@ describe('Ext.grid.plugin.Clipboard', function () {
         });
     });
 });
-

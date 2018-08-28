@@ -437,8 +437,7 @@ Ext.define('Ext.dom.CompositeElementLite', {
     },
 
     destroy: function() {
-        // TOUCH-4761: ensure Element#destroy() gets called and not Base#destroy()
-        return this.invoke('destroy', arguments);
+        this.invoke('destroy', arguments);
         this.callParent();
     }
 

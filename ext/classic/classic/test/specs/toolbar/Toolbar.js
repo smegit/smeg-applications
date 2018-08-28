@@ -18,6 +18,22 @@ describe("Ext.toolbar.Toolbar", function(){
         expect(toolbar.getLayout() instanceof Ext.layout.container.HBox);
     });
 
+    it("should be able to change layout to vertical", function() {
+        createToolbar({
+            layout: {
+                type: 'box',
+                vertical: false
+            }
+        });
+
+        expect(function(){
+            toolbar.setLayout({
+                type: 'box',
+                vertical: true
+            });
+        }).not.toThrow();
+    });
+
     describe('overflow', function () {
         describe('when enableOverflow is false', function () {
             it('should not create a menu', function () {
@@ -332,6 +348,28 @@ describe("Ext.toolbar.Toolbar", function(){
             
             expect(toolbar.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
             expect(toolbar.tabGuardAfterEl).not.toHaveAttr('tabIndex');
+        });
+        
+        describe("forced to true", function() {
+            beforeEach(function() {
+                createToolbar({
+                    enableFocusableContainer: true,
+                    items: [{
+                        xtype: 'button'
+                    }, {
+                        xtype: 'textfield'
+                    }]
+                });
+            });
+            
+            it("should enable tab guards", function() {
+                expect(toolbar.tabGuardBeforeEl).toHaveAttr('tabIndex', '0');
+                expect(toolbar.tabGuardAfterEl).toHaveAttr('tabIndex', '0');
+            });
+            
+            it("should keep the role of toolbar", function() {
+                expect(toolbar).toHaveAttr('role', 'toolbar');
+            });
         });
     });
     

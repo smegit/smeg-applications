@@ -287,7 +287,7 @@ Ext.define('Ext.list.AbstractTreeItem', {
     },
 
     nodeCollapseEnd: function (collapsingForExpand) {
-        if (!collapsingForExpand) {
+        if (!collapsingForExpand && !this.destroying) {
             this.getOwner().updateLayout();
         }
     },
@@ -321,7 +321,9 @@ Ext.define('Ext.list.AbstractTreeItem', {
     },
 
     nodeExpandEnd: function () {
-        this.getOwner().updateLayout();
+        if (!this.destroying) {
+            this.getOwner().updateLayout();
+        }
     },
 
     /**

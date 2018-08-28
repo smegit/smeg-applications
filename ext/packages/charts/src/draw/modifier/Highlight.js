@@ -83,9 +83,8 @@ Ext.define('Ext.draw.modifier.Highlight', {
             highlightOriginal = attr.highlightOriginal,
             style = me.getHighlightStyle(),
             name;
+
         if (attr.highlighted) {
-            // TODO: Remove changes that match highlightStyle attribute names.
-            // TODO: Backup such changes to highlightOriginal before removing.
             for (name in changes) {
                 if (style.hasOwnProperty(name)) {
                     // If sprite is highlighted, then stash the changes
@@ -94,13 +93,6 @@ Ext.define('Ext.draw.modifier.Highlight', {
                     highlightOriginal[name] = changes[name];
                     delete changes[name];
                 }
-            }
-        }
-
-        // TODO: Remove changes (except the 'highlighted' flag) that match the original values. Why?
-        for (name in changes) {
-            if (name !== 'highlighted' && highlightOriginal[name] === changes[name]) {
-                delete changes[name];
             }
         }
 

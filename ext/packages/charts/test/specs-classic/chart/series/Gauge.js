@@ -8,8 +8,8 @@ describe('Ext.chart.series.Gauge', function () {
         });
 
         it('should be called with the right index', function () {
-            var redrawCount = 0,
-                indexes = [];
+            var indexes = [],
+                layoutDone;
 
             runs(function () {
                 chart = Ext.create({
@@ -50,15 +50,15 @@ describe('Ext.chart.series.Gauge', function () {
                         }
                     },
                     listeners: {
-                        redraw: function () {
-                            redrawCount++;
+                        layout: function () {
+                            layoutDone = true;
                         }
                     }
                 });
             });
 
             waitsFor(function () {
-                return redrawCount >= 3;
+                return layoutDone;
             });
 
             runs(function () {

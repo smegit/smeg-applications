@@ -320,6 +320,7 @@ Ext.Loader = (new function() {  // jshint ignore:line
         },
 
         /**
+         * @method setConfig
          * Set the configuration for the loader. This should be called right after ext-(debug).js
          * is included in the page, and before Ext.onReady. i.e:
          *
@@ -594,16 +595,24 @@ Ext.Loader = (new function() {  // jshint ignore:line
             };
         },
         
-        onLoadFailure: function () {
+        onLoadFailure: function (request) {
             var options = this,
-                onError = options.onError;
+                entries = request.entries || [],
+                onError = options.onError, error, entry, i;
 
             Loader.hasFileLoadError = true;
             --Loader.scriptsLoading;
 
             if (onError) {
-                //TODO: need an adapter to convert to v4 onError signatures
-                onError.call(options.userScope, options);
+                for (i = 0; i < entries.length; i++) {
+                    entry = entries[i];
+                    if (entry.error) {
+                        error = new Error('Failed to load: ' + entry.url);
+                        break;
+                    }
+                }
+                error = error || new Error('Failed to load');
+                onError.call(options.userScope, options, error, request);
             }
             //<debug>
             else {

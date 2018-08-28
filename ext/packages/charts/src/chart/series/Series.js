@@ -232,6 +232,8 @@ Ext.define('Ext.chart.series.Series', {
          *              return { strokeStyle: (index % 2 === 0 ? 'red' : 'black') };
          *          }
          *      }
+         *
+         * @controllable
          */
         renderer: null,
 
@@ -309,7 +311,7 @@ Ext.define('Ext.chart.series.Series', {
          * Specifies the presence and position of the labels. The possible values depend on the series type.
          * For Line and Scatter series: 'under' | 'over' | 'rotate'.
          * For Bar and 3D Bar series: 'insideStart' | 'insideEnd' | 'outside'.
-         * For Pie series: 'outside' | 'rotate' | 'horizontal' | 'vertical'.
+         * For Pie series: 'inside' | 'outside' | 'rotate' | 'horizontal' | 'vertical'.
          * Area, Radar and Candlestick series don't support labels.
          * For Area and Radar series please consider using {@link #tooltip tooltips} instead.
          * 3D Pie series currently always display labels 'outside'.
@@ -691,6 +693,19 @@ Ext.define('Ext.chart.series.Series', {
         this.setAttributesForItem(newHighlightItem, {highlighted: true});
     },
 
+    /**
+     * @private
+     * @property
+     * The range of "coordinated" data.
+     * For numbers coordinated data are numbers themselves.
+     * For categories - their indexes.
+     * For Date objects - their timestamps.
+     * In other words, whatever source data we have it has to be converted to numbers
+     * before it can be plotted.
+     */
+    dataRange: null,
+
+
     constructor: function (config) {
         var me = this,
             id;
@@ -742,7 +757,7 @@ Ext.define('Ext.chart.series.Series', {
             autoHide: true,
             hideDelay: 200,
             mouseOffset: [20, 20],
-            trackmouse: true
+            trackMouse: true
         }, tooltip);
 
         return Ext.create(config);
@@ -791,14 +806,18 @@ Ext.define('Ext.chart.series.Series', {
         tooltip.showBy(event);
     },
 
-    hideTooltip: function (item) {
+    hideTooltip: function (item, immediate) {
         var me = this,
             tooltip = me.getTooltip();
 
         if (!tooltip) {
             return;
         }
-        tooltip.delayHide();
+        if (immediate) {
+            tooltip.hide();
+        } else {
+            tooltip.delayHide();
+        }
     },
 
     applyStore: function (store) {
@@ -861,14 +880,12 @@ Ext.define('Ext.chart.series.Series', {
             i, field, data, style = {},
             sprites = me.getSprites();
 
-        if (sprites.length > 0) {
-            if (!Ext.isBoolean(hidden) || !hidden) {
-                for (i = 0; i < fieldCategory.length; i++) {
-                    field = fields[i];
-                    data = me.coordinateData(items, field, axis);
-                    me.getRangeOfData(data, range);
-                    style['data' + fieldCategory[i]] = data;
-                }
+        if (sprites.length && !Ext.isBoolean(hidden) || !hidden) {
+            for (i = 0; i < fieldCategory.length; i++) {
+                field = fields[i];
+                data = me.coordinateData(items, field, axis);
+                me.getRangeOfData(data, range);
+                style['data' + fieldCategory[i]] = data;
             }
             me.dataRange[directionOffset] = range.min;
             me.dataRange[directionOffset + directionCount] = range.max;
@@ -876,7 +893,7 @@ Ext.define('Ext.chart.series.Series', {
             style['dataMax' + direction] = range.max;
             if (axis) {
                 axis.range = null;
-                style['range' + direction] = axis.getRange();
+                axis.setBoundSeriesRange(axis.getRange());
             }
             for (i = 0; i < sprites.length; i++) {
                 sprites[i].setAttributes(style);
@@ -1038,6 +1055,10 @@ Ext.define('Ext.chart.series.Series', {
     },
 
     onAxesChange: function (chart, force) {
+        if (chart.destroying || chart.destroyed) {
+            return;
+        }
+
         var me = this,
             axes = chart.getAxes(), axis,
             directionToAxesMap = {},
@@ -1745,11 +1766,18 @@ Ext.define('Ext.chart.series.Series', {
      * @param {Number} target.index
      */
     provideLegendInfo: function (target) {
+        var me = this,
+            style = me.getSubStyleWithTheme(),
+            fill = style.fillStyle;
+
+        if (Ext.isArray(fill)) {
+            fill = fill[0];
+        }
         target.push({
-            name: this.getTitle() || this.getId(),
-            mark: 'black',
-            disabled: this.getHidden(),
-            series: this.getId(),
+            name: me.getTitle() || me.getYField() || me.getId(),
+            mark: (Ext.isObject(fill) ? fill.stops && fill.stops[0].color : fill) || style.strokeStyle || 'black',
+            disabled: me.getHidden(),
+            series: me.getId(),
             index: 0
         });
     },

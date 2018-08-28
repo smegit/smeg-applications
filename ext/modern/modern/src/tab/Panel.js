@@ -143,7 +143,7 @@ Ext.define('Ext.tab.Panel', {
 
         bar = this.getTabBar();
         if (this.initialized && bar) {
-            bar.setUi(newUi);
+            bar.setUi(ui);
         }
     },
 
@@ -205,6 +205,16 @@ Ext.define('Ext.tab.Panel', {
      * @private
      */
     applyTabBar: function(config) {
+        var innerItems,
+            activeItem;
+
+        if (this.isConfiguring) {
+            activeItem = this.initialConfig.activeItem || 0;
+        } else {
+            innerItems = this.getInnerItems();
+            activeItem = innerItems.indexOf(this._activeItem);
+        }
+
         if (config === true) {
             config = {};
         }
@@ -212,11 +222,12 @@ Ext.define('Ext.tab.Panel', {
         if (config) {
             Ext.applyIf(config, {
                 ui: this.getUi(),
-                docked: this.getTabBarPosition()
+                docked: this.getTabBarPosition(),
+                activeItem: activeItem
             });
+            return Ext.factory(config, Ext.tab.Bar, this.getTabBar());
         }
-
-        return Ext.factory(config, Ext.tab.Bar, this.getTabBar());
+        return null;
     },
 
     /**

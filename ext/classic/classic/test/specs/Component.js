@@ -538,14 +538,14 @@ describe("Ext.Component", function(){
             expect(called).toBe(false);
         });
 
-        it("should not create an instance during render", function() {
+        it("should initialize if there are no binds/publishes", function() {
             makeComponent({
                 renderTo: Ext.getBody(),
                 viewModel: {
                     type: 'test'
                 }
             });
-            expect(called).toBe(false);
+            expect(called).toBe(true);
         });
 
         it("should not create an instance while constructing with binds", function() {
@@ -1159,7 +1159,7 @@ describe("Ext.Component", function(){
                     config: {
                         test: null
                     }
-                })
+                });
             });
 
             afterEach(function() {
@@ -5478,6 +5478,10 @@ describe("Ext.Component", function(){
 
         afterEach(function(){
             Ext.undefine('MyPlugin');
+            
+            if (Ext.isIE8) {
+                addGlobal('MyPlugin');
+            }
         });   
 
         it("should accept a single plugin", function(){
@@ -8955,7 +8959,7 @@ describe("Ext.Component", function(){
 
                 jasmine.fireMouseEvent(foo.childEl, 'mousedown');
 
-                expect(result).toEqual(['pdc', 'cdc', 'cd', 'pd', 'pc', 'cc', 'c', 'p'])
+                expect(result).toEqual(['pdc', 'cdc', 'cd', 'pd', 'pc', 'cc', 'c', 'p']);
             });
 
             it("should allow element options to be used as event names", function() {
@@ -9657,7 +9661,7 @@ describe("Ext.Component", function(){
         });
     });
 
-    (Ext.supports.PointerEvents ? describe : xdescribe)("touchAction", function() {
+    (Ext.supports.TouchAction === 15 ? describe : xdescribe)("touchAction", function() {
         var Cmp, cmp;
 
         function makeCmpWithTouchAction(touchAction) {
@@ -9765,7 +9769,7 @@ describe("Ext.Component", function(){
                 doubleTapZoom: false
             });
 
-            expectTouchAction(cmp.el, 'manipulation');
+            expectTouchAction(cmp.el, 'pan-x pan-y pinch-zoom');
         });
 
         it("should disable panX and doubleTapZoom", function() {

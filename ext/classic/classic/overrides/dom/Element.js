@@ -468,6 +468,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
         },
 
         /**
+         * @method
          * Empties this element. Removes all child nodes.
          */
         empty: emptyRange ? function() {
@@ -2469,7 +2470,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
                 dest = this.dom,
                 destNodes = dest.childNodes,
                 destLen = destNodes.length,
-                i,  destNode, sourceNode,
+                i,  destNode, sourceNode, sourceStyle,
                 nodeType, newAttrs, attLen, attName,
                 elData = dest._extData;
 
@@ -2511,6 +2512,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
                 sourceNode = sourceNodes[i];
                 destNode = destNodes[i];
                 nodeType = sourceNode.nodeType;
+                sourceStyle = sourceNode.style;
 
                 // If node structure is out of sync, just drop innerHTML in and return
                 if (nodeType !== destNode.nodeType || (nodeType === 1 && sourceNode.tagName !== destNode.tagName)) {
@@ -2518,8 +2520,8 @@ Ext.define('Ext.overrides.dom.Element', (function() {
                     return;
                 }
 
-                // Update text node
-                if (nodeType === 3) {
+                // Update non-Element node (text, comment)
+                if (!sourceStyle) {
                     destNode.data = sourceNode.data;
                 }
                 // Sync element content
@@ -2527,7 +2529,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
                     if (sourceNode.id && destNode.id !== sourceNode.id) {
                         destNode.id = sourceNode.id;
                     }
-                    destNode.style.cssText = sourceNode.style.cssText;
+                    destNode.style.cssText = sourceStyle.cssText;
                     destNode.className = sourceNode.className;
                     Ext.fly(destNode, '_syncContent').syncContent(sourceNode);
                 }

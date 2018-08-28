@@ -65,6 +65,7 @@ describe("Ext.data.Session", function() {
     afterEach(function() {
         MockAjaxManager.removeMethods();
         session = Ext.destroy(session);
+        Ext.data.Model.schema.clear(true);
     });
 
     describe("record access", function() {
@@ -88,7 +89,6 @@ describe("Ext.data.Session", function() {
             parent.destroy();
             User = rec = parent = null;
             Ext.undefine('spec.User');
-            Ext.data.Model.schema.clear(true);
         });
 
         describe("adopt", function() {
@@ -1294,7 +1294,6 @@ describe("Ext.data.Session", function() {
             Ext.undefine('spec.User');
             Ext.undefine('spec.Order');
             Ext.undefine('spec.Job');
-            Ext.data.Model.schema.clear(true);
             Job = Order = User = identifier = Ext.destroy(identifier);
 
             var Generator = Ext.data.identifier.Generator;
@@ -1420,7 +1419,6 @@ describe("Ext.data.Session", function() {
             Ext.undefine('spec.Address');
             Ext.undefine('spec.Post');
             Ext.undefine('spec.Group');
-            Ext.data.Model.schema.clear(true);
             User = null;
         });
 
@@ -2154,10 +2152,6 @@ describe("Ext.data.Session", function() {
             Ext.data.Model.schema.setNamespace('spec');
             session = new Ext.data.Session();
         });
-
-        afterEach(function() {
-            Ext.data.Model.schema.clear(true);
-        }); 
 
         describe("basic operations", function() {
             var User;
@@ -3530,7 +3524,6 @@ describe("Ext.data.Session", function() {
 
         afterEach(function() {
             Ext.undefine('spec.User');
-            Ext.data.Model.schema.clear(true);
         });
 
         it("should evict a phantom when it is dropped", function() {
@@ -3571,7 +3564,6 @@ describe("Ext.data.Session", function() {
         afterEach(function() {
             User = null;
             Ext.undefine('spec.User');
-            Ext.data.Model.schema.clear(true);
         });
 
         it("should call commit on created records", function() {
@@ -3694,7 +3686,6 @@ describe("Ext.data.Session", function() {
             Ext.destroy(parent);
             parent = null;
             Ext.undefine('spec.User');
-            Ext.data.Model.schema.clear(true);
         });
 
         it("should set the schema from the parent", function() {
@@ -3938,7 +3929,6 @@ describe("Ext.data.Session", function() {
 
         afterEach(function() {
             Ext.undefine('spec.User');
-            Ext.data.Model.schema.clear(true);
             Ext.destroy(child);
             child = null;
         });
@@ -5016,6 +5006,145 @@ describe("Ext.data.Session", function() {
         }); // loading a many-to-many
     }); // Many-to-many associations
 
+    describe("getSaveBatch", function() {
+        beforeEach(function() {
+            Ext.data.Model.schema.setNamespace('spec');
+
+            Ext.define('spec.User', {
+                extend: 'Ext.data.Model',
+                fields: ['name'],
+                proxy: {
+                    type: 'ajax',
+                    url: 'a',
+                    batchActions: true
+                }
+            });
+
+            Ext.define('spec.Office', {
+                extend: 'Ext.data.Model',
+                fields: ['name'],
+                proxy: {
+                    type: 'ajax',
+                    url: 'b',
+                    batchActions: false
+                }
+            });
+
+            session = new Ext.data.Session();
+        });
+
+        afterEach(function() {
+            Ext.undefine('spec.User');
+            Ext.undefine('spec.Office');
+        });
+
+        function sortFn(o1, o2) {
+            var r1 = o1.getRecords(),
+                r2 = o2.getRecords();
+
+            r1 = r1.isModel ? 1 : r1.length;
+            r2 = r2.isModel ? 1 : r2.length;
+
+            return r2 - r1;
+        }
+
+        it("should respect batchActions on the proxy for creates", function() {
+            session.createRecord(spec.User, { name: 'Foo1' });
+            session.createRecord(spec.User, { name: 'Foo2' });
+
+            session.createRecord(spec.Office, { name: 'Bar1' });
+            session.createRecord(spec.Office, { name: 'Bar2' });
+
+            var batch = session.getSaveBatch(),
+                operations = Ext.Array.clone(batch.getOperations());
+
+            operations.sort(sortFn);
+
+            expect(operations.length).toBe(3);
+
+            expect(operations[0].getRecords().length).toBe(2);
+            expect(operations[0].isCreateOperation).toBe(true);
+            expect(operations[0].getRecords()[0].$className).toBe('spec.User');
+            expect(operations[0].getRecords()[0].get('name')).toBe('Foo1');
+            expect(operations[0].getRecords()[1].$className).toBe('spec.User');
+            expect(operations[0].getRecords()[1].get('name')).toBe('Foo2');
+
+            var r = operations[1].getRecords();
+            expect(operations[1].isCreateOperation).toBe(true);
+            expect(r.$className).toBe('spec.Office');
+            expect(r.get('name')).toBe('Bar1');
+
+            r = operations[2].getRecords();
+            expect(operations[2].isCreateOperation).toBe(true);
+            expect(r.$className).toBe('spec.Office');
+            expect(r.get('name')).toBe('Bar2');
+        });
+
+        it("should respect batchActions on the proxy for updates", function() {
+            session.createRecord(spec.User, { id: 1 }).set('name', 'Foo1');
+            session.createRecord(spec.User, { id: 2 }).set('name', 'Foo2');
+
+            session.createRecord(spec.Office, { id: 1 }).set('name', 'Bar1');
+            session.createRecord(spec.Office, { id: 2 }).set('name', 'Bar2');
+
+            var batch = session.getSaveBatch(),
+                operations = Ext.Array.clone(batch.getOperations());
+
+            operations.sort(sortFn);
+
+            expect(operations.length).toBe(3);
+
+            expect(operations[0].isUpdateOperation).toBe(true);
+            expect(operations[0].getRecords().length).toBe(2);
+            expect(operations[0].getRecords()[0].$className).toBe('spec.User');
+            expect(operations[0].getRecords()[0].id).toBe(1);
+            expect(operations[0].getRecords()[1].$className).toBe('spec.User');
+            expect(operations[0].getRecords()[1].id).toBe(2);
+
+            var r = operations[1].getRecords();
+            expect(operations[1].isUpdateOperation).toBe(true);
+            expect(r.$className).toBe('spec.Office');
+            expect(r.id).toBe(1);
+
+            r = operations[2].getRecords();
+            expect(operations[2].isUpdateOperation).toBe(true);
+            expect(r.$className).toBe('spec.Office');
+            expect(r.id).toBe(2);
+        });
+
+        it("should respect batchActions on the proxy for deletes", function() {
+            session.createRecord(spec.User, { id: 1 }).drop();
+            session.createRecord(spec.User, { id: 2 }).drop();
+
+            session.createRecord(spec.Office, { id: 1 }).drop();
+            session.createRecord(spec.Office, { id: 2 }).drop();
+
+            var batch = session.getSaveBatch(),
+                operations = Ext.Array.clone(batch.getOperations());
+
+            operations.sort(sortFn);
+
+            expect(operations.length).toBe(3);
+
+            expect(operations[0].getRecords().length).toBe(2);
+            expect(operations[0].isDestroyOperation).toBe(true);
+            expect(operations[0].getRecords()[0].$className).toBe('spec.User');
+            expect(operations[0].getRecords()[0].id).toBe(1);
+            expect(operations[0].getRecords()[1].$className).toBe('spec.User');
+            expect(operations[0].getRecords()[1].id).toBe(2);
+
+            var r = operations[1].getRecords();
+            expect(operations[1].isDestroyOperation).toBe(true);
+            expect(r.$className).toBe('spec.Office');
+            expect(r.id).toBe(1);
+
+            r = operations[2].getRecords();
+            expect(operations[2].isDestroyOperation).toBe(true);
+            expect(r.$className).toBe('spec.Office');
+            expect(r.id).toBe(2);
+        });
+    });
+
     describe('transactions', function () {
         var Base, Parent, Child, GrandChild, Group, User;
         var parentData, childData, grandChildData;
@@ -5106,8 +5235,6 @@ describe("Ext.data.Session", function() {
             Ext.undefine('spec.GrandChild');
             Ext.undefine('spec.Group');
             Ext.undefine('spec.User');
-
-            Ext.data.Model.schema.clear(true);
 
             session = null;
             Base = Parent = Child = GrandChild = Group = User = null;

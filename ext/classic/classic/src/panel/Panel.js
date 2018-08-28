@@ -579,7 +579,7 @@ Ext.define('Ext.panel.Panel', {
     rbar: null,
 
     /**
-     * @cfg {Object/Object[]} buttons
+     * @cfg {Object[]} buttons
      * Convenience config used for adding buttons docked to the bottom of the panel. This is a
      * synonym for the {@link #fbar} config.
      *
@@ -1090,9 +1090,9 @@ Ext.define('Ext.panel.Panel', {
             tools = [tools];
         }
 
-        var me     = this,
+        var me = this,
             header = me.header,
-            tLen   = tools.length,
+            len = tools.length,
             curTools = me.tools,
             t, tool;
 
@@ -1103,8 +1103,11 @@ Ext.define('Ext.panel.Panel', {
             }
         }
 
-        for (t = 0; t < tLen; t++) {
+        for (t = 0; t < len; t++) {
             tool = tools[t];
+            if (typeof tool !== 'string' && !tool.isTool) {
+                tool = Ext.apply({}, tool);
+            }
             tool.toolOwner = me;
 
             if (header) {
@@ -2234,9 +2237,10 @@ Ext.define('Ext.panel.Panel', {
                     click: {
                         // titleCollapse needs to take precedence over floatable
                         fn: function(e, target) {
+                            var expandTool = placeholder.expandTool;
                             // If the element click was specifically on the tool, that tool's handler
                             // will process it and we must not: https://sencha.jira.com/browse/EXTJS-21045
-                            if (!placeholder.expandTool.el.dom.contains(arguments[1])) {
+                            if (!(expandTool && expandTool.el.dom.contains(arguments[1]))) {
                                 me[(!titleCollapse && floatable) ? 'floatCollapsedPanel' : 'toggleCollapse']();
                             }
                         },
@@ -2668,13 +2672,19 @@ Ext.define('Ext.panel.Panel', {
     initTools: function() {
         var me = this,
             tools = me.tools,
+            len = tools && tools.length,
             i, toolCfg, tool;
 
         me.tools = [];
-        for (i = tools && tools.length; i; ) {
-            --i;
-            me.tools[i] = tool = tools[i];
-            tool.toolOwner = me;
+        if (len) {
+            for (i = 0; i < len; ++i) {
+                tool = tools[i];
+                if (typeof tool !== 'string' && !tool.isTool) {
+                    tool = Ext.apply({}, tool);
+                }
+                me.tools.push(tool);
+                tool.toolOwner = me;
+            }
         }
 
         // Add a collapse tool unless configured to not show a collapse tool
@@ -2787,7 +2797,7 @@ Ext.define('Ext.panel.Panel', {
             });
             
             me.accordionBodyKeyNav = new Ext.util.KeyNav({
-                target: me.body,
+                target: me.bodyWrap,
                 scope: me,
                 
                 up: {
@@ -3667,6 +3677,10 @@ Ext.define('Ext.panel.Panel', {
     fireDefaultButton: function(e) {
         var me = this,
             refHolder, btn;
+
+        if (e.target.tagName === 'TEXTAREA' || e.target.getAttribute('aria-multiline') === 'true') {
+            return true;
+        }
         
         refHolder = me.lookupReferenceHolder(/* skipThis = */ false) || me;
         btn = refHolder.lookupReference(me.defaultButton);
@@ -4198,7 +4212,7 @@ Ext.define('Ext.panel.Panel', {
             // Remove mouse leave/enter monitors, and the mousedown monitor
             Ext.destroy(me.pointerLeaveListener, me.phHoverListeners, me.elHoverListeners);
             if (bodyMousedownListener) {
-                me.bodyMousedownListener = bodyMousedownListener.destroy()
+                me.bodyMousedownListener = bodyMousedownListener.destroy();
             }
         },
 

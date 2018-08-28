@@ -188,28 +188,30 @@ Ext.define('Ext.chart.series.sprite.Cartesian', {
      */
     getIndexNearPoint: function (x, y) {
         var me = this,
-            mat = me.attr.matrix,
+            matrix = me.attr.matrix,
             dataX = me.attr.dataX,
             dataY = me.attr.dataY,
             selectionTolerance = me.attr.selectionTolerance,
-            minX, minY, index = -1,
-            imat = mat.clone().prependMatrix(me.surfaceMatrix).inverse(),
-            center = imat.transformPoint([x, y]),
-            positionLB = imat.transformPoint([x - selectionTolerance, y - selectionTolerance]),
-            positionTR = imat.transformPoint([x + selectionTolerance, y + selectionTolerance]),
-            left = Math.min(positionLB[0], positionTR[0]),
-            right = Math.max(positionLB[0], positionTR[0]),
-            top = Math.min(positionLB[1], positionTR[1]),
-            bottom = Math.max(positionLB[1], positionTR[1]),
-            xi, yi, i, len;
+            dx = Infinity, dy = Infinity, index = -1,
+            inverseMatrix = matrix.clone().prependMatrix(me.surfaceMatrix).inverse(),
+            center = inverseMatrix.transformPoint([x, y]),
+            hitboxBL = inverseMatrix.transformPoint([x - selectionTolerance, y - selectionTolerance]),
+            hitboxTR = inverseMatrix.transformPoint([x + selectionTolerance, y + selectionTolerance]),
+            left = Math.min(hitboxBL[0], hitboxTR[0]),
+            right = Math.max(hitboxBL[0], hitboxTR[0]),
+            bottom = Math.min(hitboxBL[1], hitboxTR[1]),
+            top = Math.max(hitboxBL[1], hitboxTR[1]),
+            xi, yi, i, ln;
 
-        for (i = 0, len = dataX.length; i < len; i++) {
+        for (i = 0, ln = dataX.length; i < ln; i++) {
             xi = dataX[i];
             yi = dataY[i];
-            if (xi > left && xi < right && yi > top && yi < bottom) {
-                if (index === -1 || (Math.abs(xi - center[0]) < minX) && (Math.abs(yi - center[1]) < minY)) {
-                    minX = Math.abs(xi - center[0]);
-                    minY = Math.abs(yi - center[1]);
+            // Don't stop when the first matching point is found.
+            // Keep looking for the nearest point.
+            if (xi >= left && xi < right && yi >= bottom && yi < top) {
+                if (index === -1 || (Math.abs(xi - center[0]) < dx) && (Math.abs(yi - center[1]) < dy)) {
+                    dx = Math.abs(xi - center[0]);
+                    dy = Math.abs(yi - center[1]);
                     index = i;
                 }
             }

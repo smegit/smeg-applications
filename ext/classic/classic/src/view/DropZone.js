@@ -117,7 +117,7 @@ Ext.define('Ext.view.DropZone', {
             pos = me.getPosition(e, node),
             overRecord = view.getRecord(node),
             draggingRecords = data.records,
-            indicatorY;
+            indicatorY, scrollable, scrollableEl, container;
 
         if (!Ext.Array.contains(draggingRecords, overRecord) && (
             pos === 'before' && !me.containsRecordAtOffset(draggingRecords, overRecord, -1) ||
@@ -126,8 +126,11 @@ Ext.define('Ext.view.DropZone', {
             me.valid = true;
 
             if (me.overRecord !== overRecord || me.currentPosition !== pos) {
+                scrollable =  me.view.getScrollable();
+                scrollableEl = scrollable && scrollable.getElement();
 
-                indicatorY = Ext.fly(node).getY() - Ext.fly(view.getNodeContainer()).getY() - 1;
+                container = (scrollableEl && !scrollableEl.isScrollable()) ? scrollableEl : Ext.fly(view.getNodeContainer());
+                indicatorY = Ext.fly(node).getY() - container.getY() - 1;
                 if (pos === 'after') {
                     indicatorY += Ext.fly(node).getHeight();
                 }

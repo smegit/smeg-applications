@@ -144,8 +144,9 @@ Ext.define('Ext.EventManager', {
      * @param {String} eventName The name of the event.
      * @param {Function} fn The handler function to remove. **This must be a reference to the function passed
      * into the {@link #addListener} call.**
-     * @param {Object} scope If a scope (`this` reference) was specified when the listener was added,
+     * @param {Object} [scope] If a scope (`this` reference) was specified when the listener was added,
      * then this must refer to the same object.
+     * @param {Object} [options]
      */
     removeListener: function(element, eventName, fn, scope, options) {
         //<debug>
@@ -158,7 +159,7 @@ Ext.define('Ext.EventManager', {
     /**
      * Removes the passed window resize listener.
      * @param {Function} fn        The method the event invokes
-     * @param {Object}   scope    The scope of handler
+     * @param {Object}   [scope]  The scope of handler
      * @deprecated 5.0.0
      */
     removeResizeListener: function(fn, scope) {
@@ -172,7 +173,7 @@ Ext.define('Ext.EventManager', {
     /**
      * Removes the passed window unload listener.
      * @param {Function} fn        The method the event invokes
-     * @param {Object}   scope    The scope of handler
+     * @param {Object}   [scope]  The scope of handler
      * @deprecated 5.0.0
      */
     removeUnloadListener: function(fn, scope) {

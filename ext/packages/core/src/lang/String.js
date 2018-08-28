@@ -38,6 +38,7 @@ Ext.String = (function() {
     return ExtString = {
 
         /**
+         * @method
          * Creates a string created by using the specified sequence of code points.
          * @param {Number...} codePoint Codepoints from which to build the string.
          * @return {String} A string built from the sequence of code points passed.

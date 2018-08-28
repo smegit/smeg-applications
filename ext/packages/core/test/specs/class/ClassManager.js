@@ -31,6 +31,10 @@ describe("Ext.ClassManager", function() {
             window.My = undefined;
             window.I = undefined;
             window.Test = undefined;
+            
+            if (Ext.isIE8) {
+                addGlobal(['Something', 'My', 'I', 'Test']);
+            }
         }
         manager.enableNamespaceParseCache = true;
     });
@@ -466,7 +470,9 @@ describe("Ext.ClassManager", function() {
         function undo (name) {
             if (Ext.isIE8) {
                 w[name] = undefined;
-            } else {
+                addGlobal(name);
+            }
+            else {
                 delete w[name];
             }
         }

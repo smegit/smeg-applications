@@ -1080,7 +1080,7 @@ describe("Ext.layout.container.Accordion", function() {
         
         function makeSuite(animate) {
             describe("animate: " + !!animate, function() {
-                var ct, foo, bar, fooHdr, barHdr, pinTool, closeTool,
+                var ct, foo, bar, fooHdr, barHdr, pinTool, closeTool, okBtn,
                     beforeInput, afterInput, fooInnerInput, barInnerInput,
                     collapseSpy, expandSpy;
                 
@@ -1123,6 +1123,9 @@ describe("Ext.layout.container.Accordion", function() {
                             items: [{
                                 xtype: 'textfield',
                                 fieldLabel: 'foo inner'
+                            }],
+                            buttons: [{
+                                text: 'OK'
                             }]
                         }, {
                             title: 'bar',
@@ -1151,12 +1154,13 @@ describe("Ext.layout.container.Accordion", function() {
                     closeTool = bar.down('tool[type=close]');
                     
                     fooInnerInput = foo.down('textfield');
+                    okBtn = foo.down('button[text=OK]');
                     barInnerInput = bar.down('textfield');
                 });
                 
                 afterEach(function() {
                     Ext.destroy(beforeInput, ct, afterInput);
-                    ct = foo = bar = pinTool = closeTool = null;
+                    ct = foo = bar = pinTool = closeTool = okBtn = null;
                     beforeInput = afterInput = fooInnerInput = barInnerInput = null;
                     collapseSpy = expandSpy = null;
                 });
@@ -1399,6 +1403,12 @@ describe("Ext.layout.container.Accordion", function() {
                                 expectFocused(fooTitle);
                             });
                             
+                            it("should go to foo title from ok button", function() {
+                                asyncPressKey(okBtn, 'up', { ctrl: true });
+                                
+                                expectFocused(fooTitle);
+                            });
+                            
                             it("should go to bar title from bar input", function() {
                                 foo.collapse();
                                 
@@ -1432,8 +1442,14 @@ describe("Ext.layout.container.Accordion", function() {
                                     expectFocused(fooInnerInput);
                                 });
                                 
-                                it("should go from foo inner input to bar title", function() {
+                                it("should go from foo inner input to ok button", function() {
                                     asyncPressTab(fooInnerInput, true);
+                                    
+                                    expectFocused(okBtn);
+                                });
+                                
+                                it("should go from ok button to bar title", function() {
+                                    asyncPressTab(okBtn, true);
                                     
                                     expectFocused(barTitle);
                                 });
@@ -1492,8 +1508,14 @@ describe("Ext.layout.container.Accordion", function() {
                                     expectFocused(barTitle);
                                 });
                                 
-                                it("should go from bar title to foo inner input", function() {
+                                it("should go from bar title to ok button", function() {
                                     asyncPressTab(barTitle, false);
+                                    
+                                    expectFocused(okBtn);
+                                });
+                                
+                                it("should go from ok button to foo inner input", function() {
+                                    asyncPressTab(okBtn, false);
                                     
                                     expectFocused(fooInnerInput);
                                 });

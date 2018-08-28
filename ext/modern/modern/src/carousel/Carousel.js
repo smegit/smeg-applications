@@ -96,8 +96,6 @@ Ext.define('Ext.carousel.Carousel', {
          */
         direction: 'horizontal',
 
-        directionLock: false,
-
         animation: {
             duration: 250,
             easing: {
@@ -148,13 +146,6 @@ Ext.define('Ext.carousel.Carousel', {
 
     activeIndex: -1,
 
-    touchAction: {
-        // This pevents the touchstart from being captured
-        // by the platform for scrolling.
-        panX: false,
-        panY: false
-    },
-
     beforeInitialize: function() {
         var me = this;
 
@@ -163,6 +154,7 @@ Ext.define('Ext.carousel.Carousel', {
             dragstart: 'onDragStart',
             drag: 'onDrag',
             dragend: 'onDragEnd',
+            dragcancel: 'onDragEnd',
             scope: me
         });
 
@@ -341,20 +333,16 @@ Ext.define('Ext.carousel.Carousel', {
     onDragStart: function(e) {
         var direction = this.getDirection(),
             absDeltaX = e.absDeltaX,
-            absDeltaY = e.absDeltaY,
-            directionLock = this.getDirectionLock();
+            absDeltaY = e.absDeltaY;
 
         this.isDragging = true;
 
-        if (directionLock) {
-            if ((direction === 'horizontal' && absDeltaX > absDeltaY) ||
-                (direction === 'vertical' && absDeltaY > absDeltaX)) {
-                e.stopPropagation();
-            }
-            else {
-                this.isDragging = false;
-                return;
-            }
+        if ((direction === 'horizontal' && absDeltaX > absDeltaY) ||
+            (direction === 'vertical' && absDeltaY > absDeltaX)) {
+            e.stopPropagation();
+        } else {
+            this.isDragging = false;
+            return;
         }
 
         this.getTranslatable().stopAnimation();
@@ -462,9 +450,12 @@ Ext.define('Ext.carousel.Carousel', {
     },
 
     updateDirection: function(direction) {
-        var indicator = this.getIndicator();
+        var indicator = this.getIndicator(),
+            vertical = (direction === 'vertical');
 
-        this.currentAxis = (direction === 'horizontal') ? 'x' : 'y';
+        this.currentAxis = vertical ? 'y' : 'x';
+
+        this.setTouchAction(vertical ? { panY: false } : { panX: false });
 
         if (indicator) {
             indicator.setDirection(direction);

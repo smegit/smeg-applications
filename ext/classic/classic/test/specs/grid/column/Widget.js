@@ -53,7 +53,9 @@ describe("Ext.grid.column.Widget", function() {
             xtype: 'button'
         })];
 
-        data = data || generateData(4);
+        if (typeof data == 'number' || data == null) {
+            data = generateData(data || 4);
+        }
 
         store = new Ext.data.Store({
             model: Model,
@@ -1110,6 +1112,16 @@ describe("Ext.grid.column.Widget", function() {
                         expect(childNodes.length).toBe(1);
                     });
                 });
+
+                it("should be rendered after calling view refreshNode", function() {
+                    makeGrid(null, 1, {
+                        height: 200
+                    });
+
+                    grid.getView().refreshNode(0);
+
+                    expect(Ext.fly(grid.getView().getRow(0)).down('.x-btn')).not.toBeNull();
+                });
             });
 
             describe("item removal", function() {
@@ -1334,6 +1346,40 @@ describe("Ext.grid.column.Widget", function() {
                             return grid.actionableMode === false;
                         });
                     }
+                });
+
+                describe("in a locked grid", function() {
+                    var normalGrid, lockedGrid, firstNormalRow, firstLockedRow;
+
+                    afterEach(function() {
+                        normalGrid = lockedGrid = firstNormalRow, firstLockedRow = null;
+                    });
+
+                    it("should keep line heights synced after sorting", function() {
+                        
+
+                        createGrid(null, null, {
+                            columns: [Ext.apply(getColCfg({
+                                xtype: 'button',
+                                height: 40
+                            }), {
+                                locked: true
+                            }), {
+                                dataIndex: 'a'
+                            }]
+                        });
+
+                        normalGrid = grid.normalGrid;
+                        lockedGrid = grid.lockedGrid;
+
+                        normalGrid.getColumnManager().getColumns()[0].sort();
+
+                        firstNormalRow = normalGrid.getView().getRow(0);
+                        firstLockedRow = lockedGrid.getView().getRow(0);
+
+                        expect(Ext.fly(firstNormalRow).getHeight()).toBe(Ext.fly(firstLockedRow).getHeight());
+
+                    });
                 });
             });
 

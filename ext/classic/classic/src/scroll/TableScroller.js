@@ -11,7 +11,11 @@ Ext.define('Ext.scroll.TableScroller', {
             var lockingScroller = this.getLockingScroller(),
                 position = this.getPosition(),
                 newPosition;
-        
+            
+            if (lockingScroller) {
+                position.y = lockingScroller.position.y;
+            }
+
             newPosition = Ext.fly(el).getScrollIntoViewXY(this.getElement(), position.x, position.y);
             newPosition.x = (hscroll === false) ? position.x : newPosition.x;
             if (lockingScroller) {

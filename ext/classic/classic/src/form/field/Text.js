@@ -107,11 +107,14 @@ Ext.define('Ext.form.field.Text', {
     extend:'Ext.form.field.Base',
     alias: 'widget.textfield',
     requires: [
+        'Ext.layout.component.field.Text',
         'Ext.form.field.VTypes',
         'Ext.form.trigger.Trigger',
         'Ext.util.TextMetrics'
     ],
     alternateClassName: ['Ext.form.TextField', 'Ext.form.Text'],
+
+    componentLayout: 'textfield',
 
     config: {
         /**
@@ -244,7 +247,8 @@ Ext.define('Ext.form.field.Text', {
 
     /**
      * @cfg {Boolean} [disableKeyFilter=false]
-     * Specify true to disable input keystroke filtering
+     * Specify true to disable input keystroke filtering. This will ignore the
+     * maskRe field.
      */
 
     /**
@@ -410,7 +414,7 @@ Ext.define('Ext.form.field.Text', {
      * @cfg {Boolean} repeatTriggerClick
      * `true` to attach a {@link Ext.util.ClickRepeater click repeater} to the trigger(s).
      * Click repeating behavior can also be configured on the individual {@link #triggers
-     * trigger instances using the trigger's {@link {Ext.form.trigger.Trigger#repeatClick
+     * trigger instances} using the trigger's {@link Ext.form.trigger.Trigger#repeatClick
      * repeatClick} config.
      */
     repeatTriggerClick: false,
@@ -449,6 +453,7 @@ Ext.define('Ext.form.field.Text', {
     inputWrapFocusCls: Ext.baseCSSPrefix + 'form-text-wrap-focus',
     inputWrapInvalidCls: Ext.baseCSSPrefix + 'form-text-wrap-invalid',
     growCls: Ext.baseCSSPrefix + 'form-text-grow',
+    heightedCls: Ext.baseCSSPrefix + 'form-text-heighted',
 
     /* 
      * @private
@@ -662,6 +667,18 @@ Ext.define('Ext.form.field.Text', {
         }
         
         return data;
+    },
+
+    beforeRender: function() {
+        var me = this,
+            heighted = (me.height != null) ||
+                !!(me.ownerLayout && me.ownerLayout.getItemSizePolicy(me, me.fakeSizeModel).setsHeight);
+
+        if (heighted) {
+            me.protoEl.addCls(me.heightedCls);
+        }
+
+        me.callParent();
     },
 
     onRender: function() {
@@ -1063,31 +1080,10 @@ Ext.define('Ext.form.field.Text', {
     onFocus: function(e) {
         var me = this,
             inputEl = me.inputEl.dom,
-            startValue, value, len;
+            value, len;
 
         me.callParent([e]);
         
-        // This handler may be called when the focus has already shifted to another element;
-        // calling inputEl.select() will forcibly focus again it which in turn might set up
-        // a nasty circular race condition if focusEl !== inputEl.
-        if (!me.focusTimer) {
-            startValue = inputEl.value;
-            me.focusTimer = Ext.asap(function() {
-                me.focusTimer = null;
-                // This ensures the carret will be at the end of the input element
-                // while tabbing between editors.
-                if (!me.destroyed && document.activeElement === inputEl) {
-                    value = inputEl.value;
-                    len = value.length;
-                    
-                    // If focusing has fired an event which mutated the value,
-                    // place the caret at the end. Else select the initial text
-                    // as is the HTML default behaviour.
-                    me.selectText(value !== startValue ? len : 0, len);
-                }
-            });
-        }
-
         if (me.emptyText) {
             me.autoSize();
         }
@@ -1096,6 +1092,16 @@ Ext.define('Ext.form.field.Text', {
         me.triggerWrap.addCls(me.triggerWrapFocusCls);
         me.inputWrap.addCls(me.inputWrapFocusCls);
         me.invokeTriggers('onFieldFocus', [e]);
+
+        // This handler may be called when the focus has already shifted to another element;
+        // calling inputEl.select() will forcibly focus again it which in turn might set up
+        // a nasty circular race condition if focusEl !== inputEl.
+        if (me.selectOnFocus && document.activeElement === inputEl) {
+            value = inputEl.value;
+            len = value.length;
+
+            me.selectText(0, len);
+        }
     },
 
     /**
@@ -1327,7 +1333,6 @@ Ext.define('Ext.form.field.Text', {
     doDestroy: function() {
         var me = this;
 
-        Ext.asapCancel(me.focusTimer);
         me.invokeTriggers('destroy');
         Ext.destroy(me.triggerRepeater);
 
@@ -1372,4 +1377,8 @@ Ext.define('Ext.form.field.Text', {
         }
     }
 
+}, function(TextField) {
+    var calculated = Ext.layout.SizeModel.calculated;
+        
+    TextField.prototype.fakeSizeModel = calculated.pairsByHeightOrdinal[calculated.ordinal];
 });

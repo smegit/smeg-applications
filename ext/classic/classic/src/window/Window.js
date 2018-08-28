@@ -312,7 +312,7 @@ Ext.define('Ext.window.Window', {
 
     /**
      * @cfg {Boolean} [floating=true]
-     * @inheritdoc Ext.Component
+     * @inheritdoc Ext.Component#cfg!floating
      */
     floating: true,
 
@@ -1141,7 +1141,12 @@ Ext.define('Ext.window.Window', {
             nextFocus = nextFocus || (forward ? nodes[0] : nodes[nodes.length - 1]);
             
             if (nextFocus) {
-                nextFocus.focus();
+                // If there is only one focusable node in the window, focusing it
+                // while we're in focusenter handler for the tab guard might cause
+                // race condition where the focusable node will be refocused first
+                // and then its original blur handler will kick in, removing focus
+                // styling erroneously.
+                Ext.fly(nextFocus).focus(nodes.length === 1 ? 1 : 0);
             }
         }
     }

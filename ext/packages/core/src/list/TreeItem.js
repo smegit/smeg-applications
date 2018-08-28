@@ -155,11 +155,15 @@ Ext.define('Ext.list.TreeItem', {
         var me = this,
             itemContainer = me.itemContainer;
 
-        me.collapsing = null;
-        itemContainer.dom.style.display = '';
-        itemContainer.setHeight(null);
+        // stopAnimation is called on destroy, so don't
+        // bother continuing if we don't need to
+        if (!me.destroying && !me.destroyed) {
+            me.collapsing = null;
+            itemContainer.dom.style.display = '';
+            itemContainer.setHeight(null);
 
-        me.nodeCollapseEnd(me.collapsingForExpand);
+            me.nodeCollapseEnd(me.collapsingForExpand);
+        }
     },
 
     nodeExpandBegin: function (animation) {

@@ -18,8 +18,7 @@ Ext.define('Ext.viewport.Default', new function() {
             "2": LEFT,
             "4": TOP,
             "8": RIGHT
-        },
-        stripQuoteRe = /"/g;
+        };
 
     return {
         extend: 'Ext.Container',
@@ -143,7 +142,13 @@ Ext.define('Ext.viewport.Default', new function() {
 
             // Used in legacy browser that do not support matchMedia. Hidden element is used for checking of orientation
             if (!Ext.feature.has.MatchMedia) {
-                cfg.children.unshift({reference: 'orientationElement', className: 'x-orientation-inspector'});
+                cfg.children.unshift({
+                    reference: 'orientationElement',
+                    className: Ext.baseCSSPrefix + 'orientation-inspector',
+                    children: [{
+                        className: Ext.baseCSSPrefix + 'orientation-inspector-landscape'
+                    }]
+                });
             }
             return cfg;
         },
@@ -279,9 +284,6 @@ Ext.define('Ext.viewport.Default', new function() {
         onReady: function() {
             if (this.getAutoRender()) {
                 this.render();
-            }
-            if (Ext.browser.name === 'ChromeiOS') {
-                this.setHeight('-webkit-calc(100% - ' + ((window.outerHeight - window.innerHeight) / 2) + 'px)');
             }
         },
 
@@ -441,7 +443,8 @@ Ext.define('Ext.viewport.Default', new function() {
 
         determineOrientation: function() {
             var me = this,
-                nativeOrientation;
+                orientationElement = me.orientationElement,
+                nativeOrientation, visible;
 
             // First attempt will be to use Native Orientation information
             if (me.supportsOrientation()) {
@@ -456,8 +459,9 @@ Ext.define('Ext.viewport.Default', new function() {
             } else if (me.supportsMatchMedia()) {
                 return window.matchMedia('(orientation : landscape)').matches ? me.LANDSCAPE : me.PORTRAIT;
                 // Fall back on hidden element with media query attached to it (media query in Base Theme)
-            } else if (me.orientationElement) {
-                return me.orientationElement.getStyle('content').replace(stripQuoteRe, '');
+            } else if (orientationElement) {
+                visible = orientationElement.first().isVisible();
+                return visible ? me.LANDSCAPE : me.PORTRAIT;
             }
 
             return null;

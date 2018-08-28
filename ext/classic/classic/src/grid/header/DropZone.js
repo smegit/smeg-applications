@@ -181,7 +181,7 @@ Ext.define('Ext.grid.header.DropZone', {
             doPosition = (from.ownerCt === to.ownerCt);
 
             // If from different containers, and they are not sealed, then continue checking
-            if (!doPosition && (!from.ownerCt.sealed && !to.ownerCt.sealed)) {
+            if (!doPosition && (!from.ownerCt.isSealed() && !to.ownerCt.isSealed())) {
 
                 doPosition = true;
                 fromPanel = from.up('tablepanel');
@@ -348,8 +348,9 @@ Ext.define('Ext.grid.header.DropZone', {
                 !(targetHeader.isGroupHeader && (!targetHeader.items || !targetHeader.items.length)) &&
                 visibleFromIdx !== visibleToIdx)
             {
+
                 colsToMove = dragHeader.isGroupHeader ?
-                    dragHeader.query(':not([hidden]):not([isGroupHeader])').length :
+                    dragHeader.query('gridcolumn:not([hidden]):not([isGroupHeader])').length :
                     1;
 
                 // We need to adjust the visibleToIdx when both of the following conditions are met:

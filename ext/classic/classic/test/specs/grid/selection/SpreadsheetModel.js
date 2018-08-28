@@ -694,6 +694,34 @@ describe("Ext.grid.selection.SpreadsheetModel", function() {
                 expect(grid.getSelectionModel().getCount()).toBe(0);
                 expect(count).toBe(0);
             });
+            itNotTouch("should allow click/SHIFT click selection of rows when checkbox is clicked", function() {
+                var sel, checkbox5, checkbox7;
+                makeGrid(null, {
+                    selModel: {
+                        type: 'spreadsheet',
+                        checkboxSelect: true,
+                        checkboxColumnIndex: 1
+                    }
+                });
+
+                checkbox5 = findCell(5,1).down('.x-grid-checkcolumn');
+                jasmine.fireMouseEvent(checkbox5, 'click');
+                expect(isRowSelected(5)).toBe(true);
+
+                checkbox7 = findCell(7,1).down('.x-grid-checkcolumn');
+                jasmine.fireMouseEvent(checkbox7, 'click', null, null, null, true); // SHIFT/click
+
+                sel = selModel.getSelected();
+
+                // Click on checkbox for rows 5 and 7 should select all 3 rows
+                expect(sel.isRows).toBe(true);
+                expect(sel.getCount()).toBe(3);
+                expect(isRowSelected(5)).toBe(true);
+                expect(isRowSelected(6)).toBe(true);
+                expect(isRowSelected(7)).toBe(true);
+                expect(isRowSelected(0)).toBe(false);
+                expect(isRowSelected(8)).toBe(false);
+            });
         });
     });
     
@@ -1670,6 +1698,58 @@ describe("Ext.grid.selection.SpreadsheetModel", function() {
                 // Need a bit of fuzziness for IE8, Firefox, Safari...
                 expect(have).toBeWithin(2, handleX + 100);
             });
+        });
+        
+        it('should hide the replicator when cell has been deselected', function () {
+           jasmine.fireMouseEvent(findCell(1, 1), 'click');
+           
+           waitsForFocus(view);
+           runs(function () {
+               selModel.deselectAll();
+               expect(selModel.extensible.handle.isVisible()).toBe(false);
+           });
+           
+        });
+    
+        it('should remove the replicator when a column has been hidden', function () {
+            var columns = grid.getVisibleColumnManager().getColumns(),
+                spy = spyOnEvent(grid, 'columnschanged').andCallThrough(),
+                idleSpy = jasmine.createSpy('idle'),
+                i;
+            
+            // First iteration will hide the column 'field 2' that is to the right of the selection.
+            // Second iteration will hide the column 'field 1' with the selection. Both cases should
+            // remove the replicator handle.
+            for (i = 2; i > 0; i--) {
+                (function (idx) {
+                    runs(function () {
+                        jasmine.fireMouseEvent(findCell(1, 1), 'click');
+                    });
+                    
+                    waitsForFocus(view);
+                    runs(function () {
+                        columns[idx].hide();
+                
+                        // hiding the column eventually creates an 'idle' listener in
+                        // SpreadsheetModel#onColumnsChanged to wait for the UI to update
+                        // before updating the selection replicator. By creating this
+                        // listener, we know that by the time it fires, the other listener
+                        // has also fired. Triggering the 'click' event causes 'idle' to fire.
+                        Ext.on('idle', idleSpy, this, {single: true});
+                        jasmine.fireMouseEvent(Ext.getBody().dom, 'click', -100, -100);
+                    });
+            
+                    // 'columnschanged' and 'idle' must fire before continuing
+                    waitsFor(function () {
+                        return spy.callCount === 1 && idleSpy.callCount === 1;
+                    });
+                    runs(function () {
+                        expect(selModel.extensible.handle.isVisible()).toBe(false);
+                        spy.reset();
+                        idleSpy.reset();
+                    });
+                }(i));
+            }
         });
 
         describe("multiple selection", function() {

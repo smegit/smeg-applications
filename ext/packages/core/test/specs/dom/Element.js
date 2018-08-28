@@ -4326,9 +4326,9 @@ describe("Ext.dom.Element", function() {
                 expect(listeners.mouseup.mostRecentCall.args[0].type).toBe('mouseup');
             });
 
-            if (Ext.supports.TouchEvents && Ext.isWebKit && Ext.os.is.Desktop) {
-                // Touch Enabled webkit on windows 8 fires both mouse and touch events We already
-                // tested the touch events above, so make sure mouse events/ work as well.
+            if (Ext.supports.TouchEvents && Ext.os.is.Desktop) {
+                // Touch Enabled desktop browsers on windows fire both mouse and touch events.
+                // We already tested the touch events above, so make sure mouse events work as well.
 
                 it("should fire secondary start events", function() {
                     fire('start', true);
@@ -4885,4 +4885,30 @@ describe("Ext.dom.Element", function() {
         });
     });
 
+    describe('miscellaneous', function () {
+        // classic
+        (Ext.toolkit === 'classic' ? describe : xdescribe)('classic toolkit', function () {
+
+            // EXTJS-20524
+            describe('syncContent', function () {
+                it('should not throw an exception when syncing node content', function () {
+                    var el1 = Ext.fly(document.createElement('div')),
+                        el2 = Ext.fly(document.createElement('div'));
+
+                    el1.dom.innerHTML = '<!--comment--> foo';
+                    el2.dom.innerHTML = '<!--comment--> bar';
+
+                    expect(function () {el1.syncContent(el2);}).not.toThrow();
+                    expect(el1.dom.innerHTML).toEqual(
+                        (Ext.isIE8 ? '' : '<!--comment--> ') + 'bar'
+                    );
+                });
+            });
+        });
+
+        // modern
+        (Ext.toolkit === 'modern' ? describe : xdescribe)('modern toolkit', function () {
+
+        });
+    });
 }, "/src/dom/Element.js");

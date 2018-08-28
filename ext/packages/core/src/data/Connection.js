@@ -315,25 +315,28 @@ Ext.define('Ext.data.Connection', {
      *
      * File uploads are not performed using normal "Ajax" techniques, that is they are **not**
      * performed using XMLHttpRequests. Instead the form is submitted in the standard manner with the
-     * DOM `<form>` element temporarily modified to have its [target][] set to refer to a dynamically
-     * generated, hidden `<iframe>` which is inserted into the document but removed after the return data
-     * has been gathered.
+     * DOM `&lt;form&gt;` element temporarily modified to have its [target](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/target)
+     * set to refer to a dynamically generated, hidden `&lt;iframe&gt;` which is inserted
+     * into the document but removed after the return data has been gathered.
      *
      * The server response is parsed by the browser to create the document for the IFRAME. If the
-     * server is using JSON to send the return object, then the [Content-Type][] header must be set to
-     * "text/html" in order to tell the browser to insert the text unchanged into the document body.
+     * server is using JSON to send the return object, then the
+     * [Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type)
+     * header must be set to "text/html" in order to tell the browser to insert the text
+     * unchanged into the document body.
      *
      * The response text is retrieved from the document, and a fake XMLHttpRequest object is created
      * containing a `responseText` property in order to conform to the requirements of event handlers
      * and callbacks.
      *
-     * Be aware that file upload packets are sent with the content type [multipart/form][] and some server
+     * Be aware that file upload packets are sent with the content type
+     * [multipart/form](https://tools.ietf.org/html/rfc7233#section-4.1) and some server
      * technologies (notably JEE) may require some custom processing in order to retrieve parameter names
      * and parameter values from the packet content.
      *
-     * [target]: http://www.w3.org/TR/REC-html40/present/frames.html#adef-target
-     * [Content-Type]: http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17
-     * [multipart/form]: http://www.faqs.org/rfcs/rfc2388.html
+     * [target](http://www.w3.org/TR/REC-html40/present/frames.html#adef-target)
+     * [Content-Type](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17)
+     * [multipart/form](http://www.faqs.org/rfcs/rfc2388.html)
      *
      * @param {Object} options.headers Request headers to set for the request.
      * The XHR will attempt to set an appropriate Content-Type based on the params/data passed
@@ -378,10 +381,16 @@ Ext.define('Ext.data.Connection', {
             
             return request.start(requestOptions.data);
         }
+        
+        // Reusing for response
+        request = {
+            status: -1,
+            statusText: 'Request cancelled in beforerequest event handler'
+        };
 
-        Ext.callback(options.callback, options.scope, [options, undefined, undefined]);
+        Ext.callback(options.callback, options.scope, [options, false, request]);
 
-        return Ext.Deferred.rejected([options, undefined, undefined]);
+        return Ext.Deferred.rejected([options, false, request]);
     },
 
     createRequest: function(options, requestOptions) {

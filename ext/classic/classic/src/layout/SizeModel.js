@@ -254,7 +254,8 @@ function () {
         for (j = 0; j < n; ++j) {
             pairs.push({
                 width: sizeModel,
-                height: sizeModelsArray[j]
+                height: sizeModelsArray[j],
+                ordinal: j
             });
         }
     }

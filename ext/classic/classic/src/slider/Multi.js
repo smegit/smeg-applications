@@ -150,6 +150,8 @@ Ext.define('Ext.slider.Multi', {
      *
      * @cfg {Ext.slider.Thumb} tipText.thumb The Thumb that the Tip is attached to
      * @cfg {String} tipText.return The text to display in the tip
+     *
+     * @controllable
      */
     tipText: null,
     
@@ -157,6 +159,11 @@ Ext.define('Ext.slider.Multi', {
      * @inheritdoc
      */
     defaultBindProperty: 'values',
+
+    /**
+     * @inheritdoc
+     */
+    publishes: ['value'],
 
     /**
      * @event beforechange

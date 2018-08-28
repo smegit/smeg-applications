@@ -10,6 +10,156 @@ describe("Ext.data.Model", function() {
         Ext.data.Model.schema.clear(true);
     });
 
+    describe("loadData", function() {
+        var session;
+
+        beforeEach(function() {
+            Ext.define('spec.User', {
+                extend: 'Ext.data.Model',
+                fields: ['name']
+            });
+
+            Ext.define('spec.Order', {
+                extend: 'Ext.data.Model',
+                fields: ['discountCode', {
+                    name: 'userId',
+                    reference: 'User'
+                }]
+            });
+        });
+
+        afterEach(function() {
+            Ext.undefine('spec.User');
+            Ext.undefine('spec.Order');
+        });
+
+        function create(data) {
+            return spec.User.loadData(data, session);
+        }
+
+        describe("without session", function() {
+            it("should return a model of the same type", function() {
+                var rec = create({
+                    name: 'Foo'
+                });
+                expect(rec.$className).toBe('spec.User');
+                expect(rec.get('name')).toBe('Foo');
+            });
+
+            it("should create with no data", function() {
+                var rec = create();
+                expect(rec.$className).toBe('spec.User');
+                expect(rec.get('name')).toBeUndefined();
+            });
+
+            it("should parse associations", function() {
+                var rec = create({
+                    name: 'Foo',
+                    orders: [{
+                        id: 101,
+                        discountCode: 'abc'
+                    }, {
+                        id: 102,
+                        discountCode: 'xyz'
+                    }]
+                });
+
+                expect(rec.$className).toBe('spec.User');
+                expect(rec.get('name')).toBe('Foo');
+
+                var orders = rec.orders();
+
+                expect(orders.getCount()).toBe(2);
+
+                expect(orders.getAt(0).$className).toBe('spec.Order');
+                expect(orders.getAt(0).id).toBe(101);
+                expect(orders.getAt(0).get('discountCode')).toBe('abc');
+
+                expect(orders.getAt(1).$className).toBe('spec.Order');
+                expect(orders.getAt(1).id).toBe(102);
+                expect(orders.getAt(1).get('discountCode')).toBe('xyz');
+            });
+        });
+
+        describe("with session", function() {
+            beforeEach(function() {
+                session = new Ext.data.Session();
+            });
+
+            afterEach(function() {
+                session = Ext.destroy(session);
+            });
+
+            it("should return a model of the same type", function() {
+                var rec = create({
+                    name: 'Foo'
+                });
+                expect(rec.$className).toBe('spec.User');
+                expect(rec.get('name')).toBe('Foo');
+                expect(rec.session).toBe(session);
+            });
+
+            it("should create with no data", function() {
+                var rec = create();
+                expect(rec.$className).toBe('spec.User');
+                expect(rec.get('name')).toBeUndefined();
+                expect(rec.session).toBe(session);
+            });
+
+            it("should parse associations", function() {
+                var rec = create({
+                    name: 'Foo',
+                    orders: [{
+                        id: 101,
+                        discountCode: 'abc'
+                    }, {
+                        id: 102,
+                        discountCode: 'xyz'
+                    }]
+                });
+
+                expect(rec.$className).toBe('spec.User');
+                expect(rec.get('name')).toBe('Foo');
+                expect(rec.session).toBe(session);
+
+                var orders = rec.orders();
+
+                expect(orders.getCount()).toBe(2);
+
+                expect(orders.getAt(0).$className).toBe('spec.Order');
+                expect(orders.getAt(0).id).toBe(101);
+                expect(orders.getAt(0).get('discountCode')).toBe('abc');
+                expect(orders.getAt(0).session).toBe(session);
+
+                expect(orders.getAt(1).$className).toBe('spec.Order');
+                expect(orders.getAt(1).id).toBe(102);
+                expect(orders.getAt(1).get('discountCode')).toBe('xyz');
+                expect(orders.getAt(0).session).toBe(session);
+            });
+
+            it("should read records from the session", function() {
+                var order = session.createRecord('Order', {
+                    id: 101
+                });
+
+                var rec = create({
+                    name: 'Foo',
+                    orders: [{
+                        id: 101
+                    }, {
+                        id: 102
+                    }]
+                });
+
+                var orders = rec.orders();
+
+                expect(orders.getCount()).toBe(2);
+
+                expect(orders.getAt(0)).toBe(order);
+            });
+        });
+    });
+
     describe('use of raw Model class', function() {
         it("should be able to use Ext.data.Model directly on a store", function() {
             var data = [
@@ -83,6 +233,60 @@ describe("Ext.data.Model", function() {
             });
         });
     });
+
+    describe("replaceFields", function() {
+        describe("dependencies", function() {
+            it("should keep dependencies when replaced with the same fields", function() {
+                function getFields() {
+                    return [{
+                        name: 'a'
+                    }, {
+                        name: 'b',
+                        depends: ['a'],
+                        calculate: function(data) {
+                            return 'x' + data.a;
+                        }
+                    }];
+                }
+
+                var M = Ext.define(null, {
+                    extend: 'Ext.data.Model',
+                    fields: getFields()
+                });
+
+                var rec = new M();
+
+                M.replaceFields(getFields());
+                rec.set('a', 'foo');
+                expect(rec.get('b')).toBe('xfoo');
+            });
+
+            it("should calculate any new dependencies", function() {
+                function getFields() {
+                    return [{
+                        name: 'a'
+                    }];
+                }
+
+                var M = Ext.define(null, {
+                    extend: 'Ext.data.Model',
+                    fields: getFields()
+                });
+
+                var rec = new M();
+
+                M.replaceFields(getFields().concat([{
+                    name: 'b',
+                    depends: ['a'],
+                    calculate: function(data) {
+                        return 'x' + data.a;
+                    }
+                }]));
+                rec.set('a', 'foo');
+                expect(rec.get('b')).toBe('xfoo');
+            });
+        });
+    });
     
     describe("defining models", function() {
         var A, B;
@@ -93,6 +297,10 @@ describe("Ext.data.Model", function() {
             Ext.undefine('spec.B');
             Ext.undefine('spec.model.sub.C');
             A = B = null;
+            
+            if (Ext.isIE8) {
+                addGlobal('specModel');
+            }
         });
 
         describe('entityName', function () {
@@ -632,7 +840,7 @@ describe("Ext.data.Model", function() {
                         });
                         expect(rec.get('bar')).toBe(40);
                     });
-                })
+                });
             });
         });
         
@@ -698,6 +906,49 @@ describe("Ext.data.Model", function() {
                 defineA('custom');
                 expect(A.getProxy().getReader().$className).toBe('spec.CustomReader');
                 Ext.undefine('spec.CustomReader');
+                Ext.undefine('spec.CustomProxy');
+            });
+
+            it("should inherit the type from the proxy instance and url from the schema", function() {
+                Ext.define('spec.CustomProxy', {
+                    extend: 'Ext.data.proxy.Rest',
+                    alias: 'proxy.custom'
+                });
+
+                defineA('custom');
+                expect(A.getProxy() instanceof Ext.data.proxy.Rest).toBe(true);
+                expect(A.getProxy().getUrl()).toBe('/A');
+                Ext.undefine('spec.CustomProxy');
+            });
+    
+            it("should inherit the type and url from the proxy instance when the schema isn't used", function() {
+                Ext.define('spec.CustomProxy', {
+                    extend: 'Ext.data.proxy.Rest',
+                    alias: 'proxy.custom',
+                    url: 'foo.bar'
+                });
+        
+                defineA({
+                    type: 'custom',
+                    schema: false
+                });
+                expect(A.getProxy() instanceof Ext.data.proxy.Rest).toBe(true);
+                expect(A.getProxy().getUrl()).toBe('foo.bar');
+                Ext.undefine('spec.CustomProxy');
+            });
+    
+            it("should only inherit the type from the proxy when the schema is used", function() {
+                Ext.define('spec.CustomProxy', {
+                    extend: 'Ext.data.proxy.Rest',
+                    alias: 'proxy.custom',
+                    url: 'foo.bar'
+                });
+        
+                defineA({
+                    type: 'custom'
+                });
+                expect(A.getProxy() instanceof Ext.data.proxy.Rest).toBe(true);
+                expect(A.getProxy().getUrl()).toBe('/A');
                 Ext.undefine('spec.CustomProxy');
             });
             
@@ -1148,7 +1399,7 @@ describe("Ext.data.Model", function() {
                             return 'Fail1';
                         },
                             fn2 = function(){
-                                return 'Fail2'
+                                return 'Fail2';
                             };
                             
                         defineA({
@@ -3512,7 +3763,7 @@ describe("Ext.data.Model", function() {
                 expect(function() {
                     o.set('addressId', 1);
                 }).not.toThrow();
-            })
+            });
         });
         
         it("should update the id property if the id changes", function() {
@@ -6705,7 +6956,7 @@ describe("Ext.data.Model", function() {
                     defineA(null, [{
                         name: 'name',
                         validators: ['presence', 'email']
-                    }])
+                    }]);
 
                     o = new A();
 
@@ -6721,7 +6972,7 @@ describe("Ext.data.Model", function() {
                     expect(name[1].field).toBe('name');
                     expect(name[1].message).toBe(emailMsg);
                 });
-            })
+            });
         });
         
         describe("isValid", function() {
@@ -6764,6 +7015,49 @@ describe("Ext.data.Model", function() {
                 });
                 expect(o.isValid()).toBe(false);
             });
+
+            describe("using cancelEdit", function() {
+                beforeEach(function() {
+                    defineA({
+                        name: 'presence',
+                        rank: 'presence'
+                    });
+                });
+
+                it("should validate correctly when using cancelEdit on an invalid edit after calling set", function() {
+                    var o = new A(),
+                        valid;
+
+                    o.beginEdit();
+                    o.set('name', 'foo');
+                    expect(o.isValid()).toBe(false);
+                    o.cancelEdit();
+
+                    o.set({
+                        name: 'foo',
+                        rank: 'bar'
+                    });
+
+                    expect(o.isValid()).toBe(true);
+                });
+
+                it("should validate correctly when using cancelEdit on a valid edit after calling set", function() {
+                    var o = new A(),
+                        valid;
+
+                    o.beginEdit();
+                    o.set({
+                        name: 'foo',
+                        rank: 'bar'
+                    });
+                    expect(o.isValid()).toBe(true);
+                    o.cancelEdit();
+
+                    o.set('name', 'foo');
+
+                    expect(o.isValid()).toBe(false);
+                });
+            });
         });
 
         describe("validation via getValidation", function() {
@@ -6800,6 +7094,49 @@ describe("Ext.data.Model", function() {
                     name: null
                 });
                 expect(o.getValidation().isValid()).toBe(false);
+            });
+
+            describe("using cancelEdit", function() {
+                beforeEach(function() {
+                    defineA({
+                        name: 'presence',
+                        rank: 'presence'
+                    });
+                });
+
+                it("should validate correctly when using cancelEdit on an invalid edit after calling set", function() {
+                    var o = new A(),
+                        valid;
+
+                    o.beginEdit();
+                    o.set('name', 'foo');
+                    expect(o.getValidation().isValid()).toBe(false);
+                    o.cancelEdit();
+
+                    o.set({
+                        name: 'foo',
+                        rank: 'bar'
+                    });
+
+                    expect(o.getValidation().isValid()).toBe(true);
+                });
+
+                it("should validate correctly when using cancelEdit on a valid edit after calling set", function() {
+                    var o = new A(),
+                        valid;
+
+                    o.beginEdit();
+                    o.set({
+                        name: 'foo',
+                        rank: 'bar'
+                    });
+                    expect(o.getValidation().isValid()).toBe(true);
+                    o.cancelEdit();
+
+                    o.set('name', 'foo');
+
+                    expect(o.getValidation().isValid()).toBe(false);
+                });
             });
         });
     });
@@ -7284,7 +7621,7 @@ describe("Ext.data.Model", function() {
             A = Ext.define('spec.A', {
                 extend: 'Ext.data.Model',
                 fields: ['id', 'name']
-            })
+            });
         });
 
         afterEach(function() {
@@ -7316,7 +7653,7 @@ describe("Ext.data.Model", function() {
             rec.drop();
             expect(rec.dropped).toBe(true);
             expect(rec.erased).toBe(true);
-        })
+        });
 
         it("should call afterDrop", function() {
             var rec = new A({
@@ -7414,7 +7751,7 @@ describe("Ext.data.Model", function() {
                 extend: 'Ext.data.Model',
                 fields: ['name'],
                 versionProperty: 'version'
-            })
+            });
         });
 
         afterEach(function() {

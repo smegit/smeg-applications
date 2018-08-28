@@ -118,6 +118,7 @@ Ext.define('Ext.field.Select', {
 
         /**
          * @cfg {Ext.data.Model} selection
+         * @accessor
          * The selected model. `null` if no value exists.
          */
         selection: null

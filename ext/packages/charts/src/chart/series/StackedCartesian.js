@@ -252,7 +252,6 @@ Ext.define('Ext.chart.series.StackedCartesian', {
         if (this.getSprites()) {
             var me = this,
                 i, ln, sprite,
-                itemInstancing = me.getItemInstancing(),
                 sprites = me.getSprites(),
                 store = me.getStore(),
                 hidden = me.getHidden(),
@@ -267,7 +266,7 @@ Ext.define('Ext.chart.series.StackedCartesian', {
                         item = {
                             series: me,
                             index: index,
-                            category: itemInstancing ? 'items' : 'markers',
+                            category: me.getItemInstancing() ? 'items' : 'markers',
                             record: store.getData().items[index],
                             // Handle the case where we're stacked but a single segment
                             field: typeof yField === 'string' ? yField : yField[i],

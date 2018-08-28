@@ -426,6 +426,15 @@ describe('Ext.grid.feature.RowBody', function () {
             });
         });
 
+        describe("updating", function() {
+            it("should react to an update", function() {
+                createGrid();
+                store.first().set('company', '2m Co');
+                var el = grid.el.down('.x-grid-rowbody').dom;
+                expect(el.childNodes[0]).hasHTML('2m Co');
+            });
+        });
+
         // TODO: Locked grids!
     });
 

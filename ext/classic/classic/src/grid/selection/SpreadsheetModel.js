@@ -122,7 +122,7 @@ Ext.define('Ext.grid.selection.SpreadsheetModel', {
 
         /**
          * @cfg {String} extensible
-         * This configures whether this selection model is to implement a mouse based dragging gesture to extend a *contiguou*s selection.
+         * This configures whether this selection model is to implement a mouse based dragging gesture to extend a *contiguous* selection.
          *
          * Note that if there are multiple, discontiguous selected rows or columns, selection extension is not available.
          *
@@ -142,7 +142,7 @@ Ext.define('Ext.grid.selection.SpreadsheetModel', {
          *    - `false` Disable the extensible feature
          *    - `null` Disable the extensible feature
          *
-         * It's importante to notice that setting this to `"both"`, `"xy"` or `true` will allow you to extend the selection in both
+         * It's important to notice that setting this to `"both"`, `"xy"` or `true` will allow you to extend the selection in both
          * directions, but only one direction at a time. It will NOT be possible to drag it diagonally. 
          */
         extensible: {
@@ -368,7 +368,7 @@ Ext.define('Ext.grid.selection.SpreadsheetModel', {
 
         return {
             xtype: 'checkcolumn',
-            isCheckerHd: showCheck, // historically used as a dicriminator property before isCheckColumn
+            isCheckerHd: showCheck, // historically used as a discriminator property before isCheckColumn
             headerCheckbox: showCheck,
             ignoreExport: true,
             text : me.checkColumnHeaderText,
@@ -980,49 +980,8 @@ Ext.define('Ext.grid.selection.SpreadsheetModel', {
          */
         onColumnsChanged: function() {
             var me = this,
-                selData = me.selected,
-                rowRange,
-                colCount,
-                colIdx,
-                rowIdx,
-                view,
-                context,
-                selectionChanged;
-
-            // When columns have changed, we have to deselect *every* cell in the row range because we do not know where the
-            // columns have gone to.
-            if (selData) {
-                view = selData.view;
-
-                if (selData.isCells) {
-                    context = new Ext.grid.CellContext(view);
-                    rowRange = selData.getRowRange();
-                    colCount = view.getVisibleColumnManager().getColumns().length;
-                    if (colCount) {
-                        for (rowIdx = rowRange[0]; rowIdx <= rowRange[1]; rowIdx++) {
-                            context.setRow(rowIdx);
-                            for (colIdx = 0; colIdx < colCount; colIdx++) {
-                                context.setColumn(colIdx);
-                                view.onCellDeselect(context);
-                            }
-                        }
-                    } else {
-                        me.clearSelections();
-                    }
-                }
-
-                // We have to deselect columns which have been hidden/removed
-                else if (selData.isColumns) {
-                    selectionChanged = false;
-                    selData.eachColumn(function(column, columnIdx) {
-                        if (!column.isVisible() || !view.ownerGrid.isAncestor(column)) {
-                            me.remove(column);
-                            selectionChanged = true;
-                        }
-                    });
-                }
-            }
-
+                selectionChanged = me.onViewChanged(me.view, true);
+            
             // This event is fired directly from the HeaderContainer before the view updates.
             // So we have to wait until idle to update the selection UI.
             // NB: fireSelectionChange calls updateSelectionExtender after firing its event.
@@ -1041,22 +1000,11 @@ Ext.define('Ext.grid.selection.SpreadsheetModel', {
          */
         onViewRefresh: function(view) {
             var me = this,
-                sel = me.selected,
-                store = me.view.store,
-                changed = false;
-
-            // Deselect filtered out records
-            if (sel && sel.isRows && store.isFiltered()) {
-                sel.eachRow(function(rec) {
-                    if (!store.contains(rec)) {
-                        this.remove(rec);  // Maintainer: this is the Rows selection object, *NOT* me.
-                        changed = true;
-                    }
-                });
-            }
+                selectionChanged = me.onViewChanged(view);
+            
             // The selection may have acquired or lost contiguity, so the replicator may need enabling or disabling
             // NB: fireSelectionChange calls updateSelectionExtender after firing its event.
-            me[changed ? 'fireSelectionChange' : 'updateSelectionExtender']();
+            me[selectionChanged ? 'fireSelectionChange' : 'updateSelectionExtender']();
         },
 
         /**
@@ -1071,6 +1019,88 @@ Ext.define('Ext.grid.selection.SpreadsheetModel', {
                     this.fireSelectionChange();
                 }
             }
+        },
+    
+        /**
+         * When the view has changed, whether it be to a refresh or a column change, we need
+         * to check the current selection and deselect anything that may no longer be valid.
+         * @param {Ext.view.Table} view
+         * @param {Boolean} isColumnChange `true` if this change is based on a column change
+         * @returns {Boolean} `true` if a change to the selection was made
+         * @private
+         * @since 6.2.2
+         */
+        onViewChanged: function (view, isColumnChange) {
+            var me = this,
+                selData = me.selected,
+                store = view.store,
+                selectionChanged = false,
+                rowRange, colCount, colIdx, rowIdx, context;
+    
+            // When columns have changed, we have to deselect *every* cell in the row range because we do not know where the
+            // columns have gone to.
+            if (selData) {
+                view = selData.view;
+    
+                if (isColumnChange) {
+                    if (selData.isCells) {
+                        context = new Ext.grid.CellContext(view);
+                        rowRange = selData.getRowRange();
+                        colCount = view.ownerGrid.getColumnManager().getColumns().length;
+                        if (colCount) {
+                            for (rowIdx = rowRange[0]; rowIdx <= rowRange[1]; rowIdx++) {
+                                context.setRow(rowIdx);
+                                for (colIdx = 0; colIdx < colCount; colIdx++) {
+                                    // CellContext only works with visible columns and this index is
+                                    // potentially a hidden column. Ensure the column is available
+                                    // before deselecting the cell.
+                                    context.setColumn(colIdx);
+                                    if (context.column) {
+                                        view.onCellDeselect(context);
+                                    }
+                        
+                                    // Selection may still reference a hidden column and may need
+                                    // to be cleared
+                                    if (me.maybeClearSelection(context)) {
+                                        selectionChanged = true;
+                                    }
+                                }
+                            }
+                        } else {
+                            me.clearSelections();
+                            selectionChanged = true;
+                        }
+                    }
+        
+                    // We have to deselect columns which have been hidden/removed
+                    else if (selData.isColumns) {
+                        selectionChanged = false;
+                        selData.eachColumn(function (column, columnIdx) {
+                            if (!column.isVisible() || !view.ownerGrid.isAncestor(column)) {
+                                me.remove(column);
+                                if (me.maybeClearSelection({column: column})) {
+                                    selectionChanged = true;
+                                }
+                            }
+                        });
+                    }
+                }
+
+                // View has refreshed; deselect filtered out records
+                else if (selData.isRows && store.isFiltered()) {
+                    selData.eachRow(function (rec) {
+                        if (!store.contains(rec)) {
+                            this.remove(rec);  // Maintainer: this is the Rows selection object, *NOT* me.
+                            if (me.maybeClearSelection({rowIdx: view.indexOf(rec)})) {
+                                selectionChanged = true;
+                            }
+                        }
+            
+                    });
+                }
+            }
+            
+            return selectionChanged;
         },
 
         onViewCreated: function(grid, view) {
@@ -1236,8 +1266,8 @@ Ext.define('Ext.grid.selection.SpreadsheetModel', {
                 recChange,
                 colChange;
 
-            // when the mousedown happenes in a checkcolumn, we need to verify is the mouse pointer has moved out of the initial clicked cell.
-            // if it has, then we select the initial row and mark it as the range start, otherwise assing the lastOverRecord and return as 
+            // when the mousedown happens in a checkcolumn, we need to verify is the mouse pointer has moved out of the initial clicked cell.
+            // if it has, then we select the initial row and mark it as the range start, otherwise passing the lastOverRecord and return as
             // we don't want to select the record while moving the pointer around the initial cell.
             if (me.checkCellClicked) {
                 // We are dragging within the check cell...
@@ -1396,19 +1426,24 @@ Ext.define('Ext.grid.selection.SpreadsheetModel', {
         onNavigate: function(navigateEvent) {
             var me = this,
                 // Use outermost view. May be lockable
-                view = navigateEvent.view.ownerGrid.view,
+                view = navigateEvent.view && navigateEvent.view.ownerGrid.view,
                 record = navigateEvent.record,
                 sel = me.selected,
 
                 // Create a new Context based upon the outermost View.
                 // NavigationModel works on local views. TODO: remove this step when NavModel is fixed to use outermost view in locked grid.
                 // At that point, we can use navigateEvent.position
-                pos = new Ext.grid.CellContext(view).setPosition(record, navigateEvent.column),
+                pos = view && new Ext.grid.CellContext(view).setPosition(record, navigateEvent.column),
                 keyEvent = navigateEvent.keyEvent,
                 ctrlKey = keyEvent.ctrlKey,
                 shiftKey = keyEvent.shiftKey,
                 keyCode = keyEvent.getKey(),
-                selectionChanged;
+                selectionChanged, rowRangeStart, lastRecord;
+
+            // if there's no position then the user might have clicked outside a cell
+            if (!pos) {
+                return;
+            }
 
             // A Column's processEvent method may set this flag if configured to do so.
             if (keyEvent.stopSelection) {
@@ -1453,7 +1488,15 @@ Ext.define('Ext.grid.selection.SpreadsheetModel', {
                         }
                         // First shift
                         if (!sel.getRangeSize()) {
-                            sel.setRangeStart(navigateEvent.previousRecordIndex || 0);
+                            rowRangeStart = navigateEvent.previousRecordIndex;
+
+                            if (rowRangeStart == null) {
+                                // previousRecordIndex could be empty due to BufferedRenderer de-rendering the last selected row.
+                                // In that case we need to select the last selected record or start from 0.
+                                lastRecord = me.getLastSelected();
+                                rowRangeStart = lastRecord ? me.store.indexOf(lastRecord) : 0;
+                            }
+                            sel.setRangeStart(rowRangeStart);
                         }
                         sel.setRangeEnd(navigateEvent.recordIndex);
                         sel.addRange();
@@ -1506,6 +1549,7 @@ Ext.define('Ext.grid.selection.SpreadsheetModel', {
                     } else {
                         sel.clear();
                         sel.add(record);
+                        sel.setRangeStart(pos.rowIdx, true);
                     }
                     selectionChanged = true;
                 }
@@ -1549,8 +1593,39 @@ Ext.define('Ext.grid.selection.SpreadsheetModel', {
                 if (sel.isRows) {
                     me.updateHeaderState();
                 }
+                // this will give continuity between keyboard selection and mouse selection
+                me.lastOverRecord = record;
+                me.lastOverColumn = pos.column;
                 me.fireSelectionChange();
             }
+        },
+    
+        /**
+         * Checks the current selection (if available) against the context being removed.
+         * If the context was selected, the selection is cleared since it's no longer valid.
+         * @param {Object} removedContext
+         * @return {Boolean} `true` if part or all of the selection was cleared
+         * @since 6.2.2
+         */
+        maybeClearSelection: function (removedContext) {
+            var me = this,
+                selData = me.selected,
+                startCell = selData.startCell,
+                endCell = selData.endCell,
+                column = removedContext.column,
+                colIdx = removedContext.colIdx,
+                rowIdx = removedContext.rowIdx,
+                changed;
+    
+            if (startCell && (startCell.column === column || startCell.colIdx === colIdx) && startCell.rowIdx === rowIdx) {
+                selData.startCell = changed = null;
+            }
+    
+            if (endCell && (endCell.column === column || endCell.colIdx === colIdx) && endCell.rowIdx === rowIdx) {
+                selData.endCell = changed = null;
+            }
+    
+            return changed === null;
         },
 
         /**

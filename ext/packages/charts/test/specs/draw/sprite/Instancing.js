@@ -19,7 +19,7 @@ describe("Ext.draw.sprite.Instancing", function () {
 
             instancing.destroy();
 
-            expect(instancing.isDestroyed).toBe(true);
+            expect(instancing.destroyed).toBe(true);
         });
     });
 
@@ -60,7 +60,7 @@ describe("Ext.draw.sprite.Instancing", function () {
 
             instancing.destroy();
 
-            expect(instancing.isDestroyed).toBe(true);
+            expect(instancing.destroyed).toBe(true);
         });
     });
 

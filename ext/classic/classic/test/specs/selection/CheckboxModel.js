@@ -250,6 +250,20 @@ describe('Ext.selection.CheckboxModel', function() {
                 }];
             });
 
+            it('should be able to be locked without any other locked columns', function() {
+                var checkColumn;
+                makeGrid({
+                    locked: true
+                },{
+                    enableLocking: true,
+                    column: cols
+                });
+
+                checkColumn = grid.down('[isCheckerHd]');
+
+                expect(checkColumn.up('grid') === grid.lockedGrid).toBe(true);
+            });
+
             it('should migrate the check column to locked when the first column is locked', function() {
                 makeGrid(null, {
                     enableLocking: true,
@@ -1265,12 +1279,12 @@ describe('Ext.selection.CheckboxModel', function() {
                         cell = null;
                     });
                     
-                    it("should not have tabIndex", function() {
-                        expect(cell).not.toHaveAttr('tabIndex');
+                    it("should have tabIndex", function() {
+                        expect(cell).toHaveAttr('tabIndex');
                     });
                     
-                    it("should have presentation role", function() {
-                        expect(cell).toHaveAttr('role', 'presentation');
+                    it("should have gridcell role", function() {
+                        expect(cell).toHaveAttr('role', 'gridcell');
                     });
                     
                     it("should not have aria-label", function() {
@@ -1331,12 +1345,12 @@ describe('Ext.selection.CheckboxModel', function() {
                         cell = null;
                     });
                     
-                    it("should not have tabIndex", function() {
-                        expect(cell).not.toHaveAttr('tabIndex');
+                    it("should have tabIndex", function() {
+                        expect(cell).toHaveAttr('tabIndex');
                     });
                     
-                    it("should have presentation role", function() {
-                        expect(cell).toHaveAttr('role', 'presentation');
+                    it("should have gridcell role", function() {
+                        expect(cell).toHaveAttr('role', 'gridcell');
                     });
                     
                     it("should not have aria-label", function() {

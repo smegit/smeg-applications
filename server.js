@@ -1,23 +1,23 @@
 // set up basic settings
 //
-var base      = 'sys.smeg.com.au',
-    host      = 'http://' + base,
-    hostport  = 6051,
+var base = 'sys.smeg.com.au',
+    host = 'https://' + base,
+    hostport = 6051,
     localport = 8889;
 
 // define server proxy
 //
-var express         = require('express'),
-    app             = express(),
+var express = require('express'),
+    app = express(),
     valenceDevToken = '*TEST',
-    valenceDev      = true,// true - running outside the portal, auto set sid with dev token
-    https           = require('https'),
-    http            = require('http'),
-    queryString     = require('querystring'),
-    url             = require('url'),
-    httpProxy       = require('express-http-proxy'),
-    valenceProxy    = httpProxy(host + ':' + hostport, {
-        proxyReqPathResolver : function (req) {
+    valenceDev = true,// true - running outside the portal, auto set sid with dev token
+    https = require('https'),
+    http = require('http'),
+    queryString = require('querystring'),
+    url = require('url'),
+    httpProxy = require('express-http-proxy'),
+    valenceProxy = httpProxy(host + ':' + hostport, {
+        proxyReqPathResolver: function (req) {
             return url.parse(req.url).path;
         }
     });

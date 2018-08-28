@@ -51,6 +51,10 @@ describe("Ext.form.Basic", function() {
         container.destroy();
         basicForm.destroy();
         basicForm = container = currentActionInstance = null;
+        
+        if (Ext.isIE8) {
+            addGlobal('MockAction');
+        }
     });
 
     /*========== SPECS ==========*/
@@ -859,6 +863,10 @@ describe("Ext.form.Basic", function() {
         afterEach(function(){
             Ext.undefine('BasicFormTestModel');
             Ext.data.Model.schema.clear();
+            
+            if (Ext.isIE8) {
+                addGlobal('BasicFormTestModel');
+            }
         });
         
         it("should update fields on a given model to match corresponding form fields", function() {

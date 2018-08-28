@@ -81,7 +81,7 @@
  * are nested as descendant nodes of other records, then this lenient behaviour must be overridden by using a more specific
  * child node selector as your {@link #record} selector which will not select all descendants, such as:
  *
- *    record: '>user'
+ *     record: '>user'
  *
  * # Response metadata
  *
@@ -126,12 +126,13 @@
  * otherwise.
  */
 Ext.define('Ext.data.reader.Xml', {
+    alternateClassName: 'Ext.data.XmlReader',
     extend: 'Ext.data.reader.Reader',
+    alias: 'reader.xml',
+    
     requires: [
         'Ext.dom.Query'
     ],
-    alternateClassName: 'Ext.data.XmlReader',
-    alias : 'reader.xml',
 
     config: {
         /**
@@ -145,7 +146,7 @@ Ext.define('Ext.data.reader.Xml', {
         * then only first generation child nodes of the root element must be selected, so the record selector must be
         * specified with a more specific selector which will not select all descendants. For example:
         *
-        *    record: '>node'
+        *     record: '>node'
         *
         */
         record: '',
@@ -172,13 +173,14 @@ Ext.define('Ext.data.reader.Xml', {
     },
 
     /**
-     * @private
-     * Creates a function to return some particular key of data from a response. The totalProperty and
-     * successProperty are treated as special cases for type casting, everything else is just a simple selector.
-     * @param {String} key
+     * Creates a function to return some particular key of data from a response. The
+     * `totalProperty` and `successProperty` are treated as special cases for type
+     * casting, everything else is just a simple selector.
+     * @param {String} expr
      * @return {Function}
+     * @private
      */
-    createAccessor: function(expr) {
+    createAccessor: function (expr) {
         if (Ext.isEmpty(expr)) {
             return Ext.emptyFn;
         }
@@ -277,9 +279,10 @@ Ext.define('Ext.data.reader.Xml', {
      * Parses an XML document and returns a ResultSet containing the model instances.
      * @param {Object} doc Parsed XML document
      * @param {Object} [readOptions] See {@link #read} for details.
+     * @param {Object} [internalReadOptions] (private)
      * @return {Ext.data.ResultSet} The parsed result set
      */
-    readRecords: function(doc, readOptions, /* private */ internalReadOptions) {
+    readRecords: function(doc, readOptions, internalReadOptions) {
         // it's possible that we get passed an array here by associations.
         // Make sure we strip that out (see Ext.data.reader.Reader#readAssociated)
         if (Ext.isArray(doc)) {
@@ -298,19 +301,40 @@ Ext.define('Ext.data.reader.Xml', {
     createFieldAccessor: function(field) {
         var me = this,
             namespace = me.getNamespace(),
-            selector, result;
+            selector, autoMapping, result;
 
-        selector = field.mapping || ((namespace ? namespace + '|' : '') + field.name); 
+        if (field.mapping) {
+            selector = field.mapping;
+        }
+        else {
+            selector = (namespace ? namespace + '|' : '') + field.name;
+            autoMapping = true;
+        }
 
         if (typeof selector === 'function') {
             result = function(raw) {
                 return field.mapping(raw, me);
             };
-        } else {
-            result = function(raw) {
-                return me.getNodeValue(Ext.DomQuery.selectNode(selector, raw));
-            };
         }
+        else {
+            // The generated field accessor is a *very* hot code path in XML reader,
+            // so we try hard to optimize away any checks and lessen run time penalty.
+            // We also try hard to use native code where possible, since Ext.DomQuery
+            // is slow and very CPU intensive.
+            // querySelector and getNodeValue break on namespaces so we can't use them
+            if (autoMapping && !namespace && Ext.supports.XmlQuerySelector) {
+                result = function(raw) {
+                    return me.getNodeValue(raw.querySelector(selector));
+                };
+            }
+            
+            if (!result) {
+                result = function(raw) {
+                    return me.getNodeValue(Ext.DomQuery.selectNode(selector, raw));
+                };
+            }
+        }
+        
         return result;
     },
     

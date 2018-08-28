@@ -278,12 +278,12 @@ Ext.define('Ext.view.BoundList', {
      * to context. For example to highlight the currently typed value, the getInnerTpl may be configured into a
      * ComboBox as part of the {@link Ext.form.field.ComboBox#listConfig listConfig}:
      *
-     *    listConfig: {
-     *        getInnerTpl: function() {
-     *            return '{[values.name.replace(this.field.getRawValue(), "<b>" + this.field.getRawValue() + "</b>")]}';
-     *        }
-     *    }
-     * @param {String} displayField The {@link #displayField} for the BoundList.
+     *     listConfig: {
+     *         getInnerTpl: function() {
+     *             return '{[values.name.replace(this.field.getRawValue(), "<b>" + this.field.getRawValue() + "</b>")]}';
+     *         }
+     *     }
+     * @param {String} displayField The {@link #cfg!displayField} for the BoundList.
      * @return {String} The inner template
      */
     getInnerTpl: function(displayField) {

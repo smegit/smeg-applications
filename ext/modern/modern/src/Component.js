@@ -545,6 +545,9 @@ Ext.define('Ext.Component', {
          * @cfg {Object} data
          * The initial set of data to apply to the `{@link #tpl}` to
          * update the content area of the Component.
+         *
+         * **Note:** Data will be appended to any existing data.
+         *
          * @accessor
          */
         data: null,
@@ -566,6 +569,7 @@ Ext.define('Ext.Component', {
         record: null,
 
         /**
+         * @cfg {Boolean} useBodyElement
          * @private
          */
         useBodyElement: null,
@@ -700,7 +704,8 @@ Ext.define('Ext.Component', {
     /**
      * @event resize
      * @inheritdoc Ext.dom.Element#resize
-     * @param {Ext.Element} element The component's outer element (this.element)
+     * @param {Ext.Element} element The component's outer element (this.element).
+     * @param {Object} info The component's new size parameters.
      */
 
     /**
@@ -916,6 +921,8 @@ Ext.define('Ext.Component', {
             parent = parent ? parent.bodyElement : Ext.getBody();
             parentBox = parent.getConstrainRegion();
             xy = [(parentBox.getWidth() - me.el.getWidth()) / 2, (parentBox.getHeight() - me.el.getHeight()) / 2];
+            me.needsCenter = false;
+
 
             if (me.isPositioned()) {
                 me.setLeft(xy[0]);
@@ -1552,7 +1559,7 @@ Ext.define('Ext.Component', {
         if (me.isFloated()) {
             if (centered) {
                 me.center();
-                if (!me.centerResizeListener) {
+                if (!me.centerResizeListener && !me.needsCenter) {
                     me.centerResizeListener = me.floatParentNode.on({
                         resize: me.center,
                         scope: me,
@@ -1819,6 +1826,14 @@ Ext.define('Ext.Component', {
                 me[hidden ? 'afterHide' : 'afterShow'](me);
             }
         }
+    },
+
+    afterShow: function(panel) {
+        if (panel.isFloated() && panel.isCentered()) {
+            panel.updateCentered(true);
+        }
+
+        this.callParent([panel]);
     },
 
     /**

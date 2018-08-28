@@ -50,6 +50,37 @@ describe("Ext.picker.Date", function() {
                 });
             }).not.toThrow();
         });
+        
+        describe("startDay", function() {
+            var weekStart;
+            
+            beforeEach(function() {
+                weekStart = Ext.Date.firstDayOfWeek;
+                Ext.Date.firstDayOfWeek = 1;
+            });
+            
+            afterEach(function() {
+                Ext.Date.firstDayOfWeek = weekStart;
+            });
+            
+            it("should default to Ext.Date.firstDayOfWeek", function() {
+                makeComponent();
+                
+                var th = component.eventEl.down('th', true);
+                
+                expect(th.firstChild.innerHTML).toBe('M');
+            });
+            
+            it("should take config option", function() {
+                makeComponent({
+                    startDay: 2
+                });
+                
+                var th = component.eventEl.down('th', true);
+                
+                expect(th.firstChild.innerHTML).toBe('T');
+            });
+        });
 
         // https://sencha.jira.com/browse/EXTJS-15718
         describe("when rendered within a td element", function () {

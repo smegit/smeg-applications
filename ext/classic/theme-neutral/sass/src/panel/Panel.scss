@@ -58,6 +58,24 @@
  * @param {number} [$ui-header-inner-border-width=$panel-header-inner-border-width]
  * The inner border-width of the Header
  *
+ * @param {color} [$ui-header-focus-outline-color]
+ * The color of the outline around focused Panel title
+ *
+ * @param {string} [$ui-header-focus-outline-style]
+ * The outline style of the focused Panel title
+ *
+ * @param {number} [$ui-header-focus-outline-width]
+ * The width of the focused Panel title outline
+ *
+ * @param {number} [$ui-header-focus-outline-offset]
+ * The offset for focused Panel title outline
+ *
+ * @param {color} [$ui-header-focus-color]
+ * The color of the Panel title text when header is focused
+ *
+ * @param {color} [$ui-header-focus-background-color]
+ * The background color of Panel title text when header is focused
+ *
  * @param {number/list} [$ui-header-text-padding=$panel-header-text-padding]
  * The padding of the Header's text element
  *
@@ -113,6 +131,15 @@
  *
  * @param {number} [$ui-tool-focus-outline-offset=$panel-tool-focus-outline-offset]
  * The outline-offset of Panel {@link Ext.panel.Tool Tools} when focused
+ *
+ * @param {color} [$ui-tool-focus-color]
+ * The text color of the focused Panel tool glyph
+ *
+ * @param {color} [$ui-tool-focus-background-color]
+ * The background color of the focused Panel tool
+ *
+ * @param {string} [$ui-tool-focus-background-image]
+ * The sprite to use for focused Panel tools
  *
  * @param {color} [$ui-body-color=$panel-body-color]
  * The color of text inside the Panel body
@@ -190,6 +217,12 @@
     $ui-header-border-color: $panel-header-border-color,
     $ui-header-border-width: $panel-header-border-width,
     $ui-header-border-style: $panel-header-border-style,
+    $ui-header-focus-outline-color: $panel-header-focus-outline-color,
+    $ui-header-focus-outline-style: $panel-header-focus-outline-style,
+    $ui-header-focus-outline-width: $panel-header-focus-outline-width,
+    $ui-header-focus-outline-offset: $panel-header-focus-outline-offset,
+    $ui-header-focus-color: $panel-header-focus-color,
+    $ui-header-focus-background-color: $panel-header-focus-background-color,
     $ui-header-background-color: $panel-header-background-color,
     $ui-header-background-gradient: $panel-header-background-gradient,
     $ui-header-inner-border-color: $panel-header-inner-border-color,
@@ -213,6 +246,9 @@
     $ui-tool-focus-outline-style: $panel-tool-focus-outline-style,
     $ui-tool-focus-outline-width: $panel-tool-focus-outline-width,
     $ui-tool-focus-outline-offset: $panel-tool-focus-outline-offset,
+    $ui-tool-focus-color: $panel-tool-focus-color,
+    $ui-tool-focus-background-color: $panel-tool-focus-background-color,
+    $ui-tool-focus-background-image: $panel-tool-focus-background-image,
 
     $ui-body-color: $panel-body-color,
     $ui-body-border-color: $panel-body-border-color,
@@ -291,13 +327,14 @@
             border: $ui-header-border-width $ui-header-border-style $ui-header-border-color;
         }
 
-        @if $enable-font-icons {
-            @if $ui-tool-glyph-color != $tool-glyph-color {
-                .#{$prefix}tool-tool-el {
-                    color: $ui-tool-glyph-color;
-                }
+        // Non font icon themes allow using glyphs as well
+        @if $ui-tool-glyph-color != $tool-glyph-color {
+            .#{$prefix}tool-tool-el {
+                color: $ui-tool-glyph-color;
             }
-        } @else {
+        }
+
+        @if not $enable-font-icons {
             .#{$prefix}tool-img {
                 @if $ui-tool-background-image != $tool-background-image {
                     background-image: theme-background-image($ui-tool-background-image);
@@ -399,6 +436,25 @@
 
         @if $ui-header-text-margin != 0 {
             margin: $ui-header-text-margin;
+        }
+        
+        &.#{$prefix}title-focus {
+            @if not is-null($ui-header-focus-color) {
+                color: $ui-header-focus-color;
+            }
+            
+            @if not is-null($ui-header-focus-background-color) {
+                background-color: $ui-header-focus-background-color;
+            }
+            
+            @if not is-null($ui-header-focus-outline-width) {
+                @include css-outline(
+                    $width: $ui-header-focus-outline-width,
+                    $style: $ui-header-focus-outline-style,
+                    $color: $ui-header-focus-outline-color,
+                    $offset: $ui-header-focus-outline-offset
+                );
+            }
         }
 
         > {
@@ -833,12 +889,30 @@
 
     .#{$prefix}panel-header-#{$ui} {
         .#{$prefix}tool-focus {
-            @include css-outline(
-                $width: $ui-tool-focus-outline-width,
-                $style: $ui-tool-focus-outline-style,
-                $color: $ui-tool-focus-outline-color,
-                $offset: $ui-tool-focus-outline-offset
-            );
+            .#{$prefix}tool-tool-el {
+                @if not is-null($ui-tool-focus-color) {
+                    color: $ui-tool-focus-color;
+                }
+                
+                @if not is-null($ui-tool-focus-background-color) {
+                    background-color: $ui-tool-focus-background-color;
+                }
+            }
+            
+            @if $ui-tool-focus-background-image != $ui-tool-background-image {
+                .#{$prefix}tool-img {
+                    background-image: theme-background-image($ui-tool-focus-background-image);
+                }
+            }
+            
+            @if not is-null($ui-tool-focus-outline-width) {
+                @include css-outline(
+                    $width: $ui-tool-focus-outline-width,
+                    $style: $ui-tool-focus-outline-style,
+                    $color: $ui-tool-focus-outline-color,
+                    $offset: $ui-tool-focus-outline-offset
+                );
+            }
         }
     }
 

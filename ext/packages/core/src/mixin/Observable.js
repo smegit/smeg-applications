@@ -93,7 +93,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
         mixins: ['Ext.mixin.Identifiable'],
 
         statics: {
-            /**
+           /**
             * Removes **all** added captures from the Observable.
             *
             * @param {Ext.util.Observable} o The Observable to release
@@ -103,7 +103,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
                 o.fireEventArgs = this.prototype.fireEventArgs;
             },
 
-            /**
+           /**
             * Starts capture on the specified Observable. All events will be passed to the supplied function with the event
             * name + standard signature of the event **before** the event is fired. If the supplied function returns false,
             * the event will not fire.
@@ -134,7 +134,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
                 o.fireEventArgs = Ext.Function.createInterceptor(o.fireEventArgs, fn, scope);
             },
 
-            /**
+           /**
             * Sets observability on the passed class constructor.
             *
             * This makes any event fired on any instance of the passed class also fire a single event through
@@ -165,7 +165,8 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
                 return cls;
             },
 
-            /**
+           /**
+            * @method prepareClass
             * Prepares a given class for observable instances. This method is called when a
             * class derives from this class or uses this class as a mixin.
             * @param {Function} T The class constructor to prepare.
@@ -257,7 +258,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
 
         /* End Definitions */
 
-        /**
+       /**
         * @cfg {Object} listeners
         *
         * A config object containing one or more event handlers to be added to this object during initialization. This
@@ -306,13 +307,13 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
          */
         $vetoClearingPrototypeOnDestroy: true,
         
-        /**
+       /**
         * @private
         * Initial suspended call count. Incremented when {@link #suspendEvents} is called, decremented when {@link #resumeEvents} is called.
         */
         eventsSuspended: 0,
 
-        /**
+       /**
         * @property {Object} hasListeners
         * @readonly
         * This object holds a key for any event that has a listener. The listener may be set
@@ -460,7 +461,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
             return me._addedDeclaredListeners;
         },
 
-        /**
+       /**
         * The addManagedListener method is used when some object (call it "A") is listening 
         * to an event on another observable object ("B") and you want to remove that listener 
         * from "B" when "A" is destroyed. This is not an issue when "B" is destroyed because
@@ -496,7 +497,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
         * in which the handler function is executed.
         * @param {Object} options (optional) If the `ename` parameter was an event name, this is the
         * {@link Ext.util.Observable#addListener addListener} options.
-        * @return {Object} **Only when the `destroyable` option is specified. **
+        * @return {Object} **Only when the `destroyable` option is specified.**
         *
         *  A `Destroyable` object. An object which implements the `destroy` method which removes all listeners added in this call. For example:
         *
@@ -554,7 +555,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
             }
         },
 
-        /**
+       /**
         * Removes listeners that were added by the {@link #mon} method.
         *
         * @param {Ext.util.Observable/Ext.dom.Element} item The item from which to remove a listener/listeners.
@@ -592,7 +593,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
             }
         },
 
-        /**
+       /**
         * Fires the specified event with the passed parameters (minus the event name, plus the `options` object passed
         * to {@link Ext.util.Observable#addListener addListener}).
         *
@@ -630,7 +631,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
             return defaultScope || this;
         },
 
-        /**
+       /**
         * Fires the specified event with the passed parameter list.
         *
         * An event may be set to bubble up an Observable parent hierarchy (See {@link Ext.Component#getBubbleTarget}) by
@@ -788,7 +789,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
             return controller.resume();
         },
 
-        /**
+       /**
         * Continue to fire event.
         * @private
         *
@@ -821,7 +822,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
             return ret;
         },
 
-        /**
+       /**
         * Gets the bubbling parent for an Observable
         * @private
         * @return {Ext.util.Observable} The bubble parent. null is returned if no bubble target exists
@@ -969,9 +970,12 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
          *   before firing the handler.
          *
          * @param {Array} [options.args]
-         *   Optional arguments to pass to the handler function. Any additional arguments
-         *   passed to {@link Ext.util.Observable#fireEvent fireEvent} will be appended 
-         *   to these arguments.
+         *
+         * Optional set of arguments to pass to the handler function before the actual
+         * fired event arguments. For example, if `args` is set to `['foo', 42]`,
+         * the event handler function will be called with an arguments list like this:
+         *
+         *      handler('foo', 42, <actual event arguments>...);
          *
          * @param {Boolean} [options.destroyable=false]
          *   When specified as `true`, the function returns a `destroyable` object. An object 
@@ -1060,7 +1064,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
          *         delegate: 'h1.myTitle'
          *      });
          *
-         * @return {Object} **Only when the `destroyable` option is specified. **
+         * @return {Object} **Only when the `destroyable` option is specified.**
          *
          *  A `Destroyable` object. An object which implements the `destroy` method which removes 
          *  all listeners added in this call. For example:
@@ -1291,7 +1295,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
             return this.unAfter.apply(this, arguments);
         },
 
-        /**
+       /**
         * Removes all listeners for this object including the managed listeners
         */
         clearListeners: function() {
@@ -1327,7 +1331,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
         },
         //</debug>
 
-        /**
+       /**
         * Removes all managed listeners for this object.
         */
         clearManagedListeners: function() {
@@ -1348,7 +1352,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
             me.managedListeners = managedListeners;
         },
 
-        /**
+       /**
         * Remove a single managed listener item
         * @private
         * @param {Boolean} isClear True if this is being called during a clear
@@ -1378,7 +1382,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
         },
         //</debug>
         
-        /**
+       /**
         * Checks to see if this object has any listeners for a specified event, or whether the event bubbles. The answer
         * indicates whether the event needs firing or not.
         *
@@ -1408,7 +1412,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
             return suspended;
         },
 
-        /**
+       /**
         * Suspends the firing of all events. (see {@link #resumeEvents})
         *
         * @param {Boolean} queueSuspended `true` to queue up suspended events to be fired
@@ -1475,7 +1479,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
             }
         },
 
-        /**
+       /**
         * Resumes firing events (see {@link #suspendEvents}).
         *
         * If events were suspended using the `queueSuspended` parameter, then all events fired
@@ -1502,7 +1506,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
             }
         },
 
-        /**
+       /**
         * Relays selected events from the specified Observable as if the events were fired by `this`.
         *
         * For example if you are extending Grid, you might decide to forward some events from store.
@@ -1569,7 +1573,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
             return new ListenerRemover(me, origin, relayers);
         },
 
-        /**
+       /**
         * @private
         * Creates an event handling function which re-fires the event from this object as the passed event name.
         * @param {String} newName The name under which to re-fire the passed parameters.
@@ -1583,7 +1587,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
             };
         },
 
-        /**
+       /**
         * Enables events fired by this Observable to bubble up an owner hierarchy by calling `this.getBubbleTarget()` if
         * present. There is no implementation in the Observable base class.
         *

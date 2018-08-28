@@ -225,7 +225,7 @@ Ext.define('Ext.data.Store', {
          * Array of Model instances or data objects to load locally. See "Inline data"
          * above for details.
          */
-        data: 0, // pass 0 to ensure applyData is called
+        data: undefined, // undefined so the applier is always called
         
         /**
         * @cfg {Boolean} [clearRemovedOnLoad=true]
@@ -709,7 +709,7 @@ Ext.define('Ext.data.Store', {
             me.setMoving(replacement.items, true);
         }
         
-        for (i = 0; i < len; ++i) {
+        for (i = len - 1; i >=  0; i--) {
             record = records[i];
 
             // If the data contains the record, that means the record is filtered out, so
@@ -720,6 +720,7 @@ Ext.define('Ext.data.Store', {
                 if (removed && !isMove && !record.phantom && !record.erasing) {
                     // Store the index the record was removed from so that rejectChanges can re-insert at the correct place.
                     // The record's index property won't do, as that is the index in the overall dataset when Store is buffered.
+
                     record.removedFrom = index + i;
                     removed.push(record);
 
@@ -1137,6 +1138,17 @@ Ext.define('Ext.data.Store', {
 
         me.endUpdate();
         Ext.resumeLayouts(true);
+
+        /**
+         * @private
+         * @event commit
+         * Fired when all changes were committed and the Store is clean.
+         *
+         * **Note** Used internally.
+         *
+         * @param {Ext.data.Store} store The Store object
+         */
+        me.fireEvent('commit', me);
     },
 
     filterNewOnly: function(item) {
@@ -1212,6 +1224,17 @@ Ext.define('Ext.data.Store', {
         }
         me.endUpdate();
         Ext.resumeLayouts(true);
+
+        /**
+         * @private
+         * @event reject
+         * Fired when all changes were rejected and the Store is clean.
+         *
+         * **Note** Used internally.
+         *
+         * @param {Ext.data.Store} store The Store object
+         */
+        me.fireEvent('reject', me);
     },
 
     doDestroy: function() {
@@ -1282,6 +1305,7 @@ Ext.define('Ext.data.Store', {
          * {@link #event-add} and {@link #event-remove} events to determine whether the records are being removed/added
          * or just having the position changed.
          * @param {Ext.data.Model[]/Ext.data.Model} [records] The record(s).
+         * @param {Object} [getMap] (private)
          * @return {Number} The number of records being moved. `0` if no records are moving. If records are passed
          * the number will refer to how many of the passed records are moving.
          *

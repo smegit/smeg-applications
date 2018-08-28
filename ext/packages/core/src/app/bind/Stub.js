@@ -287,7 +287,9 @@ Ext.define('Ext.app.bind.Stub', {
 
             // Setting fields or associated records will fire change notifications so we
             // handle the side effects there
-        } else if ((value && value.constructor === Object) || value !== parentData[name]) {
+        } else if ((value && value.constructor === Object) || !(value === parentData[name] && parentData.hasOwnProperty(name))) {
+            // The hasOwnProperty check is important, even though the value might be the same here, that value
+            // could exist in a viewmodel above us
             if (!me.setByLink(value)) {
                 if (value === undefined) {
                     delete parentData[name];

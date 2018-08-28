@@ -319,7 +319,7 @@ Ext.define('Ext.grid.column.Column', {
         exportStyle: null,
 
         /**
-         * @cfg {Object} cell
+         * @cfg {Object} summaryCell
          * The config object used to create {@link Ext.grid.cell.Base cells} in
          * {@link Ext.grid.plugin.Summary Summary Rows} for this column.
          */

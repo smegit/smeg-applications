@@ -93,7 +93,14 @@ Ext.define('Ext.chart.sprite.Label', {
          *
          * Default value: false.
          */
-        calloutLine: true
+        calloutLine: true,
+
+        /**
+         * @cfg {Number} [hideLessThan=20]
+         * Use `hideLessThan` to hide labels for pie slices with segment length less than
+         * value in pixels.
+         */
+        hideLessThan: 20
     },
 
     applyCalloutLine: function (calloutLine) {

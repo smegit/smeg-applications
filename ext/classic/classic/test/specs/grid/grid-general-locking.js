@@ -99,6 +99,47 @@ describe("grid-general-locking", function() {
                 expect(grid.rowLines).toBe(true);
                 expect(grid.lockedGrid.rowLines).toBe(false);
             });
+
+            it("should set both sides with xtype gridpanel when creating form extended classes", function() {
+                grid.destroy();
+
+                Ext.define('BaseGrid',{
+                    extend: 'Ext.grid.Panel',
+                    xtype: 'base-grid',
+                    title: 'foo'
+                });
+
+                Ext.define('MyGrid', {
+                    extend: 'BaseGrid',
+                    xtype: 'mygrid',
+                    columns: [{
+                        dataIndex: 'foo',
+                        locked: true
+                    },{
+                        dataIndex:'bar'
+                    }]
+                });
+
+                grid = Ext.create('MyGrid',{
+                    renderTo: document.body,
+                    store: {
+                        data: {
+                            foo: 1,
+                            bar: 2
+                        }
+                    }
+                });
+
+                expect(grid.lockedGrid.isXType('base-grid')).not.toBe(true);
+                expect(grid.lockedGrid.isXType('gridpanel')).toBe(true);
+
+                Ext.undefine('BaseGrid');
+                Ext.undefine('MyGrid');
+                
+                if (Ext.isIE8) {
+                    addGlobal(['BaseGrid', 'MyGrid']);
+                }
+            });
         });
 
         describe("when stateful", function () {
@@ -332,7 +373,79 @@ describe("grid-general-locking", function() {
                     expect(grid.lockedGrid.getWidth()).toBe(grid.lockedGrid.headerCt.getTableWidth() + grid.lockedGrid.gridPanelBorderWidth);
                 });
             });
-            
+
+            (Ext.getScrollbarSize().height ? describe : xdescribe)("collpasing and expanding", function() {
+                it("should display the scroller if needed", function() {
+                    var spy = jasmine.createSpy();
+                    
+                    makeGrid(2, null, {
+                        width: 100,
+                        collapsible: true,
+                        listeners: {
+                            expand: spy,
+                            collapse: spy
+                        }
+                    });
+
+                    grid.lockedGrid.collapse();
+
+                    waitsFor(function() {
+                        return spy.callCount === 1;
+                    });
+
+                    runs(function() {
+                        grid.lockedGrid.expand();
+                    });
+
+                    waitsFor(function() {
+                        return spy.callCount === 2;
+                    });
+
+                    runs(function() {
+                        expect(grid.lockedScrollbarScroller.getElement().getWidth()).toBe(grid.lockedGrid.getWidth());
+                        expect(grid.lockedScrollbarScroller.getElement().isScrollable()).toBe(true);
+                        // overflow of the locked side should be handled by the lockedScrollbarScroller, not the view's body
+                        expect(grid.lockedGrid.body.dom.style.overflowX).toBe('');
+                    });
+                });
+
+                it("should display the scroller if need and the normal side continued to be scrollable during expand/collapse", function() {
+                    var spy = jasmine.createSpy();
+                    
+                    makeGrid(2, {
+                        width: 400
+                    }, {
+                        width: 100,
+                        collapsible: true,
+                        listeners: {
+                            expand: spy,
+                            collapse: spy
+                        }
+                    });
+
+
+                    grid.lockedGrid.collapse();
+
+                    waitsFor(function() {
+                        return spy.callCount === 1;
+                    });
+
+                    runs(function() {
+                        grid.lockedGrid.expand();
+                    });
+
+                    waitsFor(function() {
+                        return spy.callCount === 2;
+                    });
+
+                    runs(function() {
+                        expect(grid.lockedScrollbarScroller.getElement().getWidth()).toBe(grid.lockedGrid.getWidth());
+                        expect(grid.lockedScrollbarScroller.getElement().isScrollable()).toBe(true);
+                        // overflow of the locked side should be handled by the lockedScrollbarScroller, not the view's body
+                        expect(grid.lockedGrid.body.dom.style.overflowX).toBe('');
+                    });
+                });
+            });
         });
     });
 
@@ -372,7 +485,7 @@ describe("grid-general-locking", function() {
     });
 
     describe('Focusing the view el, not a cell', function() {
-        it('should move to the same row on the other side', function() {
+        Ext.isIE8 ? xit: it('should move to the same row on the other side', function() {
             var errorSpy = jasmine.createSpy('error handler'),
                 old = window.onError;
 
@@ -432,6 +545,79 @@ describe("grid-general-locking", function() {
             runs(function() {
                 expect(errorSpy).not.toHaveBeenCalled();
                 window.onerror = old;
+            });
+        });
+    });
+
+    describe("scrolling", function() {
+        beforeEach(function() {
+            store = new Ext.data.Store({
+                fields: ['name', 'email', 'phone'],
+                data: [
+                { name: 'Lisa',  email: 'lisa@simpsons.com',  phone: '555-111-1224' }, 
+                { name: 'Bart',  email: 'bart@simpsons.com',  phone: '555-222-1234' }, 
+                { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' }, 
+                { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' },
+                { name: 'Lisa',  email: 'lisa@simpsons.com',  phone: '555-111-1224' }, 
+                { name: 'Bart',  email: 'bart@simpsons.com',  phone: '555-222-1234' }, 
+                { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' }, 
+                { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' },
+                { name: 'Lisa',  email: 'lisa@simpsons.com',  phone: '555-111-1224' }, 
+                { name: 'Bart',  email: 'bart@simpsons.com',  phone: '555-222-1234' }, 
+                { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' }, 
+                { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' },
+                { name: 'Lisa',  email: 'lisa@simpsons.com',  phone: '555-111-1224' }, 
+                { name: 'Bart',  email: 'bart@simpsons.com',  phone: '555-222-1234' }, 
+                { name: 'Homer', email: 'homer@simpsons.com', phone: '555-222-1244' }, 
+                { name: 'Marge', email: 'marge@simpsons.com', phone: '555-222-1254' }
+                ]
+            });
+        });
+
+        it("should not scroll back to top when selecting records", function() {
+            var scroller,
+                cell;
+
+            createGrid({
+                columns: [{
+                    text: 'Name',
+                    dataIndex: 'name',
+                    locked: true
+                }, {
+                    text: 'Email',
+                    dataIndex: 'email',
+                    width: 300
+                }, {
+                    text: 'Phone',
+                    dataIndex: 'phone',
+                    width: 300
+                }],
+                height: 200,
+                width: 400,
+            });
+
+
+
+            scroller = grid.getScrollable();
+            scroller.scrollTo(null, 100);
+            scroller.scrollTo(100, null);
+
+            waitsFor(function() {
+                return scroller.position.y === scroller.position.x && scroller.position.y === 100;
+            });
+
+            runs(function(){ 
+                cell = grid.normalGrid.view.getCell(7, 0);
+                jasmine.fireMouseEvent(cell, 'mousedown');
+            });
+
+            // Need waits here because we are waitign for the scroller not to move
+            waits(100);
+
+            runs(function() {
+                expect(scroller.getPosition().y).toBe(100);
+                // finish the click to avoid even publisher leaks
+                jasmine.fireMouseEvent(cell, 'mouseup'); 
             });
         });
     });

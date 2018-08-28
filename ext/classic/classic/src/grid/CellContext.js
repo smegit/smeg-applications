@@ -184,7 +184,7 @@ Ext.define('Ext.grid.CellContext', {
      * Returns the cell object referenced *at the time of calling*. Note that grid DOM is transient, and 
      * the cell referenced may be removed from the DOM due to paging or buffered rendering or column or record removal.
      *
-     * @param {Boolean} returnDom Pass `true` to return a DOM object instead of an {@link Ext.dom.Element Element).
+     * @param {Boolean} returnDom Pass `true` to return a DOM object instead of an {@link Ext.dom.Element Element}.
      * @return {HTMLElement/Ext.dom.Element} The cell referenced by this context.
      */
     getCell: function(returnDom) {
@@ -195,7 +195,7 @@ Ext.define('Ext.grid.CellContext', {
      * Returns the row object referenced *at the time of calling*. Note that grid DOM is transient, and 
      * the row referenced may be removed from the DOM due to paging or buffered rendering or column or record removal.
      *
-     * @param {Boolean} returnDom Pass `true` to return a DOM object instead of an {@link Ext.dom.Element Element).
+     * @param {Boolean} returnDom Pass `true` to return a DOM object instead of an {@link Ext.dom.Element Element}.
      * @return {HTMLElement/Ext.dom.Element} The grid row referenced by this context.
      */
     getRow: function(returnDom) {
@@ -208,7 +208,7 @@ Ext.define('Ext.grid.CellContext', {
      * calling*. Note that grid DOM is transient, and the node referenced may be removed from the DOM due
      * to paging or buffered rendering or column or record removal.
      *
-     * @param {Boolean} returnDom Pass `true` to return a DOM object instead of an {@link Ext.dom.Element Element).
+     * @param {Boolean} returnDom Pass `true` to return a DOM object instead of an {@link Ext.dom.Element Element}.
      * @return {HTMLElement/Ext.dom.Element} The grid item referenced by this context.
      */
     getNode: function(returnDom) {

@@ -258,7 +258,16 @@ Ext.define('Ext.panel.Tool', {
         ENTER: 'onClick'
     },
 
+    /**
+     * @cfg {Boolean} cacheHeight
+     * Set to `false` to use a custom tool height and not the cached tool height.
+     */
     cacheHeight: true,
+
+    /**
+     * @cfg {Boolean} cacheWidth
+     * Set to `false` to use a custom tool width and not the cached tool width.
+     */
     cacheWidth: true,
 
     //<debug>

@@ -115,8 +115,34 @@ Ext.define('Ext.chart.AbstractChart', {
 
     /**
      * @event redraw
-     * Fires after the chart is redrawn.
+     * Fires after each {@link #redraw} call.
      * @param {Ext.chart.AbstractChart} this
+     */
+
+    /**
+     * @private
+     * @event layout
+     * Fires after the final layout is done.
+     * (Two layouts may be required to fully render a chart.
+     * Typically for the initial render and every time thickness
+     * of the chart's axes changes.)
+     * @param {Ext.chart.AbstractChart} this
+     */
+
+    /**
+     * @event itemhighlight
+     * Fires when an item is highlighted.
+     * @param {Ext.chart.AbstractChart} this
+     * @param {Object} newItem The new highlight item.
+     * @param {Object} oldItem The old highlight item.
+     */
+
+    /**
+     * @event itemhighlightchange
+     * Fires when an item's highlight changes.
+     * @param this
+     * @param {Object} newItem The new highlight item.
+     * @param {Object} oldItem The old highlight item.
      */
 
     /**
@@ -472,11 +498,25 @@ Ext.define('Ext.chart.AbstractChart', {
          * Note that series can also own highlight items.
          * This notion is separate from this one and should not be used at the same time.
          */
-        highlightItem: null
+        highlightItem: null,
+
+        surfaceZIndexes: {
+            background: 0, // Contains the backround 'rect' sprite.
+            main: 1,       // Contains grid lines and CrossZoom overlay 'rect' sprite.
+            grid: 2,       // Reserved (unused).
+            series: 3,     // Contains series sprites.
+            axis: 4,       // Reserved.
+            chart: 5,      // Covers whole chart, minus the legend area.
+            overlay: 6,    // This surface will typically contain chart labels
+                           // and interaction sprites like crosshair lines.
+            legend: 7,     // SpriteLegend surface.
+            title: 8       // Reserved.
+        }
     },
 
     /**
-     * Toggle for chart interactions that require animation to be suspended.
+     * When this is non-zero, changes to sprite attributes apply instantly.
+     * See {@link #getAnimation}.
      * @private
      */
     animationSuspendCount: 0,
@@ -485,6 +525,16 @@ Ext.define('Ext.chart.AbstractChart', {
      * @private
      */
     chartLayoutSuspendCount: 0,
+
+    /**
+     * @private
+     */
+    chartLayoutCount: 0,
+
+    /**
+     * @private
+     */
+    scheduledLayoutId: null,
 
     /**
      * @private
@@ -498,23 +548,6 @@ Ext.define('Ext.chart.AbstractChart', {
      * should be called again when current layout is done.
      */
     isThicknessChanged: false,
-
-    /**
-     * @private
-     * The z-indexes to use for the various surfaces
-     */
-    surfaceZIndexes: {
-        background: 0, // Contains the backround 'rect' sprite.
-        main: 1,       // Contains grid lines and CrossZoom overlay 'rect' sprite.
-        grid: 2,       // Reserved (unused).
-        series: 3,     // Contains series sprites.
-        axis: 4,       // Reserved.
-        chart: 5,      // Covers whole chart, minus the legend area.
-        overlay: 6,    // This surface will typically contain chart labels
-                       // and interaction sprites like crosshair lines.
-        legend: 7,     // SpriteLegend surface.
-        title: 8       // Reserved.
-    },
 
     constructor: function (config) {
         var me = this;
@@ -651,6 +684,7 @@ Ext.define('Ext.chart.AbstractChart', {
         if (this.scheduledLayoutId) {
             Ext.draw.Animator.cancel(this.scheduledLayoutId);
             this.scheduledLayoutId = null;
+            this.checkLayoutEnd();
         }
     },
 
@@ -672,12 +706,12 @@ Ext.define('Ext.chart.AbstractChart', {
     doScheduleLayout: function () {
         var me = this;
 
+        me.scheduledLayoutId = null;
         if (me.chartLayoutSuspendCount) {
             me.layoutInSuspension = true;
         } else {
             me.performLayout();
         }
-        me.scheduledLayoutId = null;
     },
 
     /**
@@ -918,18 +952,14 @@ Ext.define('Ext.chart.AbstractChart', {
         }
     },
 
-    getSurface: function (name, type) {
-        name = name || 'main';
-        type = type || name;
+    getSurface: function (id, type) {
+        id = id || 'main';
+        type = type || id;
 
         var me = this,
-            surface = this.callParent([name]),
-            zIndexes = me.surfaceZIndexes,
+            surface = this.callParent([id, type]),
             map = me.surfaceMap;
 
-        if (type in zIndexes) {
-            surface.element.setStyle('zIndex', zIndexes[type]);
-        }
         if (!map[type]) {
             map[type] = [];
         }
@@ -944,7 +974,7 @@ Ext.define('Ext.chart.AbstractChart', {
     forgetSurface: function (surface) {
         var map = this.surfaceMap;
 
-        if (!map || this.isDestroying) {
+        if (!map || this.destroying) {
             return;
         }
 
@@ -1063,7 +1093,7 @@ Ext.define('Ext.chart.AbstractChart', {
             axis.onSeriesChange(me);
         }
 
-        if (!me.isDestroying) {
+        if (!me.isConfiguring && !me.destroying) {
             me.scheduleLayout();
         }
     },
@@ -1458,7 +1488,7 @@ Ext.define('Ext.chart.AbstractChart', {
     updateSeries: function (newSeries, oldSeries) {
         var me = this;
 
-        if (me.isDestroying) {
+        if (me.destroying) {
             return;
         }
 
@@ -1469,7 +1499,9 @@ Ext.define('Ext.chart.AbstractChart', {
         if (!Ext.isEmpty(newSeries)) {
             me.updateTheme(me.getTheme());
         }
-        me.scheduleLayout();
+        if (!me.isConfiguring && !me.destroying) {
+            me.scheduleLayout();
+        }
 
         me.animationSuspendCount--;
     },
@@ -1563,12 +1595,20 @@ Ext.define('Ext.chart.AbstractChart', {
 
     /**
      * Redraw the chart. If animations are set this will animate the chart too.
+     * Note: the actual redraw is performed in a subclass.
      */
     redraw: function () {
         this.fireEvent('redraw', this);
     },
 
-    // Note: the actual layout is performed in a subclass.
+    /**
+     * @private
+     * Lays out chart components and triggers a {@link #redraw}.
+     * Note: the actual layout is performed in a subclass.
+     * A subclass should not perform a layout, if this parent method
+     * returns `false`.
+     * @return {Boolean}
+     */
     performLayout: function () {
         var me = this,
             legend = me.getLegend(),
@@ -1576,8 +1616,14 @@ Ext.define('Ext.chart.AbstractChart', {
             background = me.getBackground(),
             result = true;
 
+        if (me.destroying || me.destroyed) {
+            //<debug>
+            Ext.raise('Attempting to lay out a dead chart: ' + me.getId());
+            //</debug>
+            return false; // Cancel subclass layout.
+        }
+
         me.hasFirstLayout = true;
-        me.fireEvent('layout', me);
         me.cancelChartLayout();
         me.getSurface('background').setRect(chartRect);
         me.getSurface('chart').setRect(chartRect);
@@ -1593,6 +1639,23 @@ Ext.define('Ext.chart.AbstractChart', {
         });
 
         return result;
+    },
+
+    /**
+     * @private
+     */
+    checkLayoutEnd: function () {
+        //        not running                not pending
+        if (!this.chartLayoutCount && !this.scheduledLayoutId) {
+            this.onLayoutEnd();
+        }
+    },
+
+    /**
+     * @private
+     */
+    onLayoutEnd: function () {
+        this.fireEvent('layout', this);
     },
 
     /**
@@ -1840,37 +1903,15 @@ Ext.define('Ext.chart.AbstractChart', {
     },
 
     destroyChart: function () {
-        var me = this,
-            legend = me.getLegend(),
-            axes = me.getAxes(),
-            series = me.getSeries(),
-            interactions = me.getInteractions(),
-            emptyArray = [],
-            i, ln;
+        var me = this;
 
-        me.surfaceMap = null;
-
-        for (i = 0, ln = interactions.length; i < ln; i++) {
-            interactions[i].destroy();
-        }
-        for (i = 0, ln = axes.length; i < ln; i++) {
-            axes[i].destroy();
-        }
-        for (i = 0, ln = series.length; i < ln; i++) {
-            series[i].destroy();
-        }
-
-        me.setInteractions(emptyArray);
-        me.setAxes(emptyArray);
-        me.setSeries(emptyArray);
-
-        if (legend) {
-            legend.destroy();
-            me.setLegend(null);
-        }
-
-        me.legendStore = null;
+        // The order is important here.
+        me.setInteractions(null);
+        me.setAxes(null);
+        me.setSeries(null);
+        me.setLegend(null);
         me.setStore(null);
+
         me.cancelChartLayout();
     },
 

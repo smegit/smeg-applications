@@ -288,6 +288,8 @@
  *      // Find every 3rd field in a form
  *      form.query('field:nth-child(3n)');
  *
+ * **Note:** The `nth-child` selector returns 1-based result sets.
+ *
  * Pseudo classes can be combined to further filter the results, e.g., in the
  * form example above we can modify the query to exclude hidden fields:
  *

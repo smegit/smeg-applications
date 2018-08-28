@@ -29,9 +29,9 @@ Ext.define('Ext.state.Stateful', {
          *
          * To set the state provider for the current page:
          *
-         *    Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
-         *        expires: new Date(new Date().getTime()+(1000*60*60*24*7)), //7 days from now
-         *    }));
+         *     Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
+         *         expires: new Date(new Date().getTime()+(1000*60*60*24*7)), //7 days from now
+         *     }));
          *
          * A stateful object attempts to save state when one of the events
          * listed in the {@link #stateEvents} configuration fires.
@@ -98,9 +98,10 @@ Ext.define('Ext.state.Stateful', {
     /**
      * @cfg {String[]} stateEvents
      * An array of events that, when fired, should trigger this object to
-     * save its state. Defaults to none. `stateEvents` may be any type
-     * of event supported by this object, including browser or custom events
-     * (e.g., `['click', 'customerchange']`).
+     * save its state. `stateEvents` defaults to the `stateEvents` associated with the
+     * component you are using.  Any events you statically set will be appended to that list.
+     * `stateEvents` may be any type of event supported by this object, including
+     * browser or custom events (e.g., `['click', 'customerchange']`).
      *
      * See `{@link #stateful}` for an explanation of saving and
      * restoring object state.

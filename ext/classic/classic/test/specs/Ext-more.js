@@ -558,6 +558,7 @@ describe("Ext-more", function() {
             }
             catch (e) {
                 window.Test = undefined;
+                addGlobal('Test');
             }
         });
         

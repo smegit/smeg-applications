@@ -1,19 +1,16 @@
 describe("Ext.form.FieldContainer", function() {
 
-    var component, makeComponent;
-
-    beforeEach(function() {
-        makeComponent = function(config) {
-            config = config || {};
-            component = new Ext.form.FieldContainer(config);
-        };
-    });
+    var component,
+    makeComponent = function(config) {
+        config = config || {};
+        component = new Ext.form.FieldContainer(config);
+    };
 
     afterEach(function() {
         if (component) {
             component.destroy();
         }
-        component = makeComponent = null;
+        component = null;
     });
 
     describe("FieldAncestor", function(){
@@ -46,6 +43,37 @@ describe("Ext.form.FieldContainer", function() {
             component.items.first().markInvalid('Foo');
             expect(called).toBe(true);
         });  
+    });
+
+    describe("enable/disable", function() {
+        var form;
+
+        beforeEach(function() {
+            makeComponent({ items: [{ xtype: 'textfield'}] });
+
+            form = new Ext.form.Panel({
+                renderTo: document.body,
+                width: 100,
+                items: [component]
+            });
+        });
+
+        afterEach(function() {
+            form.destroy();
+        });
+
+        it("should be disabled when disabling the form panel", function() {
+            form.disable();
+
+            expect(component.isDisabled()).toBe(true);
+        });
+
+        it("should be enabled when enabling the form panel", function() {
+            form.disable();
+            form.enable();
+
+            expect(component.isDisabled()).toBe(false);
+        });
     });
 
     describe("label", function() {

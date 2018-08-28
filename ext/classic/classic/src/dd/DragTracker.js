@@ -144,7 +144,7 @@ Ext.define('Ext.dd.DragTracker', {
      */
 
     /**
-     * @event beforestart
+     * @event beforedragstart
      * @param {Object} this
      * @param {Object} e event object
      */
@@ -377,8 +377,9 @@ Ext.define('Ext.dd.DragTracker', {
             // we need to track on the parentEvent if it exists.
             trackEvent = e.parentEvent || e;
 
+        // Ignore all mousedown events that were not started by the primary button
         // If this is disabled, or the mousedown has been processed by an upstream DragTracker, return
-        if (me.disabled || trackEvent.dragTracked) {
+        if (e.button || me.disabled || trackEvent.dragTracked) {
             return;
         }
 

@@ -78,6 +78,7 @@ Ext.define('Ext.grid.RowEditor', {
             me.items = [
                 // Locked columns container shrinkwraps the fields
                 lockedCt = me.lockedColumnContainer = new Container({
+                    $initParent: me,
                     id: grid.id + '-locked-editor-cells',
                     scrollable: {
                         x: false,
@@ -93,19 +94,23 @@ Ext.define('Ext.grid.RowEditor', {
 
                 // Normal columns container flexes the remaining RowEditor width
                 normalCt = me.normalColumnContainer = new Container({
+                    $initParent: me,
+                    id: grid.id + '-normal-editor-cells',
                     // not user scrollable, but needs a Scroller instance for syncing with view
                     scrollable: {
                         x: false,
                         y: false
                     },
-                    flex: 1,
-                    id: grid.id + '-normal-editor-cells',
                     layout: {
                         type: 'hbox',
                         align: 'middle'
-                    }
+                    },
+                    flex: 1
                 })
             ];
+
+            delete lockedCt.$initParent;
+            delete normalCt.$initParent;
 
             // keep horizontal position of fields in sync with view's horizontal scroll position
             lockedCt.getScrollable().addPartner(grid.lockedGrid.view.getScrollable(), 'x');
@@ -544,8 +549,8 @@ Ext.define('Ext.grid.RowEditor', {
         // Cache the active field so that we can restore focus into its cell onHide
 
         // Makes the cursor always be placed at the end of the textfield
-        // when the field is being edited for the first time (IE/Edge only).
-        if ((Ext.isIE || Ext.isEdge) && field.selectText) {
+        // when the field is being edited for the first time.
+        if (field.selectText) {
             field.selectText(field.inputEl.dom.value.length);
         }
 

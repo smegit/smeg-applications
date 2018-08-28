@@ -155,6 +155,7 @@ Ext.define('Ext.chart.axis.Axis', {
          * of axis' ticks based on current layout, segmenter, axis length and configuration.
          * @param {String/Number/null} lastLabel The last label (if any).
          * @return {String} The label to display.
+         * @controllable
          */
         renderer: null,
 
@@ -881,6 +882,29 @@ Ext.define('Ext.chart.axis.Axis', {
     },
 
     /**
+     * @private
+     */
+    setBoundSeriesRange: function (range) {
+        var boundSeries = this.boundSeries,
+            style = {},
+            series, i,
+            sprites, j,
+            ln;
+
+        style['range' + this.getDirection()] = range;
+        for (i = 0, ln = boundSeries.length; i < ln; i++) {
+            series = boundSeries[i];
+            if (series.getHidden() === true) {
+                continue;
+            }
+            sprites = series.getSprites();
+            for (j = 0; j < sprites.length; j++) {
+                sprites[j].setAttributes(style);
+            }
+        }
+    },
+
+    /**
      * Get the range derived from all the bound series.
      * @return {Array}
      */
@@ -902,14 +926,17 @@ Ext.define('Ext.chart.axis.Axis', {
             segmenter = me.getSegmenter(),
             visibleRange = me.getVisibleRange(),
             getRangeMethod = 'get' + me.getDirection() + 'Range',
-            context, attr, majorTicks,
-            series, i, ln;
+            context, attr, majorTicks, style,
+            series, sprites, i, j, ln, minMax;
 
         // For each series bound to this axis, ask the series for its min/max values
         // and use them to find the overall min/max.
         for (i = 0, ln = boundSeries.length; i < ln; i++) {
             series = boundSeries[i];
-            var minMax = series[getRangeMethod]();
+            if (series.getHidden() === true) {
+                continue;
+            }
+            minMax = series[getRangeMethod]();
 
             if (minMax) {
                 if (minMax[0] < min) {

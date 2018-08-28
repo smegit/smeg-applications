@@ -28,6 +28,7 @@
         majorVer = '',
         isWebView = false,
         edgeRE = /(Edge\/)([\w.]+)/,
+        ripple = '',
         i, prefix, mode, name, maxIEVersion;
 
     /**
@@ -348,7 +349,7 @@
 
     // Facebook changes the userAgent when you view a website within their iOS app. For some reason, the strip out information
     // about the browser, so we have to detect that and fake it...
-    if (userAgent.match(/FB/) && browserName === "Other") {
+    if (userAgent.match(/FB/) && browserName === 'Other') {
         browserName = browserNames.safari;
         engineName = engineNames.webkit;
     }
@@ -455,7 +456,14 @@
 
     this.setFlag('Standalone', !!navigator.standalone);
 
-    this.setFlag('Ripple', !!document.getElementById("tinyhippos-injected") && !Ext.isEmpty(window.top.ripple));
+    // Cross domain access could throw an error
+    try {
+        ripple = window.top.ripple;
+    } catch (e) {
+        // Do nothing, can't access cross frame so leave it empty
+    }
+
+    this.setFlag('Ripple', !!document.getElementById('tinyhippos-injected') && !Ext.isEmpty(ripple));
     this.setFlag('WebWorks', !!window.blackberry);
 
     if (window.PhoneGap !== undefined || window.Cordova !== undefined || window.cordova !== undefined) {

@@ -339,5 +339,44 @@ describe("Ext.view.MultiSelector", function(){
                 expect(node).not.toHaveCls('x-grid-item-selected');
             });
         });
+    
+        describe('focus', function () {
+            beforeEach(function () {
+                makeSelector();
+            });
+        
+            it('should move focus to the search field after checkbox selection and scrolling the row out of the buffer', function () {
+                var searchStore, searchGrid, searchField,
+                    cell, x, y;
+            
+                multiSelector.onShowSearch();
+            
+                searchGrid = multiSelector.searchPopup.lookup('searchGrid');
+                searchField = multiSelector.searchPopup.lookup('searchField');
+                searchStore = searchGrid.store;
+            
+                // Search grid's store is set to autoload, so wait for it to kick off a load
+                waitsFor(function () {
+                    return (searchStore instanceof Ext.data.Store) && searchStore.isLoading();
+                }, 'searchStore to kick off a load');
+                runs(function () {
+                    completeRequest();
+                
+                    cell = new Ext.grid.CellContext(searchGrid.view).setPosition(0, 0).getCell(true);
+                    x = Ext.fly(cell).getX() + Ext.fly(cell).getWidth() / 2;
+                    y = Ext.fly(cell).getY() + Ext.fly(cell).getHeight() / 2;
+                
+                    jasmine.fireMouseEvent(cell, 'click', x, y);
+                });
+            
+                jasmine.waitsForScroll(searchGrid.getScrollable(), function (scroller, x, y) {
+                    if (searchField.inputEl.dom === Ext.dom.Element.getActiveElement()) {
+                        return true;
+                    }
+                
+                    scroller.scrollBy(0, 10);
+                }, 'focus to move to the Search field');
+            });
+        });
     });
 });

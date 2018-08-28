@@ -188,13 +188,13 @@ Ext.define('Ext.window.Toast', {
     slideBackDuration: 500,
 
     /**
-     * @cfg {Number} hideDuration
+     * @cfg {Number}
      * The number of milliseconds it takes for a Toast to hide.
      */
     hideDuration: 500,
 
     /**
-     * @cfg {Number} hideDuration
+     * @cfg {Number}
      * The number of milliseconds a Toast waits before automatically closing.
      */
     autoCloseDelay: 3000,

@@ -268,6 +268,7 @@ describe("Ext.direct.Manager", function() {
             }
             catch (e) {
                 Ext.global.Direct = undefined;
+                addGlobal('Direct');
             }
         });
         
@@ -312,7 +313,7 @@ describe("Ext.direct.Manager", function() {
         var provider, successSpy, failureSpy, callbackSpy, callbackScope;
         
         beforeEach(function() {
-            Ext.define('test.Provider', {
+            Ext.define('spec.Provider', {
                 extend: 'Ext.direct.Provider',
                 alias:  'direct.testprovider',
                 type: 'test',
@@ -345,13 +346,8 @@ describe("Ext.direct.Manager", function() {
             
             successSpy = failureSpy = callbackSpy = callbackScope = null;
 
-            Ext.undefine('test.Provider');
+            Ext.undefine('spec.Provider');
             Manager.providerClasses.test = provider = null;
-            try {
-                delete Ext.global.test;
-            } catch (e) {
-                Ext.global.test = undefined;
-            }
             
             delete Ext.REMOTING_API;
         });
@@ -599,11 +595,11 @@ describe("Ext.direct.Manager", function() {
                     
                     describe("variable resolution", function() {
                         it("should eval nested variable", function() {
-                            test.foo = { bar: { baz: 'qux' } };
+                            spec.foo = { bar: { baz: 'qux' } };
                             
                             Manager.onApiLoadSuccess({
                                 url: 'bar',
-                                varName: 'test.foo.bar',
+                                varName: 'spec.foo.bar',
                                 config: { type: 'test' }
                             });
                             

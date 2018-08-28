@@ -1709,6 +1709,11 @@ Ext.define('Ext.container.Container', {
     onBeforeAdd: function(item) {
         // Remove from current container without detaching it from the DOM if it's not us.
         var owner = item.ownerCt;
+
+        if (item.isDetached) {
+            item.reattachToBody();
+        }
+
         if (owner && owner !== this) {
             item.isLayoutMoving = true;
             owner.remove(item, {
@@ -1727,8 +1732,9 @@ Ext.define('Ext.container.Container', {
      * removed. This method may be used to update any internal
      * structure which may depend upon the state of the child items.
      *
-     * @param {Ext.Component} component
-     * @param {Boolean} autoDestroy
+     * @param {Ext.Component} component The removed component
+     * @param {Boolean} isDestroying `true` if the the component is being destroyed in
+     * the remove action
      *
      * @template
      * @protected
@@ -2032,11 +2038,6 @@ Ext.define('Ext.container.Container', {
             this.layoutTargetCls = targetCls;
         },
 
-        // Detach a component from the DOM
-        detachComponent: function(component){
-            Ext.getDetachedBody().appendChild(component.getEl(), true);
-        },
-
         /**
          * @private
          */
@@ -2097,7 +2098,7 @@ Ext.define('Ext.container.Container', {
                     layout.afterRemove(component);
                 }
                 if (doDetach && component.rendered) {
-                    me.detachComponent(component);
+                    component.detachFromBody();
                 }
             }
         },
@@ -2119,7 +2120,7 @@ Ext.define('Ext.container.Container', {
          * @return {Ext.Component[]} Items to be enabled/disabled
          */
         getChildItemsToDisable: function() {
-            return this.query('[isFormField],[isFocusableContainer],button');
+            return this.query('[isLabelable],[isFocusableContainer],button');
         },
 
         /**

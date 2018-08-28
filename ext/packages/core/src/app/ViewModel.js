@@ -822,7 +822,7 @@ Ext.define('Ext.app.ViewModel', {
      * Get a value from the data for this viewmodel.
      * @param {String} path The path of the data to retrieve.
      *
-     *    var value = vm.get('theUser.address.city');
+     *     var value = vm.get('theUser.address.city');
      *
      * @return {Object} The data stored at the passed path.
      */

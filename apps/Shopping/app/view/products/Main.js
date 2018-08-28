@@ -22,7 +22,7 @@ Ext.define('Shopping.view.products.Main', {
         height : 50
     }, {
         xtype  : 'categories',
-        width  : 210,
+        width  : 280,
         region : 'west'
     }, {
         xtype  : 'products',

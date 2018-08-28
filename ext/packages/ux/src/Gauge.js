@@ -119,7 +119,7 @@ Ext.define('Ext.ux.Gauge', {
          * Otherwise, the text will be centered in the middle of the gauge's
          * bounding box. This config allows to alter the position of the text
          * in the latter case. See the docs for the `align` option to the
-         * {@Ext.util.Region#alignTo} method for possible ways of alignment
+         * {@link Ext.util.Region#alignTo} method for possible ways of alignment
          * of the text to the guage's bounding box.
          */
         textAlign: 'c-c',

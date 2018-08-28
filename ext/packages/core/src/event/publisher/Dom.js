@@ -99,8 +99,11 @@ Ext.define('Ext.event.publisher.Dom', {
     },
 
     constructor: function() {
-        var me = this;
+        var me = this,
+            supportsPassive = Ext.supports.PassiveEventListener;
 
+        me.listenerOptions = supportsPassive ? { passive: false } : false;
+        me.captureOptions = supportsPassive ? { passive: false, capture: true } : true;
         me.bubbleSubscribers = {};
         me.captureSubscribers = {};
         me.directSubscribers = {};
@@ -168,32 +171,46 @@ Ext.define('Ext.event.publisher.Dom', {
     },
 
     addDelegatedListener: function(eventName) {
-        this.delegatedListeners[eventName] = 1;
-        this.target.addEventListener(
-            eventName, this.onDelegatedEvent, !!this.captureEvents[eventName]
+        var me = this;
+
+        me.delegatedListeners[eventName] = 1;
+
+        me.target.addEventListener(
+            eventName,
+            me.onDelegatedEvent,
+            me.captureEvents[eventName] ? me.captureOptions : me.listenerOptions
         );
     },
 
     removeDelegatedListener: function(eventName) {
-        delete this.delegatedListeners[eventName];
-        this.target.removeEventListener(
-            eventName, this.onDelegatedEvent, !!this.captureEvents[eventName]
+        var me = this;
+
+        delete me.delegatedListeners[eventName];
+
+        me.target.removeEventListener(
+            eventName,
+            me.onDelegatedEvent,
+            me.captureEvents[eventName] ? me.captureOptions : me.listenerOptions
         );
     },
 
     addDirectListener: function(eventName, element, capture) {
+        var me = this;
+
         element.dom.addEventListener(
             eventName,
-            capture ? this.onDirectCaptureEvent : this.onDirectEvent,
-            capture
+            capture ? me.onDirectCaptureEvent : me.onDirectEvent,
+            capture ? me.captureOptions : me.listenerOptions
         );
     },
 
     removeDirectListener: function(eventName, element, capture) {
+        var me = this;
+
         element.dom.removeEventListener(
             eventName,
-            capture ? this.onDirectCaptureEvent : this.onDirectEvent,
-            capture
+            capture ? me.onDirectCaptureEvent : me.onDirectEvent,
+            capture ? me.captureOptions : me.listenerOptions
         );
     },
 

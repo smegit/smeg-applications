@@ -3,30 +3,66 @@
  */
 Ext.define('Ext.util.Focusable', {
     mixinId: 'focusable',
-
-    /**
-     * @property {Boolean} hasFocus
-     * `true` if this component has focus.
-     * @private
-     */
-    hasFocus: false,
     
     /**
      * @property {Boolean} focusable
      * @readonly
      *
-     * `true` for interactive Components, `false` for static Components.
+     * `true` for keyboard interactive Components, `false` otherwise.
      * For Containers, this property reflects interactiveness of the
      * Container itself, not its children. See {@link #isFocusable}.
      *
-     * **Note:** Plain components are static, so not focusable.
+     * **Note:** It is not enough to set this property to `true` to make
+     * a component keyboard interactive. You also need to make sure that
+     * the component's {@link #focusEl} is reachable via Tab key (tabbable).
+     * See also {@link #tabIndex}.
      */
     focusable: false,
+
+    /**
+     * @property {Boolean} hasFocus `true` if this component's {@link #focusEl} is focused.
+     * See also {@link #containsFocus}.
+     *
+     * @readonly
+     */
+    hasFocus: false,
     
     /**
-     * @property {Ext.dom.Element} focusEl The component's focusEl.
+     * @property {Boolean} containsFocus `true` if this currently focused element
+     * is within this Component's or Container's hierarchy. This property is set separately
+     * from {@link #hasFocus}, and can be `true` when `hasFocus` is `false`.
+     *
+     * Examples:
+     *
+     * + Text field with input element focused would be:
+     *      focusable: true,
+     *      hasFocus: true,
+     *      containsFocus: true
+     *
+     * + Date field with drop-down picker currently focused would be:
+     *      focusable: true,
+     *      hasFocus: false,
+     *      containsFocus: true
+     *
+     * + Form Panel with a child input field currently focused would be:
+     *      focusable: false,
+     *      hasFocus: false,
+     *      containsFocus: true
+     *
+     * See also {@link #hasFocus}.
+     *
+     * @readonly
+     */
+    containsFocus: false,
+    
+    /**
+     * @property {Ext.dom.Element} focusEl The element that will be focused
+     * when {@link #focus} method is called on this component. Usually this is
+     * the same element that receives focus via mouse clicks, taps, and pressing
+     * Tab key.
+     *
      * Available after rendering.
-     * @private
+     * @readonly
      */
     
     /**
@@ -42,14 +78,14 @@ Ext.define('Ext.util.Focusable', {
     
     /**
      * @event focus
-     * Fires when this Component receives focus.
+     * Fires when this Component's {@link #focusEl} receives focus.
      * @param {Ext.Component} this
      * @param {Ext.event.Event} event The focus event.
      */
 
     /**
      * @event blur
-     * Fires when this Component loses focus.
+     * Fires when this Component's {@link #focusEl} loses focus.
      * @param {Ext.Component} this
      * @param {Ext.event.Event} event The blur event.
      */
@@ -88,10 +124,14 @@ Ext.define('Ext.util.Focusable', {
     },
     
     /**
-     * Returns the focus styling holder element associated with this Focusable.
-     * By default it is the same element as {@link #getFocusEl getFocusEl}.
+     * Returns the element used to apply focus styling CSS class when Component's
+     * {@link #focusEl} becomes focused. By default it is {@link #focusEl}.
      *
-     * @return {Ext.Element} The focus styling element.
+     * @param {Ext.dom.Element} [focusEl] Return focus styling element for the given
+     * focused element. This is used by Components implementing multiple focusable
+     * elements.
+     *
+     * @return {Ext.dom.Element} The focus styling element.
      * @protected
      */
     getFocusClsEl: function() {
@@ -107,7 +147,7 @@ Ext.define('Ext.util.Focusable', {
      * should override this for use by {@link Ext.util.Focusable#method-focus focus}
      * method.
      *
-     * @return {Ext.Element}
+     * @return {Ext.dom.Element}
      * @protected
      */
     getFocusEl: function() {
@@ -729,7 +769,11 @@ Ext.define('Ext.util.Focusable', {
                         return focusEl.isFocusing(e);
                     }
                     else {
-                        return e.toElement === focusEl.dom && e.fromElement !== e.toElement;
+                        // Sometimes focusing an element may cause reaction from other entities
+                        // that will focus something else instead. So before unraveling the
+                        // event chain we better make sure our focusEl is *indeed* focused.
+                        return focusEl.dom === document.activeElement &&
+                               e.toElement === focusEl.dom && e.fromElement !== e.toElement;
                     }
                 }
             }
@@ -751,7 +795,11 @@ Ext.define('Ext.util.Focusable', {
                         return focusEl.isBlurring(e);
                     }
                     else {
-                        return e.fromElement === focusEl.dom && e.fromElement !== e.toElement;
+                        // Ditto for blurring: in some cases freshly blurred element can be
+                        // refocused by external forces so we need to check if our focusEl
+                        // *indeed* is not focused before we can call it blurring.
+                        return focusEl.dom !== document.activeElement &&
+                               e.fromElement === focusEl.dom && e.fromElement !== e.toElement;
                     }
                 }
             }

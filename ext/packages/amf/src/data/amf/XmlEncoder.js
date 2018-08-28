@@ -34,7 +34,7 @@
  *   function. A writeByteArray method is provided for writing out ByteArray objects.
  *
  * For more information on working with AMF data please refer to the
- * [AMF Guide](#/guide/amf).
+ * [AMF Guide](../guides/backend_connectors/amf.html).
  */
 
 Ext.define('Ext.data.amf.XmlEncoder', {

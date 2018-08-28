@@ -76,5 +76,35 @@ describe("Ext.Panel", function () {
                 expect(panel.getHeader()).toBeNull();
             });
         });
+
+        describe('showBy', function() {
+            var byCmp;
+
+            beforeEach(function() {
+                byCmp = new Ext.Button({
+                    width: 100,
+                    text: 'Button',
+                    renderTo: document.body
+                });
+
+                createPanel({
+                    title: 'The title',
+                    html: 'The content'
+                });
+            });
+
+            afterEach(function() {
+                byCmp = Ext.destroy(byCmp);
+            });
+
+            it('should be able to show a floated menu after hiding it', function() {
+                panel.showBy(byCmp);
+                panel.hide();
+                panel.showBy(byCmp);
+
+                expect(panel.isFloated()).toBe(true);
+                expect(panel.isVisible()).toBe(true);
+            });
+        });
     });
 });

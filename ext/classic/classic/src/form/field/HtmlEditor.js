@@ -224,12 +224,12 @@ Ext.define('Ext.form.field.HtmlEditor', {
      * @cfg {Object} buttonDefaults
      * A config object to apply to the toolbar's {@link Ext.button.Button buttons} to affect how they operate, eg:
      *
-     *    buttonDefaults: {
-     *        tooltip: {
-     *            align: 't-b',
-     *            anchor: true
-     *        }
-     *    }
+     *     buttonDefaults: {
+     *         tooltip: {
+     *             align: 't-b',
+     *             anchor: true
+     *         }
+     *     }
      *
      * @since 6.2.0
      */

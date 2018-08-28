@@ -3082,8 +3082,8 @@ describe('Ext.grid.Panel', function(){
         });
     });
 
-    describe('buffered store, dataset shrinks on reload', function() {
-        var ForumThread;
+    describe('buffered store, heighted by a viewport', function() {
+        var ForumThread, viewport;
 
         beforeEach(function() {
             MockAjaxManager.addMethods();
@@ -3095,20 +3095,21 @@ describe('Ext.grid.Panel', function(){
 
         afterEach(function() {
             MockAjaxManager.removeMethods();
+            Ext.destroy(viewport);
         });
 
-        it('should successfully reload the smaller dataset, and render what it can', function() {
+        it('should successfully render the data', function() {
             function makeRows(n, total) {
                 var data = [],
                     i = 1;
-                    
+
                 for (i = 1; i <= n; ++i) {
                     data.push({
                         id: i,
                         title: 'Title' + i
                     });
-                } 
-                
+                }
+
                 return {
                     data: data,
                     totalCount: total
@@ -3130,7 +3131,72 @@ describe('Ext.grid.Panel', function(){
                 },
                 remoteFilter: true
             });
-        
+
+            expect(function() {
+                viewport = new Ext.container.Viewport({
+                    layout: 'fit',
+                    items: grid = new Ext.grid.Panel({
+                        store: store,
+                        columns: [{
+                            text: "Topic",
+                            dataIndex: 'title',
+                            flex: 1
+                        }]
+                    })
+                });
+            }).not.toThrow();
+        });
+    });
+
+    describe('buffered store, dataset shrinks on reload', function() {
+        var ForumThread;
+
+        beforeEach(function() {
+            MockAjaxManager.addMethods();
+            ForumThread = Ext.define(null, {
+                extend: 'Ext.data.Model',
+                fields: ['id', 'title']
+            });
+        });
+
+        afterEach(function() {
+            MockAjaxManager.removeMethods();
+        });
+
+        it('should successfully reload the smaller dataset, and render what it can', function() {
+            function makeRows(n, total) {
+                var data = [],
+                    i = 1;
+
+                for (i = 1; i <= n; ++i) {
+                    data.push({
+                        id: i,
+                        title: 'Title' + i
+                    });
+                }
+
+                return {
+                    data: data,
+                    totalCount: total
+                };
+            }
+
+            // create the Data Store
+            var store = new Ext.data.BufferedStore({
+                model: ForumThread,
+                asynchronousLoad: false,
+                pageSize: 350,
+                proxy: {
+                    type: 'ajax',
+                    url: 'fakeUrl',
+                    reader: {
+                        rootProperty: 'data',
+                        totalProperty: 'totalCount'
+                    }
+                },
+                remoteFilter: true
+            });
+
             grid = new Ext.grid.Panel({
                 width: 700,
                 height: 500,
@@ -3144,7 +3210,7 @@ describe('Ext.grid.Panel', function(){
             });
             var view = grid.getView(),
                 scroller = view.getScrollable();
-            
+
             store.load();
 
             Ext.Ajax.mockComplete({
@@ -3159,7 +3225,7 @@ describe('Ext.grid.Panel', function(){
                 }
                 scroller.scrollBy(0, 100);
             }, 'Initially rendered block to scroll out of view');
-            
+
             runs(function() {
 
                 store.reload();

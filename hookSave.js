@@ -1,14 +1,14 @@
 Ext.define('Valence.Hook', {
-    singleton              : true,
-    portalSettingOverrides : {
-        favicon : '/resources/images/smeg/smeg_favicon.ico'
+    singleton: true,
+    portalSettingOverrides: {
+        favicon: '/resources/images/smeg/smeg_favicon.ico'
     },
-    activeAgent            : null,
-    agencies               : [],
-    allowAutoStart         : false,
-    basicView              : false,
-    agencyFields           : ['ACCOUNT', 'NAME'],
-    ui                     : {
+    activeAgent: null,
+    agencies: [],
+    allowAutoStart: false,
+    basicView: false,
+    agencyFields: ['ACCOUNT', 'NAME'],
+    ui: {
         /*
          Change the image used for the Portal login. One may be specified for each theme or the "default" will be used for all.
 
@@ -27,26 +27,26 @@ Ext.define('Valence.Hook', {
                      "metal"   : "yet_another_path.png"
                  }
          */
-        loginLogoUrl  : {
-            "default" : '/resources/images/smeg/smeg_logo.png',
-            "dracula" : null,
-            "metal"   : null
+        loginLogoUrl: {
+            "default": '/resources/images/smeg/smeg_logo.png',
+            "dracula": null,
+            "metal": null
         },
         /*
          Change the image used for the Portal control bar.  Same rules apply as loginLogoUrl above.
          */
-        portalLogoUrl : {
-            "default" : '/resources/images/smeg/smeg_logo.png',
-            "dracula" : null,
-            "metal"   : null
+        portalLogoUrl: {
+            "default": '/resources/images/smeg/smeg_logo.png',
+            "dracula": null,
+            "metal": null
         },
         /*
          Change the image used for the Portal lock window.  Same rules apply as loginLogoUrl above.
          */
-        lockLogoUrl   : {
-            "default" : '/resources/images/smeg/smeg_logo.png',
-            "dracula" : null,
-            "metal"   : null
+        lockLogoUrl: {
+            "default": '/resources/images/smeg/smeg_logo.png',
+            "dracula": null,
+            "metal": null
         },
 
         /*
@@ -67,7 +67,7 @@ Ext.define('Valence.Hook', {
                 }]
             }
          */
-        footer : {
+        footer: {
             // layout : {
             //     type  : 'vbox',
             //     align : 'middle'
@@ -79,10 +79,10 @@ Ext.define('Valence.Hook', {
             // }]
         }
     },
-    constructor            : function () {
-        var me        = this,
-            ns        = Valence.login.Processor.getNamespace(),
-            app       = (typeof window[ns].getApplication === 'function') ? window[ns].getApplication() : null,
+    constructor: function () {
+        var me = this,
+            ns = Valence.login.Processor.getNamespace(),
+            app = (typeof window[ns].getApplication === 'function') ? window[ns].getApplication() : null,
             basicView = Ext.getUrlParam('basic');
 
         //don't allow user to launch previous running apps
@@ -100,53 +100,53 @@ Ext.define('Valence.Hook', {
 
         if (app) {
             app.on({
-                scope                    : me,
-                activateapp              : function (app) {
+                scope: me,
+                activateapp: function (app) {
                 },
-                afterautostart           : function (apps) {
+                afterautostart: function (apps) {
                 },
-                appsloaded               : function (appStore) {
+                appsloaded: function (appStore) {
                     // fired after the "Apps" store has been loaded...
                 },
-                beforeactivateapp        : function (app) {
+                beforeactivateapp: function (app) {
                     // return false to prevent the app from activating...
                 },
-                beforeautostart          : function () {
+                beforeautostart: function () {
                     return me.allowAutoStart;
                 },
-                beforechangepassword     : function (params) {
+                beforechangepassword: function (params) {
                     // return false to prevent call...
                 },
-                beforecloseapp           : function (app) {
+                beforecloseapp: function (app) {
                     // return false to prevent closing the app...
                 },
-                beforeenvironmentset     : function (user, env) {
+                beforeenvironmentset: function (user, env) {
                     // return false to prevent setting of environment...
                 },
-                beforelaunchapp          : function (app) {
+                beforelaunchapp: function (app) {
                     // return false to prevent the app from launching
                 },
-                beforelock               : function () {
+                beforelock: function () {
                     // return false to prevent the lock attempt
                 },
-                beforelogin              : function (params) {
+                beforelogin: function (params) {
                     // return false to prevent login attempt...
                 },
-                beforelogout             : function (user, params) {
+                beforelogout: function (user, params) {
                     // return false to prevent logout...
                 },
-                beforepoll               : function (params) {
+                beforepoll: function (params) {
                 },
-                beforesendpassword       : function (params) {
+                beforesendpassword: function (params) {
                     // return false to prevent call to sendpassword...
                 },
-                beforeshowappcircles     : function (apps) {
+                beforeshowappcircles: function (apps) {
                     // return false to prevent showing...
                 },
-                beforeshowchangepassword : function () {
+                beforeshowchangepassword: function () {
                     // return false to prevent showing...
                 },
-                beforeusersettings       : function (el) {
+                beforeusersettings: function (el) {
                     //if basic view show the change password instead of the
                     // base functionality of showing the user settings section
                     //
@@ -155,9 +155,9 @@ Ext.define('Valence.Hook', {
                         return false;
                     }
                 },
-                closeapp                 : function (app) {
+                closeapp: function (app) {
                 },
-                componentrender          : function (cmp) {
+                componentrender: function (cmp) {
                     var me = this;
 
                     //get the controlbar and add the agency selection
@@ -166,36 +166,36 @@ Ext.define('Valence.Hook', {
                         me.setupControlbar(cmp);
                     }
                 },
-                environmentset           : function (user, env) {
+                environmentset: function (user, env) {
                 },
-                launchapp                : function (app) {
+                launchapp: function (app) {
                 },
-                lock                     : function () {
+                lock: function () {
                 },
-                login                    : function (user, sid) {
+                login: function (user, sid) {
                     if (!Ext.isEmpty(window.Portal)) {
                         this.checkAgencies(user, sid);
 
                         window['smegGetCurrentAgent'] = Ext.bind(me.getCurrentAgent, me);
                     }
                 },
-                loginfailure             : function (parms, response) {
+                loginfailure: function (parms, response) {
                 },
-                loggedout                : function (user) {
+                loggedout: function (user) {
                 },
-                passwordchanged          : function (user, pwd) {
+                passwordchanged: function (user, pwd) {
                 },
-                poll                     : function (rsp) {
+                poll: function (rsp) {
                 },
-                portalsearchshow         : function () {
+                portalsearchshow: function () {
                     var me = this;
                     me.showHideAgencySelector('hide');
                 },
-                portalsearchinactive     : function () {
+                portalsearchinactive: function () {
                     var me = this;
                     me.showHideAgencySelector('show');
                 },
-                settingsapplied          : function () {
+                settingsapplied: function () {
                     var me = this,
                         fnc;
                     for (var i in me.portalSettingOverrides) {
@@ -207,11 +207,16 @@ Ext.define('Valence.Hook', {
                         }
                     }
                 },
-                smegagentchanged         : function (agent) {
+                smegagentchanged: function (agent) {
+                    console.log('smegagentchanged called');
                     if (!Ext.isEmpty(agent)) {
                         me.activeAgent = agent;
                         me.silentlySetAgent();
                     }
+                },
+
+                sayHello: function () {
+                    console.log('say hello');
                 }
             });
         }
@@ -223,19 +228,19 @@ Ext.define('Valence.Hook', {
      * @param user
      * @param sid
      */
-    checkAgencies : function (user, sid) {
+    checkAgencies: function (user, sid) {
         var me = this;
         Valence.common.util.Helper.loadMask('Loading');
         Ext.Ajax.request({
-            url     : '/valence/vvcall.pgm',
-            params  : {
-                pgm    : 'EC1000',
-                action : 'getAgencies'
+            url: '/valence/vvcall.pgm',
+            params: {
+                pgm: 'EC1000',
+                action: 'getAgencies'
             },
-            scope   : me,
-            success : function (r) {
+            scope: me,
+            success: function (r) {
                 var me = this,
-                    d  = Ext.decode(r.responseText);
+                    d = Ext.decode(r.responseText);
                 Valence.common.util.Helper.destroyLoadMask();
 
                 if (!Ext.isEmpty(d)) {
@@ -249,7 +254,7 @@ Ext.define('Valence.Hook', {
                     }
                 }
             },
-            failure : function () {
+            failure: function () {
                 Valence.common.util.Helper.destroyLoadMask();
                 me.startAutoStartApps();
             }
@@ -259,35 +264,35 @@ Ext.define('Valence.Hook', {
     /**
      * getCurrentAgent - get the current active agent
      */
-    getCurrentAgent : function () {
+    getCurrentAgent: function () {
         return this.activeAgent;
     },
 
     /**
      * overrideLaunchpad - override the launchpad with the SMEG welcome application
      */
-    overrideLaunchpad : function () {
+    overrideLaunchpad: function () {
         //override the launch pad with an iframe that loads the SMEG welcome page
         //
         Ext.define('Portal.view.launchpad.Launchpad', {
-            extend : 'Ext.container.Container',
-            xtype  : 'launchpad',
-            title  : 'Welcome',
-            layout : 'fit',
-            items  : [{
-                xtype     : 'uxiframe',
-                src       : '/SmegApps/build/production/Welcome/index.html?app=1020&sid=' + Valence.util.Helper.getSid() + '&lng=' + Valence.util.Helper.getLanguage(),
-                listeners : {
-                    render : {
-                        single : true,
-                        fn     : function (cmp) {
+            extend: 'Ext.container.Container',
+            xtype: 'launchpad',
+            title: 'Welcome',
+            layout: 'fit',
+            items: [{
+                xtype: 'uxiframe',
+                src: '/SmegApps/build/production/Welcome/index.html?app=1020&sid=' + Valence.util.Helper.getSid() + '&lng=' + Valence.util.Helper.getLanguage(),
+                listeners: {
+                    render: {
+                        single: true,
+                        fn: function (cmp) {
                             Valence.common.util.Helper.loadMask({
-                                renderTo : cmp.el,
-                                text     : 'Welcome'
+                                renderTo: cmp.el,
+                                text: 'Welcome'
                             });
                         }
                     },
-                    load   : function (cmp) {
+                    load: function (cmp) {
                         Valence.common.util.Helper.destroyLoadMask(cmp.el);
                     }
                 }
@@ -298,52 +303,52 @@ Ext.define('Valence.Hook', {
     /**
      * requestAgency - request the user select an agency
      */
-    requestAgency : function () {
-        var me           = this,
-            store        = Ext.create('Ext.data.Store', {
-                fields : me.agencyFields,
-                data   : Ext.clone(me.agencies)
+    requestAgency: function () {
+        var me = this,
+            store = Ext.create('Ext.data.Store', {
+                fields: me.agencyFields,
+                data: Ext.clone(me.agencies)
             }),
             agencyWindow = Ext.create('Ext.window.Window', {
-                title    : 'Select Agency',
-                renderTo : Ext.getBody(),
-                closable : false,
-                modal    : true,
-                width    : 500,
-                height   : 400,
-                allowEsc : false,
-                cls      : 'smeg-agency-sel-win',
-                layout   : 'fit',
-                items    : [{
-                    xtype       : 'grid',
-                    store       : store,
-                    dockedItems : [{
-                        xtype  : 'toolbar',
-                        cls    : 'smeg-agency-sel-win-sch-tb',
-                        dock   : 'top',
-                        style  : {
-                            'z-index' : 11
+                title: 'Select Agency',
+                renderTo: Ext.getBody(),
+                closable: false,
+                modal: true,
+                width: 500,
+                height: 400,
+                allowEsc: false,
+                cls: 'smeg-agency-sel-win',
+                layout: 'fit',
+                items: [{
+                    xtype: 'grid',
+                    store: store,
+                    dockedItems: [{
+                        xtype: 'toolbar',
+                        cls: 'smeg-agency-sel-win-sch-tb',
+                        dock: 'top',
+                        style: {
+                            'z-index': 11
                         },
-                        layout : 'fit',
-                        items  : [{
-                            xtype     : 'textfield',
-                            emptyText : 'Search',
-                            listeners : {
-                                scope       : me,
-                                afterrender : function (cmp) {
+                        layout: 'fit',
+                        items: [{
+                            xtype: 'textfield',
+                            emptyText: 'Search',
+                            listeners: {
+                                scope: me,
+                                afterrender: function (cmp) {
                                     setTimeout(function () {
                                         cmp.focus();
                                     }, 100);
                                 },
-                                change      : {
-                                    buffer : 350,
-                                    fn     : function (cmp, value) {
+                                change: {
+                                    buffer: 350,
+                                    fn: function (cmp, value) {
                                         Valence.util.Helper.processTypedInputFilter(store, ['ACCOUNT', 'NAME'], value, 'smegAgentFilter');
                                     }
                                 },
-                                specialkey  : function (cmp, e) {
+                                specialkey: function (cmp, e) {
                                     if (e.getKey() == e.ENTER) {
-                                        var grid  = cmp.up('grid'),
+                                        var grid = cmp.up('grid'),
                                             store = grid.getStore();
                                         if (store.count() === 1) {
                                             me.setAgent(store.getAt(0));
@@ -354,23 +359,23 @@ Ext.define('Valence.Hook', {
                             }
                         }]
                     }],
-                    hideHeaders : true,
-                    columns     : [{
-                        flex      : 3,
-                        dataIndex : 'NAME'
+                    hideHeaders: true,
+                    columns: [{
+                        flex: 3,
+                        dataIndex: 'NAME'
                     }, {
-                        flex      : 1,
-                        dataIndex : 'ACCOUNT',
-                        align     : 'right'
+                        flex: 1,
+                        dataIndex: 'ACCOUNT',
+                        align: 'right'
                     }],
-                    listeners   : {
-                        scope     : me,
-                        itemclick : function (cmp, rec) {
+                    listeners: {
+                        scope: me,
+                        itemclick: function (cmp, rec) {
                             me.setAgent(rec);
                             agencyWindow.destroy();
                         }
                     },
-                    onEsc       : function () {
+                    onEsc: function () {
                         return;
                     }
                 }]
@@ -381,9 +386,10 @@ Ext.define('Valence.Hook', {
      * setAgent - set the agent selected from the window or the combo
      * @param rec
      */
-    setAgent : function (rec) {
-        var me         = this,
-            agent      = rec.get('ACCOUNT'),
+    setAgent: function (rec) {
+        console.log('setAgent called');
+        var me = this,
+            agent = rec.get('ACCOUNT'),
             resetAgent = function () {
                 if (!Ext.isEmpty(me.activeAgent)) {
                     me.silentlySetAgent();
@@ -393,27 +399,27 @@ Ext.define('Valence.Hook', {
         Valence.common.util.Helper.loadMask('Setting Agent');
 
         Ext.Ajax.request({
-            url     : '/valence/vvcall.pgm',
-            params  : {
-                pgm    : 'EC1000',
-                action : 'setAgent',
-                agent  : agent
+            url: '/valence/vvcall.pgm',
+            params: {
+                pgm: 'EC1000',
+                action: 'setAgent',
+                agent: agent
             },
-            scope   : me,
-            success : function (r) {
+            scope: me,
+            success: function (r) {
                 var me = this,
-                    d  = Ext.decode(r.responseText);
+                    d = Ext.decode(r.responseText);
 
                 Valence.common.util.Helper.destroyLoadMask()
 
                 if (!d.success) {
                     Valence.common.util.Dialog.show({
-                        msg     : d.msg || 'Not able to set agency at this time.',
-                        buttons : [{
-                            text : Valence.lang.lit.ok
+                        msg: d.msg || 'Not able to set agency at this time.',
+                        buttons: [{
+                            text: Valence.lang.lit.ok
                         }],
-                        scope   : me,
-                        handler : resetAgent
+                        scope: me,
+                        handler: resetAgent
                     });
                 } else {
                     var apps = Ext.ComponentQuery.query('uxiframe'),
@@ -428,13 +434,14 @@ Ext.define('Valence.Hook', {
                     //
                     for (var ii = 0; ii < apps.length; ii++) {
                         frameWindow = apps[ii].getWin();
+                        console.log('frameWindow');
                         if (!Ext.isEmpty(frameWindow.smegAgentChanged) && typeof frameWindow.smegAgentChanged === 'function') {
                             frameWindow.smegAgentChanged(agent);
                         }
                     }
                 }
             },
-            failure : function () {
+            failure: function () {
                 Valence.common.util.Helper.destroyLoadMask();
                 resetAgent();
             }
@@ -446,16 +453,16 @@ Ext.define('Valence.Hook', {
      *   to change the agent.
      * @param cmp
      */
-    setupControlbar : function (cmp) {
-        var me       = this,
-            items    = cmp.items.items,
+    setupControlbar: function (cmp) {
+        var me = this,
+            items = cmp.items.items,
             agencies = (!Ext.isEmpty(me.agencies)) ? me.agencies : [],
-            store    = Ext.create('Ext.data.Store', {
-                fields : me.agencyFields,
-                data   : agencies,
-                type   : 'memory',
-                reader : {
-                    type : 'json'
+            store = Ext.create('Ext.data.Store', {
+                fields: me.agencyFields,
+                data: agencies,
+                type: 'memory',
+                reader: {
+                    type: 'json'
                 }
             }),
             insertIndex;
@@ -475,26 +482,26 @@ Ext.define('Valence.Hook', {
         }
 
         cmp.insert(insertIndex, {
-            xtype          : 'combo',
-            cls            : 'smeg-agency-sel',
-            itemId         : 'smegAgencySelector',
-            store          : store,
-            grow           : true,
-            hideLabel      : true,
-            valueField     : 'ACCOUNT',
-            displayField   : 'NAME',
-            queryMode      : 'local',
-            allowBlank     : false,
-            forceSelection : true,
-            anyMatch       : true,
-            caseSensitive  : false,
-            readOnly       : (!Ext.isEmpty(agencies) && agencies.length === 1) ? true : false,
-            hidden         : (Ext.isEmpty(agencies)) ? true : false,
-            value          : me.activeAgent,
-            listConfig     : {
-                cls : 'smeg-agency-sel-list'
+            xtype: 'combo',
+            cls: 'smeg-agency-sel',
+            itemId: 'smegAgencySelector',
+            store: store,
+            grow: true,
+            hideLabel: true,
+            valueField: 'ACCOUNT',
+            displayField: 'NAME',
+            queryMode: 'local',
+            allowBlank: false,
+            forceSelection: true,
+            anyMatch: true,
+            caseSensitive: false,
+            readOnly: (!Ext.isEmpty(agencies) && agencies.length === 1) ? true : false,
+            hidden: (Ext.isEmpty(agencies)) ? true : false,
+            value: me.activeAgent,
+            listConfig: {
+                cls: 'smeg-agency-sel-list'
             },
-            beforeQuery    : function (plan) {
+            beforeQuery: function (plan) {
                 //overriding the query plan so we can filter agents by words entered
                 //
                 var originalQuery = plan.query;
@@ -505,17 +512,17 @@ Ext.define('Valence.Hook', {
                 }
                 return plan;
             },
-            listeners      : {
-                scope       : me,
-                afterrender : function (cmp) {
+            listeners: {
+                scope: me,
+                afterrender: function (cmp) {
                     cmp.agentTip = Ext.create('Ext.tip.ToolTip', {
-                        showDelay : 800,
-                        target    : cmp.el,
-                        html      : '',
-                        listeners : {
-                            scope      : me,
-                            beforeshow : function (cmp) {
-                                var sel         = Ext.ComponentQuery.query('#smegAgencySelector')[0],
+                        showDelay: 800,
+                        target: cmp.el,
+                        html: '',
+                        listeners: {
+                            scope: me,
+                            beforeshow: function (cmp) {
+                                var sel = Ext.ComponentQuery.query('#smegAgencySelector')[0],
                                     selectedRec = (!Ext.isEmpty(sel)) ? sel.getSelection() : null;
                                 if (!Ext.isEmpty(selectedRec)) {
                                     cmp.setHtml('<div class="smeg-agency-sel-tip"><span class="label">Agent #: </span><span class="code">' + selectedRec.get('ACCOUNT') + '</span></div>')
@@ -526,7 +533,7 @@ Ext.define('Valence.Hook', {
                         }
                     });
                 },
-                select      : function (cmp, rec) {
+                select: function (cmp, rec) {
                     var me = this;
                     if (rec.get('ACCOUNT') !== me.activeAgent) {
                         me.setAgent(rec);
@@ -541,8 +548,8 @@ Ext.define('Valence.Hook', {
      * showHideAgencySelector - show/hide the agency selector in the top controlbar
      * @param action
      */
-    showHideAgencySelector : function (action) {
-        var me               = this,
+    showHideAgencySelector: function (action) {
+        var me = this,
             agenciesSelector = Ext.ComponentQuery.query('#smegAgencySelector')[0];
 
         if (action === 'show') {
@@ -554,8 +561,9 @@ Ext.define('Valence.Hook', {
         }
     },
 
-    silentlySetAgent : function () {
-        var me            = this,
+    silentlySetAgent: function () {
+        console.log('silentlySetAgent called');
+        var me = this,
             agentSelector = Ext.ComponentQuery.query('#smegAgencySelector')[0];
 
         if (!Ext.isEmpty(agentSelector)) {
@@ -581,9 +589,9 @@ Ext.define('Valence.Hook', {
      * startAutoStartApps - start the auto start apps if needed. We stop them initially because
      *  we need to check if the user has access to multiple agents.
      */
-    startAutoStartApps : function () {
-        var me      = this,
-            main    = Ext.ComponentQuery.query('main')[0],
+    startAutoStartApps: function () {
+        var me = this,
+            main = Ext.ComponentQuery.query('main')[0],
             mainCtl = (!Ext.isEmpty(main)) ? main.getController() : null;
 
         //set the auto start is allow to be performed

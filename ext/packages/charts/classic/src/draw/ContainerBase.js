@@ -1,6 +1,6 @@
 /**
- * @private
  * @class Ext.draw.ContainerBase
+ * @private
  */
 Ext.define('Ext.draw.ContainerBase', {
     extend: 'Ext.panel.Panel',
@@ -88,7 +88,7 @@ Ext.define('Ext.draw.ContainerBase', {
         me.handleResize({
             width: width,
             height: height
-        });
+        }, !me.size); // First resize should be performed without any delay.
     },
 
     preview: function () {

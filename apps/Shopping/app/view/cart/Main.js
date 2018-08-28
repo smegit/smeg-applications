@@ -68,8 +68,8 @@ Ext.define('Shopping.view.cart.Main', {
                 ui      : 'white',
                 handler : 'onClickBack'
             }, {
-                text      : 'Clear Order',
-                maskMsg   : 'Clearing Cart',
+                text      : 'Exit Order',
+                maskMsg   : 'Exiting Order',
                 ui        : 'white',
                 listeners : {
                     click : 'onClickClear'
@@ -89,10 +89,10 @@ Ext.define('Shopping.view.cart.Main', {
                     click : 'onClickDeposit'
                 }
             }, {
-                text      : 'Checkout',
+                text      : 'Process',
                 reference : 'checkoutButton',
                 ui        : 'blue',
-                maskMsg   : 'Setting up Checkout',
+                maskMsg   : 'Preparing to process order',
                 handler   : 'onClickRelease'
             }]
     },

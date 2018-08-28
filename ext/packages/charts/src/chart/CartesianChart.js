@@ -15,7 +15,6 @@
  * to gain a better performance.
  *
  */
-
 Ext.define('Ext.chart.CartesianChart', {
     extend: 'Ext.chart.AbstractChart',
     alternateClassName: 'Ext.chart.Chart',
@@ -117,11 +116,13 @@ Ext.define('Ext.chart.CartesianChart', {
     performLayout: function () {
         var me = this;
 
-        me.animationSuspendCount++;
         if (me.callParent() === false) {
-            --me.animationSuspendCount;
             return;
         }
+
+        me.chartLayoutCount++;
+        me.animationSuspendCount++;
+
         // 'chart' surface rect is the size of the chart's inner element
         // (see chart.getChartBox), i.e. the portion of the chart minus
         // the legend area (whether DOM or sprite based).
@@ -251,7 +252,18 @@ Ext.define('Ext.chart.CartesianChart', {
         me.redraw();
 
         me.animationSuspendCount--;
+        // 'resumeThicknessChanged' may trigger another layout, if the 'redraw' call above
+        // resulted in a situation where an axis is no longer 'thick' enough to accommodate
+        // the new labels. E.g. the labels were: 'Bob', 'Ann', 'Joe' and now they are 'Jonathan',
+        // 'Rachael', 'Michael'. An axis has to be made thicker now, and another layout should be
+        // performed. This second layout is not scheduled, but performed immediately, which will
+        // increment the 'chartLayoutCount' again.
         me.resumeThicknessChanged();
+        me.chartLayoutCount--;
+        // 'checkLayoutEnd' will check if another layout is already running or scheduled and,
+        // if neither is the case, will fire the 'layout' event, meaning we are totally done
+        // with layout at this point.
+        me.checkLayoutEnd();
     },
 
     refloatAxes: function () {
@@ -434,7 +446,7 @@ Ext.define('Ext.chart.CartesianChart', {
             }
         }
         me.renderFrame();
-        me.callParent(arguments);
+        me.callParent();
     },
 
     renderFrame: function () {

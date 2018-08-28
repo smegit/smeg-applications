@@ -271,4 +271,38 @@ describe("grid-widgets", function(){
             expect(grid.query('progressbarwidget').length).toBe(10);
         });
     });
+    
+    describe('widget focus', function () {
+        it('should not focus the cell on mousedown', function () {
+            var view, pos, btn;
+            
+            makeGrid(5, {}, [{
+                width: 200,
+                xtype: 'widgetcolumn',
+                dataIndex: 'name',
+                cellFocusable: false,
+                widget: {
+                    xtype: 'container',
+                    layout: 'vbox',
+                    items: [{
+                        html: '',
+                        height: 200
+                    }, {
+                        xtype: 'button'
+                    }]
+                }
+            }]);
+            
+            view = grid.getView();
+            
+            // scroll the first row partially out of view
+            view.scrollTo(0, 100);
+            pos = view.getScrollY();
+            
+            btn = Ext.fly(grid.getView().getRow(0)).down('.x-btn');
+            jasmine.fireMouseEvent(btn.dom, 'mousedown', null, null, true);
+        
+            expect(pos).toEqual(view.getScrollY());
+        });
+    });
 });

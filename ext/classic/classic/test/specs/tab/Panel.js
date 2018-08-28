@@ -287,7 +287,7 @@ describe("Ext.tab.Panel", function() {
                     }).not.toThrow();
                 });
                 
-                waitsFor(function() { return !!spy.callCount }, 'spy to be called', 100);
+                waitsFor(function() { return !!spy.callCount; }, 'spy to be called', 100);
                 
                 runs(function() {
                     expect(spy).toHaveBeenCalled();
@@ -2081,6 +2081,15 @@ describe("Ext.tab.Panel", function() {
                     expect(card2).toHaveAttr('aria-hidden', 'false');
                 });
             });
+        });
+    });
+
+    describe("layout counts", function() {
+        it("should only do a single layout when removing the active tab", function() {
+            createTabPanelWithTabs(2);
+            var cnt = tabPanel.componentLayoutCounter;
+            tabPanel.items.first().destroy();
+            expect(tabPanel.componentLayoutCounter - cnt).toBe(1);
         });
     });
 });

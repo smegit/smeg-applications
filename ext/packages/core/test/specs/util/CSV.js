@@ -110,6 +110,14 @@ describe("Ext.util.CSV", function() {
             expect(CSV.decode('')).toEqual([]);
         });
 
+        it("should work when the first value is empty", function() {
+            var test = ',F,,O,,O,';
+
+            expect(CSV.decode(test)).toEqual([
+                ['', 'F', '', 'O', '', 'O', '']
+            ]);
+        });
+
         it("should not create an empty row when a line feed is the last character in the input", function() {
             var test1 = 'John,Doe,42' + CSV.lineBreak + 'Jane,Henry,31' + CSV.lineBreak + ',,\r\n',
                 test2 = 'John,Doe,42' + CSV.lineBreak + ',,' + CSV.lineBreak + 'Jane,Henry,31\n',

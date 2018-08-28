@@ -143,7 +143,14 @@ Ext.define('Ext.scroll.Scroller', {
          */
         size: null,
 
-        spacerXY: null
+        spacerXY: null,
+
+        /**
+         * @cfg {Object} touchAction for the scroller's {@link #element}.
+         *
+         * For more details see {@link Ext.dom.Element#setTouchAction}
+         */
+        touchAction: null
     },
 
     snappableCls: Ext.baseCSSPrefix + 'scroller-snappable',
@@ -779,8 +786,21 @@ Ext.define('Ext.scroll.Scroller', {
         this.initSnap();
     },
 
+    updateTouchAction: function(touchAction) {
+        var element = this.getElement();
+
+        if (element) {
+            element.setTouchAction(touchAction);
+        }
+    },
+
     updateElement: function(element) {
-        var me = this;
+        var me = this,
+            touchAction = me.getTouchAction();
+
+        if (touchAction) {
+            element.setTouchAction(touchAction);
+        }
 
         me.initXStyle();
         me.initYStyle();

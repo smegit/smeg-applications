@@ -427,14 +427,20 @@ Ext.define('Ext.Panel', {
             setY = positioned ? me.setTop : me.setY,
             x = 0,
             y = 0,
-            resultRegion, oldHeight, cls;
+            resultRegion, oldHeight, cls, parent;
 
         if (alignmentInfo.isAligned) {
             return;
         }
 
-        if (!me.isFloated() && !me.getParent()) {
-            me.setFloated(true);
+        parent = me.getParent();
+
+        if (!me.isFloated()) {
+            if (!parent) {
+                me.setFloated(true);
+            } else {
+                me.positioned = true;
+            }
         }
 
         // Superclass does pure alignment.

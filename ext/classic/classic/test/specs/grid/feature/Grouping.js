@@ -558,7 +558,7 @@ describe('Ext.grid.feature.Grouping', function () {
             });
         });
 
-        it('should collapse all other groups when CRTL/click on group header', function() {
+        it('should collapse all other groups when CTRL/click on group header', function() {
             var grouping = lockedGrid.lockedGrid.view.findFeature('groupingsummary'),
                 groupStore = grouping.dataSource,
                 firstGroup = grouping.getGroup(lockedGridStore.getAt(0)),
@@ -574,6 +574,139 @@ describe('Ext.grid.feature.Grouping', function () {
             grouping.onGroupClick(lockedGrid.lockedGrid.view, groupHeader, firstGroupName, {ctrlKey: true});
 
             expect(groupStore.getCount()).toBe(6);
+        });
+    });
+    
+    describe('interactive expand/collapse', function () {
+        var grouping;
+        
+        function makeStore () {
+            // this dataset, while large, is reproducible every time
+            var data = [
+                    {name: 'Cheesecake Factory', cuisine: 'American'},
+                    {name: 'University Cafe', cuisine: 'American'},
+                    {name: 'Slider Bar', cuisine: 'American'},
+                    {name: 'Shokolaat', cuisine: 'American'},
+                    {name: 'Gordon Biersch', cuisine: 'American'},
+                    {name: 'Crepevine', cuisine: 'American'},
+                    {name: 'Creamery', cuisine: 'American'},
+                    {name: 'Old Pro', cuisine: 'American'},
+                    {name: 'Nola\'s', cuisine: 'Cajun'},
+                    {name: 'House of Bagels', cuisine: 'Bagels'},
+                    {name: 'The Prolific Oven', cuisine: 'Sandwiches'},
+                    {name: 'La Strada', cuisine: 'Italian'},
+                    {name: 'Buca di Beppo', cuisine: 'Italian'},
+                    {name: 'Pasta?', cuisine: 'Italian'},
+                    {name: 'Madame Tam', cuisine: 'Asian'},
+                    {name: 'Sprout Cafe', cuisine: 'Salad'},
+                    {name: 'Pluto\'s', cuisine: 'Salad'},
+                    {name: 'Junoon', cuisine: 'Indian'},
+                    {name: 'Bistro Maxine', cuisine: 'French'},
+                    {name: 'Three Seasons', cuisine: 'Vietnamese'},
+                    {name: 'Sancho\'s Taquira', cuisine: 'Mexican'},
+                    {name: 'Reposado', cuisine: 'Mexican'},
+                    {name: 'Siam Royal', cuisine: 'Thai'},
+                    {name: 'Krung Siam', cuisine: 'Thai'},
+                    {name: 'Thaiphoon', cuisine: 'Thai'},
+                    {name: 'Tamarine', cuisine: 'Vietnamese'},
+                    {name: 'Joya', cuisine: 'Tapas'},
+                    {name: 'Jing Jing', cuisine: 'Chinese'},
+                    {name: 'Patxi\'s Pizza', cuisine: 'Pizza'},
+                    {name: 'Evvia Estiatorio', cuisine: 'Mediterranean'},
+                    {name: 'Cafe 220', cuisine: 'Mediterranean'},
+                    {name: 'Cafe Renaissance', cuisine: 'Mediterranean'},
+                    {name: 'Kan Zeman', cuisine: 'Mediterranean'},
+                    {name: 'Gyros-Gyros', cuisine: 'Mediterranean'},
+                    {name: 'Mango Caribbean Cafe', cuisine: 'Caribbean'},
+                    {name: 'Coconuts Caribbean Restaurant & Bar', cuisine: 'Caribbean'},
+                    {name: 'Rose & Crown', cuisine: 'English'},
+                    {name: 'Baklava', cuisine: 'Mediterranean'},
+                    {name: 'Mandarin Gourmet', cuisine: 'Chinese'},
+                    {name: 'Bangkok Cuisine', cuisine: 'Thai'},
+                    {name: 'Darbar Indian Cuisine', cuisine: 'Indian'},
+                    {name: 'Mantra', cuisine: 'Indian'},
+                    {name: 'Janta', cuisine: 'Indian'},
+                    {name: 'Hyderabad House', cuisine: 'Indian'},
+                    {name: 'Starbucks', cuisine: 'Coffee'},
+                    {name: 'Peet\'s Coffee', cuisine: 'Coffee'},
+                    {name: 'Coupa Cafe', cuisine: 'Coffee'},
+                    {name: 'Lytton Coffee Company', cuisine: 'Coffee'},
+                    {name: 'Il Fornaio', cuisine: 'Italian'},
+                    {name: 'Lavanda', cuisine: 'Mediterranean'},
+                    {name: 'MacArthur Park', cuisine: 'American'},
+                    {name: 'St Michael\'s Alley', cuisine: 'Californian'},
+                    {name: 'Osteria', cuisine: 'Italian'},
+                    {name: 'Vero', cuisine: 'Italian'},
+                    {name: 'Cafe Renzo', cuisine: 'Italian'},
+                    {name: 'Miyake', cuisine: 'Sushi'},
+                    {name: 'Sushi Tomo', cuisine: 'Sushi'},
+                    {name: 'Kanpai', cuisine: 'Sushi'},
+                    {name: 'Pizza My Heart', cuisine: 'Pizza'},
+                    {name: 'New York Pizza', cuisine: 'Pizza'},
+                    {name: 'California Pizza Kitchen', cuisine: 'Pizza'},
+                    {name: 'Round Table', cuisine: 'Pizza'},
+                    {name: 'Loving Hut', cuisine: 'Vegan'},
+                    {name: 'Garden Fresh', cuisine: 'Vegan'},
+                    {name: 'Cafe Epi', cuisine: 'French'},
+                    {name: 'Tai Pan', cuisine: 'Chinese'}
+            ];
+            
+            return new Ext.data.Store({
+                fields: ['name', 'cuisine'],
+                groupField: 'cuisine',
+                sorters: ['cuisine','name'],
+                data: data,
+                autoDestroy: true
+            });
+        }
+    
+        beforeEach(function () {
+            grid = new Ext.grid.Panel({
+                renderTo : Ext.getBody(),
+                store : makeStore(),
+                columns: [{
+                    text: 'Name',
+                    dataIndex: 'name',
+        
+                    flex: 1
+                },{
+                    text: 'Cuisine',
+                    dataIndex: 'cuisine',
+        
+                    flex: 1
+                }],
+                width: 600,
+                height: 400,
+                features: [{
+                    ftype: 'grouping',
+                    startCollapsed: true,
+                    groupHeaderTpl: '{columnName}: {name} ({rows.length} Item{[values.rows.length > 1 ? "s" : ""]})'
+                }]
+            });
+            grouping = grid.view.findFeature('grouping');
+        });
+    
+        afterEach(function () {
+            Ext.destroy(grouping);
+            grouping = null;
+        });
+    
+        it('should have the same scroll and view height when CTRL/click to collapse', function(){
+            var groupName = 'Vietnamese',
+            groupHeader = grouping.getHeaderNode(groupName),
+            spy = jasmine.createSpy(),
+            scroller = grid.getScrollable(),
+            itemContainer = grid.view.el.down(grid.view.getBodySelector());
+            
+            grouping.expandAll();
+            scroller.scrollBy(null, Infinity, {duration: 50, callback: spy});
+            waitsFor(function () {
+                return spy.callCount === 1;
+            });
+            runs(function () {
+                grouping.onGroupClick(grid.view, groupHeader, groupName, {ctrlKey: true});
+                expect(itemContainer.getHeight()).toEqual(scroller.getSize().y);
+            });
         });
     });
 
@@ -1270,10 +1403,11 @@ describe('Ext.grid.feature.Grouping', function () {
                 // For instance, when the feature would process the store again, it was expecting the collapsed state
                 // to have been poked onto the group object itself, which may no longer be around. We now have a separate,
                 // internal metaGroup cache in the feature that stores this information.
-                function testIt(group, method, filterValue) {
+                function testIt(group, method, filterValue, collapsible) {
                     var initialState = method === 'expand';
+                    collapsible = collapsible !== false;
                     
-                    describe('Group: "' + group + '", method: "' + method + '", filterValue: "' + filterValue + '"', function() {
+                    describe('Group: "' + group + '", method: "' + method + '", filterValue: "' + filterValue + '"' + '", collapsible: "' + collapsible + '"', function() {
                         it('should retain its state of ' + !initialState, function () {
                             makeUI(null, {
                                 startCollapsed: initialState
@@ -1291,14 +1425,20 @@ describe('Ext.grid.feature.Grouping', function () {
                             expect(groupingFeature.getMetaGroup(group).isCollapsed).toBe(!initialState);
                         });
 
-                        it('should have the ' + (initialState ? 'collapseTip' : 'expandTip') +  ' tooltip', function() {
+                        it('should ' + (collapsible ? '' : 'not') + ' have the ' + (initialState ? 'collapseTip' : 'expandTip') +  ' tooltip', function() {
                             var row;
                             makeUI(null,{
-                                startCollapsed: initialState
+                                startCollapsed: initialState,
+                                collapsible: collapsible
                             });
                             groupingFeature[method](group);
                             row = view.body.query('.' + groupingFeature.ctCls + '>div div', true)[group === 'Greek' ? 0 : 1];
-                            expect(row.getAttribute('data-qtip')).toEqual(initialState ? groupingFeature.collapseTip : groupingFeature.expandTip);
+                            
+                            if (collapsible) {
+                                expect(row.getAttribute('data-qtip')).toEqual(initialState ? groupingFeature.collapseTip : groupingFeature.expandTip);
+                            } else {
+                                expect(row.getAttribute('data-qtip')).toBeNull();
+                            }
                         });
                     });
                 }
@@ -1307,6 +1447,7 @@ describe('Ext.grid.feature.Grouping', function () {
                     describe('when expanded group is filtered', function () {
                         testIt('Greek', 'expand', 'Roman');
                         testIt('Roman', 'expand', 'Greek');
+                        testIt('Roman', 'expand', 'Greek', false);
                     });
 
                     describe('when expanded group is not filtered', function () {
@@ -1319,11 +1460,46 @@ describe('Ext.grid.feature.Grouping', function () {
                     describe('when collapsed group is filtered', function () {
                         testIt('Greek', 'collapse', 'Roman');
                         testIt('Roman', 'collapse', 'Greek');
+                        testIt('Roman', 'collapse', 'Greek', false);
                     });
 
                     describe('when collapsed group is not filtered', function () {
                         testIt('Greek', 'collapse', 'Greek');
                         testIt('Roman', 'collapse', 'Roman');
+                    });
+                });
+
+                it("should cancel actionableMode while collapsing", function() {
+                    var cell, plugin;
+
+                    makeUI(null, null, {
+                        columns: [{
+                            text: 'Name',
+                            dataIndex: 'name',
+                            editor: 'textfield'
+                        }, {
+                            text: 'Cuisine',
+                            dataIndex: 'cuisine'
+                        }],
+                        plugins: {
+                            ptype: 'cellediting',
+                            clicksToEdit: 1
+                        }
+                    });
+
+                    cell = grid.view.getCellInclusive({row: 0, column: 0});
+                    plugin = grid.findPlugin('cellediting');
+                    jasmine.fireMouseEvent(cell, 'click');
+
+                    waitsFor(function() {
+                        return plugin.editing;
+                    });
+
+                    runs(function() {
+                        expect(function() {
+                            groupingFeature.collapse('Greek');
+                        }).not.toThrow();
+                        expect(plugin.editing).toBe(false);
                     });
                 });
             });

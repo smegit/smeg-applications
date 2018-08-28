@@ -159,7 +159,7 @@ Ext.define('Ext.tip.ToolTip', {
          * Set to `true` to allow mouse exiting the target, but moving into the ToolTip to
          * keep the ToolTip visible. This may be useful for interactive tips.
          *
-         * While the mouse is over the tip, the {@link dismissDelay dismiss timer} is
+         * While the mouse is over the tip, the {@link #dismissDelay dismiss timer} is
          * inactive, so the tip will not {@link #autoHide}.
          *
          * On touch platforms, a touch on the tooltip is the equivalent, and this cancels

@@ -147,6 +147,7 @@ Ext.define('Ext.chart.series.sprite.PieSlice', {
             labelCfg = me.labelCfg || (me.labelCfg = {}),
             label = me.getMarker('labels'),
             labelTpl = label.getTemplate(),
+            hideLessThan = labelTpl.getHideLessThan(),
             calloutLine = labelTpl.getCalloutLine(),
             labelBox, x, y, changes, params, calloutLineLength;
 
@@ -226,7 +227,7 @@ Ext.define('Ext.chart.series.sprite.PieSlice', {
 
         labelBox = me.getMarkerBBox('labels', attributeId, true);
         if (labelBox) {
-            if (attr.doCallout) {
+            if (attr.doCallout && ((endAngle - startAngle) * endRho > hideLessThan || attr.highlighted)) {
                 if (labelTpl.attr.display === 'outside') {
                     me.putMarker('labels', {
                         callout: 1

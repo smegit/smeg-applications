@@ -114,7 +114,7 @@ Ext.testHelper = {
         return events;
     },
 
-    pointerEvents: navigator.pointerEnabled ? {
+    pointerEvents: Ext.supports.PointerEvents ? {
         start: 'pointerdown',
         move: 'pointermove',
         end: 'pointerup',
@@ -126,7 +126,7 @@ Ext.testHelper = {
         // incorrect on IE11, so force it to use mouseleave here.
         // See: https://connect.microsoft.com/IE/feedback/details/851111/ev-relatedtarget-in-pointerleave-indicates-departure-element-not-destination-element
         leave: jasmine.browser.isIE11 ? 'mouseleave' : 'pointerleave'
-    } : navigator.msPointerEnabled ? {
+    } : Ext.supports.MSPointerEvents ? {
         start: 'MSPointerDown',
         move: 'MSPointerMove',
         end: 'MSPointerUp',
@@ -204,8 +204,8 @@ Ext.testHelper = {
             // If it's "over" or "out", we'll fall through to mouse events.
             // This is important for touch enabled platforms which have a mouse but
             // do not support W3C pointer events.
-            // If they insist on specifying touch events, override the fallback to mouse on WebKits which implement touch on desktop
-            if (jasmine.supportsTouch && (cfg.pointerType === 'touch' || ((eventType = me.touchEvents[type]) && !(Ext.isWebKit && Ext.os.is.Desktop)))) {
+            // If they insist on specifying touch events, override the fallback to mouse on desktop browsers that support touch events
+            if (jasmine.supportsTouch && (cfg.pointerType === 'touch' || ((eventType = me.touchEvents[type]) && !Ext.os.is.Desktop))) {
                 // If a translated mousemove happens with no prior mousedown
                 // we have to ignore it - that's no gesture on touch.
                 if (eventType === 'touchmove' && !Ext.Object.getKeys(me.activeTouches).length) {

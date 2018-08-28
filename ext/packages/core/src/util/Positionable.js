@@ -464,7 +464,7 @@ Ext.define('Ext.util.Positionable', {
      * An alternative constraint may be passed.
      * @param {String/HTMLElement/Ext.dom.Element/Ext.util.Region} [constrainTo] The Element or {@link Ext.util.Region Region}
      * into which this Component is to be constrained. Defaults to the element into which this Positionable
-     * was rendered, or this Component's {@link Ext.Component#constrainTo.
+     * was rendered, or this Component's {@link Ext.Component#constrainTo}.
      * @param {Number[]} [proposedPosition] A proposed `[X, Y]` position to test for validity
      * and to coerce into constraints instead of using this Positionable's current position.
      * @param {Boolean} [local] The proposedPosition is local *(relative to floatParent if a floating Component)*

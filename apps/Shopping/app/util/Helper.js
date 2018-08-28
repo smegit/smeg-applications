@@ -37,7 +37,6 @@ Ext.define('Shopping.util.Helper', {
         var me = this,
             appId = Ext.getUrlParam('app'),
             portal = parent.Portal, app;
-
         if (!Ext.isEmpty(portal) && !Ext.isEmpty(appId)) {
             var activeApps = portal.util.Helper.getAllApps();
             if (!Ext.isEmpty(activeApps)) {

@@ -166,7 +166,7 @@ Ext.define('Ext.util.Collection', {
          *
          * Individual filters can be specified as an `Ext.util.Filter` instance, a config
          * object for `Ext.util.Filter` or simply a function that will be wrapped in a
-         * instance with its {@Ext.util.Filter#filterFn filterFn} set.
+         * instance with its {@link Ext.util.Filter#filterFn filterFn} set.
          *
          * For fine grain control of the filters collection, call `getFilters` to return
          * the `Ext.util.Collection` instance that holds this collection's filters.
@@ -1098,8 +1098,8 @@ Ext.define('Ext.util.Collection', {
      * property value. This comparison can be further tuned with the `anyMatch` and
      * `caseSensitive` (optional) arguments.
      *
-     *    // Create a new Collection containing only the items where age == 24
-     *    var middleAged = people.createFiltered('age', 24);
+     *     // Create a new Collection containing only the items where age == 24
+     *     var middleAged = people.createFiltered('age', 24);
      *
      * Alternatively you can apply `filters` to this Collection by calling `setFilters`
      * or modifying the filter collection returned by `getFilters`.
@@ -1631,7 +1631,9 @@ Ext.define('Ext.util.Collection', {
 
         // We are owned, we cannot react, inform owning collection.
         if (source && !source.updating) {
+            me.sourceUpdating = true;
             source.itemChanged(item, modified, oldKey, meta);
+            me.sourceUpdating = false;
         }
 
         // Root Collection has been informed.
@@ -2428,6 +2430,11 @@ Ext.define('Ext.util.Collection', {
     onCollectionBeforeItemChange: function (source, details) {
         // Drop the next updatekey event
         this.onCollectionUpdateKey = null;
+        // If this flag is true it means we're inside itemchanged, so this will be fired
+        // shortly, don't fire it twice
+        if (!this.sourceUpdating) {
+            this.notify('beforeitemchange', [details]);
+        }
     },
 
     /**
@@ -2471,9 +2478,9 @@ Ext.define('Ext.util.Collection', {
         this.itemChanged(details.item, details.modified, details.oldKey, details.meta);
     },
 
-    // If our source collection informs us that a filtered out item has changed, we do not care
-    // We contain only the filtered in items of the source collection.
-    onCollectionFilteredItemChange: null,
+    onCollectionFilteredItemChange: function() {
+        delete this.onCollectionUpdateKey;
+    },
 
     /**
      * This method is called when the `source` collection refreshes. This is equivalent to
@@ -3294,18 +3301,18 @@ Ext.define('Ext.util.Collection', {
      * @param {String} [mode="replace"] Where to put new sorters in the collection. This
      * should be one the following values:
      *
-     * * `**replace**` : The new sorter(s) become the sole sorter set for this Sortable.
+     * - **`replace`** : The new sorter(s) become the sole sorter set for this Sortable.
      *   This is the most useful call mode to programmatically sort by multiple fields.
      *
-     * * `**prepend**` : The new sorters are inserted as the primary sorters. The sorter
+     * - **`prepend`** : The new sorters are inserted as the primary sorters. The sorter
      *   collection length must be controlled by the developer.
      *
-     * * `**multi**` : Similar to `**prepend**` the new sorters are inserted at the front
+     * - **`multi`** : Similar to **`prepend`** the new sorters are inserted at the front
      *   of the collection of sorters. Following the insertion, however, this mode trims
      *   the sorter collection to enforce the `multiSortLimit` config. This is useful for
      *   implementing intuitive "Sort by this" user interfaces.
      *
-     * * `**append**` : The new sorters are added at the end of the collection.
+     * - **`append`** : The new sorters are added at the end of the collection.
      * @return {Ext.util.Collection} This instance.
      */
     sort: function (property, direction, mode) {

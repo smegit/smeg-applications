@@ -205,7 +205,35 @@ describe("grid-general", function() {
                     }, undefined, false);
 
                     expect(grid.getScrollable()).not.toBe(true);
+                });
 
+                it("should keep scroll position when adding a scrolled grid to a container", function() {
+                    var scrollable;
+                    var win = Ext.create('Ext.window.Window',{
+                        width: 500,
+                        height: 500,
+                        title: 'Foo',
+                        layout: 'fit',
+                        x: 0,
+                        y: 0
+                    }).show();
+
+                    makeGrid(undefined, 100, {
+                        scrollable: true
+                    }, undefined, false);
+
+                    scrollable = grid.getScrollable();
+                    scrollable.scrollTo(null, 1000);
+
+                    waitsFor(function() {
+                        return scrollable.getPosition().y === 1000;
+                    });
+
+                    runs(function() {
+                        win.add(grid);
+                        expect(scrollable.getPosition().y).toBe(1000);
+                        win.destroy();
+                    });
                 });
                 
                 // EXTJS-14858
@@ -1055,16 +1083,48 @@ describe("grid-general", function() {
                 });
 
                 describe("with overflow", function() {
-                    beforeEach(function() {
+                    it("should size the columns to fit within the grid body, inside the scrollbar", function() {
                         makeGrid(null, data, {
                             forceFit: true,
                             width: 400,
                             height: 200
                         });
+                        expect(grid.headerCt.getTableWidth()).toBe(grid.body.getWidth() - grid.body.getBorderWidth('lr') - Ext.getScrollbarSize().width);
                     });
 
-                    it('should size the columns to fit within the grid body, inside the scrollbar', function() {
-                        expect(grid.headerCt.getTableWidth()).toBe(grid.body.getWidth() - grid.body.getBorderWidth('lr') - Ext.getScrollbarSize().width);
+                    it("should not change the column sizes after updateLayout when width is not specified", function() {
+                        var w1 = [],
+                            w2 = [],
+                            i;
+
+                        makeGrid([{
+                            dataIndex: 'field1',
+                            text: 'col1'
+                        },{
+                            dataIndex: 'field2',
+                            text: 'col2'
+                        },{
+                            dataIndex: 'field3',
+                            text: 'col3'
+                        }], 10, {
+                            plugins: 'viewport',
+                            forceFit: true,
+                            renderTo: null
+                        });
+
+                        colRef[0].autoSize();
+
+                        for (i = 0; i < colRef.length; i++) {
+                            w1.push(colRef[i].getWidth());
+                        }
+
+                        grid.updateLayout();
+
+                        for (i = 0; i < colRef.length; i++) {
+                            w2.push(colRef[i].getWidth());
+                        }
+
+                        expect(w1).toEqual(w2);
                     });
                 });
             });
@@ -1833,667 +1893,736 @@ describe("grid-general", function() {
                         o.createFn(widgetCfg, data, gridCfg);
                     }
 
-                    describe("column", function() {
-                        describe("default viewModel creation", function() {
-                            it("should not create a viewmodel by default", function() {
-                                create({
-                                    xtype: 'gridwidget'
-                                }, 1);
+                    describe("default viewModel creation", function() {
+                        it("should not create a viewmodel by default", function() {
+                            create({
+                                xtype: 'gridwidget'
+                            }, 1);
 
-                                var w = getWidget(0);
-                                expect(w.lookupViewModel()).toBeNull();
-                            });
-
-                            it("should create a viewmodel if the widget has a bind statement", function() {
-                                create({
-                                    xtype: 'gridwidget',
-                                    bind: '{record.id}'
-                                }, 1);
-
-                                var w = getWidget(0);
-
-                                expect(w.lookupViewModel().$className).toBe('Ext.app.ViewModel');
-                                notify();
-                                expect(w.getA()).toBe('rec0');
-                            });
-
-                            it("should create a viewmodel if a rowViewModel if specified", function() {
-                                create({
-                                    xtype: 'gridwidget'
-                                }, 1, {
-                                    rowViewModel: {}
-                                });
-
-                                var w = getWidget(0);
-                                expect(w.lookupViewModel().$className).toBe('Ext.app.ViewModel');
-                            });
-
-                            it("should use the viewModel type as a string", function() {
-                                create({
-                                    xtype: 'gridwidget'
-                                }, 1, {
-                                    rowViewModel: 'specgridrow'
-                                });
-
-                                var w = getWidget(0);
-                                expect(w.lookupViewModel().$className).toBe('spec.RowVM');
-                            });
-
-                            it("should use the viewModel type as an object", function() {
-                                create({
-                                    xtype: 'gridwidget'
-                                }, 1, {
-                                    rowViewModel: {
-                                        type: 'specgridrow'
-                                    }
-                                });
-
-                                var w = getWidget(0);
-                                expect(w.lookupViewModel().$className).toBe('spec.RowVM');
-                            });
+                            var w = getWidget(0);
+                            expect(w.getViewModel()).toBeNull();
                         });
 
-                        describe("inheriting viewmodels", function() {
-                            describe("viewmodel above grid", function() {
-                                var ct, vm;
+                        it("should create a viewmodel if the widget has a bind statement", function() {
+                            create({
+                                xtype: 'gridwidget',
+                                bind: '{record.id}'
+                            }, 1);
 
-                                beforeEach(function() {
-                                    vm = new Ext.app.ViewModel({
-                                        data: {
-                                            foo: 'xxx'
-                                        }
-                                    });
-                                });
+                            var w = getWidget(0);
 
-                                afterEach(function() {
-                                    vm = ct = Ext.destroy(ct);
-                                });
-
-                                describe("without a rowviewmodel", function() {
-                                    describe("without widget viewmodel", function() {
-                                        it("should hook up rows to the parent vm", function() {
-                                            create({
-                                                xtype: 'gridwidget',
-                                                items: {
-                                                    xtype: 'gridwidgetchild',
-                                                    bind: '{foo}'
-                                                }
-                                            }, 1, {
-                                                renderTo: null
-                                            });
-
-                                            ct = new Ext.container.Container({
-                                                viewModel: vm,
-                                                items: grid,
-                                                renderTo: Ext.getBody()
-                                            });
-
-                                            var w = getWidget(0);
-                                            notify();
-                                            expect(w.lookupViewModel()).toBe(vm);
-                                            expect(w.items.first().getZ()).toBe('xxx');
-                                        });
-                                    });
-
-                                    describe("with widget viewmodel", function() {
-                                        it("should hook up rows to the parent vm", function() {
-                                            create({
-                                                xtype: 'gridwidget',
-                                                items: {
-                                                    xtype: 'gridwidgetchild',
-                                                    bind: '{foo}{bar}'
-                                                },
-                                                viewModel: {
-                                                    type: 'specwidgetvm',
-                                                    data: {
-                                                        bar: 'yyy'
-                                                    }
-                                                }
-                                            }, 1, {
-                                                renderTo: null
-                                            });
-
-                                            ct = new Ext.container.Container({
-                                                viewModel: vm,
-                                                items: grid,
-                                                renderTo: Ext.getBody()
-                                            });
-
-                                            var w = getWidget(0),
-                                                wVM = w.lookupViewModel();
-
-                                            notify();
-                                            expect(wVM.$className).toBe('spec.WidgetVM');
-                                            expect(wVM.getParent()).toBe(vm);
-                                            expect(w.items.first().getZ()).toBe('xxxyyy');
-                                        });
-                                    });
-                                });
-
-                                describe("with a rowviewmodel", function() {
-                                    describe("without widget viewmodel", function() {
-                                        it("should hook up rows to the parent vm", function() {
-                                            create({
-                                                xtype: 'gridwidget',
-                                                bind: '{foo}{bar}',
-                                                items: {
-                                                    xtype: 'gridwidgetchild',
-                                                    bind: '{foo}{bar}'
-                                                }
-                                            }, 1, {
-                                                renderTo: null,
-                                                rowViewModel: {
-                                                    type: 'specgridrow',
-                                                    data: {
-                                                        bar: 'yyy'
-                                                    }
-                                                }
-                                            });
-
-                                            ct = new Ext.container.Container({
-                                                viewModel: vm,
-                                                items: grid,
-                                                renderTo: Ext.getBody()
-                                            });
-
-                                            var w = getWidget(0),
-                                                wVM = w.lookupViewModel();
-
-                                            notify();
-                                            expect(wVM.$className).toBe('spec.RowVM');
-                                            expect(wVM.getParent()).toBe(vm);
-                                            expect(w.getA()).toBe('xxxyyy');
-                                            expect(w.items.first().getZ()).toBe('xxxyyy');
-                                        });
-                                    });
-
-                                    describe("with widget viewmodel", function() {
-                                        it("should hook up rows to the parent vm", function() {
-                                            create({
-                                                xtype: 'gridwidget',
-                                                bind: '{foo}{bar}{baz}',
-                                                items: {
-                                                    xtype: 'gridwidgetchild',
-                                                    bind: '{foo}{bar}{baz}'
-                                                },
-                                                viewModel: {
-                                                    type: 'specwidgetvm',
-                                                    data: {
-                                                        baz: 'zzz'
-                                                    }
-                                                }
-                                            }, 1, {
-                                                renderTo: null,
-                                                rowViewModel: {
-                                                    type: 'specgridrow',
-                                                    data: {
-                                                        bar: 'yyy'
-                                                    }
-                                                }
-                                            });
-
-                                            ct = new Ext.container.Container({
-                                                viewModel: vm,
-                                                items: grid,
-                                                renderTo: Ext.getBody()
-                                            });
-
-                                            var w = getWidget(0),
-                                                wVM = w.lookupViewModel();
-
-                                            notify();
-                                            expect(wVM.$className).toBe('spec.WidgetVM');
-                                            expect(wVM.getParent().$className).toBe('spec.RowVM');
-                                            expect(wVM.getParent().getParent()).toBe(vm);
-                                            expect(w.getA()).toBe('xxxyyyzzz');
-                                            expect(w.items.first().getZ()).toBe('xxxyyyzzz');
-                                        });
-                                    });
-                                });
-                            });
-
-                            describe("viewmodel on grid", function() {
-                                var vm;
-
-                                beforeEach(function() {
-                                    vm = new Ext.app.ViewModel({
-                                        data: {
-                                            foo: 'xxx'
-                                        }
-                                    });
-                                });
-
-                                afterEach(function() {
-                                    vm = null;
-                                });
-
-                                describe("without a rowviewmodel", function() {
-                                    describe("without widget viewmodel", function() {
-                                        it("should hook up rows to the parent vm", function() {
-                                            create({
-                                                xtype: 'gridwidget',
-                                                items: {
-                                                    xtype: 'gridwidgetchild',
-                                                    bind: '{foo}'
-                                                }
-                                            }, 1, {
-                                                viewModel: vm
-                                            });
-
-                                            var w = getWidget(0);
-                                            notify();
-                                            expect(w.lookupViewModel()).toBe(vm);
-                                            expect(w.items.first().getZ()).toBe('xxx');
-                                        });
-                                    });
-
-                                    describe("with widget viewmodel", function() {
-                                        it("should hook up rows to the parent vm", function() {
-                                            create({
-                                                xtype: 'gridwidget',
-                                                items: {
-                                                    xtype: 'gridwidgetchild',
-                                                    bind: '{foo}{bar}'
-                                                },
-                                                viewModel: {
-                                                    type: 'specwidgetvm',
-                                                    data: {
-                                                        bar: 'yyy'
-                                                    }
-                                                }
-                                            }, 1, {
-                                                viewModel: vm
-                                            });
-
-                                            var w = getWidget(0),
-                                                wVM = w.lookupViewModel();
-
-                                            notify();
-                                            expect(wVM.$className).toBe('spec.WidgetVM');
-                                            expect(wVM.getParent()).toBe(vm);
-                                            expect(w.items.first().getZ()).toBe('xxxyyy');
-                                        });
-                                    });
-                                });
-
-                                describe("with a rowviewmodel", function() {
-                                    describe("without widget viewmodel", function() {
-                                        it("should hook up rows to the parent vm", function() {
-                                            create({
-                                                xtype: 'gridwidget',
-                                                bind: '{foo}{bar}',
-                                                items: {
-                                                    xtype: 'gridwidgetchild',
-                                                    bind: '{foo}{bar}'
-                                                }
-                                            }, 1, {
-                                                viewModel: vm,
-                                                rowViewModel: {
-                                                    type: 'specgridrow',
-                                                    data: {
-                                                        bar: 'yyy'
-                                                    }
-                                                }
-                                            });
-
-                                            var w = getWidget(0),
-                                                wVM = w.lookupViewModel();
-
-                                            notify();
-                                            expect(wVM.$className).toBe('spec.RowVM');
-                                            expect(wVM.getParent()).toBe(vm);
-                                            expect(w.getA()).toBe('xxxyyy');
-                                            expect(w.items.first().getZ()).toBe('xxxyyy');
-                                        });
-                                    });
-
-                                    describe("with widget viewmodel", function() {
-                                        it("should hook up rows to the parent vm", function() {
-                                            create({
-                                                xtype: 'gridwidget',
-                                                bind: '{foo}{bar}{baz}',
-                                                items: {
-                                                    xtype: 'gridwidgetchild',
-                                                    bind: '{foo}{bar}{baz}'
-                                                },
-                                                viewModel: {
-                                                    type: 'specwidgetvm',
-                                                    data: {
-                                                        baz: 'zzz'
-                                                    }
-                                                }
-                                            }, 1, {
-                                                viewModel: vm,
-                                                rowViewModel: {
-                                                    type: 'specgridrow',
-                                                    data: {
-                                                        bar: 'yyy'
-                                                    }
-                                                }
-                                            });
-
-                                            var w = getWidget(0),
-                                                wVM = w.lookupViewModel();
-
-                                            notify();
-                                            expect(wVM.$className).toBe('spec.WidgetVM');
-                                            expect(wVM.getParent().$className).toBe('spec.RowVM');
-                                            expect(wVM.getParent().getParent()).toBe(vm);
-                                            expect(w.getA()).toBe('xxxyyyzzz');
-                                            expect(w.items.first().getZ()).toBe('xxxyyyzzz');
-                                        });
-                                    });
-                                });
-                            });
-
-                            describe("no viewmodel on grid", function() {
-                                describe("without a rowviewmodel", function() {
-                                    describe("without widget viewmodel", function() {
-                                        it("should not throw an error", function() {
-                                            // We can't bind here, but it should still render
-                                            create({
-                                                xtype: 'gridwidget',
-                                                a: 1,
-                                                items: {
-                                                    xtype: 'gridwidgetchild'
-                                                }
-                                            }, 1);
-
-                                            var w = getWidget(0);
-
-                                            expect(w.getA()).toBe(1);
-                                        });
-                                    });
-
-                                    describe("with widget viewmodel", function() {
-                                        it("should hook up rows to the parent vm", function() {
-                                            create({
-                                                xtype: 'gridwidget',
-                                                items: {
-                                                    xtype: 'gridwidgetchild',
-                                                    bind: '{foo}'
-                                                },
-                                                viewModel: {
-                                                    type: 'specwidgetvm',
-                                                    data: {
-                                                        foo: 'xxx'
-                                                    }
-                                                }
-                                            }, 1);
-
-                                            var w = getWidget(0),
-                                                wVM = w.lookupViewModel();
-
-                                            notify();
-                                            expect(wVM.$className).toBe('spec.WidgetVM');
-                                            expect(w.items.first().getZ()).toBe('xxx');
-                                        });
-                                    });
-                                });
-
-                                describe("with a rowviewmodel", function() {
-                                    describe("without widget viewmodel", function() {
-                                        it("should hook up rows to the parent vm", function() {
-                                            create({
-                                                xtype: 'gridwidget',
-                                                bind: '{foo}',
-                                                items: {
-                                                    xtype: 'gridwidgetchild',
-                                                    bind: '{foo}'
-                                                }
-                                            }, 1, {
-                                                rowViewModel: {
-                                                    type: 'specgridrow',
-                                                    data: {
-                                                        foo: 'xxx'
-                                                    }
-                                                }
-                                            });
-
-                                            var w = getWidget(0),
-                                                wVM = w.lookupViewModel();
-
-                                            notify();
-                                            expect(wVM.$className).toBe('spec.RowVM');
-                                            expect(w.getA()).toBe('xxx');
-                                            expect(w.items.first().getZ()).toBe('xxx');
-                                        });
-                                    });
-
-                                    describe("with widget viewmodel", function() {
-                                        it("should hook up rows to the parent vm", function() {
-                                            create({
-                                                xtype: 'gridwidget',
-                                                bind: '{foo}{bar}',
-                                                items: {
-                                                    xtype: 'gridwidgetchild',
-                                                    bind: '{foo}{bar}'
-                                                },
-                                                viewModel: {
-                                                    type: 'specwidgetvm',
-                                                    data: {
-                                                        bar: 'yyy'
-                                                    }
-                                                }
-                                            }, 1, {
-                                                rowViewModel: {
-                                                    type: 'specgridrow',
-                                                    data: {
-                                                        foo: 'xxx'
-                                                    }
-                                                }
-                                            });
-
-                                            var w = getWidget(0),
-                                                wVM = w.lookupViewModel();
-
-                                            notify();
-                                            expect(wVM.$className).toBe('spec.WidgetVM');
-                                            expect(wVM.getParent().$className).toBe('spec.RowVM');
-                                            expect(w.getA()).toBe('xxxyyy');
-                                            expect(w.items.first().getZ()).toBe('xxxyyy');
-                                        });
-                                    });
-                                });
-                            });
+                            expect(w.lookupViewModel().$className).toBe('Ext.app.ViewModel');
+                            notify();
+                            expect(w.getA()).toBe('rec0');
                         });
 
-                        describe("data", function() {
-                            it("should put the record and recordIndex in the vm", function() {
-                                create({
-                                    xtype: 'gridwidget',
-                                    bind: '{record.id} - {recordIndex}'
-                                }, [{id: 101}, {id: 102}, {id: 103}, {id: 104}]);
-
-                                // Force widget creation in expander mode
-                                getWidget(0);
-                                getWidget(1);
-                                getWidget(2);
-                                getWidget(3);
-
-                                notify();
-
-                                expect(getWidget(0).getA()).toBe('101 - 0');
-                                expect(getWidget(1).getA()).toBe('102 - 1');
-                                expect(getWidget(2).getA()).toBe('103 - 2');
-                                expect(getWidget(3).getA()).toBe('104 - 3');
+                        it("should create a viewmodel if a rowViewModel if specified", function() {
+                            create({
+                                xtype: 'gridwidget'
+                            }, 1, {
+                                rowViewModel: {}
                             });
+
+                            var w = getWidget(0);
+                            expect(w.lookupViewModel().$className).toBe('Ext.app.ViewModel');
                         });
 
-                        describe("resolving listeners", function() {
+                        it("should use the viewModel type as a string", function() {
+                            create({
+                                xtype: 'gridwidget'
+                            }, 1, {
+                                rowViewModel: 'specgridrow'
+                            });
+
+                            var w = getWidget(0);
+                            expect(w.lookupViewModel().$className).toBe('spec.RowVM');
+                        });
+
+                        it("should use the viewModel type as an object", function() {
+                            create({
+                                xtype: 'gridwidget'
+                            }, 1, {
+                                rowViewModel: {
+                                    type: 'specgridrow'
+                                }
+                            });
+
+                            var w = getWidget(0);
+                            expect(w.lookupViewModel().$className).toBe('spec.RowVM');
+                        });
+                    });
+
+                    describe("inheriting viewmodels", function() {
+                        describe("viewmodel above grid", function() {
+                            var ct, vm;
+
                             beforeEach(function() {
-                                Ext.define('spec.GridController', {
-                                    extend: 'Ext.app.ViewController',
-                                    alias: 'controller.specgrid',
-
-                                    onFoo: function() {},
-                                    onBar: function() {}
+                                vm = new Ext.app.ViewModel({
+                                    data: {
+                                        foo: 'xxx'
+                                    }
                                 });
                             });
 
                             afterEach(function() {
-                                Ext.undefine('spec.GridController');
+                                vm = ct = Ext.destroy(ct);
                             });
 
-                            describe("controller above the grid", function() {
-                                var ct;
+                            describe("without a rowviewmodel", function() {
+                                describe("without widget viewmodel", function() {
+                                    it("should hook up rows to the parent vm", function() {
+                                        create({
+                                            xtype: 'gridwidget',
+                                            items: {
+                                                xtype: 'gridwidgetchild',
+                                                bind: '{foo}'
+                                            }
+                                        }, 1, {
+                                            renderTo: null
+                                        });
 
-                                afterEach(function() {
-                                    ct = Ext.destroy(ct);
+                                        ct = new Ext.container.Container({
+                                            viewModel: vm,
+                                            items: grid,
+                                            renderTo: Ext.getBody()
+                                        });
+
+                                        var w = getWidget(0);
+                                        notify();
+                                        expect(w.lookupViewModel()).toBe(vm);
+                                        expect(w.items.first().getZ()).toBe('xxx');
+                                    });
                                 });
 
-                                it("should resolve to the controller", function() {
-                                    create({
-                                        xtype: 'gridwidget',
-                                        listeners: {
-                                            widgetevent: 'onFoo'
-                                        },
-                                        items: {
-                                            xtype: 'gridwidgetchild',
-                                            listeners: {
-                                                childevent: 'onBar'
+                                describe("with widget viewmodel", function() {
+                                    it("should hook up rows to the parent vm", function() {
+                                        create({
+                                            xtype: 'gridwidget',
+                                            items: {
+                                                xtype: 'gridwidgetchild',
+                                                bind: '{foo}{bar}'
+                                            },
+                                            viewModel: {
+                                                type: 'specwidgetvm',
+                                                data: {
+                                                    bar: 'yyy'
+                                                }
                                             }
-                                        }
-                                    }, 1, {
-                                        renderTo: null
+                                        }, 1, {
+                                            renderTo: null
+                                        });
+
+                                        ct = new Ext.container.Container({
+                                            viewModel: vm,
+                                            items: grid,
+                                            renderTo: Ext.getBody()
+                                        });
+
+                                        var w = getWidget(0),
+                                            wVM = w.lookupViewModel();
+
+                                        notify();
+                                        expect(wVM.$className).toBe('spec.WidgetVM');
+                                        expect(wVM.getParent()).toBe(vm);
+                                        expect(w.items.first().getZ()).toBe('xxxyyy');
                                     });
-
-                                    var controller = new spec.GridController();
-                                    spyOn(controller, 'onFoo');
-                                    spyOn(controller, 'onBar');
-
-                                    ct = new Ext.container.Container({
-                                        controller: controller,
-                                        items: grid,
-                                        renderTo: Ext.getBody()
-                                    });
-
-                                    var w = getWidget(0);
-                                    w.fireIt();
-                                    expect(controller.onFoo.callCount).toBe(1);
-
-                                    w.items.first().fireIt();
-                                    expect(controller.onBar.callCount).toBe(1);
-                                });
-                            });
-
-                            describe("controller on the grid", function() {
-                                it("should resolve to the controller", function() {
-                                    var controller = new spec.GridController();
-                                    spyOn(controller, 'onFoo');
-                                    spyOn(controller, 'onBar');
-
-                                    create({
-                                        xtype: 'gridwidget',
-                                        listeners: {
-                                            widgetevent: 'onFoo'
-                                        },
-                                        items: {
-                                            xtype: 'gridwidgetchild',
-                                            listeners: {
-                                                childevent: 'onBar'
-                                            }
-                                        }
-                                    }, 1, {
-                                        controller: controller
-                                    });
-
-                                    var w = getWidget(0);
-                                    w.fireIt();
-                                    expect(controller.onFoo.callCount).toBe(1);
-
-                                    w.items.first().fireIt();
-                                    expect(controller.onBar.callCount).toBe(1);
                                 });
                             });
 
-                            describe("method on the widget view", function() {
-                                beforeEach(function() {
-                                    Ext.define('spec.SelfWidget', {
-                                        extend: 'Ext.Component',
-                                        xtype: 'selfwidget',
-
-                                        constructor: function(config) {
-                                            ++wCount;
-                                            this.callParent([config]);
-                                            if (!o.ignoreFirst || wCount > 1) {
-                                                widgets.push(this);
+                            describe("with a rowviewmodel", function() {
+                                describe("without widget viewmodel", function() {
+                                    it("should hook up rows to the parent vm", function() {
+                                        create({
+                                            xtype: 'gridwidget',
+                                            bind: '{foo}{bar}',
+                                            items: {
+                                                xtype: 'gridwidgetchild',
+                                                bind: '{foo}{bar}'
                                             }
-                                        },
+                                        }, 1, {
+                                            renderTo: null,
+                                            rowViewModel: {
+                                                type: 'specgridrow',
+                                                data: {
+                                                    bar: 'yyy'
+                                                }
+                                            }
+                                        });
 
-                                        fireIt: function() {
-                                            this.fireEvent('selfevent', this);
-                                        },
+                                        ct = new Ext.container.Container({
+                                            viewModel: vm,
+                                            items: grid,
+                                            renderTo: Ext.getBody()
+                                        });
 
-                                        onSelfEvent: function() {},
+                                        var w = getWidget(0),
+                                            wVM = w.lookupViewModel();
 
-                                        defaultListenerScope: true,
-                                        listeners: {
-                                            selfEvent: 'onSelfEvent'
-                                        }
+                                        notify();
+                                        expect(wVM.$className).toBe('spec.RowVM');
+                                        expect(wVM.getParent()).toBe(vm);
+                                        expect(w.getA()).toBe('xxxyyy');
+                                        expect(w.items.first().getZ()).toBe('xxxyyy');
                                     });
                                 });
 
-                                afterEach(function() {
-                                    Ext.undefine('spec.SelfWidget');
+                                describe("with widget viewmodel", function() {
+                                    it("should hook up rows to the parent vm", function() {
+                                        create({
+                                            xtype: 'gridwidget',
+                                            bind: '{foo}{bar}{baz}',
+                                            items: {
+                                                xtype: 'gridwidgetchild',
+                                                bind: '{foo}{bar}{baz}'
+                                            },
+                                            viewModel: {
+                                                type: 'specwidgetvm',
+                                                data: {
+                                                    baz: 'zzz'
+                                                }
+                                            }
+                                        }, 1, {
+                                            renderTo: null,
+                                            rowViewModel: {
+                                                type: 'specgridrow',
+                                                data: {
+                                                    bar: 'yyy'
+                                                }
+                                            }
+                                        });
+
+                                        ct = new Ext.container.Container({
+                                            viewModel: vm,
+                                            items: grid,
+                                            renderTo: Ext.getBody()
+                                        });
+
+                                        var w = getWidget(0),
+                                            wVM = w.lookupViewModel();
+
+                                        notify();
+                                        expect(wVM.$className).toBe('spec.WidgetVM');
+                                        expect(wVM.getParent().$className).toBe('spec.RowVM');
+                                        expect(wVM.getParent().getParent()).toBe(vm);
+                                        expect(w.getA()).toBe('xxxyyyzzz');
+                                        expect(w.items.first().getZ()).toBe('xxxyyyzzz');
+                                    });
                                 });
+                            });
+                        });
 
-                                it("should resolve to the widget method", function() {
-                                    create({
-                                        xtype: 'selfwidget'
-                                    }, 1);
+                        describe("viewmodel on grid", function() {
+                            var vm;
 
-                                    var w = getWidget(0);
-                                    spyOn(w, 'onSelfEvent');
-
-                                    w.fireIt();
-                                    expect(w.onSelfEvent.callCount).toBe(1);
+                            beforeEach(function() {
+                                vm = new Ext.app.ViewModel({
+                                    data: {
+                                        foo: 'xxx'
+                                    }
                                 });
                             });
 
-                            describe("method on the widget controller", function() {
-                                beforeEach(function() {
-                                    Ext.define('spec.ControllerWidget', {
-                                        extend: 'Ext.Component',
-                                        xtype: 'controllerwidget',
+                            afterEach(function() {
+                                vm = null;
+                            });
 
-                                        controller: 'specgrid',
-
-                                        constructor: function(config) {
-                                            ++wCount;
-                                            this.callParent([config]);
-                                            if (!o.ignoreFirst || wCount > 1) {
-                                                widgets.push(this);
+                            describe("without a rowviewmodel", function() {
+                                describe("without widget viewmodel", function() {
+                                    it("should hook up rows to the parent vm", function() {
+                                        create({
+                                            xtype: 'gridwidget',
+                                            items: {
+                                                xtype: 'gridwidgetchild',
+                                                bind: '{foo}'
                                             }
-                                        },
+                                        }, 1, {
+                                            viewModel: vm
+                                        });
 
-                                        fireIt: function() {
-                                            this.fireEvent('controllerevent', this);
-                                        },
-
-                                        listeners: {
-                                            controllerevent: 'onFoo'
-                                        }
+                                        var w = getWidget(0);
+                                        notify();
+                                        expect(w.lookupViewModel()).toBe(vm);
+                                        expect(w.items.first().getZ()).toBe('xxx');
                                     });
                                 });
 
-                                afterEach(function() {
-                                    Ext.undefine('spec.ControllerWidget');
+                                describe("with widget viewmodel", function() {
+                                    it("should hook up rows to the parent vm", function() {
+                                        create({
+                                            xtype: 'gridwidget',
+                                            items: {
+                                                xtype: 'gridwidgetchild',
+                                                bind: '{foo}{bar}'
+                                            },
+                                            viewModel: {
+                                                type: 'specwidgetvm',
+                                                data: {
+                                                    bar: 'yyy'
+                                                }
+                                            }
+                                        }, 1, {
+                                            viewModel: vm
+                                        });
+
+                                        var w = getWidget(0),
+                                            wVM = w.lookupViewModel();
+
+                                        notify();
+                                        expect(wVM.$className).toBe('spec.WidgetVM');
+                                        expect(wVM.getParent()).toBe(vm);
+                                        expect(w.items.first().getZ()).toBe('xxxyyy');
+                                    });
+                                });
+                            });
+
+                            describe("with a rowviewmodel", function() {
+                                describe("without widget viewmodel", function() {
+                                    it("should hook up rows to the parent vm", function() {
+                                        create({
+                                            xtype: 'gridwidget',
+                                            bind: '{foo}{bar}',
+                                            items: {
+                                                xtype: 'gridwidgetchild',
+                                                bind: '{foo}{bar}'
+                                            }
+                                        }, 1, {
+                                            viewModel: vm,
+                                            rowViewModel: {
+                                                type: 'specgridrow',
+                                                data: {
+                                                    bar: 'yyy'
+                                                }
+                                            }
+                                        });
+
+                                        var w = getWidget(0),
+                                            wVM = w.lookupViewModel();
+
+                                        notify();
+                                        expect(wVM.$className).toBe('spec.RowVM');
+                                        expect(wVM.getParent()).toBe(vm);
+                                        expect(w.getA()).toBe('xxxyyy');
+                                        expect(w.items.first().getZ()).toBe('xxxyyy');
+                                    });
                                 });
 
-                                it("should resolve to the controller method", function() {
-                                    create({
-                                        xtype: 'controllerwidget'
-                                    }, 1);
+                                describe("with widget viewmodel", function() {
+                                    it("should hook up rows to the parent vm", function() {
+                                        create({
+                                            xtype: 'gridwidget',
+                                            bind: '{foo}{bar}{baz}',
+                                            items: {
+                                                xtype: 'gridwidgetchild',
+                                                bind: '{foo}{bar}{baz}'
+                                            },
+                                            viewModel: {
+                                                type: 'specwidgetvm',
+                                                data: {
+                                                    baz: 'zzz'
+                                                }
+                                            }
+                                        }, 1, {
+                                            viewModel: vm,
+                                            rowViewModel: {
+                                                type: 'specgridrow',
+                                                data: {
+                                                    bar: 'yyy'
+                                                }
+                                            }
+                                        });
 
-                                    var w = getWidget(0),
-                                        controller = w.getController();
+                                        var w = getWidget(0),
+                                            wVM = w.lookupViewModel();
 
-                                    spyOn(controller, 'onFoo');
-
-                                    w.fireIt();
-                                    expect(controller.onFoo.callCount).toBe(1);
+                                        notify();
+                                        expect(wVM.$className).toBe('spec.WidgetVM');
+                                        expect(wVM.getParent().$className).toBe('spec.RowVM');
+                                        expect(wVM.getParent().getParent()).toBe(vm);
+                                        expect(w.getA()).toBe('xxxyyyzzz');
+                                        expect(w.items.first().getZ()).toBe('xxxyyyzzz');
+                                    });
                                 });
+                            });
+                        });
+
+                        describe("no viewmodel on grid", function() {
+                            describe("without a rowviewmodel", function() {
+                                describe("without widget viewmodel", function() {
+                                    it("should not throw an error", function() {
+                                        // We can't bind here, but it should still render
+                                        create({
+                                            xtype: 'gridwidget',
+                                            a: 1,
+                                            items: {
+                                                xtype: 'gridwidgetchild'
+                                            }
+                                        }, 1);
+
+                                        var w = getWidget(0);
+
+                                        expect(w.getA()).toBe(1);
+                                    });
+                                });
+
+                                describe("with widget viewmodel", function() {
+                                    beforeEach(function() {
+                                        create({
+                                            xtype: 'gridwidget',
+                                            items: {
+                                                xtype: 'gridwidgetchild',
+                                                bind: '{foo}'
+                                            },
+                                            viewModel: {
+                                                type: 'specwidgetvm',
+                                                data: {
+                                                    foo: 'xxx'
+                                                }
+                                            }
+                                        }, 5);
+                                    });
+
+                                    it("should hook up rows to the parent vm", function() {
+                                        var w = getWidget(0),
+                                            wVM = w.lookupViewModel();
+
+                                        notify();
+                                        expect(wVM.$className).toBe('spec.WidgetVM');
+                                        expect(w.items.first().getZ()).toBe('xxx');
+                                    });
+
+                                    it("should share a scheduler for all widgets", function() {
+                                        var scheduler = getWidget(0).getViewModel().getScheduler();
+
+                                        expect(getWidget(1).getViewModel().getScheduler()).toBe(scheduler);
+                                        expect(getWidget(2).getViewModel().getScheduler()).toBe(scheduler);
+                                        expect(getWidget(3).getViewModel().getScheduler()).toBe(scheduler);
+                                        expect(getWidget(4).getViewModel().getScheduler()).toBe(scheduler);
+                                    });
+                                });
+                            });
+
+                            describe("with a rowviewmodel", function() {
+                                describe("without widget viewmodel", function() {
+                                    beforeEach(function() {
+                                        create({
+                                            xtype: 'gridwidget',
+                                            bind: '{foo}',
+                                            items: {
+                                                xtype: 'gridwidgetchild',
+                                                bind: '{foo}'
+                                            }
+                                        }, 5, {
+                                            rowViewModel: {
+                                                type: 'specgridrow',
+                                                data: {
+                                                    foo: 'xxx'
+                                                }
+                                            }
+                                        });
+                                    });
+
+                                    it("should hook up rows to the parent vm", function() {
+                                        var w = getWidget(0),
+                                            wVM = w.lookupViewModel();
+
+                                        notify();
+                                        expect(wVM.$className).toBe('spec.RowVM');
+                                        expect(w.getA()).toBe('xxx');
+                                        expect(w.items.first().getZ()).toBe('xxx');
+                                    });
+
+                                    it("should share a scheduler for all widgets", function() {
+                                        var scheduler = getWidget(0).lookupViewModel().getScheduler();
+
+                                        expect(getWidget(1).lookupViewModel().getScheduler()).toBe(scheduler);
+                                        expect(getWidget(2).lookupViewModel().getScheduler()).toBe(scheduler);
+                                        expect(getWidget(3).lookupViewModel().getScheduler()).toBe(scheduler);
+                                        expect(getWidget(4).lookupViewModel().getScheduler()).toBe(scheduler);
+                                    });
+                                });
+
+                                describe("with widget viewmodel", function() {
+                                    beforeEach(function() {
+                                        create({
+                                            xtype: 'gridwidget',
+                                            bind: '{foo}{bar}',
+                                            items: {
+                                                xtype: 'gridwidgetchild',
+                                                bind: '{foo}{bar}'
+                                            },
+                                            viewModel: {
+                                                type: 'specwidgetvm',
+                                                data: {
+                                                    bar: 'yyy'
+                                                }
+                                            }
+                                        }, 5, {
+                                            rowViewModel: {
+                                                type: 'specgridrow',
+                                                data: {
+                                                    foo: 'xxx'
+                                                }
+                                            }
+                                        });
+                                    });
+
+                                    it("should hook up rows to the parent vm", function() {
+                                        var w = getWidget(0),
+                                            wVM = w.lookupViewModel();
+
+                                        notify();
+                                        expect(wVM.$className).toBe('spec.WidgetVM');
+                                        expect(wVM.getParent().$className).toBe('spec.RowVM');
+                                        expect(w.getA()).toBe('xxxyyy');
+                                        expect(w.items.first().getZ()).toBe('xxxyyy');
+                                    });
+
+                                    it("should share a scheduler for all widgets", function() {
+                                        var scheduler = getWidget(0).getViewModel().getScheduler();
+
+                                        expect(getWidget(1).getViewModel().getScheduler()).toBe(scheduler);
+                                        expect(getWidget(2).getViewModel().getScheduler()).toBe(scheduler);
+                                        expect(getWidget(3).getViewModel().getScheduler()).toBe(scheduler);
+                                        expect(getWidget(4).getViewModel().getScheduler()).toBe(scheduler);
+                                    });
+                                });
+                            });
+                        });
+                    });
+
+                    describe("data", function() {
+                        it("should put the record and recordIndex in the vm", function() {
+                            create({
+                                xtype: 'gridwidget',
+                                bind: '{record.id} - {recordIndex}'
+                            }, [{id: 101}, {id: 102}, {id: 103}, {id: 104}]);
+
+                            // Force widget creation in expander mode
+                            getWidget(0);
+                            getWidget(1);
+                            getWidget(2);
+                            getWidget(3);
+
+                            notify();
+
+                            expect(getWidget(0).getA()).toBe('101 - 0');
+                            expect(getWidget(1).getA()).toBe('102 - 1');
+                            expect(getWidget(2).getA()).toBe('103 - 2');
+                            expect(getWidget(3).getA()).toBe('104 - 3');
+                        });
+                    });
+
+                    describe("resolving listeners", function() {
+                        beforeEach(function() {
+                            Ext.define('spec.GridController', {
+                                extend: 'Ext.app.ViewController',
+                                alias: 'controller.specgrid',
+
+                                onFoo: function() {},
+                                onBar: function() {}
+                            });
+                        });
+
+                        afterEach(function() {
+                            Ext.undefine('spec.GridController');
+                        });
+
+                        describe("controller above the grid", function() {
+                            var ct;
+
+                            afterEach(function() {
+                                ct = Ext.destroy(ct);
+                            });
+
+                            it("should resolve to the controller", function() {
+                                create({
+                                    xtype: 'gridwidget',
+                                    listeners: {
+                                        widgetevent: 'onFoo'
+                                    },
+                                    items: {
+                                        xtype: 'gridwidgetchild',
+                                        listeners: {
+                                            childevent: 'onBar'
+                                        }
+                                    }
+                                }, 1, {
+                                    renderTo: null
+                                });
+
+                                var controller = new spec.GridController();
+                                spyOn(controller, 'onFoo');
+                                spyOn(controller, 'onBar');
+
+                                ct = new Ext.container.Container({
+                                    controller: controller,
+                                    items: grid,
+                                    renderTo: Ext.getBody()
+                                });
+
+                                var w = getWidget(0);
+                                w.fireIt();
+                                expect(controller.onFoo.callCount).toBe(1);
+
+                                w.items.first().fireIt();
+                                expect(controller.onBar.callCount).toBe(1);
+                            });
+                        });
+
+                        describe("controller on the grid", function() {
+                            it("should resolve to the controller", function() {
+                                var controller = new spec.GridController();
+                                spyOn(controller, 'onFoo');
+                                spyOn(controller, 'onBar');
+
+                                create({
+                                    xtype: 'gridwidget',
+                                    listeners: {
+                                        widgetevent: 'onFoo'
+                                    },
+                                    items: {
+                                        xtype: 'gridwidgetchild',
+                                        listeners: {
+                                            childevent: 'onBar'
+                                        }
+                                    }
+                                }, 1, {
+                                    controller: controller
+                                });
+
+                                var w = getWidget(0);
+                                w.fireIt();
+                                expect(controller.onFoo.callCount).toBe(1);
+
+                                w.items.first().fireIt();
+                                expect(controller.onBar.callCount).toBe(1);
+                            });
+                        });
+
+                        describe("method on the widget view", function() {
+                            beforeEach(function() {
+                                Ext.define('spec.SelfWidget', {
+                                    extend: 'Ext.Component',
+                                    xtype: 'selfwidget',
+
+                                    constructor: function(config) {
+                                        ++wCount;
+                                        this.callParent([config]);
+                                        if (!o.ignoreFirst || wCount > 1) {
+                                            widgets.push(this);
+                                        }
+                                    },
+
+                                    fireIt: function() {
+                                        this.fireEvent('selfevent', this);
+                                    },
+
+                                    onSelfEvent: function() {},
+
+                                    defaultListenerScope: true,
+                                    listeners: {
+                                        selfEvent: 'onSelfEvent'
+                                    }
+                                });
+                            });
+
+                            afterEach(function() {
+                                Ext.undefine('spec.SelfWidget');
+                            });
+
+                            it("should resolve to the widget method", function() {
+                                create({
+                                    xtype: 'selfwidget'
+                                }, 1);
+
+                                var w = getWidget(0);
+                                spyOn(w, 'onSelfEvent');
+
+                                w.fireIt();
+                                expect(w.onSelfEvent.callCount).toBe(1);
+                            });
+                        });
+
+                        describe("method on the widget controller", function() {
+                            beforeEach(function() {
+                                Ext.define('spec.ControllerWidget', {
+                                    extend: 'Ext.Component',
+                                    xtype: 'controllerwidget',
+
+                                    controller: 'specgrid',
+
+                                    constructor: function(config) {
+                                        ++wCount;
+                                        this.callParent([config]);
+                                        if (!o.ignoreFirst || wCount > 1) {
+                                            widgets.push(this);
+                                        }
+                                    },
+
+                                    fireIt: function() {
+                                        this.fireEvent('controllerevent', this);
+                                    },
+
+                                    listeners: {
+                                        controllerevent: 'onFoo'
+                                    }
+                                });
+                            });
+
+                            afterEach(function() {
+                                Ext.undefine('spec.ControllerWidget');
+                            });
+
+                            it("should resolve to the controller method", function() {
+                                create({
+                                    xtype: 'controllerwidget'
+                                }, 1);
+
+                                var w = getWidget(0),
+                                    controller = w.getController();
+
+                                spyOn(controller, 'onFoo');
+
+                                w.fireIt();
+                                expect(controller.onFoo.callCount).toBe(1);
+                            });
+                        });
+                    });
+
+                    describe("bindings", function() {
+                        describe("hidden", function() {
+                            beforeEach(function() {
+                                create({
+                                    xtype: 'gridwidget',
+                                    bind: {
+                                        hidden: '{record.field1}'
+                                    }
+                                }, [{
+                                    field1: false
+                                }, {
+                                    field1: true
+                                }]);
+                                getWidget(0);
+                                getWidget(1);
+                                notify();
+                            });
+
+                            it("should bind to the hidden state", function() {
+                                expect(getWidget(0).isVisible()).toBe(true);
+                                expect(getWidget(1).isVisible()).toBe(false);
+                            });
+
+                            it("should be able to bind to hidden state after reloading data", function() {
+                                store.loadData([{
+                                    field1: true
+                                }, {
+                                    field1: false
+                                }]);
+                                getWidget(0);
+                                getWidget(1);
+                                notify();
+                                expect(getWidget(0).isVisible()).toBe(false);
+                                expect(getWidget(1).isVisible()).toBe(true);
                             });
                         });
                     });
@@ -2564,6 +2693,23 @@ describe("grid-general", function() {
                             expectNodeLength(0);
                             expect(storeChangeSpy.callCount).toBe(1);
                         });
+
+                        it("should not throw errors if the grid is hidden", function() {
+                            var p = new Ext.panel.Panel({
+                                renderTo: Ext.getBody(),
+                                collapsed: true,
+                                items: {
+                                    xtype: 'gridpanel',
+                                    enableLocking: true
+                                }
+                            });
+
+                            expect(function() {
+                                p.items.first().reconfigure(null, [{ dataIndex: 'name' }]);
+                            }).not.toThrow();
+
+                            p.destroy();
+                        });
                     });
                 });
 
@@ -2581,6 +2727,31 @@ describe("grid-general", function() {
                         grid.reconfigure(makeStore(makeData(50, columns)));
 
                         expect(grid.getView().getScrollable().position.y).toBe(0);
+                    });
+
+                    it("should reconfigure the scroller if needed", function() {
+                        var columnsA = [{
+                            width: 100,
+                            dataIndex: 'field1'
+                        }],
+                        columnsB = [{
+                            width: 300,
+                            dataIndex: 'field1'
+                        },{
+                            width: 300,
+                            dataIndex: 'field2'
+                        }];
+
+                        makeGrid(columnsA, 5, {
+                            width: 400,
+                            height: 400
+                        });
+                        
+                        expect(grid.getView().getScrollable().getX()).toBe(false);
+                        
+                        grid.reconfigure(null, columnsB);
+
+                        expect(grid.getView().getScrollable().getX()).toBe(true);
                     });
                 });
 
@@ -4940,7 +5111,7 @@ describe("grid-general", function() {
                                 i;
 
                             for (i = 0; i < len; ++i) {
-                                expect(columns[i].getWidth()).toBe(sizes[i]);
+                                expect(columns[i].getWidth()).toBeApprox(sizes[i], 1);
                             }
 
                         }
@@ -4982,6 +5153,20 @@ describe("grid-general", function() {
                                     }], 1);
                                     expectScroll(false, false);
                                     expectColumnWidths([100, 300]);
+                                });
+
+                                it("should respect the scrollable config as an object", function() {
+                                    makeGrid(null, 50, {
+                                        scrollable: {
+                                            y: true,
+                                            x: false
+                                        },
+                                        width: 300,
+                                        height: 400
+                                    });
+
+                                    expect(view.el.getStyle('overflow-x')).toBe('hidden');
+                                    expect(view.getScrollable().getX()).toBe(false);
                                 });
 
                                 it("should show a vertical scrollbar if y overflows", function() {
@@ -5171,7 +5356,7 @@ describe("grid-general", function() {
                                         flex: 1
                                     }], scrollRowSize);
                                     expectScroll(true, false);
-                                    expectColumnWidths(scrollbarsTakeSpace ? [200, 260, 260, 260]: [200, 267, 267, 266]);
+                                    expectColumnWidths(scrollbarsTakeSpace ? [200, 260, 260, 260] : [200, 266, 267, 267]);
                                 });
                             });
                         });
@@ -7759,7 +7944,7 @@ describe("grid-general", function() {
                             { id : 1, name : '1', name1: 'one' }
                         ]
                     }),
-                    columns		: [
+                    columns     : [
                         { text : 'Id', dataIndex : 'id', locked : true, width : 100 },
                         { text : 'Name', dataIndex : 'name', locked: true, width : 100 },
                         { text : 'Name1', dataIndex : 'name1', width : 100 }

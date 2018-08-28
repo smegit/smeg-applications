@@ -31,6 +31,13 @@ Ext.define('Ext.scroll.LockingScroller', {
         normalScroller.setLockingScroller(this);
     },
 
+    updateTouchAction: function(touchAction, oldTouchAction) {
+        this.callParent([touchAction, oldTouchAction]);
+
+        this.getLockedScroller().setTouchAction(touchAction);
+        this.getNormalScroller().setTouchAction(touchAction);
+    },
+
     getPosition: function() {
         var me = this,
             position = me.callParent();

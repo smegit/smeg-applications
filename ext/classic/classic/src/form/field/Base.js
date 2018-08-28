@@ -249,6 +249,8 @@ Ext.define('Ext.form.field.Base', {
 
     fieldBodyCls: Ext.baseCSSPrefix + 'field-body',
 
+    webkitBorderBoxBugCls: Ext.baseCSSPrefix + 'webkit-border-box-bug',
+
     maskOnDisable: false,
     
     // Instructs the layout to stretch the inputEl to 100% width when laying
@@ -356,7 +358,17 @@ Ext.define('Ext.form.field.Base', {
             id = me.id,
             type = me.inputType,
             inputId = me.getInputId(),
+            inputCls = me.inputCls || '',
             data, ariaAttr, inputElAttr;
+
+        if (Ext.supports.WebKitInputTableBoxModelBug) {
+            if (inputCls) {
+                inputCls += ' ';
+            }
+
+            // workaround for https://bugs.webkit.org/show_bug.cgi?id=137693
+            inputCls += me.webkitBorderBoxBugCls;
+        }
 
         data = Ext.apply({
             ui: me.ui,
@@ -371,7 +383,7 @@ Ext.define('Ext.form.field.Base', {
             fieldStyle: me.getFieldStyle(),
             childElCls: fieldData.childElCls,
             tabIdx: me.tabIndex,
-            inputCls: me.inputCls,
+            inputCls: inputCls,
             typeCls: Ext.baseCSSPrefix + 'form-' + (me.isTextInput ? 'text' : type),
             ariaEl: me.ariaEl
         }, me.subTplData);

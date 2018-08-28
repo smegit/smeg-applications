@@ -130,7 +130,7 @@ Ext.define('Ext.draw.Container', {
          * The `resizeHandler` function takes a single parameter -
          * the size object with `width` and `height` properties.
          *
-         * __Note:__ since resize events trigger {@link #renderFrame} calls automatically,
+         * **Note:** Since resize events trigger {@link #renderFrame} calls automatically,
          * return `false` from the resize function, if it also calls `renderFrame`,
          * to prevent double rendering.
          */
@@ -202,6 +202,15 @@ Ext.define('Ext.draw.Container', {
             panY: false,
             pinchZoom: false,
             doubleTapZoom: false
+        },
+
+        /**
+         * @private
+         * @cfg {Object} surfaceZIndexes A map of surface type name to zIndex.
+         * The z-indexes to use for the various types of surfaces.
+         */
+        surfaceZIndexes: {
+            main: 1
         }
     },
 
@@ -307,6 +316,13 @@ Ext.define('Ext.draw.Container', {
     resizeTimerId: 0,
 
     /**
+     * @private
+     * @property
+     * Last valid size.
+     */
+    size: null,
+
+    /**
      * Triggers the {@link #resizeHandler} with the size of the draw container
      * element as the parameter.
      */
@@ -329,19 +345,29 @@ Ext.define('Ext.draw.Container', {
             return;
         }
 
-        clearTimeout(me.resizeTimerId);
+        me.size = size;
+
+        me.stopResizeTimer();
 
         if (!instantly) {
             me.resizeTimerId = Ext.defer(me.handleResize, me.resizeDelay, me, [size, true]);
             return;
-        } else {
-            me.resizeTimerId = 0;
         }
 
         me.fireEvent('bodyresize', me, size);
         result = resizeHandler.call(me, size);
         if (result !== false) {
             me.renderFrame();
+        }
+    },
+
+    /**
+     * @private
+     */
+    stopResizeTimer: function () {
+        if (this.resizeTimerId) {
+            clearTimeout(this.resizeTimerId);
+            this.resizeTimerId = 0;
         }
     },
 
@@ -362,13 +388,21 @@ Ext.define('Ext.draw.Container', {
      * @param {String} [id="main"]
      * @return {Ext.draw.Surface}
      */
-    getSurface: function (id) {
+    getSurface: function (id, type) {
+        id = id || 'main';
+        type = type || id;
+
         var me = this,
             surfaces = me.getItems(),
             oldCount = surfaces.getCount(),
+            zIndexes = me.getSurfaceZIndexes(),
             surface;
 
         surface = me.createSurface(id);
+
+        if (type in zIndexes) {
+            surface.element.setStyle('zIndex', zIndexes[type]);
+        }
 
         if (surfaces.getCount() > oldCount) {
             // Immediately call resize handler of the draw container,
@@ -424,7 +458,7 @@ Ext.define('Ext.draw.Container', {
     getImage: function (format) {
         var size = this.innerElement.getSize(),
             surfaces = Array.prototype.slice.call(this.items.items),
-            zIndexes = this.surfaceZIndexes,
+            zIndexes = this.getSurfaceZIndexes(),
             image, imageElement,
             i, j, surface, zIndex;
 
@@ -472,10 +506,23 @@ Ext.define('Ext.draw.Container', {
      * platform and browser specific. For more consistent results on mobile devices use 
      * the {@link #preview} method instead. This method doesn't work in IE8.
      *
+     * Important: The default download mechanism sends image data to `http://svg.sencha.io`,
+     * which is a server operated by Sencha. Using this default setting will generate a
+     * warning due to potential security concerns (since user data may be exposed).
+     *
+     * You can deploy your own server by using the code from the **server** directory
+     * in the Charts package. The server is Node.js based and uses PhantomJS to
+     * generate images and PDFs from received data.
+     *
+     * The warning that the default download server is used can be suppressed
+     * by explicitly providing the `url` option.
+     *
      * @param {Object} [config] The following config options are supported:
      *
-     * @param {String} config.url The url to post the data to. Defaults to
-     * the {@link #defaultDownloadServerUrl} configuration on the class.
+     * @param {String} [config.url] The url to post the data to. Defaults to
+     * the {@link #defaultDownloadServerUrl} configuration on the class which
+     * will result in a warning as discussed above. Passing any value explicitly
+     * disables this warning.
      *
      * @param {String} config.format The format of image to export. See the
      * {@link #supportedFormats}. Defaults to 'png' on the Sencha IO server.
@@ -629,8 +676,7 @@ Ext.define('Ext.draw.Container', {
             Ext.draw.Animator.removeFrameCallback(callbackId);
         }
 
-        clearTimeout(me.resizeTimerId);
-        me.resizeTimerId = 0;
+        me.stopResizeTimer();
 
         me.callParent();
     }

@@ -42,11 +42,21 @@ Ext.define('Ext.data.ChainedStore', {
     
     remove: function() {
         var source = this.getSource();
+        //<debug>
+        if (!source) {
+            Ext.raise('Cannot remove records with no source.');
+        }
+        //</debug>
         return source.remove.apply(source, arguments);
     },
 
     removeAll: function() {
         var source = this.getSource();
+        //<debug>
+        if (!source) {
+            Ext.raise('Cannot remove records with no source.');
+        }
+        //</debug>
         return source.removeAll();
     },
     
@@ -65,7 +75,7 @@ Ext.define('Ext.data.ChainedStore', {
     },
 
     getSession: function() {
-        return this.getSource().getSession();
+        return this.getSourceValue('getSession', null);
     },
 
     applySource: function(source) {
@@ -110,7 +120,7 @@ Ext.define('Ext.data.ChainedStore', {
      * @return {Ext.data.Model} The model
      */
     getModel: function() {
-        return this.getSource().getModel();
+        return this.getSourceValue('getModel', null);
     },
 
     getProxy: function() {
@@ -234,15 +244,15 @@ Ext.define('Ext.data.ChainedStore', {
     },
     
     hasPendingLoad: function() {
-        return this.getSource().hasPendingLoad();
+        return this.getSourceValue('hasPendingLoad', false);
     },
     
     isLoaded: function() {
-        return this.getSource().isLoaded();
+        return this.getSourceValue('isLoaded', false);
     },
 
     isLoading: function() {
-        return this.getSource().isLoading();
+        return this.getSourceValue('isLoading', false);
     },
 
     doDestroy: function() {
@@ -257,6 +267,16 @@ Ext.define('Ext.data.ChainedStore', {
     },
 
     privates: {
+        getSourceValue: function(method, defaultValue) {
+            var source = this.getSource(),
+                val = defaultValue;
+
+            if (source) {
+                val = source[method]();
+            }
+            return val;
+        },
+
         isMoving: function () {
             var source = this.getSource();
             return source.isMoving ? source.isMoving.apply(source, arguments) : false;

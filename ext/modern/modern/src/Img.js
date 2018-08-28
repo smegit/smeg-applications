@@ -71,7 +71,7 @@ Ext.define('Ext.Img', {
         src: null,
 
         /**
-         * @cfg
+         * @cfg {String} baseCls
          * @inheritdoc
          */
         baseCls : Ext.baseCSSPrefix + 'img',

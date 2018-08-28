@@ -15,7 +15,7 @@ Ext.define('Shopping.view.cart.Release', {
     layout        : 'anchor',
     defaultFocus  : '[name=OACSTREF]',
     bind          : {
-        title : 'Checkout {ordKeyText}'
+        title : 'Process {ordKeyText}'
     },
     initComponent : function () {
         var me        = this,

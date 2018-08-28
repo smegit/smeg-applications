@@ -8,7 +8,7 @@
  *
  * Every component has a specific xtype, which is its Ext-specific type name, along with
  * methods for checking the xtype like {@link #getXType} and {@link #isXType}. See the
- * [Component Guide](../../../guides/core_concepts/components.html) for more information on xtypes
+ * [Component Guide](../guides/core_concepts/components.html) for more information on xtypes
  * and the Component hierarchy.
  *
  * ## Finding components
@@ -35,7 +35,7 @@
  * All user-developed visual widgets that are required to participate in automated
  * life cycle and size management should subclass Component.
  *
- * See the Creating new UI controls chapter in [Component Guide](../../../guides/core_concepts/components.html)
+ * See the Creating new UI controls chapter in [Component Guide](../guides/core_concepts/components.html)
  * for details on how and to either extend or augment Ext JS base classes to create custom Components.
  *
  * ## The Ext.Component class by itself
@@ -292,6 +292,7 @@ Ext.define('Ext.Component', {
          * The initial set of data to apply to the `{@link #tpl}` to update the content
          * area of the Component.
          *
+         * @accessor
          * @since 3.4.0
          */
         data: null,
@@ -419,6 +420,21 @@ Ext.define('Ext.Component', {
         scrollable: null
     },
 
+    /**
+     * @cfg {Object} renderConfig
+     * renderConfig wraps configs that do not get applied until after the component is
+     * rendered. Unlike normal config system properties, renderConfigs use a special
+     * setter method to store values on the instance instead of running the apply and
+     * update methods if it is called before the component is rendered. Then, after the
+     * component has been rendered, these values are processed by the normal apply and
+     * update method for the config.
+     *
+     * This means that calling the get method for the config prior to render will return
+     * whatever raw value has been set, while calling the getter after render will return
+     * the value after processing by the config's apply method. If this distinction needs
+     * to be made, it is the caller's responsibility to check for the rendered state and
+     * handle such intermediate config values.
+     */
     renderConfig: {
         /**
          * @cfg {Object}
@@ -652,7 +668,7 @@ Ext.define('Ext.Component', {
      * within which this component must be constrained when positioning or sizing.
      * example:
      *
-     *    constraintInsets: '10 10 10 10' // Constrain with 10px insets from parent
+     *     constraintInsets: '10 10 10 10' // Constrain with 10px insets from parent
      */
 
     /**
@@ -1996,8 +2012,14 @@ Ext.define('Ext.Component', {
 
     /**
      * @event beforedestroy
-     * Fires before the component is {@link #method-destroy}ed. Return `false` from an event handler to stop the
-     * {@link #method-destroy}.
+     * Fires before the component is destroyed.
+     *
+     * **Note:** This event should not be used to try to veto the destruction sequence by returning
+     *  `false`, even though this is often permitted in other "before" events. Doing so will have
+     * unpredictable side-effects and can result in partially destroyed objects. Instead look to
+     * other events like {@link Ext.panel.Panel#event!beforeclose beforeclose} that occur prior to
+     * the call to the {@link Ext.Base#method!destroy destroy} method.
+     *
      * @param {Ext.Component} this
      * @since 1.1.0
      */
@@ -2957,7 +2979,9 @@ Ext.define('Ext.Component', {
         me.destroyBindable();
 
         if (ownerCt && ownerCt.remove) {
-            ownerCt.remove(me, false);
+            ownerCt.remove(me, {
+                destroy: false
+            });
         }
 
         me.stopAnimation();
@@ -3524,6 +3548,7 @@ Ext.define('Ext.Component', {
             height = me.height,
             typeofWidth, typeofHeight,
             hasPixelWidth, hasPixelHeight,
+            hasWidthStyle, hasHeightStyle,
             heightModel, ownerLayout, policy, shrinkWrap, topLevel, widthModel,
 
             // floating === a floating Component, floated === a border layout's slideout view of a region.
@@ -3573,9 +3598,12 @@ Ext.define('Ext.Component', {
             if (topLevel && shrinkWrap) {
                 if (width && typeofWidth === 'string') {
                     shrinkWrap &= 2; // percentage, "30em" or whatever - not width shrinkWrap
+                    hasWidthStyle = true;
                 }
+                
                 if (height && typeofHeight === 'string') {
                     shrinkWrap &= 1; // percentage, "30em" or whatever - not height shrinkWrap
+                    hasHeightStyle = true;
                 }
             }
 
@@ -3590,7 +3618,7 @@ Ext.define('Ext.Component', {
             }
 
             if (!widthModel) {
-                if (!policy.setsWidth) {
+                if (!policy.setsWidth && !(me.frame && hasWidthStyle)) {
                     if (hasPixelWidth) {
                         widthModel = models.configured;
                     } else {
@@ -3609,7 +3637,7 @@ Ext.define('Ext.Component', {
             }
 
             if (!heightModel) {
-                if (!policy.setsHeight) {
+                if (!policy.setsHeight && !(me.frame && hasHeightStyle)) {
                     if (hasPixelHeight) {
                         heightModel = models.configured;
                     } else {
@@ -5790,6 +5818,23 @@ Ext.define('Ext.Component', {
         }
     },
 
+    /**
+     * Update the content area of a component.
+     * @param {String/Object} htmlOrData If this component has been configured with a
+     * template via the tpl config then it will use this argument as data to populate the
+     * template. If this component was not configured with a template, the components
+     * content area will be updated via Ext.Element update.
+     * @param {Boolean} [loadScripts=false] Only legitimate when using the `html`
+     * configuration. Causes embedded script tags to be executed. Inline source will be executed
+     * with this Component as the scope (`this` reference).
+     * @param {Function} [callback] Only legitimate when using the `html` configuration.
+     * Callback to execute when scripts have finished loading.
+     * @param {Object} [scriptScope=`this`] The scope (`this` reference) in which to
+     * execute *inline* script elements content. Scripts with a `src` attribute cannot
+     * be executed with this scope.
+     *
+     * @since 3.4.0
+     */
     setHtml: function (html, loadScripts, scriptScope) {
         this.update(html, loadScripts, null, scriptScope);
     },
@@ -5835,7 +5880,7 @@ Ext.define('Ext.Component', {
             lastBox.invalid = true;
         }
 
-        if (!me.rendered || me.layoutSuspendCount || me.suspendLayout) {
+        if (!me.rendered || me.isDetached || me.layoutSuspendCount || me.suspendLayout) {
             return;
         }
 
@@ -6079,13 +6124,14 @@ Ext.define('Ext.Component', {
         },
 
         detachFromBody: function() {
-            // Currently this is called by column.Widget to store components
-            // in the pool when they are not needed in the grid.
-            //
             // Also see reattachToBody
-            Ext.getDetachedBody().appendChild(this.el, true);
-            Ext.Component.cancelLayout(this);
-            this.isDetached = true;
+            var me = this;
+
+            if (!me.isDetached) {
+                Ext.getDetachedBody().appendChild(me.el, true);
+                Ext.Component.cancelLayout(me);
+                me.isDetached = true;
+            }
         },
 
         doAddListener: function(ename, fn, scope, options, order, caller, manager) {

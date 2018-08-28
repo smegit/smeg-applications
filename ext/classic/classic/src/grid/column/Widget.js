@@ -8,13 +8,17 @@
  * 
  * There are two ways of setting values in a cell widget.
  * 
- * Ths simplest way is to use data binding. Each cell widget has a {@link Ext.app.ViewModel ViewModel} injected which inherits from any ViewModel
- * that the grid is using, and contains two extra properties:
+ * The simplest way is to use data binding. To use column widget data binding, the widget must either contain 
+ * a top-level bind statement, which will cause a {@link Ext.app.ViewModel ViewModel} to be automatically injected
+ * into the widget. This ViewModel will inherit data from any ViewModel that the grid is using, and it will also
+ * contain two extra properties:
  *
  * - `record` : {@link Ext.data.Model Model}<br>The record which backs the grid row.
  * - `recordIndex` : {@link Number}<br>The index in the dataset of the record which backs the grid row.
  *
- * The widget configuration may contain a {@link #cfg-bind} config which uses the ViewModel's data.
+ * For complex widgets, where the widget may be a container that does not directly use any data binding, but has items
+ * which do, the specification of a {@link Ext.panel.Table#rowViewModel rowViewModel} type or configuration 
+ * is required on the grid. This can simply be an empty object if grid widgets only require binding to the row record.
  * 
  * The deprecated way is to configure the column with a {@link #dataIndex}. The widget's
  * {@link Ext.Component#defaultBindProperty defaultBindProperty} will be set using the
@@ -66,6 +70,8 @@
  *             // This is the widget definition for each cell.
  *             // The Progress widget class's defaultBindProperty is 'value'
  *             // so its "value" setting is taken from the ViewModel's record "capacityUsed" field
+ *             // Note that a row ViewModel will automatically be injected due to the existence of 
+ *             // the bind property in the widget configuration.
  *             widget: {
  *                 xtype: 'progressbarwidget',
  *                 bind: '{record.capacityUsed}',
@@ -176,7 +182,7 @@ Ext.define('Ext.grid.column.Widget', {
     ignoreExport: true,
 
     /**
-     * @cfg
+     * @cfg {Boolean} sortable
      * @inheritdoc
      */
     sortable: false,
@@ -210,8 +216,8 @@ Ext.define('Ext.grid.column.Widget', {
      * This column's {@link #dataIndex} is used to update the widget/component's {@link Ext.Component#defaultBindProperty defaultBindProperty}.
      *
      * The widget will be decorated with 2 methods:
-     * `getWidgetRecord` - Returns the {@link Ext.data.Model record} the widget is associated with.
-     * `getWidgetColumn` - Returns the {@link Ext.grid.column.Widget column} the widget 
+     * {@link #method-getWidgetRecord} - Returns the {@link Ext.data.Model record} the widget is associated with.
+     * {@link #method-getWidgetColumn} - Returns the {@link Ext.grid.column.Widget column} the widget
      * was associated with.
      */
     
@@ -297,6 +303,20 @@ Ext.define('Ext.grid.column.Widget', {
         }
         me.isFixedSize = Ext.isNumber(widget.width);
     },
+
+    /**
+     * @method getWidgetRecord
+     * getWidgetRecord is a method that decorates every widget.
+     * Returns the {@link Ext.data.Model record} the widget is associated with.
+     * @return {Ext.data.Model}
+     */
+
+    /**
+     * @method getWidgetColumn
+     * getWidgetColumn is a method that decorates every widget.
+     * Returns the {@link Ext.grid.column.Widget column} the widget was associated with.
+     * @return {Ext.grid.column.Widget}
+     */
 
     processEvent : function(type, view, cell, recordIndex, cellIndex, e, record, row) {
         var target;
@@ -387,8 +407,15 @@ Ext.define('Ext.grid.column.Widget', {
         me.callParent(arguments);
 
         me.ownerGrid = me.up('tablepanel').ownerGrid;
-        view = me.getView();
 
+        // If the grid is lockable we should mark this column with variableRowHeight,
+        // as widgets can cause rows to be taller and this config will force them
+        // to be synced on every layout cycle.
+        if (me.ownerGrid.lockable) {
+            me.variableRowHeight = true;
+        }
+
+        view = me.getView();
         // If we are being added to a rendered HeaderContainer
         if (view) {
             me.setupViewListeners(view);

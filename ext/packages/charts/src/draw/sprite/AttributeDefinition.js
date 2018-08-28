@@ -66,7 +66,7 @@ Ext.define('Ext.draw.sprite.AttributeDefinition', {
          *         size: 'size'   // Use comma-separated values here if multiple updaters have to be called.
          *     }                  // Note that the order is _not_ guaranteed.
          *
-         * If any of the updaters to be called (triggered by the {@link Ext.draw.sprite.Sprite#setAttributes call)
+         * If any of the updaters to be called (triggered by the {@link Ext.draw.sprite.Sprite#setAttributes} call)
          * set attributes themselves and those attributes have triggers defined for them,
          * then their updaters will be called after all current updaters finish execution.
          *

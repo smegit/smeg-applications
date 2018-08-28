@@ -527,6 +527,8 @@ describe("Ext.ElementLoader", function(){
                     delete window.ElementLoaderTest;
                 } catch (e) {
                     window.ElementLoaderTest = undefined;
+                    
+                    addGlobal('ElementLoaderTest');
                 }
             });
             it("should process inline scripts", function(){

@@ -1,5 +1,31 @@
 describe('Ext.draw.sprite.Sprite', function () {
 
+    describe('surface', function () {
+        var surface;
+
+        it('should remove itself from the old surface', function () {
+            surface = new Ext.draw.Surface({
+                items: {
+                    type: 'rect',
+                    id: 'rect',
+                    x: 50,
+                    y: 50,
+                    width: 100,
+                    height: 100,
+                    fillStyle: 'orange'
+                }
+            });
+            var sprite = surface.get('rect');
+            expect(surface.getItems().length).toBe(1);
+            sprite.setSurface(null);
+            expect(surface.getItems().length).toBe(0);
+        });
+
+        afterEach(function () {
+            Ext.destroy(surface);
+        });
+    });
+
     describe('transformation matrix calculation', function () {
         describe('default centers of scaling and rotation', function () {
             it('should apply transformation in the following order: scale, rotate, translate', function () {

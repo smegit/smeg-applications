@@ -256,8 +256,8 @@ var Ext = Ext || {}; // jshint ignore:line
         frameStartTime: Ext.now(),
 
         /**
-         * This object is initialized prior to loading the framework (Ext JS or Sencha
-         * Touch) and contains settings and other information describing the application.
+         * This object is initialized prior to loading the framework
+         * and contains settings and other information describing the application.
          *
          * For applications built using Sencha Cmd, this is produced from the `"app.json"`
          * file with information extracted from all of the required packages' `"package.json"`
@@ -266,20 +266,7 @@ var Ext = Ext || {}; // jshint ignore:line
          * requested as `"foo.json"` and the object in that JSON file will parsed and set
          * as this object.
          *
-         * @cfg {String/Object} manifest
-         *
-         * @cfg {String/Object} manifest.compatibility An object keyed by package name with
-         * the value being to desired compatibility level as a version number. If this is
-         * just a string, this version is assumed to apply to the framework ('ext' or
-         * 'touch'). Setting this value to less than 5 for 'ext' will enable the compatibility
-         * layer to assist in the application upgrade process. For details on the upgrade
-         * process, see the (Upgrade Guide)[#/guides/upgrade_50].
-         *
-         * @cfg {Object} manifest.debug An object configuring the debugging characteristics
-         * of the framework. See `Ext.debugConfig` which is set to this value.
-         *
-         * @cfg {Object} manifest.packages An object keyed by package name with the value
-         * being a subset of the package's `"package.json"` descriptor.
+         * @cfg {String/Ext.Manifest} manifest
          * @since 5.0.0
          */
         manifest: manifest,
@@ -826,6 +813,7 @@ var Ext = Ext || {}; // jshint ignore:line
          * given `className`.
          * @param {String} className The name of the class.
          * @return {Boolean} `true` if debug is enabled for the specified class.
+         * @method
          */
         isDebugEnabled:
             //<debug>

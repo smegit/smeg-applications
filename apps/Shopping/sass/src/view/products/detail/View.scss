@@ -5,33 +5,74 @@
   font-family: Helvetica, Arial, Geneva, sans-serif;
   color: #333;
   .prd-detail-header {
+
+    //border: 1px solid;
     width:100%;
     display: block;
     padding-top: 10px;
     padding-bottom: 10px;
     position: relative;
-    height:54px;
+    //height:54px;
+    height: 100px;
     .prd-price-wrpr {
-      display: inline-block;
+      //display: inline-block;
+      // Added
+      //border: 1px solid;
+
+      display: block;
+      margin-top: 27px;
+      top: 1px;
+      height: 200px;
+
       position: absolute;
       right: 8px;
       .prd-price-normal {
-        display: inline-block;
-        padding-right: 8px;
-        color: $black-3-color;
+        //display: inline-block;
+        // Added
+        //border: 1px solid;
+
+        display: block;
+        padding: 10px;
+        //padding-right: 8px;
+        //color: $black-3-color;
+        color: rgba(0, 0, 0, 0.7);
         text-decoration: line-through;
-        font-size: 19px;
-        font-weight: 400;
+        font-size: 15px;
+        font-weight: 500;
+        text-align: right;
+
+        
       }
       .prd-price-spc {
-        display: inline-block;
-        color: $smeg-red;
-        font-weight: bold;
-        font-size: 19px;
+        //display: inline-block;
+        //border: 1px solid;
+
+        display: block;
+        //color: $smeg-red;
+        color: black;
+        font-weight: 800;
+        font-size: 20px;
+        padding-right: 10px;
+      }
+
+      .prd-stock{
+        display: block;
+        //border: 1px solid;
+        position: absolute;
+        bottom: 1px;
+        //right: 8px;
+        padding-right: 10px;
+        font-size: 15px;
+        font-weight: 500;
+        right: 0px;
       }
       .prd-price {
-        display:inline-block;
-        margin-right: 10px;
+        //border: 1px solid;
+        display: block;
+        padding: 10px;
+
+        //display:inline-block;
+        //margin-right: 10px;
         text-align: right;
         font-size: 20px;
         font-weight: 800;
@@ -39,10 +80,16 @@
       }
     }
     .prd-general.prd-expire {
-      position: absolute;
-      right: 8px;
+      //border: 1px solid;
+      padding: 10px 10px 10px;
+      position: relative;
+      //right: 8px;
       display: block;
       font-style: italic;
+      font-size: 15px;
+      font-weight: 500;
+      //top: 81px;
+      float: right;
     }
 
     .prd-desc{
@@ -55,24 +102,69 @@
       font-size: 15px;
       font-weight: 500;
     }
+
+    // Added
+    .prd-model{
+      padding: 10px 15px;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    // Added
+    .prd-ean{
+      padding: 0px 15px;
+      font-size: 15px;
+      font-weight: 500;
+    }
+  }
+
+  .prd-stock-info{
+    //position: relative;
+    //bottom: 10px;
+    padding: 5px 15px;
+    float: left;
+    .stock-info-wrap{
+      //padding: 15px;
+      h3{
+        margin-bottom: 5px;
+        margin-top: 1px;
+        font-size: 16px;
+      }
+      table, th {
+        border-collapse: collapse;
+        border: 1px solid #ddd;
+        text-align: center;
+        padding: 0px 5px;
+      }
+      td{
+        border-right: 1px solid #ddd;
+        padding: 0px 5px;
+      }
+      tr:hover {background-color:#f5f5f5;}
+    }
   }
 
   .prd-detail-body{
-    line-height: 18px;
+    //line-height: 18px;
+    height: auto;
     h3 {
       font-size : 16px;
     }
     .prd-detail-body-left {
-      width: 50%;
-      height: 100%;
+      width: 60%;
+      height: auto;
       float: left;
       padding-left: 15px;
+      h3 {
+        margin: 5px 0px;
+      }
       ul {
         list-style-type: none;
         line-height: 20px;
         font-size: 14px;
         color: #333;
         padding: 0;
+        margin: 5px 0px;
         li {
           font-size: 13px;
           //white-space: nowrap;
@@ -87,26 +179,34 @@
         padding-top: 20px;
       }
     }
+
+    .prd-img-wrap{
+      //border: solid 1px #aaa;
+      border-radius: 2px;
+      padding-left: 10px;
+      img {
+        display: block;
+        //margin-right:auto;
+        //margin-left:auto;
+        width: 200px;
+        height: 200px;
+      }
+    }
     .prd-detail-body-right {
-      width: 50%;
-      height: 100%;
-      right: 0;
+      //position: relative;
+      //top: 205px;
+      width: 40%;
+      height: auto;
+      //right: 0;
       float: right;
       padding-left: 10px;
-      .prd-img-wrap{
-        border: solid 1px #aaa;
-        border-radius: 2px;
-        img {
-          display: block;
-          margin-right:auto;
-          margin-left:auto;
-          width: 200px;
-          height: 200px;
-        }
-      }
+      
 
       .prd-files-wrap{
         width:100%;
+        h3{
+          margin: 5px 0px;
+        }
 
         * {
           font-size: 16px;
@@ -120,6 +220,7 @@
         ul {
           list-style-type: none;
           padding: 0;
+          margin: 5px 0px;
           li a {
             font-family: Helvetica, Arial, Geneva, sans-serif;
             font-size: 13px;
@@ -128,6 +229,7 @@
         }
       }
     }
+    
 
     .prd-lg-img-wrap {
       img {

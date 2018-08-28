@@ -120,6 +120,48 @@ describe('Ext.grid.plugin.CellEditing', function () {
         });
     });
 
+    describe('Widget column', function() {
+        it('should work while editing', function() {
+            var plugin, columnManager, cell, widget;
+
+            makeGrid({
+                clicksToEdit: 1
+            }, {
+                columns: [
+                    {header: 'Name',  dataIndex: 'name', editor: 'textfield'},
+                    {
+                        xtype: 'widgetcolumn',
+                        widget: {
+                            xtype: 'button'
+                        }
+                    }
+                ]
+            });
+
+            columnManager = grid.getColumnManager();
+
+            record = grid.store.getAt(0);
+            column = columnManager.getColumns()[0];
+            cell = grid.view.getCell(record, column);
+            
+            view.getNavigationModel().setPosition(cell);
+            jasmine.fireMouseEvent(cell, 'click');
+
+            plugin = grid.findPlugin('cellediting');
+
+            waitsFor(function() {
+                return plugin.editing;
+            });
+
+            runs(function() {
+                widget = columnManager.getColumns()[1].getWidget(record);
+                expect(function(){
+                    jasmine.fireMouseEvent(widget.el, 'click');
+                }).not.toThrow();
+            });
+        });
+    });
+
     describe('finding the cell editing plugin in a locking grid', function() {
         beforeEach(function() {
             makeGrid({pluginId:'test-cell-editing'}, null, null, true);
@@ -1021,6 +1063,40 @@ describe('Ext.grid.plugin.CellEditing', function () {
                 return plugin.activeEditor && plugin.activeEditor.up('grid') === grid;
             });
         });
+    
+        it('should allow custom editors as a config', function () {
+            var spy;
+            
+            Ext.define('CustomEditor', {
+                extend : 'Ext.grid.CellEditor',
+                alias  : 'widget.customeditor',
+                
+                constructor: function (config) {return this.callParent([config])}
+            });
+            
+            spy = spyOn(CustomEditor.prototype, 'constructor').andCallThrough();
+            grid = Ext.destroy(grid);
+            
+            makeGrid(null, {
+                columns: [{
+                    header: 'Name',  dataIndex: 'name', editor: {
+                        xtype: 'customeditor',
+                        field: {
+                            xtype: 'textfield'
+                        }
+                    }
+                }]
+            });
+            startEdit();
+            
+            waitsForSpy(spy);
+            
+            Ext.undefine('CustomEditor');
+            
+            if (Ext.isIE8) {
+                addGlobal('CustomEditor');
+            }
+        });
 
         describe('positioning the editor', function () {
             it('should default to "l-l!"', function () {
@@ -1059,10 +1135,10 @@ describe('Ext.grid.plugin.CellEditing', function () {
             });
 
             describe('within a draggable container', function() {
-                var win;
+                var win, setPositionSpy;
 
                 afterEach(function() {
-                    win = Ext.destroy(win);
+                    win = grid = Ext.destroy(grid, win);
                 });
 
                 it('should not reposition when within a draggable container', function () {
@@ -1080,14 +1156,14 @@ describe('Ext.grid.plugin.CellEditing', function () {
 
                     startEdit();
 
-                    spyOn(plugin.activeEditor, 'setPosition');
+                    setPositionSpy = spyOn(plugin.activeEditor, 'setPosition');
 
                     jasmine.fireMouseEvent(win.el.dom, 'mousedown');
                     jasmine.fireMouseEvent(win.el.dom, 'mousemove', win.x, win.y);
                     jasmine.fireMouseEvent(win.el.dom, 'mousemove', (win.x - 100), (win.y - 100));
                     jasmine.fireMouseEvent(win.el.dom, 'mouseup', 400);
 
-                    expect(plugin.activeEditor.setPosition).not.toHaveBeenCalled();
+                    expect(setPositionSpy).not.toHaveBeenCalled();
                 });
             });
         });

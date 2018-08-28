@@ -111,6 +111,8 @@ describe("Ext.app.domain.Controller", function() {
                 delete window.ControllerDomainSpec;
             } catch (e) {
                 window.ControllerDomainSpec = undefined;
+                
+                addGlobal('ControllerDomainSpec');
             }
         });
         

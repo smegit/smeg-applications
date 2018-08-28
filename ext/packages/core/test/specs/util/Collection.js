@@ -2922,6 +2922,29 @@ describe("Ext.util.Collection", function() {
                 expect(sorters.events.endupdate.listeners.length).toBe(count);
             });
         });
+
+        describe("misc tests", function() {
+            it("should be able to move a group via change when used as a source", function() {
+                var child = new Ext.util.Collection({
+                    source: collection
+                });
+
+                groupBy();
+                child.setGrouper({
+                    property: 'group',
+                    direction: 'ASC'
+                });
+
+                item2.group = 'E';
+                collection.itemChanged(item2, ['group']);
+
+                var group = collection.getGroups().get('E');
+                expect(group.contains(item2));
+
+                group = child.getGroups().get('E');
+                expect(group.contains(item2));
+            });
+        });
     });
 
     describe("sorting", function() {
@@ -4591,6 +4614,23 @@ describe("Ext.util.Collection", function() {
         }); // sorted / filtered
         
         describe("with a source", function() {
+            it("should pass along the onCollectionBeforeItemChanged to the child", function() {
+                var source = new Ext.util.Collection(),
+                    spy = jasmine.createSpy(),
+                    args;
+
+                source.add(Don);
+                collection = new Ext.util.Collection({
+                    source: source
+                });
+                collection.onCollectionBeforeItemChange = spy;
+
+                source.itemChanged(Don, ['name']);
+                args = spy.mostRecentCall.args;
+                expect(args[0]).toBe(source);
+                expect(args[1].modified).toEqual(['name']);
+            });
+
             it("should pass along the onCollectionItemChanged to the child", function() {
                 var source = new Ext.util.Collection(),
                     spy = jasmine.createSpy(),
@@ -4721,6 +4761,32 @@ describe("Ext.util.Collection", function() {
             expect(mc.items[0].getId()).toBe(42);
             expect(mc.items[1].isItem).toBe(true);
             expect(mc.items[1].getId()).toBe('abc');
+        });
+    });
+
+    describe("misc", function() {
+        it("should have an updated key in a child collectionafter changing a filtered out item", function() {
+            var item1 = {id: 1},
+                item2 = {id: 2};
+
+            collection = new Ext.util.Collection({
+                filters: [{
+                    filterFn: function(item) {
+                        return item.id > 1;
+                    }
+                }]
+            });
+            collection.add([item1, item2]);
+
+            var child = new Ext.util.Collection({
+                source: collection
+            });
+
+            collection.itemChanged(item1);
+            item2.id = 100;
+            collection.updateKey(item2, 2);
+            expect(collection.get(100)).toBe(item2);
+            expect(child.get(100)).toBe(item2);
         });
     });
 });

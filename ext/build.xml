@@ -44,9 +44,6 @@
                          build/modern/**/*,
                          build/packages/**/*,
                          build/index.html,
-                         test/**/*,
-                         classic/classic/test/**/*,
-                         modern/modern/test/**/*,
                          release-notes-*,
                          build/temp/**/*,
                          build/examples/**/*,
@@ -54,8 +51,6 @@
                          ext-debug.js,
                          ext.js,
                          ext-modern*.js,
-                         classic/*/test/**/*,
-                         modern/*/test/**/*,
                          packages/*/test/**/*,
                          test_internal/**/*,
                          bootstrap*.js"/>

@@ -187,6 +187,10 @@ Ext.define('Ext.data.ProxyStore', {
          * @event beforeload
          * Fires before a request is made for a new data object. If the beforeload handler returns false the load
          * action will be canceled.
+         *
+         * **Note:** If you are using a buffered store, you should use
+         * {@link Ext.data.Store#beforeprefetch beforeprefetch}.
+         *
          * @param {Ext.data.Store} store This Store
          * @param {Ext.data.operation.Operation} operation The Ext.data.operation.Operation object that will be passed to the Proxy to
          * load the Store
@@ -196,6 +200,10 @@ Ext.define('Ext.data.ProxyStore', {
         /**
          * @event load
          * Fires whenever the store reads data from a remote data source.
+         *
+         * **Note:** If you are using a buffered store, you should use
+         * {@link Ext.data.Store#prefetch prefetch}.
+         *
          * @param {Ext.data.Store} this
          * @param {Ext.data.Model[]} records An array of records
          * @param {Boolean} successful True if the operation was successful.
@@ -882,12 +890,14 @@ Ext.define('Ext.data.ProxyStore', {
     },
 
     /**
-     * @private
-     * A model instance should call this method on the Store it has been {@link Ext.data.Model#join joined} to.
-     * @param {Ext.data.Model} record The model instance that was edited
+     * A model instance should call this method on the Store it has been
+     * {@link Ext.data.Model#join joined} to.
+     * @param {Ext.data.Model} record The model instance that was edited.
+     * @param {String[]} [modifiedFieldNames] (private)
      * @since 3.4.0
+     * @private
      */
-    afterCommit: function(record, modifiedFieldNames) {
+    afterCommit: function (record, modifiedFieldNames) {
         var me = this;
         if (!modifiedFieldNames) {
             modifiedFieldNames = null;

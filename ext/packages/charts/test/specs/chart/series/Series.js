@@ -24,48 +24,59 @@ describe('Ext.chart.series.Series', function() {
     });
 
     describe('label', function () {
-        var chart, seriesSprite, performLayoutSpy;
+        var chart;
 
         afterEach(function() {
             Ext.destroy(chart);
         });
 
-        it('should allow for dynamic updates of the "field" config', function () {
-            chart = Ext.create({
-                xtype: 'polar',
-                animation: false,
-                renderTo: document.body,
-                width: 400,
-                height: 400,
-                theme: 'green',
-                store: {
-                    fields: ['name', 'data1'],
-                    data: [{
-                        name: 'metric one',
-                        name2: 'metric 1',
-                        data1: 14
-                    }, {
-                        name: 'metric two',
-                        name2: 'metric 2',
-                        data1: 16
-                    }]
-                },
-                series: {
-                    id: 'mySeries',
-                    type: 'pie',
-                    highlight: true,
-                    angleField: 'data1',
-                    label: {
-                        field: 'name',
-                        display: 'rotate'
-                    },
-                    donut: 30
-                }
-            });
-            seriesSprite = chart.getSeries()[0].getSprites()[0];
-            performLayoutSpy = spyOn(chart, 'performLayout').andCallThrough();
+        // Safari 7 times out here in Modern for unknown reason in TeamCity only.
+        // Works fine locally (tested in Safari 7.0 (9537.71).
+        (Ext.isSafari7 ? xit : it)('should allow for dynamic updates of the "field" config', function () {
+            var layoutDone;
 
-            waitsForSpy(performLayoutSpy, "initial layout to finish");
+            runs(function () {
+                chart = Ext.create({
+                    xtype: 'polar',
+                    animation: false,
+                    renderTo: document.body,
+                    width: 400,
+                    height: 400,
+                    theme: 'green',
+                    store: {
+                        fields: ['name', 'data1'],
+                        data: [{
+                            name: 'metric one',
+                            name2: 'metric 1',
+                            data1: 14
+                        }, {
+                            name: 'metric two',
+                            name2: 'metric 2',
+                            data1: 16
+                        }]
+                    },
+                    series: {
+                        id: 'mySeries',
+                        type: 'pie',
+                        highlight: true,
+                        angleField: 'data1',
+                        label: {
+                            field: 'name',
+                            display: 'rotate'
+                        },
+                        donut: 30
+                    },
+                    listeners: {
+                        layout: function () {
+                            layoutDone = true;
+                        }
+                    }
+                });
+            });
+
+            waitsFor(function () {
+                return layoutDone;
+            });
 
             runs(function () {
                 var series = chart.get('mySeries'),
@@ -986,6 +997,108 @@ describe('Ext.chart.series.Series', function() {
                 });
             });
 
+        });
+
+    });
+
+    describe('coordinate', function () {
+        var chart;
+
+        afterEach(function () {
+            Ext.destroy(chart);
+        });
+
+        (Ext.isSafari7 ? xit : it)('should update series range as more related series get coordinated', function () {
+            // The issue with this was that when multiple series bound to the same
+            // axis were coordinated in the axis direction, the range of each series
+            // was set consecutively, without accounting for the fact that sebsequent
+            // series might affect that range.
+            // For example, if the first series has a range of data of [1, 10],
+            // and the second has a range of data of [8, 20]. The first will
+            // receive [1, 10] as its range (from the axis.getRange()) and the second
+            // [8, 20]. While both should receive [1, 20], as this is what the actual
+            // final range of the axis will be. But the final range is simly not known
+            // at the time when just the first series has been coordinated. So the range
+            // of all series bound to an axis should be updated every time we recalculate
+            // the axis' range.
+
+            chart = new Ext.chart.PolarChart({
+                animation: false,
+                renderTo: document.body,
+                width: 400,
+                height: 400,
+                store: {
+                    data: [
+                        {cat: 'A', inner: 1,  outer: 8},
+                        {cat: 'B', inner: 3,  outer: 10},
+                        {cat: 'C', inner: 10, outer: 20}
+                    ]
+                },
+                legend: {
+                    position: 'right'
+                },
+                insetPadding: '40 40 60 40',
+                interactions: ['rotate'],
+                axes: [{
+                    type: 'numeric',
+                    position: 'radial',
+                    grid: true,
+                    label: {
+                        display: true
+                    }
+                }, {
+                    type: 'category',
+                    position: 'angular',
+                    grid: true
+                }],
+                series: [
+                    {
+                        type: 'radar',
+                        angleField: 'cat',
+                        radiusField: 'inner'
+                    },
+                    {
+                        type: 'radar',
+                        angleField: 'cat',
+                        radiusField: 'outer'
+                    }
+                ]
+            });
+
+            var layoutDone;
+            var originalLayout = chart.performLayout;
+            chart.performLayout = function () {
+                originalLayout.call(this);
+                layoutDone = true;
+            };
+
+            // waitsForSpy fails here for whatever reason, so spying manually
+            waitsFor(function () {
+                return layoutDone;
+            });
+
+            runs(function () {
+                var series = chart.getSeries(),
+                    inner = series[0],
+                    outer = series[1],
+                    sprites, i, ln,
+                    expectedYRange = [1, 20],
+                    yRange;
+
+                sprites = inner.getSprites();
+                for (i = 0, ln = sprites.length; i < ln; i++) {
+                    yRange = sprites[i].attr.rangeY;
+                    expect(yRange[0]).toBe(expectedYRange[0]);
+                    expect(yRange[1]).toBe(expectedYRange[1]);
+                }
+
+                sprites = outer.getSprites();
+                for (i = 0, ln = sprites.length; i < ln; i++) {
+                    yRange = sprites[i].attr.rangeY;
+                    expect(yRange[0]).toBe(expectedYRange[0]);
+                    expect(yRange[1]).toBe(expectedYRange[1]);
+                }
+            });
         });
 
     });

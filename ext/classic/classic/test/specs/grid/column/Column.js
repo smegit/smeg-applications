@@ -359,6 +359,29 @@ describe("Ext.grid.column.Column", function() {
             expect(grid.query('[isGroupHeader]').length).toBe(2);
         });
 
+        it('should seal all grouped columns when the grid is configured with sealedColumns true', function() {
+            var grouped, i;
+
+            createGrid({}, {
+                sealedColumns: true,
+                columns: [
+                    { header: 'Name',  columns: {
+                        header: 'Foo', dataIndex: 'foo'
+                    }},
+                    { header: 'Email', columns: {
+                        header: 'Bar', dataIndex: 'bar'
+                    }},
+                    { header: 'Phone', dataIndex: 'phone', flex: 1, hidden: true }
+                ]
+            });
+
+            grouped = grid.query('[isGroupHeader]');
+
+            for (i = 0; i < grouped.length; i++) {
+                expect(grouped[i].isSealed()).toBe(true);
+            }
+        });
+
         it('should not have any isGroupHeader matches if there are no column groups', function () {
             createGrid({}, {
                 columns: [

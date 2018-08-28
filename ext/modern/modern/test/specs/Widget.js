@@ -290,6 +290,15 @@ describe("Modern Ext.Widget", function() {
             expect(w.getViewModel()).toBe(vm);
         });
 
+        it("should initialize if there are no binds/publishes", function() {
+            makeWidget({
+                viewModel: {
+                    type: 'test'
+                }
+            });
+            expect(called).toBe(true);
+        });
+
         describe("calling initViewController", function() {
             var TestController = Ext.define(null, {
                 extend: 'Ext.app.ViewController'

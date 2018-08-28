@@ -1,0 +1,20 @@
+{
+  "name": "smeg-applications",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab3.cnxcorp.com:root/smeg-applications.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.3",
+    "express-http-proxy": "^1.2.0"
+  }
+}

@@ -109,7 +109,7 @@ Ext.define('Ext.sparkline.Base', {
         baseCls: Ext.baseCSSPrefix + 'sparkline',
 
         /**
-         * @cfg {String} [lineColor=#157fcc] The hex value for line colors in graphs which display lines ({@link Ext.sparkline.Box Box}, {@link Ext.sparkline.Discrete Discrete and {@link Ext.sparkline.Line Line}).
+         * @cfg {String} [lineColor=#157fcc] The hex value for line colors in graphs which display lines ({@link Ext.sparkline.Box Box}, {@link Ext.sparkline.Discrete Discrete} and {@link Ext.sparkline.Line Line}).
          */
         lineColor: '#157fcc',
 

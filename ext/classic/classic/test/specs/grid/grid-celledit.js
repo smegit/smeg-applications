@@ -100,7 +100,7 @@ describe("grid-celledit", function(){
                 return store.getAt(index);
             }
             
-            function makeGrid(columns, pluginCfg, gridCfg) {               
+            function makeGrid(columns, pluginCfg, gridCfg) {
                 var data = [],
                     defaultCols = [],
                     i;
@@ -1323,7 +1323,7 @@ describe("grid-celledit", function(){
             });
             
             describe("locking", function(){
-                beforeEach(function(){
+                beforeEach(function() {
                     makeGrid([{
                         locked: true,
                         dataIndex: 'field1',
@@ -1384,6 +1384,52 @@ describe("grid-celledit", function(){
 
                     // The editing in the locked side should not have caused a scroll of the normal side
                     expect(grid.normalGrid.view.getScrollX()).toBe(normalViewScrollX);
+                });
+
+                it("should not scroll the partner view when start editing", function() {
+                    grid.destroy();
+
+                    makeGrid([{
+                        locked: true,
+                        dataIndex: 'field1',
+                        field: {
+                            xtype: 'textfield'
+                        }
+                    }, {
+                        locked: true,
+                        dataIndex: 'field2',
+                        field: {
+                            xtype: 'textfield'
+                        }
+                    }, {
+                        dataIndex: 'field3',
+                        field: {
+                            xtype: 'textfield'
+                        }
+                    }, {
+                        dataIndex: 'field4',
+                        field: {
+                            xtype: 'textfield'
+                        }
+                    }], {
+                        clicksToEdit: 2
+                    }, {
+                        width: 200,
+                        lockedGridConfig: {
+                            width: 100
+                        }
+                    });
+
+                    triggerCellMouseEvent('dblclick', 0, 1);
+
+                    waitsFor(function() {
+                        return grid.lockedGrid.view.getScrollX() === 100;
+                    });
+
+                    runs(function() {
+                        expect(grid.normalGrid.view.getScrollX()).toBe(0);
+                    });
+
                 });
 
                 it("should trigger an edit on the unlocked part", function(){
@@ -1580,6 +1626,36 @@ describe("grid-celledit", function(){
                     waitsFor(function() {
                         // The next editor must be the active one and must be focused
                         return plugin.getActiveColumn() === colRef[1] && Ext.Element.getActiveElement() === plugin.getActiveEditor().field.inputEl.dom;
+                    });
+                });
+
+                it("should not scroll the view horizontally when it's not necessary", function() {
+                    var spy = jasmine.createSpy();
+                    var cols = [
+                        { name: 'F1', dataIndex: 'field1', editor: 'textfield'},
+                        { name: 'F2', dataIndex: 'field2'},
+                        { name: 'F3', dataIndex: 'field3'},
+                        { name: 'F4', dataIndex: 'field4'},
+                        { name: 'F5', dataIndex: 'field5'},
+                        { name: 'F6', dataIndex: 'field6'},
+                    ];
+
+                    grid.reconfigure(null, cols);
+
+                    grid.setWidth(300);
+                    grid.getScrollable().on('scroll', spy);
+                    startEditing(0, 0);
+
+                    runs(function() {
+                        triggerEditorKey(TAB);
+                    });
+
+                    waitsFor(function() {
+                        return plugin.getActiveRecord() === getRec(1);
+                    });
+
+                    runs(function(){
+                        expect(spy.callCount).toBe(0);
                     });
                 });
                 

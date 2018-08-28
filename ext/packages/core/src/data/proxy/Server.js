@@ -161,7 +161,7 @@ Ext.define('Ext.data.proxy.Server', {
      * Fires when the server returns an exception. This event may also be listened
      * to in the event that a request has timed out or has been aborted.
      * @param {Ext.data.proxy.Proxy} this
-     * @param {Ext.data.Request} request The request that was sent
+     * @param {Ext.data.Response} response The response that was received
      * @param {Ext.data.operation.Operation} operation The operation that triggered the request
      */
 

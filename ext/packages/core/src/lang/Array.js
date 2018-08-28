@@ -559,7 +559,7 @@ Ext.Array = (function() {
          * @param {Number} fn.index Index of the item.
          * @param {Array} fn.array The whole array that's being iterated.
          * @param {Object} scope Callback function scope.
-         * @return {Boolean} `treu` if no false value is returned by the callback function.
+         * @return {Boolean} `true` if no false value is returned by the callback function.
          */
         every: ('every' in arrayPrototype) ? function(array, fn, scope) {
             //<debug>

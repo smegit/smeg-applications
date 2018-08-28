@@ -1,5 +1,5 @@
-Ext JS 6.2.1.167 - JavaScript Library
-Copyright (c) 2006-2016, Sencha Inc.
+Ext JS 6.2.2.479 - JavaScript Library
+Copyright (c) 2006-2018, Sencha Inc.
 All rights reserved.
 licensing@sencha.com
 

@@ -54,17 +54,17 @@ Ext.define('Ext.data.field.Date', {
      * To use a {@link Ext.data.JsonWriter JsonWriter} to write dates in a JSON packet in
      * the form `"\/Date(1357372800000)\/"` configure the field like this:
      *
-     *    {
-     *        type: 'date',
-     *        dateFormat: 'MS',     // To parse incoming dates from server correctly
-     *        serialize: null       // Avoid formatting or conversion by the Writer
-     *    }
+     *     {
+     *         type: 'date',
+     *         dateFormat: 'MS',     // To parse incoming dates from server correctly
+     *         serialize: null       // Avoid formatting or conversion by the Writer
+     *     }
      *
      * Then override the `Ext.JSON` date serialize function:
      *
-     *    Ext.JSON.encodeDate = function (d) {
-     *        return '"' + Ext.Date.format(d, 'MS') + '"';
-     *    };
+     *     Ext.JSON.encodeDate = function (d) {
+     *         return '"' + Ext.Date.format(d, 'MS') + '"';
+     *     };
      */
     dateWriteFormat: null,
 
@@ -72,7 +72,7 @@ Ext.define('Ext.data.field.Date', {
      * @cfg {Boolean} useStrict
      * @since 6.2.0
      * Used to manually set strict date parsing on a per-field basis. If no `useStrict`
-     * is specified, will use value of {@link Ext.Date.useStrict} to determine how to
+     * is specified, will use value of {@link Ext.Date#useStrict} to determine how to
      * process dates.
      */
 

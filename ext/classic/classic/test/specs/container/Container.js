@@ -17,15 +17,20 @@ describe("Ext.container.Container", function() {
     };
 
     beforeEach(function(){
-        realConsole = Ext.global.console;
-
-        // mock the console to avoid logging to the real console during the tests
-        Ext.global.console = fakeConsole;
+        if (Ext.global.console) {
+            realConsole = Ext.global.console;
+    
+            // mock the console to avoid logging to the real console during the tests
+            Ext.global.console = fakeConsole;
+        }
     });
 
     afterEach(function(){
         ct = Ext.destroy(ct);
-        Ext.global.console = realConsole;
+        
+        if (realConsole) {
+            Ext.global.console = realConsole;
+        }
     });
 
     function makeContainer(cfg) {
@@ -295,7 +300,7 @@ describe("Ext.container.Container", function() {
                 Ext.resumeLayouts(true);
                 expect(p.items.first().rendered).toBe(true);
             });
-        })
+        });
     });
 
     describe("onRender sequence", function() {
@@ -1251,6 +1256,24 @@ describe("Ext.container.Container", function() {
             c.destroy();
             a = b = c = null;
 
+        });
+
+        describe("and reAttaching later", function() {
+            it("should clear the isDetached flag", function() {
+                makeContainer([a]);
+                ct.render(document.body);
+
+                ct.remove(a,{
+                    destroy: false,
+                    detach: true
+                });
+
+                expect(a.isDetached).toBe(true);
+
+                ct.add(a);
+
+                expect(a.isDetached).toBe(false);
+            });
         });
 
         describe("Removing during a layout", function() {
@@ -2318,7 +2341,7 @@ describe("Ext.container.Container", function() {
                 it("should only disable matching deep children", function() {
                     disableFn = function() {
                         return this.query('#a1,#a3,#b2');
-                    }
+                    };
                     makeDisableCt({
                         disabled: true,
                         items: [{
@@ -4584,8 +4607,7 @@ describe("Ext.container.Container", function() {
                                     reference: 'a'
                                 }
                             }
-                        });    
-                        var c = ct.lookupReference('parent.a');
+                        });
                         var removed = ct.remove(0);
                         expect(ct.lookupReference('parent.a')).toBeNull();
                         removed.destroy();
@@ -4603,7 +4625,6 @@ describe("Ext.container.Container", function() {
                                 }
                             }
                         });    
-                        var c = ct.lookupReference('parent.a');
                         var removed = ct.remove(0, false);
                         expect(ct.lookupReference('parent.a')).toBeNull();
                         removed.destroy();
@@ -4772,16 +4793,14 @@ describe("Ext.container.Container", function() {
     });
     
     describe("view controllers", function() {
-        var Controller;
         beforeEach(function() {
-            Controller = Ext.define('spec.TestController', {
+            Ext.define('spec.TestController', {
                 extend: 'Ext.app.ViewController',
                 alias: 'controller.test'
             });
         });
         
         afterEach(function() {
-            Controller = null;
             Ext.undefine('spec.TestController');
             Ext.Factory.controller.instance.clearCache();
         });

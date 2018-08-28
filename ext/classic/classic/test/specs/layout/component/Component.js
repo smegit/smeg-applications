@@ -72,4 +72,45 @@ describe("Ext.layout.component.Component", function() {
             expect(child.getHeight()).toBe(150);
         });
     });
+    
+    describe("framed windows with percentage dimensions", function() {
+        function makeWindow(cfg) {
+            cfg = Ext.apply({
+                autoShow: true,
+                header: false
+            }, cfg);
+            
+            c = new Ext.window.Window(cfg);
+        }
+        
+        it("should accept percentage width and height", function() {
+            makeWindow({
+                width: "50%",
+                height: "50%"
+            });
+            
+            expect(c.getWidth()).toBe(Ext.Element.getViewportWidth() / 2);
+            expect(c.getHeight()).toBe(Ext.Element.getViewportHeight() / 2);
+        });
+        
+        it("should accept percentage width and configured height", function() {
+            makeWindow({
+                width: "50%",
+                height: 200
+            });
+            
+            expect(c.getWidth()).toBe(Ext.Element.getViewportWidth() / 2);
+            expect(c.getHeight()).toBe(200);
+        });
+        
+        it("should accept percentage height and configured width", function() {
+            makeWindow({
+                width: 200,
+                height: "50%"
+            });
+            
+            expect(c.getWidth()).toBe(200);
+            expect(c.getHeight()).toBe(Ext.Element.getViewportHeight() / 2);
+        });
+    });
 });

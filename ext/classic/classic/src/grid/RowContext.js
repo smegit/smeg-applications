@@ -66,7 +66,6 @@ Ext.define('Ext.grid.RowContext', {
                 focusEl.blur();
             }
             widget.detachFromBody();
-            widget.hidden = true;
         }
     },
 
@@ -88,7 +87,7 @@ Ext.define('Ext.grid.RowContext', {
             }
 
             me.viewModel = rowVM = Ext.Factory.viewModel(Ext.merge({
-                parent: ownerGrid.lookupViewModel(),
+                parent: ownerGrid.getRowContextViewModelParent(),
                 data: {
                     record: me.record,
                     recordIndex: me.recordIndex
@@ -100,7 +99,11 @@ Ext.define('Ext.grid.RowContext', {
             result = widgets[ownerId] = Ext.widget(Ext.apply({
                 ownerCmp: view,
                 _rowContext: me,
-                $vmParent: rowVM || ownerGrid.lookupViewModel(),
+                // This will spin up a VM on the grid if we don't have one that
+                // will be shared across all instances. If we don't have a rowVM
+                // or a viewmodel on the created object, we don't  need it, but
+                // we can't really tell until we create an instance.
+                $vmParent: rowVM || ownerGrid.getRowContextViewModelParent(),
                 initInheritedState: me.initInheritedStateHook,
                 lookupViewModel: me.lookupViewModelHook
             }, widgetCfg));
@@ -113,8 +116,6 @@ Ext.define('Ext.grid.RowContext', {
             if (result.isWidget) {
                 result.initBindable();
             }
-        } else {
-            result.hidden = false;
         }
 
         return result;
@@ -132,8 +133,7 @@ Ext.define('Ext.grid.RowContext', {
     },
 
     handleWidgetViewChange: function(view, ownerId) {
-        var widgets = this.widgets,
-            widget = this.widgets[ownerId];
+        var widget = this.widgets[ownerId];
 
         if (widget) {
             // In this particular case poking the ownerCmp doesn't really have any significance here

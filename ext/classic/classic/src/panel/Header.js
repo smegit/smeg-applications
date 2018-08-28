@@ -73,8 +73,8 @@ Ext.define('Ext.panel.Header', {
          * SDK.  For more information see:
          * 
          *  - [Font Awesome icons](http://fortawesome.github.io/Font-Awesome/cheatsheet/)
-         *  - [Pictos icons](http://docs.sencha.com/extjs/6.0/core_concepts/font_ext.html)
-         *  - [Theming Guide](http://docs.sencha.com/extjs/6.0/core_concepts/theming.html)
+         *  - [Pictos icons](../guides/core_concepts/font_ext.html)
+         *  - [Theming Guide](../guides/core_concepts/theming.html)
          */
         glyph: null,
 
@@ -119,8 +119,8 @@ Ext.define('Ext.panel.Header', {
          * SDK.  For more information see:
          * 
          *  - [Font Awesome icons](http://fortawesome.github.io/Font-Awesome/cheatsheet/)
-         *  - [Pictos icons](http://docs.sencha.com/extjs/6.0/core_concepts/font_ext.html)
-         *  - [Theming Guide](http://docs.sencha.com/extjs/6.0/core_concepts/theming.html)
+         *  - [Pictos icons](../guides/core_concepts/font_ext.html)
+         *  - [Theming Guide](../guides/core_concepts/theming.html)
          */
         iconCls: null,
 

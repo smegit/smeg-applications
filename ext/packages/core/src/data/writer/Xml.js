@@ -110,24 +110,24 @@ Ext.define('Ext.data.writer.Xml', {
      *
      * For example:
      *
-     *    myWriter.objectToElement('SystemComponent', {
-     *        "@SystemNumber": '10118795',
-     *        "SystemInfo>SystemName": 'Phase Noise Measurement System',
-     *        AssetId: 'DE3208',
-     *        AgilentModel: 'E5505A',
-     *        SerialNumber: 'US44101357',
-     *    }, []).join('');
+     *     myWriter.objectToElement('SystemComponent', {
+     *         "@SystemNumber": '10118795',
+     *         "SystemInfo>SystemName": 'Phase Noise Measurement System',
+     *         AssetId: 'DE3208',
+     *         AgilentModel: 'E5505A',
+     *         SerialNumber: 'US44101357',
+     *     }, []).join('');
      *
      * becomes
      *
-     *    <SystemComponent SystemNumber="10118795">
-     *      <SystemInfo>
-     *          <SystemName>Phase Noise Measurement System</SystemName>
-     *      </SystemInfo>
-     *      <AssetId>DE3208</AssetId>
-     *      <AgilentModel>E5505A</AgilentModel>
-     *      <SerialNumber>US44101357</SerialNumber>
-     *    </SystemComponent>
+     *     <SystemComponent SystemNumber="10118795">
+     *       <SystemInfo>
+     *           <SystemName>Phase Noise Measurement System</SystemName>
+     *       </SystemInfo>
+     *       <AssetId>DE3208</AssetId>
+     *       <AgilentModel>E5505A</AgilentModel>
+     *       <SerialNumber>US44101357</SerialNumber>
+     *     </SystemComponent>
      *    
      * @param {String} name The element name for the object.
      * @param {Object} o The object to serialize.

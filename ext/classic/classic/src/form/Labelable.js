@@ -380,7 +380,7 @@ Ext.define("Ext.form.Labelable", {
      * will be used by Assistive Technologies such as screen readers to alert the users when
      * field validation fails.
      *
-     * This config is used with {@link Ext.String.format}. '{0}' will be replaced with the actual
+     * This config is used with {@link Ext.String#format}. '{0}' will be replaced with the actual
      * error message(s), '{1}' will be replaced with field label.
      */
     ariaErrorText: 'Input error. {0}.',

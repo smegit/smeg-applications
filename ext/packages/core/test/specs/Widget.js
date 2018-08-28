@@ -3261,7 +3261,7 @@ describe("Ext.Widget", function() {
         });
     });
 
-    (Ext.supports.PointerEvents ? describe : xdescribe)("touchAction", function() {
+    (Ext.supports.TouchAction === 15 ? describe : xdescribe)("touchAction", function() {
         var Widget, widget;
 
         function makeWidgetWithTouchAction(touchAction) {
@@ -3372,7 +3372,7 @@ describe("Ext.Widget", function() {
                 doubleTapZoom: false
             });
 
-            expectTouchAction(widget.element, 'manipulation');
+            expectTouchAction(widget.element, 'pan-x pan-y pinch-zoom');
         });
 
         it("should disable panX and doubleTapZoom", function() {
@@ -3612,6 +3612,10 @@ describe("Ext.Widget", function() {
             expect(widget.getBaseCls()).toBe('x-mywidget');
 
             Ext.undefine('Foo');
+            
+            if (Ext.isIE8) {
+                addGlobal('Foo');
+            }
         });
     });
 

@@ -664,4 +664,18 @@ describe('Ext.grid.plugin.RowExpander', function () {
             });
        });
     });
+
+    describe("reconfigure", function() {
+        it("should not throw an exception when reconfiguring while not rendered", function() {
+            makeGrid({
+                renderTo: null
+            });
+
+            expect(function() {
+                grid.reconfigure(null, [{
+                    dataIndex: 'company'
+                }]);
+            }).not.toThrow();
+        });
+    });
 });

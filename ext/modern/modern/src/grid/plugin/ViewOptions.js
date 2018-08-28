@@ -1,9 +1,9 @@
 /**
- * The Modern Grid's ViewOptions plugin produces a menu that slides in from the right (by default)
- * when you drag your finger or cursor right-to-left over the grid's column headers. The
- * menu displays the column header names which represents the order of the grid's columns.
- * This allows users to easily reorder the grid's columns by reordering the rows. Items may
- * be dragged by grabbing the furthest left side of the row and moving the item vertically.
+ * The Modern Grid's ViewOptions plugin produces a menu that slides in from the right
+ * (by default) when you longpress on the grid headers. The menu displays the column
+ * header names which represents the order of the grid's columns. This allows users to
+ * easily reorder the grid's columns by reordering the rows. Items may be dragged by
+ * grabbing the furthest left side of the row and moving the item vertically.
  *
  * Once the columns are ordered to your liking, you may then close the menu by tapping the
  * "Done" button.

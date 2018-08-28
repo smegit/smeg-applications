@@ -278,7 +278,7 @@ Ext.define('Ext.util.Region', function() {
          * So tl-br becomes {myEdge:'t', offset:0}, {otherEdge:'b', offset:100}
          *
          * This not only allows more flexibility in the alignment possibilities,
-         * but it also resolves any ambiguity as to chich two edges are desired
+         * but it also resolves any ambiguity as to which two edges are desired
          * to be adjacent if an anchor pointer is required.
          * 
          * @param {String} align The align spec, eg `"tl-br"`
@@ -309,7 +309,7 @@ Ext.define('Ext.util.Region', function() {
                     sourceClass: 'Ext.util.Region',
                     sourceMethod: 'getAlignInfo',
                     position: align,
-                    msg: 'Attemmpted to align an element with an invalid position: "' + align + '"'
+                    msg: 'Attempted to align an element with an invalid position: "' + align + '"'
                 });
             }
             //</debug>
@@ -323,7 +323,7 @@ Ext.define('Ext.util.Region', function() {
             };
 
             // t-l, b-r etc.
-            // Convert points to egde and offset.
+            // Convert points to edge and offset.
             if (parts[3]) {
                 result.myEdge = parts[3][0];
                 result.myOffset = offsetFactors[parts[3][1]];
@@ -712,13 +712,14 @@ Ext.define('Ext.util.Region', function() {
      * only take place along the major align axis. That is, if `align: "l-r"` is being used, and
      * `axisLock: true` is used, then if constraints fail, only fallback to `r-l` is considered.
      * @return {Ext.util.Region} The Region that will align this rectangle. Note that if
-     * a `minHeight` option was passed, and aligment is either above or below the target,
+     * a `minHeight` option was passed, and alignment is either above or below the target,
      * the Region might be reduced to fit within the space.
      */
     alignTo: function (options) {
         var me = this,
             Region = me.self,
             Offset = ExtUtil.Offset,
+            Element = Ext.Element,
             target = parseRegion(options.target),
             targetPlusAnchorOffset,
             rtl = options.rtl,
@@ -730,8 +731,7 @@ Ext.define('Ext.util.Region', function() {
             position = options.position,
             allowXTranslate = options.allowXTranslate,
             allowYTranslate = options.allowYTranslate,
-            wasConstrained,
-            result;
+            wasConstrained, result;
 
         if (offset) {
             offset = Offset.fromObject(offset);
@@ -749,9 +749,13 @@ Ext.define('Ext.util.Region', function() {
             }
             //</debug>
         }
-
+    
         if (inside && !inside.isRegion) {
-            inside = Ext.fly(inside).getRegion();
+            if (Ext.getDom(inside) === document.body) {
+                inside = new Region(0, Element.getDocumentWidth(), Element.getDocumentHeight(), 0);
+            } else {
+                inside = Ext.fly(inside).getRegion();
+            }
         }
 
         // Position the region using an exact position.
@@ -1186,7 +1190,7 @@ Ext.define('Ext.util.Region', function() {
         me.bottom = p.bottom;
         me.left = me.x = me[0] = p.x;
 
-        return this;
+        return me;
     },
 
     /*

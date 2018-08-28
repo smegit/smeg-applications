@@ -53,8 +53,12 @@ describe("Ext.grid.filters.filter.List", function () {
     }
 
     function clickItem(index) {
-        showMenu();
-
+        runs(function() {
+            showMenu();
+        });
+        waitsFor(function() {
+            return columnMenu.isVisible();
+        });
         runs(function() {
             jasmine.fireMouseEvent(filterMenu.items.getAt(index).el, 'click');
         });
@@ -134,13 +138,20 @@ describe("Ext.grid.filters.filter.List", function () {
         });
 
         it("should use the value config as its value if specified", function () {
-            var value = ['t1', 't3'];
-
             createGrid({
-                value: value
+                value: ['t1', 't3']
             });
 
-            expect(listFilter.filter.getValue()).toEqual(value);
+            expect(listFilter.filter.getValue()).toEqual(['t1', 't3']);
+        });
+
+        it("should transform the filter value if not specified as an array", function() {
+            createGrid({
+                value: 'Item 2'
+            });
+
+            expect(store.getCount()).toBe(1);
+            expect(store.getFilters().first().getValue()).toEqual(['Item 2']);
         });
     });
 
@@ -2327,6 +2338,34 @@ describe("Ext.grid.filters.filter.List", function () {
                     }
                 }]);
             }).not.toThrow();
+        });
+    });
+
+    describe("with store sorting", function() {
+        it("should not clear any filters when sorting", function() {
+            createGrid({
+                value: ['Item 2']
+            });
+            clickItem(0);
+            runs(function() {
+                hideMenu();
+            });
+            waitsFor(function() {
+                return !columnMenu.isVisible();
+            });
+            runs(function() {
+                expect(store.getCount()).toBe(2);
+                store.sort({
+                    property: 'id',
+                    direction: 'ASC'
+                });
+                expect(store.getCount()).toBe(2);
+                store.sort({
+                    property: 'id',
+                    direction: 'DESC'
+                });
+                expect(store.getCount()).toBe(2);
+            });
         });
     });
 });

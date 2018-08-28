@@ -193,7 +193,7 @@ Ext.define('Ext.Action', {
     },
 
     /**
-     * Sets the {@link #Glyph glyph} for all components configured by this 
+     * Sets the {@link #glyph glyph} for all components configured by this 
      * Action.
      * @param {String} glyph The CSS class supplying the icon image
      */

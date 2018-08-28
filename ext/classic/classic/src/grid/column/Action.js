@@ -28,7 +28,7 @@
  *                 xtype:'actioncolumn',
  *                 width:50,
  *                 items: [{
- *                     icon: 'extjs-build/examples/shared/icons/fam/cog_edit.png',  // Use a URL in the icon config
+ *                     iconCls: 'x-fa fa-cog',
  *                     tooltip: 'Edit',
  *                     handler: function(grid, rowIndex, colIndex) {
  *                         var rec = grid.getStore().getAt(rowIndex);
@@ -131,6 +131,8 @@ Ext.define('Ext.grid.column.Action', {
      * @cfg {Number} getClass.rowIndex The row index.
      * @cfg {Number} getClass.colIndex The column index.
      * @cfg {Ext.data.Store} getClass.store The Store which is providing the data Model.
+     *
+     * @controllable
      */
     
     /**
@@ -140,6 +142,8 @@ Ext.define('Ext.grid.column.Action', {
      * @cfg {Number} isDisabled.colIndex The column index.
      * @cfg {Object} isDisabled.item The clicked item (or this Column if multiple {@link #cfg-items} were not configured).
      * @cfg {Ext.data.Model} isDisabled.record The Record underlying the row.
+     *
+     * @controllable
      */
     
     /**
@@ -217,6 +221,8 @@ Ext.define('Ext.grid.column.Action', {
      * @param {Number} colIndex The column index.
      * @param {Ext.data.Store} store The Store which is providing the data Model.
      * @return {String} tip The tip text
+     *
+     * @controllable
      */
     
     /**

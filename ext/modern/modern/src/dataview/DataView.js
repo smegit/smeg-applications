@@ -970,12 +970,12 @@ Ext.define('Ext.dataview.DataView', {
             records = store.getRange(),
             items = me.getViewItems(),
             recordsLn = records.length,
-            itemsLn = items.length,
-            deltaLn = recordsLn - itemsLn,
+            len = items.length,
+            deltaLn = recordsLn - len,
             scroller = me.getScrollable(),
-            i, item;
+            i, item, selection;
 
-        if (this.getScrollToTopOnRefresh() && scroller) {
+        if (me.getScrollToTopOnRefresh() && scroller) {
             scroller.scrollTo(0, 0);
         }
 
@@ -989,29 +989,26 @@ Ext.define('Ext.dataview.DataView', {
 
         // Too many items, hide the unused ones
         if (deltaLn < 0) {
-            container.moveItemsToCache(itemsLn + deltaLn, itemsLn - 1);
+            container.moveItemsToCache(len + deltaLn, len - 1);
             // Items can changed, we need to refresh our references
             items = me.getViewItems();
-            itemsLn = items.length;
+            len = items.length;
         }
         // Not enough items, create new ones
         else if (deltaLn > 0) {
-            container.moveItemsFromCache(store.getRange(itemsLn));
+            container.moveItemsFromCache(store.getRange(len));
         }
 
         // Update Data and insert the new html for existing items
-        for (i = 0; i < itemsLn; i++) {
+        for (i = 0; i < len; i++) {
             item = items[i];
             container.updateListItem(records[i], item);
         }
 
-        if (this.hasSelection()) {
-            var selection = this.getSelection(),
-                selectionLn = this.getSelectionCount(),
-                record;
-            for (i = 0; i < selectionLn; i++) {
-                record = selection[i];
-                this.doItemSelect(this, record);
+        if (me.hasSelection()) {
+            selection = me.getSelections();
+            for (i = 0, len = me.getSelectionCount(); i < len; i++) {
+                me.doItemSelect(me, selection[i]);
             }
         }
     },

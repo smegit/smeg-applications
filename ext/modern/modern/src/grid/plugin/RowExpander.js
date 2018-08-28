@@ -32,7 +32,11 @@ Ext.define('Ext.grid.plugin.RowExpander', {
     expanderSelector: '.' + Ext.baseCSSPrefix + 'expandercell .' + Ext.baseCSSPrefix + 'icon-el',
 
     init: function (grid) {
-        this.setGrid(grid);
+        var me = this,
+            column = me.getColumn();
+
+        me.setGrid(grid);
+        grid.insertColumn(0, column);
     },
 
     applyColumn: function(column, oldColumn) {
@@ -45,7 +49,10 @@ Ext.define('Ext.grid.plugin.RowExpander', {
         if (grid) {
             grid.hasRowExpander = true;
             grid.addCls(Ext.baseCSSPrefix + 'has-rowexpander');
-            grid.insertColumn(0, me.getColumn());
+
+            if (!grid.isConfiguring) {
+                grid.insertColumn(0, this.me.getColumn());
+            }
             grid.refreshScroller();
 
             grid.element.on({

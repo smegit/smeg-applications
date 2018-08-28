@@ -33,6 +33,139 @@ describe("Ext.panel.Panel", function() {
     });
 
     describe("toolbars", function() {
+        describe("changing sides", function() {
+            var docked;
+            beforeEach(function() {
+                makePanel({
+                    width: 400,
+                    height: 400,
+                    dockedItems: {
+                        xtype: 'toolbar',
+                        dock: 'top',
+                        layout: {
+                            type: 'box',
+                            vertical: false
+                        },
+                        items: [{
+                            text: 'Foo'
+                        }, '->', {
+                            text: 'Bar'
+                        }]
+                    }
+                });
+                docked = panel.down('toolbar');
+            });
+
+            it("should clear isDeatched flag when moving the toolbar", function() {
+                docked.setDock('bottom');
+
+                expect(docked.dock).toBe('bottom');
+                expect(docked.isDetached).toBe(false);
+            });
+        });
+
+        describe("removeDocked", function() {
+            var docked;
+            function contains() {
+                var ret = false;
+                if (!docked.destroyed) {
+                    ret = Ext.getDetachedBody().contains(docked.el);
+                }
+                return ret;
+            }
+
+            beforeEach(function() {
+                makePanel({
+                    dockedItems: {
+                        xtype: 'toolbar',
+                        dock: 'left',
+                        items: [{
+                            text: 'Foo'
+                        }]
+                    }
+                });
+                docked = panel.down('toolbar');
+            });
+
+            afterEach(function() {
+                if (docked && !docked.destroyed) {
+                    docked.destroy();
+                }
+                panel.destroy();
+
+                panel = docked = null;
+            });
+
+            describe("with no destroy param", function() {
+                it("should destroy the component autoDestroy: true", function() {
+                    panel.removeDocked(docked);
+
+                    expect(docked.destroyed).toBe(true);
+                });
+
+                it("should not destroy the component autoDestroy: false", function() {
+                    panel.autoDestroy = false;
+                    panel.removeDocked(docked);
+
+                    expect(docked.destroyed).toBe(false);
+                    expect(contains()).toBe(false);
+                });
+            });
+
+            describe("boolean destroy param", function() {
+                it("should destroy the component with destroy: true", function() {
+                    panel.removeDocked(docked, true);
+
+                    expect(docked.destroyed).toBe(true);
+                });
+                
+                it("should not destroy the component with destroy: false", function() {
+                    panel.removeDocked(docked, false);
+
+                    expect(docked.destroyed).toBe(false);
+                    expect(contains()).toBe(false);
+                });
+            });
+
+            describe("object destroy param", function() {
+                it("should not destroy and not add to the detachedBody with destroy: false, detach: false", function() {
+                    panel.removeDocked(docked, {
+                        destroy: false,
+                        detach: false
+                    });
+                    expect(docked.destroyed).toBe(false);
+                    expect(contains()).toBe(false);
+                });
+
+                it("should not destroy and add to the detachedBody with destroy: false, detach: true", function() {
+                    panel.removeDocked(docked, {
+                        destroy: false,
+                        detach: true
+                    });
+                    expect(docked.destroyed).toBe(false);
+                    expect(contains()).toBe(true);
+                });
+
+                it("should destroy and not add to the detachedBody with destroy: true, detach: false", function() {
+                    panel.removeDocked(docked, {
+                        destroy: true,
+                        detach: false
+                    });
+                    expect(docked.destroyed).toBe(true);
+                    expect(contains()).toBe(false);
+                });
+
+                it("should destroy and not add to the detachedBody with destroy: true, detach: true", function() {
+                    panel.removeDocked(docked, {
+                        destroy: true,
+                        detach: true
+                    });
+                    expect(docked.destroyed).toBe(true);
+                    expect(contains()).toBe(false);
+                });
+            });
+        });
+
         describe("vertical toolbars", function() {
             describe("lbar", function() {
                 it("should default to vertical: true", function() {
@@ -1096,6 +1229,21 @@ describe("Ext.panel.Panel", function() {
             });
             expect(panel.tools[2].type).toBe('save');
         });
+
+        it("should not mutate tool configurations", function() {
+            var t1 = { type: 'gear' },
+                t2 = { type: 'print' };
+
+            makePanel({
+                renderTo: Ext.getBody(),
+                tools: [t1]
+            });
+
+            panel.addTool(t2);
+
+            expect(Ext.Object.getKeys(t1).length).toBe(1);
+            expect(Ext.Object.getKeys(t2).length).toBe(1);
+        });
     });
     
     describe('autoHeight with dock bottom item', function () {
@@ -1274,6 +1422,62 @@ describe("Ext.panel.Panel", function() {
                 });
                 expect(panel.header).toBe(false);
             }); 
+        });
+        
+        describe("changing position", function() {
+            var positions = ['top', 'right', 'bottom', 'left'],
+                vertical = { left: true, right: true },
+                oldMode;
+            
+            beforeEach(function() {
+                oldMode = Ext.devMode;
+                
+                // This is to make layout errors to throw
+                Ext.devMode = 2;
+            });
+            
+            afterEach(function() {
+                Ext.devMode = oldMode;
+            });
+            
+            function makeSuite(startPosition, frame) {
+                describe("initial: " + startPosition + ", frame: " + frame, function() {
+                    var remaining = Ext.Array.remove(Ext.Array.clone(positions), startPosition),
+                        i, len, pos;
+                    
+                    beforeEach(function() {
+                        makePanel({
+                            x: 10,
+                            y: 10,
+                            width: 300,
+                            height: 200,
+                            title: 'foo',
+                            headerPosition: startPosition,
+                            frame: frame,
+                            html: 'Lorem ipsum'
+                        });
+                    });
+                    
+                    for (i = 0, len = remaining.length; i < len; i++) {
+                        pos = remaining[i];
+                        
+                        (function(from, to) {
+                            it("should switch from " + from + " to " + to, function() {
+                                panel.setHeaderPosition(to);
+                                expect(panel.getHeaderPosition()).toBe(to);
+                                expect(panel.getHeader().vertical).toBe(!!vertical[to]);
+                            });
+                        })(startPosition, pos);
+                    }
+                });
+            }
+            
+            for (var p = 0; p < positions.length; p++) {
+                makeSuite(positions[p], false);
+                
+                // With frame is especially important in IE8/9
+                makeSuite(positions[p], true);
+            }
         });
     });
     
@@ -2755,8 +2959,8 @@ describe("Ext.panel.Panel", function() {
             });
         });
     });
-    
-    describe("defaultButton referenceHolder == true", function() {
+
+    describe("defaultButton", function() {
         var pressKey = jasmine.pressKey,
             okSpy, cancelSpy, keydownSpy, fooInput, barInput, okButton, cancelButton,
             event;
@@ -2798,70 +3002,431 @@ describe("Ext.panel.Panel", function() {
                 this.el.on('keydown', keydownSpy);
             });
             
-            okSpy.andCallFake(function(btn, e) {
-                event = e;
-            });
-            
-            keydownSpy.andCallFake(function(e) {
-                event = e;
-            });
-        }
-        
-        beforeEach(function() {
-            okSpy = jasmine.createSpy('OK button handler');
-            cancelSpy = jasmine.createSpy('Cancel button handler');
-            keydownSpy = jasmine.createSpy('Panel keydown');
-        });
-        
-        afterEach(function() {
-            if (panel && panel.el) {
-                panel.el.un('keydown', keydownSpy);
+            if (okSpy) {
+                okSpy.andCallFake(function(btn, e) {
+                    event = e;
+                });
             }
             
-            okSpy = cancelSpy = keydownSpy = fooInput = barInput = cancelButton = null;
-            event = null;
+            if (keydownSpy) {
+                keydownSpy.andCallFake(function(e) {
+                    event = e;
+                });
+            }
+        }
+
+        it('should not fireDefaultButton when pressing ENTER in a TEXTAREA', function() {
+            var textarea, foo;
+
+            setupPanel({
+                referenceHolder: true,
+                items: [{
+                    xtype: 'textarea',
+                    enableKeyEvents: true,
+                    fieldLabel: 'foo',
+                    reference: 'fooInput'
+                }, {
+                    xtype: 'textfield',
+                    fieldLabel: 'bar',
+                    reference: 'barInput'
+                }],
+                renderTo: document.body,
+                listeners: {
+                    afterrender: function(cmp) {
+                        Ext.create('Ext.util.KeyMap', {
+                            target: cmp.el,
+                            eventName: 'keydown',
+                            key: Ext.event.Event.ENTER,
+                            fn: function(keyCode, event) {
+                                foo = 'bar';
+                                return false;
+                            }
+                        });
+                    }
+                }
+            });
+
+            textarea = panel.down('textarea');
+            jasmine.fireKeyEvent(textarea.inputEl, 'keydown', Ext.event.Event.ENTER);
+            expect(foo).toBe('bar');
+
         });
-        
-        describe("w/ referenceHolder == true", function() {
+
+        describe("defaultButton referenceHolder == true", function() {
             beforeEach(function() {
-                setupPanel({
-                    referenceHolder: true
-                });
-                
-                okButton.on('click', okSpy);
-                cancelButton.on('click', cancelSpy);
+                okSpy = jasmine.createSpy('OK button handler');
+                cancelSpy = jasmine.createSpy('Cancel button handler');
+                keydownSpy = jasmine.createSpy('Panel keydown');
             });
             
-            describe("no defaultButton", function() {
+            afterEach(function() {
+                if (panel && panel.el) {
+                    panel.el.un('keydown', keydownSpy);
+                }
+                
+                okSpy = cancelSpy = keydownSpy = fooInput = barInput = cancelButton = null;
+                event = null;
+            });
+            
+            describe("w/ referenceHolder == true", function() {
                 beforeEach(function() {
-                    panel.defaultButton = undefined;
-                    panel.render(Ext.getBody());
+                    setupPanel({
+                        referenceHolder: true
+                    });
+                    
+                    okButton.on('click', okSpy);
+                    cancelButton.on('click', cancelSpy);
                 });
                 
-                it("should not fire OK handler", function() {
-                    pressKey(fooInput, 'enter');
+                describe("no defaultButton", function() {
+                    beforeEach(function() {
+                        panel.defaultButton = undefined;
+                        panel.render(Ext.getBody());
+                    });
                     
-                    waitForSpy(keydownSpy);
+                    it("should not fire OK handler", function() {
+                        pressKey(fooInput, 'enter');
+                        
+                        waitForSpy(keydownSpy);
+                        
+                        runs(function() {
+                            expect(okSpy).not.toHaveBeenCalled();
+                        });
+                    });
                     
-                    runs(function() {
-                        expect(okSpy).not.toHaveBeenCalled();
+                    it("should not have stopped the keydown event", function() {
+                        pressKey(barInput, 'enter');
+                        
+                        waitForSpy(keydownSpy);
+                        
+                        runs(function() {
+                            expect(event.stopped).toBeFalsy();
+                        });
                     });
                 });
                 
-                it("should not have stopped the keydown event", function() {
-                    pressKey(barInput, 'enter');
+                describe("with defaultButton", function() {
+                    beforeEach(function() {
+                        panel.render(Ext.getBody());
+                    });
                     
-                    waitForSpy(keydownSpy);
+                    it("should fire OK handler in fooInput", function() {
+                        pressKey(fooInput, 'enter');
+                        
+                        waitForSpy(okSpy);
+                        
+                        runs(function() {
+                            expect(okSpy).toHaveBeenCalled();
+                        });
+                    });
                     
-                    runs(function() {
-                        expect(event.stopped).toBeFalsy();
+                    it("should fire OK handler in barInput", function() {
+                        pressKey(barInput, 'enter');
+                        
+                        waitForSpy(okSpy);
+                        
+                        runs(function() {
+                            expect(okSpy).toHaveBeenCalled();
+                        });
+                    });
+                    
+                    it("should not fire OK handler on Cancel button", function() {
+                        pressKey(cancelButton, 'enter');
+                        
+                        waitForSpy(cancelSpy);
+                        
+                        runs(function() {
+                            expect(okSpy).not.toHaveBeenCalled();
+                        });
+                    });
+                    
+                    it("should have stopped the keydown event", function() {
+                        pressKey(fooInput, 'enter');
+                        
+                        waitForSpy(okSpy);
+                        
+                        runs(function() {
+                            expect(event.stopped).toBeTruthy();
+                        });
+                    });
+                    
+                    it("should not have reached main el keydown listener", function() {
+                        pressKey(barInput, 'enter');
+                        
+                        waitForSpy(okSpy);
+                        
+                        runs(function() {
+                            expect(keydownSpy).not.toHaveBeenCalled();
+                        });
+                    });
+                });
+                
+                describe("with defaultButton and defaultButtonTarget", function() {
+                    beforeEach(function() {
+                        panel.defaultButtonTarget = 'el';
+                        panel.render(Ext.getBody());
+                    });
+                    
+                    it("should fire OK handler in fooInput", function() {
+                        pressKey(fooInput, 'enter');
+                        
+                        waitForSpy(okSpy);
+                        
+                        runs(function() {
+                            expect(okSpy).toHaveBeenCalled();
+                        });
+                    });
+                    
+                    it("should fire OK handler in barInput", function() {
+                        pressKey(barInput, 'enter');
+                        
+                        waitForSpy(okSpy);
+                        
+                        runs(function() {
+                            expect(okSpy).toHaveBeenCalled();
+                        });
+                    });
+                    
+                    it("should NOT fire OK handler on Cancel button", function() {
+                        pressKey(cancelButton, 'enter');
+                        
+                        waitForSpy(cancelSpy);
+                        
+                        runs(function() {
+                            expect(okSpy).not.toHaveBeenCalled();
+                        });
+                    });
+                    
+                    it("should have stopped the keydown event", function() {
+                        pressKey(fooInput, 'enter');
+                        
+                        waitForSpy(okSpy);
+                        
+                        runs(function() {
+                            expect(event.stopped).toBeTruthy();
+                        });
+                    });
+                });
+                
+                describe("nested panel", function() {
+                    var nestedPanel, nestedInput, nestedOk, nestedCancel,
+                        nestedOkSpy, nestedCancelSpy;
+                    
+                    beforeEach(function() {
+                        nestedOkSpy = jasmine.createSpy('Nested OK handler');
+                        nestedCancelSpy = jasmine.createSpy('Nested Cancel handler');
+                        
+                        nestedPanel = panel.add({
+                            xtype: 'panel',
+                            title: 'nested',
+                            items: [{
+                                xtype: 'textfield',
+                                fieldLabel: 'Nested',
+                                reference: 'nestedInput'
+                            }],
+                            buttons: [{
+                                text: 'Nested OK',
+                                reference: 'nestedOk',
+                                handler: nestedOkSpy
+                            }, {
+                                text: 'Nested Cancel',
+                                reference: 'nestedCancel',
+                                handler: nestedCancelSpy
+                            }]
+                        });
+                        
+                        nestedInput = panel.lookupReference('nestedInput');
+                        nestedOk = panel.lookupReference('nestedOk');
+                        nestedCancel = panel.lookupReference('nestedCancel');
+                        
+                        nestedOkSpy.andCallFake(function(btn, e) {
+                            event = e;
+                        });
+                        
+                        nestedCancelSpy.andCallFake(function(btn, e) {
+                            event = e;
+                            
+                            e.stopEvent();
+                            
+                            return false;
+                        });
+                    });
+                    
+                    afterEach(function() {
+                        nestedOkSpy = nestedCancelSpy = null;
+                        nestedInput = nestedOk = nestedCancel = null;
+                    });
+                    
+                    describe("no defaultButton config", function() {
+                        beforeEach(function() {
+                            panel.render(Ext.getBody());
+                        });
+                        
+                        it("should fire outer OK handler on nested input", function() {
+                            pressKey(nestedInput, 'enter');
+                            
+                            waitForSpy(okSpy);
+                            
+                            runs(function() {
+                                expect(okSpy).toHaveBeenCalled();
+                            });
+                        });
+                        
+                        it("should NOT fire outer OK handler on nested OK button", function() {
+                            pressKey(nestedOk, 'enter');
+                            
+                            waitForSpy(nestedOkSpy);
+                            
+                            runs(function() {
+                                expect(okSpy).not.toHaveBeenCalled();
+                            });
+                        });
+                        
+                        it("should NOT fire outer OK handler on nested Cancel button", function() {
+                            pressKey(nestedCancel, 'enter');
+                            
+                            waitForSpy(nestedCancelSpy);
+                            
+                            runs(function() {
+                                expect(okSpy).not.toHaveBeenCalled();
+                            });
+                        });
+                    });
+                    
+                    describe("with defaultButton config", function() {
+                        beforeEach(function() {
+                            nestedPanel.defaultButton = 'nestedOk';
+                            panel.render(Ext.getBody());
+                        });
+                        
+                        describe("on nested input", function() {
+                            beforeEach(function() {
+                                pressKey(nestedInput, 'enter');
+                            
+                                waitForSpy(nestedOkSpy);
+                            });
+                            
+                            it("should fire nested OK handler", function() {
+                                expect(nestedOkSpy).toHaveBeenCalled();
+                            });
+                            
+                            it("should NOT fire outer OK handler", function() {
+                                // Check that OUTER spy hasn't been fired;
+                                // we can only get there if the above waitForSpy()
+                                // didn't timeout
+                                expect(okSpy).not.toHaveBeenCalled();
+                            });
+                            
+                            it("should have stopped the event", function() {
+                                expect(event.stopped).toBeTruthy();
+                            });
+                            
+                            it("should not have reached outer keydown handler", function() {
+                                expect(keydownSpy).not.toHaveBeenCalled();
+                            });
+                        });
+                        
+                        describe("on nested OK button", function() {
+                            beforeEach(function() {
+                                pressKey(nestedOk, 'enter');
+                                
+                                waitForSpy(nestedOkSpy);
+                            });
+                            
+                            it("should fire nested OK handler", function() {
+                                expect(nestedOkSpy).toHaveBeenCalled();
+                            });
+                            
+                            it("should NOT fire outer OK handler", function() {
+                                expect(okSpy).not.toHaveBeenCalled();
+                            });
+                            
+                            it("should have stopped the event", function() {
+                                expect(event.stopped).toBeTruthy();
+                            });
+                            
+                            it("should not have reached outer keydown handler", function() {
+                                expect(keydownSpy).not.toHaveBeenCalled();
+                            });
+                        });
+                        
+                        describe("on nested Cancel button", function() {
+                            beforeEach(function() {
+                                pressKey(nestedCancel, 'enter');
+                                
+                                waitForSpy(nestedCancelSpy);
+                            });
+                            
+                            it("should fire nested Cancel handler", function() {
+                                expect(nestedCancelSpy).toHaveBeenCalled();
+                            });
+                            
+                            it("should NOT fire nested OK handler", function() {
+                                expect(nestedOkSpy).not.toHaveBeenCalled();
+                            });
+                            
+                            it("should NOT fire outer OK handler", function() {
+                                expect(okSpy).not.toHaveBeenCalled();
+                            });
+                            
+                            it("should have not reached outer keydown handler", function() {
+                                expect(keydownSpy).not.toHaveBeenCalled();
+                            });
+                            
+                            it("should have stopped the event", function() {
+                                expect(event.stopped).toBeTruthy();
+                            });
+                        });
                     });
                 });
             });
             
-            describe("with defaultButton", function() {
+            describe("nested w/ parent ViewController", function() {
+                var outerPanel;
+                
                 beforeEach(function() {
-                    panel.render(Ext.getBody());
+                    setupPanel({
+                        buttons: [{
+                            reference: 'okButton',
+                            text: 'OK',
+                            listeners: {
+                                click: 'onOkButton'
+                            }
+                        }, {
+                            reference: 'cancelButton',
+                            text: 'Cancel',
+                            listeners: {
+                                click: 'onCancelButton'
+                            }
+                        }],
+                        
+                        controller: {
+                            xclass: 'Ext.app.ViewController',
+                            onOkButton: okSpy,
+                            onCancelButton: cancelSpy
+                        }
+                    });
+                    
+                    outerPanel = new Ext.panel.Panel({
+                        renderTo: Ext.getBody(),
+                        x: 10,
+                        y: 10,
+                        width: 400,
+                        height: 400,
+                        items: [panel],
+                        
+                        // Having the outer ViewController triggers the issue
+                        controller: {
+                            xclass: 'Ext.app.ViewController'
+                        }
+                    });
+                });
+                
+                afterEach(function() {
+                    panel.el.un('keydown', keydownSpy);
+                    
+                    outerPanel.destroy();
+                    outerPanel = null;
                 });
                 
                 it("should fire OK handler in fooInput", function() {
@@ -2915,363 +3480,56 @@ describe("Ext.panel.Panel", function() {
                 });
             });
             
-            describe("with defaultButton and defaultButtonTarget", function() {
-                beforeEach(function() {
-                    panel.defaultButtonTarget = 'el';
-                    panel.render(Ext.getBody());
-                });
-                
-                it("should fire OK handler in fooInput", function() {
-                    pressKey(fooInput, 'enter');
-                    
-                    waitForSpy(okSpy);
-                    
-                    runs(function() {
-                        expect(okSpy).toHaveBeenCalled();
-                    });
-                });
-                
-                it("should fire OK handler in barInput", function() {
-                    pressKey(barInput, 'enter');
-                    
-                    waitForSpy(okSpy);
-                    
-                    runs(function() {
-                        expect(okSpy).toHaveBeenCalled();
-                    });
-                });
-                
-                it("should NOT fire OK handler on Cancel button", function() {
-                    pressKey(cancelButton, 'enter');
-                    
-                    waitForSpy(cancelSpy);
-                    
-                    runs(function() {
-                        expect(okSpy).not.toHaveBeenCalled();
-                    });
-                });
-                
-                it("should have stopped the keydown event", function() {
-                    pressKey(fooInput, 'enter');
-                    
-                    waitForSpy(okSpy);
-                    
-                    runs(function() {
-                        expect(event.stopped).toBeTruthy();
-                    });
-                });
-            });
-            
-            describe("nested panel", function() {
-                var nestedPanel, nestedInput, nestedOk, nestedCancel,
-                    nestedOkSpy, nestedCancelSpy;
-                
-                beforeEach(function() {
-                    nestedOkSpy = jasmine.createSpy('Nested OK handler');
-                    nestedCancelSpy = jasmine.createSpy('Nested Cancel handler');
-                    
-                    nestedPanel = panel.add({
-                        xtype: 'panel',
-                        title: 'nested',
-                        items: [{
-                            xtype: 'textfield',
-                            fieldLabel: 'Nested',
-                            reference: 'nestedInput'
-                        }],
-                        buttons: [{
-                            text: 'Nested OK',
-                            reference: 'nestedOk',
-                            handler: nestedOkSpy
-                        }, {
-                            text: 'Nested Cancel',
-                            reference: 'nestedCancel',
-                            handler: nestedCancelSpy
-                        }]
-                    });
-                    
-                    nestedInput = panel.lookupReference('nestedInput');
-                    nestedOk = panel.lookupReference('nestedOk');
-                    nestedCancel = panel.lookupReference('nestedCancel');
-                    
-                    nestedOkSpy.andCallFake(function(btn, e) {
-                        event = e;
-                    });
-                    
-                    nestedCancelSpy.andCallFake(function(btn, e) {
-                        event = e;
-                        
-                        e.stopEvent();
-                        
-                        return false;
-                    });
-                });
+            describe('keyMap config', function() {
+                var outerPanel;
                 
                 afterEach(function() {
-                    nestedOkSpy = nestedCancelSpy = null;
-                    nestedInput = nestedOk = nestedCancel = null;
+                    Ext.destroy(outerPanel);
                 });
-                
-                describe("no defaultButton config", function() {
-                    beforeEach(function() {
-                        panel.render(Ext.getBody());
-                    });
-                    
-                    it("should fire outer OK handler on nested input", function() {
-                        pressKey(nestedInput, 'enter');
-                        
-                        waitForSpy(okSpy);
-                        
-                        runs(function() {
-                            expect(okSpy).toHaveBeenCalled();
-                        });
-                    });
-                    
-                    it("should NOT fire outer OK handler on nested OK button", function() {
-                        pressKey(nestedOk, 'enter');
-                        
-                        waitForSpy(nestedOkSpy);
-                        
-                        runs(function() {
-                            expect(okSpy).not.toHaveBeenCalled();
-                        });
-                    });
-                    
-                    it("should NOT fire outer OK handler on nested Cancel button", function() {
-                        pressKey(nestedCancel, 'enter');
-                        
-                        waitForSpy(nestedCancelSpy);
-                        
-                        runs(function() {
-                            expect(okSpy).not.toHaveBeenCalled();
-                        });
-                    });
-                });
-                
-                describe("with defaultButton config", function() {
-                    beforeEach(function() {
-                        nestedPanel.defaultButton = 'nestedOk';
-                        panel.render(Ext.getBody());
-                    });
-                    
-                    describe("on nested input", function() {
-                        beforeEach(function() {
-                            pressKey(nestedInput, 'enter');
-                        
-                            waitForSpy(nestedOkSpy);
-                        });
-                        
-                        it("should fire nested OK handler", function() {
-                            expect(nestedOkSpy).toHaveBeenCalled();
-                        });
-                        
-                        it("should NOT fire outer OK handler", function() {
-                            // Check that OUTER spy hasn't been fired;
-                            // we can only get there if the above waitForSpy()
-                            // didn't timeout
-                            expect(okSpy).not.toHaveBeenCalled();
-                        });
-                        
-                        it("should have stopped the event", function() {
-                            expect(event.stopped).toBeTruthy();
-                        });
-                        
-                        it("should not have reached outer keydown handler", function() {
-                            expect(keydownSpy).not.toHaveBeenCalled();
-                        });
-                    });
-                    
-                    describe("on nested OK button", function() {
-                        beforeEach(function() {
-                            pressKey(nestedOk, 'enter');
-                            
-                            waitForSpy(nestedOkSpy);
-                        });
-                        
-                        it("should fire nested OK handler", function() {
-                            expect(nestedOkSpy).toHaveBeenCalled();
-                        });
-                        
-                        it("should NOT fire outer OK handler", function() {
-                            expect(okSpy).not.toHaveBeenCalled();
-                        });
-                        
-                        it("should have stopped the event", function() {
-                            expect(event.stopped).toBeTruthy();
-                        });
-                        
-                        it("should not have reached outer keydown handler", function() {
-                            expect(keydownSpy).not.toHaveBeenCalled();
-                        });
-                    });
-                    
-                    describe("on nested Cancel button", function() {
-                        beforeEach(function() {
-                            pressKey(nestedCancel, 'enter');
-                            
-                            waitForSpy(nestedCancelSpy);
-                        });
-                        
-                        it("should fire nested Cancel handler", function() {
-                            expect(nestedCancelSpy).toHaveBeenCalled();
-                        });
-                        
-                        it("should NOT fire nested OK handler", function() {
-                            expect(nestedOkSpy).not.toHaveBeenCalled();
-                        });
-                        
-                        it("should NOT fire outer OK handler", function() {
-                            expect(okSpy).not.toHaveBeenCalled();
-                        });
-                        
-                        it("should have not reached outer keydown handler", function() {
-                            expect(keydownSpy).not.toHaveBeenCalled();
-                        });
-                        
-                        it("should have stopped the event", function() {
-                            expect(event.stopped).toBeTruthy();
-                        });
-                    });
-                });
-            });
-        });
-        
-        describe("nested w/ parent ViewController", function() {
-            var outerPanel;
-            
-            beforeEach(function() {
-                setupPanel({
-                    buttons: [{
-                        reference: 'okButton',
-                        text: 'OK',
-                        listeners: {
-                            click: 'onOkButton'
-                        }
-                    }, {
-                        reference: 'cancelButton',
-                        text: 'Cancel',
-                        listeners: {
-                            click: 'onCancelButton'
-                        }
-                    }],
-                    
-                    controller: {
-                        xclass: 'Ext.app.ViewController',
-                        onOkButton: okSpy,
-                        onCancelButton: cancelSpy
-                    }
-                });
-                
-                outerPanel = new Ext.panel.Panel({
-                    renderTo: Ext.getBody(),
-                    x: 10,
-                    y: 10,
-                    width: 400,
-                    height: 400,
-                    items: [panel],
-                    
-                    // Having the outer ViewController triggers the issue
-                    controller: {
-                        xclass: 'Ext.app.ViewController'
-                    }
-                });
-            });
-            
-            afterEach(function() {
-                panel.el.un('keydown', keydownSpy);
-                
-                outerPanel.destroy();
-                outerPanel = null;
-            });
-            
-            it("should fire OK handler in fooInput", function() {
-                pressKey(fooInput, 'enter');
-                
-                waitForSpy(okSpy);
-                
-                runs(function() {
-                    expect(okSpy).toHaveBeenCalled();
-                });
-            });
-            
-            it("should fire OK handler in barInput", function() {
-                pressKey(barInput, 'enter');
-                
-                waitForSpy(okSpy);
-                
-                runs(function() {
-                    expect(okSpy).toHaveBeenCalled();
-                });
-            });
-            
-            it("should not fire OK handler on Cancel button", function() {
-                pressKey(cancelButton, 'enter');
-                
-                waitForSpy(cancelSpy);
-                
-                runs(function() {
-                    expect(okSpy).not.toHaveBeenCalled();
-                });
-            });
-            
-            it("should have stopped the keydown event", function() {
-                pressKey(fooInput, 'enter');
-                
-                waitForSpy(okSpy);
-                
-                runs(function() {
-                    expect(event.stopped).toBeTruthy();
-                });
-            });
-            
-            it("should not have reached main el keydown listener", function() {
-                pressKey(barInput, 'enter');
-                
-                waitForSpy(okSpy);
-                
-                runs(function() {
-                    expect(keydownSpy).not.toHaveBeenCalled();
-                });
-            });
-        });
-        
-        describe('keyMap config', function() {
-            var outerPanel;
-            
-            afterEach(function() {
-                Ext.destroy(outerPanel);
-            });
 
-            it("should default call a method on the controller when keyMap is in config", function() {
-                var controller,
-                    outerController,
-                    InnerPanel = Ext.define(null, {
-                        extend: 'Ext.panel.Panel',
-                        keyMap: {
-                            A: 'handleA',           // Resolved to controller
-                            B: {
-                                handler: 'handleB'  // Resolved to controller
-                            },
-                            C: {
-                                handler: 'handleC', // Resolved to this
-                                scope: 'this'
-                            }
-                        },
-                        handleC: jasmine.createSpy()
-                    }),
-                    middlePanel = new Ext.panel.Panel({
-                        items: [new InnerPanel({
+                it("should default call a method on the controller when keyMap is in config", function() {
+                    var controller,
+                        outerController,
+                        InnerPanel = Ext.define(null, {
+                            extend: 'Ext.panel.Panel',
                             keyMap: {
-                                D: 'handleD',           // Resolved to controller
-                                E: {
-                                    handler: 'handleE'  // Resolved to controller
+                                A: 'handleA',           // Resolved to controller
+                                B: {
+                                    handler: 'handleB'  // Resolved to controller
                                 },
-                                F: {
-                                    handler: 'handleF', // Resolved to this
-                                    scope: 'this'                                                                                                                    
+                                C: {
+                                    handler: 'handleC', // Resolved to this
+                                    scope: 'this'
                                 }
                             },
-                            handleF: jasmine.createSpy()
-                        })],
+                            handleC: jasmine.createSpy()
+                        }),
+                        middlePanel = new Ext.panel.Panel({
+                            items: [new InnerPanel({
+                                keyMap: {
+                                    D: 'handleD',           // Resolved to controller
+                                    E: {
+                                        handler: 'handleE'  // Resolved to controller
+                                    },
+                                    F: {
+                                        handler: 'handleF', // Resolved to this
+                                        scope: 'this'                                                                                                                    
+                                    }
+                                },
+                                handleF: jasmine.createSpy()
+                            })],
+                            controller: {
+                                xclass: 'Ext.app.ViewController',
+                                handleA: jasmine.createSpy(),
+                                handleB: jasmine.createSpy(),
+                                handleD: jasmine.createSpy(),
+                                handleE: jasmine.createSpy()
+                            }
+                        });
+                        
+                    outerPanel = new Ext.panel.Panel({
+                        items: middlePanel,
+                        renderTo: document.body,
                         controller: {
                             xclass: 'Ext.app.ViewController',
                             handleA: jasmine.createSpy(),
@@ -3280,128 +3538,117 @@ describe("Ext.panel.Panel", function() {
                             handleE: jasmine.createSpy()
                         }
                     });
-                    
-                outerPanel = new Ext.panel.Panel({
-                    items: middlePanel,
-                    renderTo: document.body,
-                    controller: {
-                        xclass: 'Ext.app.ViewController',
-                        handleA: jasmine.createSpy(),
-                        handleB: jasmine.createSpy(),
-                        handleD: jasmine.createSpy(),
-                        handleE: jasmine.createSpy()
-                    }
+                    controller = middlePanel.controller;
+                    outerController = outerPanel.controller;
+
+                    panel = middlePanel.down('panel');
+                    jasmine.fireKeyEvent(panel.el, 'keydown', 65); //'A'
+                    jasmine.fireKeyEvent(panel.el, 'keydown', 66); //'B'
+                    jasmine.fireKeyEvent(panel.el, 'keydown', 67); //'C'
+                    jasmine.fireKeyEvent(panel.el, 'keydown', 68); //'D'
+                    jasmine.fireKeyEvent(panel.el, 'keydown', 69); //'E'
+                    jasmine.fireKeyEvent(panel.el, 'keydown', 70); //'F'
+
+                    // Inner panel. A&B go to controller, C to this
+                    expect(controller.handleA.callCount).toBe(1);
+                    expect(controller.handleB.callCount).toBe(1);
+                    expect(panel.handleC.callCount).toBe(1);
+
+                    // Middle panel. D&E go to controller, F to this
+                    expect(controller.handleD.callCount).toBe(1);
+                    expect(controller.handleE.callCount).toBe(1);
+                    expect(panel.handleF.callCount).toBe(1);
+
+                    // Make sure scope resolution does not climb too high
+                    expect(outerController.handleA.callCount).toBe(0);
+                    expect(outerController.handleB.callCount).toBe(0);
+                    expect(outerController.handleD.callCount).toBe(0);
+                    expect(outerController.handleE.callCount).toBe(0);
                 });
-                controller = middlePanel.controller;
-                outerController = outerPanel.controller;
 
-                panel = middlePanel.down('panel');
-                jasmine.fireKeyEvent(panel.el, 'keydown', 65); //'A'
-                jasmine.fireKeyEvent(panel.el, 'keydown', 66); //'B'
-                jasmine.fireKeyEvent(panel.el, 'keydown', 67); //'C'
-                jasmine.fireKeyEvent(panel.el, 'keydown', 68); //'D'
-                jasmine.fireKeyEvent(panel.el, 'keydown', 69); //'E'
-                jasmine.fireKeyEvent(panel.el, 'keydown', 70); //'F'
-
-                // Inner panel. A&B go to controller, C to this
-                expect(controller.handleA.callCount).toBe(1);
-                expect(controller.handleB.callCount).toBe(1);
-                expect(panel.handleC.callCount).toBe(1);
-
-                // Middle panel. D&E go to controller, F to this
-                expect(controller.handleD.callCount).toBe(1);
-                expect(controller.handleE.callCount).toBe(1);
-                expect(panel.handleF.callCount).toBe(1);
-
-                // Make sure scope resolution does not climb too high
-                expect(outerController.handleA.callCount).toBe(0);
-                expect(outerController.handleB.callCount).toBe(0);
-                expect(outerController.handleD.callCount).toBe(0);
-                expect(outerController.handleE.callCount).toBe(0);
-            });
-
-            it("should call the method when controller and keyMap are in class definition", function() {
-                var controller,
-                    InnerPanel = Ext.define(null, {
-                        extend: 'Ext.panel.Panel',
-                        keyMap: {
-                            A: 'handleA'           // Resolved to controller
-                        },
-                        controller: {
-                            xclass: 'Ext.app.ViewController',
-                            handleA: jasmine.createSpy()
-                        }
-                    });
-                    
-                    outerPanel = new Ext.panel.Panel({
-                        items: [new InnerPanel({
-                        })],
-                        renderTo: document.body
-                    });
-                    
-                panel = outerPanel.down('panel');
-                controller = panel.controller;
-
-                jasmine.fireKeyEvent(panel.el, 'keydown', 65); //'A'
-
-                // Inner panel. A goes to controller.
-                expect(controller.handleA.callCount).toBe(1);
-            });
-
-            it("should call the method when controller is in class definition and keyMap in config", function() {
-                var controller,
-                    InnerPanel = Ext.define(null, {
-                        extend: 'Ext.panel.Panel',
-                        controller: {
-                            xclass: 'Ext.app.ViewController',
-                            handleA: jasmine.createSpy()
-                        }
-                    });
-                    
-                    outerPanel = new Ext.panel.Panel({
-                        items: [new InnerPanel({
+                it("should call the method when controller and keyMap are in class definition", function() {
+                    var controller,
+                        InnerPanel = Ext.define(null, {
+                            extend: 'Ext.panel.Panel',
                             keyMap: {
                                 A: 'handleA'           // Resolved to controller
-                            }
-                        })],
-                        renderTo: document.body
-                    });
-                    
-                panel = outerPanel.down('panel');
-                controller = panel.controller;
-
-                jasmine.fireKeyEvent(panel.el, 'keydown', 65); //'A'
-
-                // Inner panel. A goes to controller.
-                expect(controller.handleA.callCount).toBe(1);
-            });
-
-            it("should call the method when controller is in config and keyMap in class definition", function() {
-                var controller,
-                    InnerPanel = Ext.define(null, {
-                        extend: 'Ext.panel.Panel',
-                        keyMap: {
-                            A: 'handleA'           // Resolved to controller
-                        }
-                    });
-                    
-                    outerPanel = new Ext.panel.Panel({
-                        items: [new InnerPanel({
+                            },
                             controller: {
                                 xclass: 'Ext.app.ViewController',
                                 handleA: jasmine.createSpy()
                             }
-                        })],
-                        renderTo: document.body
-                    });
-                    
-                panel = outerPanel.down('panel');
-                controller = panel.controller;
+                        });
+                        
+                        outerPanel = new Ext.panel.Panel({
+                            items: [new InnerPanel({
+                            })],
+                            renderTo: document.body
+                        });
+                        
+                    panel = outerPanel.down('panel');
+                    controller = panel.controller;
 
-                jasmine.fireKeyEvent(panel.el, 'keydown', 65); //'A'
+                    jasmine.fireKeyEvent(panel.el, 'keydown', 65); //'A'
 
-                // Inner panel. A goes to controller.
-                expect(controller.handleA.callCount).toBe(1);
+                    // Inner panel. A goes to controller.
+                    expect(controller.handleA.callCount).toBe(1);
+                });
+
+                it("should call the method when controller is in class definition and keyMap in config", function() {
+                    var controller,
+                        InnerPanel = Ext.define(null, {
+                            extend: 'Ext.panel.Panel',
+                            controller: {
+                                xclass: 'Ext.app.ViewController',
+                                handleA: jasmine.createSpy()
+                            }
+                        });
+                        
+                        outerPanel = new Ext.panel.Panel({
+                            items: [new InnerPanel({
+                                keyMap: {
+                                    A: 'handleA'           // Resolved to controller
+                                }
+                            })],
+                            renderTo: document.body
+                        });
+                        
+                    panel = outerPanel.down('panel');
+                    controller = panel.controller;
+
+                    jasmine.fireKeyEvent(panel.el, 'keydown', 65); //'A'
+
+                    // Inner panel. A goes to controller.
+                    expect(controller.handleA.callCount).toBe(1);
+                });
+
+                it("should call the method when controller is in config and keyMap in class definition", function() {
+                    var controller,
+                        InnerPanel = Ext.define(null, {
+                            extend: 'Ext.panel.Panel',
+                            keyMap: {
+                                A: 'handleA'           // Resolved to controller
+                            }
+                        });
+                        
+                        outerPanel = new Ext.panel.Panel({
+                            items: [new InnerPanel({
+                                controller: {
+                                    xclass: 'Ext.app.ViewController',
+                                    handleA: jasmine.createSpy()
+                                }
+                            })],
+                            renderTo: document.body
+                        });
+                        
+                    panel = outerPanel.down('panel');
+                    controller = panel.controller;
+
+                    jasmine.fireKeyEvent(panel.el, 'keydown', 65); //'A'
+
+                    // Inner panel. A goes to controller.
+                    expect(controller.handleA.callCount).toBe(1);
+                });
             });
         });
     });

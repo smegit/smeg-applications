@@ -92,7 +92,13 @@ Ext.define('Ext.grid.NavigationModel', {
             space: me.onKeySpace,
             enter: me.onKeyEnter,
             esc: me.onKeyEsc,
-            113: me.onKeyF2,
+            113: {
+                // Actionable mode is triggered by F2 key with no modifiers
+                ctrl: false,
+                shift: false,
+                alt: false,
+                handler: me.onKeyF2
+            },
             tab: me.onKeyTab,
             A: {
                 ctrl: true,
@@ -165,9 +171,14 @@ Ext.define('Ext.grid.NavigationModel', {
     onContainerMouseDown: function(view, mousedownEvent) {
         var me = this,
             context = new Ext.grid.CellContext(view),
-            position = (view.actionableMode && view.actionPosition) || view.lastFocused;
+            lastFocused, position;
+
+        me.callParent([view, mousedownEvent]);
+
+        lastFocused = view.lastFocused;
+        position = (view.actionableMode && view.actionPosition) || lastFocused;
         
-        if (!position) {
+        if (!position || lastFocused === 'scrollbar') {
             return;
         }
         
@@ -229,20 +240,20 @@ Ext.define('Ext.grid.NavigationModel', {
                 if (mousedownEvent.button === 2) {
                     this.fireNavigateEvent(mousedownEvent);
                 }
+                
+                // If mousedowning on a focusable Component.
+                // After having set the position according to the mousedown, we then
+                // enter actionable mode and focus the component just as if the user
+                // Had navigated here and pressed F2.
+                if (targetComponent && targetComponent.isFocusable && targetComponent.isFocusable()) {
+                    view.setActionableMode(true, mousedownEvent.position);
+                    
+                    // Focus the targeted Component
+                    targetComponent.focus();
+                }
             }
             else {
                 mousedownEvent.preventDefault(true);
-            }
-
-            // If mousedowning on a focusable Component.
-            // After having set the position according to the mousedown, we then
-            // enter actionable mode and focus the component just as if the user
-            // Had navigated here and pressed F2.
-            if (targetComponent && targetComponent.isFocusable && targetComponent.isFocusable()) {
-                view.setActionableMode(true, mousedownEvent.position);
-
-                // Focus the targeted Component
-                targetComponent.focus();
             }
         }
     },
@@ -351,13 +362,17 @@ Ext.define('Ext.grid.NavigationModel', {
     },
 
     onItemMouseDown: function(view, record, item, index, mousedownEvent) {
-        var me = this;
+        var me = this,
+            scroller;
 
         // If the event is a touchstart, leave it until the click to focus
         // A mousedown outside a cell. Must be in a Feature, or on a row border
         if (!mousedownEvent.position.cellElement && (mousedownEvent.pointerType !== 'touch')) {
             // We are going to redirect focus, so do not allow default focus to proceed
-            mousedownEvent.preventDefault();
+            // but allow text selection if the view is configured with enableTextSelection
+            if (!view.enableTextSelection) {
+                mousedownEvent.preventDefault();
+            }
 
             // Stamp the closest cell into the event as if it were a cellmousedown
             me.attachClosestCell(mousedownEvent);
@@ -369,7 +384,11 @@ Ext.define('Ext.grid.NavigationModel', {
 
             // If the browser autoscrolled to bring the cell into focus
             // undo that.
-            view.getScrollable().restoreState();
+            scroller = view.getScrollable();
+            
+            if (scroller) {
+                scroller.restoreState();
+            }
         }
     },
 

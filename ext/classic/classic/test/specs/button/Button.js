@@ -1903,7 +1903,14 @@ describe("Ext.button.Button", function() {
                 
                 window.open = Ext.emptyFn;
                 button.frameTable.dom.click();
-                window.open = undefined; // IE8 :(
+                
+                try {
+                    delete window.open;
+                }
+                catch (e) {
+                    window.open = undefined; // IE8 :(
+                    addGlobal('open');
+                }
                 
                 expect(button.getHref).toHaveBeenCalled();
             });

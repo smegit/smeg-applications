@@ -83,7 +83,7 @@
  * see the changes on-screen.
  * 
  * For information on configuring a sprite with an initial transformation see 
- * {@link #scaling}, {@link rotation}, and {@link translation}.
+ * {@link #scaling}, {@link #rotation}, and {@link #translation}.
  * 
  * For information on applying a transformation to an existing sprite see the 
  * Ext.draw.Matrix class.
@@ -747,6 +747,12 @@ Ext.define('Ext.draw.sprite.Sprite', {
         me.setAttributes(config);
     },
 
+    updateSurface: function (surface, oldSurface) {
+        if (oldSurface) {
+            oldSurface.remove(this);
+        }
+    },
+
     /**
      * @private
      * Current state of the sprite.
@@ -1004,32 +1010,25 @@ Ext.define('Ext.draw.sprite.Sprite', {
      */
     setAttributes: function (changes, bypassNormalization, avoidCopy) {
         var me = this,
-            attr = me.attr,
-            normalizedChanges,
-            name, value, obj;
+            changesToPush;
 
         //<debug>
-        if (me.isDestroyed) {
+        if (me.destroyed) {
             Ext.Error.raise("Setting attributes of a destroyed sprite.");
         }
         //</debug>
+
         if (bypassNormalization) {
             if (avoidCopy) {
-                me.topModifier.pushDown(attr, changes);
+                changesToPush = changes;
             } else {
-                obj = {};
-                for (name in changes) {
-                    value = changes[name];
-                    if (value !== attr[name]) {
-                        obj[name] = value;
-                    }
-                }
-                me.topModifier.pushDown(attr, obj);
+                changesToPush = Ext.apply({}, changes);
             }
         } else {
-            normalizedChanges = me.self.def.normalize(changes);
-            me.topModifier.pushDown(attr, normalizedChanges);
+            changesToPush = me.self.def.normalize(changes);
         }
+
+        me.topModifier.pushDown(me.attr, changesToPush);
     },
 
     /**
@@ -1181,7 +1180,20 @@ Ext.define('Ext.draw.sprite.Sprite', {
      * @param {Array} rect The rect of the context to be affected by gradients.
      */
     useAttributes: function (ctx, rect) {
-        this.applyTransformations();
+        // Always (force) apply transformation to sprite instances,
+        // even if their 'dirtyTransform' flag is false.
+        // The 'dirtyTransform' flag of an instance may never be set to 'true', as the
+        // 'transform' updater won't ever be called for sprite instances that have
+        // the same transform attributes as their template, because there's nothing to update
+        // (an instance is simply a prototype chained template's 'attr' object, that only
+        // has own properties for attributes whose values are different).
+        // Making the modifier recognize transform attributes set on sprite instances
+        // (see Ext.draw.modifier.Modifier's 'pushDown' method, where attributes with
+        // same values are removed from the 'changes' object) and making sure their 'dirtyTransform'
+        // flag is set to 'true' is not a correct solution here, because of the way instances
+        // are rendered (see Ext.draw.sprite.Instancing's 'render' method) - there is no way
+        // an instance wounldn't want its 'applyTransformations' method called.
+        this.applyTransformations(this.isSpriteInstance);
         var attr = this.attr,
             canvasAttributes = attr.canvasAttributes,
             strokeStyle = canvasAttributes.strokeStyle,

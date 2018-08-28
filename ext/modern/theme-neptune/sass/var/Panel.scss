@@ -514,6 +514,10 @@ $panel-anchor-width: dynamic($panel-anchor-height * 2.33);
 ) {
     $ui-suffix: ui-suffix($ui);
 
+    // The width of adjoining borders to the "arrow" border which is $anchor-height wide.
+    // The opposite border is zero width.
+    $anchor-border-width: $anchor-width / 2;
+
     .x-panel#{$ui-suffix} {
         @if not $manage-borders {
             @include border($border-width, $border-style, $border-color)
@@ -525,10 +529,6 @@ $panel-anchor-width: dynamic($panel-anchor-height * 2.33);
             @if is-null($border-width) {
                 $border-width: 0;
             }
-
-            // The width of adjoining borders to the "arrow" border which is $anchor-height wide.
-            // The opposite border is zero width.
-            $anchor-border-width: $anchor-width / 2;
 
             .#{$prefix}anchor {
                 border: $anchor-border-width solid transparent;
@@ -604,9 +604,31 @@ $panel-anchor-width: dynamic($panel-anchor-height * 2.33);
                 .#{$prefix}anchor-right:after {
                     border-right-width: 0;
                     border-left: $anchor-height solid $body-background-color;
-                    top: calc(-#{$anchor-border-width or $default-calc-value} + #{$border-width or $default-calc-value});
+                    top: -#{$anchor-border-width or $default-calc-value};
                     right: $border-width;
                 }
+            }
+        }
+    }
+
+    // If background is a different color, make it look right on safari
+    @if $body-background-color != $border-color and $border-width != 0 {
+        // Make Safari look right
+        .#{$prefix}safari .#{$prefix}panel#{$ui-suffix} {
+            .#{$prefix}anchor-top:after {
+                left: -#{$anchor-border-width or $default-calc-value};
+            }
+
+            .#{$prefix}anchor-bottom:after {
+                left: -#{$anchor-border-width or $default-calc-value};
+            }
+
+            .#{$prefix}anchor-left:after {
+                top: -#{$anchor-border-width or $default-calc-value};
+            }
+
+            .#{$prefix}anchor-right:after {
+                top: -#{$anchor-border-width or $default-calc-value};
             }
         }
     }

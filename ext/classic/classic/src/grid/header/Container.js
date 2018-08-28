@@ -311,6 +311,10 @@ Ext.define('Ext.grid.header.Container', {
         return (items.length === 1 && items[0] === header);
     },
 
+    isSealed: function() {
+        return !!(this.sealed || this.getInherited().sealed);
+    },
+
     maybeShowNestedGroupHeader: function () {
         // Group headers are special in that they are auto-hidden when their subheaders are all
         // hidden and auto-shown when the first subheader is reshown. They are the only headers
@@ -449,7 +453,7 @@ Ext.define('Ext.grid.header.Container', {
         var targetCmp = Ext.Component.fromElement(target),
             cols, i, len, scrollable, col;
 
-        if (targetCmp !== this) {
+        if (!e.defaultPrevented && targetCmp !== this) {
             // The DDManager (Header Containers are draggable) prevents mousedown default
             // So we must explicitly focus the header
             if (targetCmp.isGroupHeader) {
@@ -585,11 +589,12 @@ Ext.define('Ext.grid.header.Container', {
             items  = me.items.items,
             count  = items.length,
             i      = 0,
-            length,
-            c, col, columnState, index,
             moved = false,
             newOrder = [],
-            newCols = [];
+            newCols = [],
+            length, col, columnState, index;
+
+        me.purgeCache();
 
         for (i = 0; i < count; i++) {
             col = items[i];
@@ -644,7 +649,6 @@ Ext.define('Ext.grid.header.Container', {
             delete me.applyingState;
 
             me.add(newOrder);
-            me.purgeCache();
         }
     },
 
@@ -778,7 +782,7 @@ Ext.define('Ext.grid.header.Container', {
                 // the inner DOM may get overwritten, since Container::deatchOnRemove gets processed after
                 // onRemove.
                 if (c.rendered) {
-                    me.detachComponent(c);
+                    c.detachFromBody();
                 }
                 
                 // If we don't have any items left and we're a group, remove ourselves.
@@ -1637,6 +1641,14 @@ Ext.define('Ext.grid.header.Container', {
             result.push(this.menu);
         }
         return result;
+    },
+
+    initInheritedState: function(inheritedState, inheritedStateInner) {
+        if (this.sealed) {
+            inheritedState.sealed = true;
+        }
+
+        this.callParent([inheritedState, inheritedStateInner]);
     },
 
     privates: {

@@ -126,6 +126,24 @@ $panel-tool-focus-outline-width: dynamic(1px);
 $panel-tool-focus-outline-offset: dynamic(0);
 
 /**
+ * @var {color}
+ * The text color of focused Panel tool glyph
+ */
+$panel-tool-focus-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The background color of focused Panel tool
+ */
+$panel-tool-focus-background-color: dynamic(null);
+
+/**
+ * @var {string}
+ * The background sprite to use for focused Panel tools
+ */
+$panel-tool-focus-background-image: dynamic($panel-tool-background-image);
+
+/**
  * @var {number}
  * The border-width of Panel Headers
  */
@@ -136,6 +154,42 @@ $panel-header-border-width: dynamic($panel-border-width);
  * The border-style of Panel Headers
  */
 $panel-header-border-style: dynamic(solid);
+
+/**
+ * @var {color}
+ * The color of the outline around focused Panel title
+ */
+$panel-header-focus-outline-color: dynamic($base-color);
+
+/**
+ * @var {string}
+ * The outline style of the focused Panel title
+ */
+$panel-header-focus-outline-style: dynamic(solid);
+
+/**
+ * @var {number}
+ * The outline width of the focused Panel title
+ */
+$panel-header-focus-outline-width: dynamic(1px);
+
+/**
+ * @var {number}
+ * The offset for focused Panel title outline
+ */
+$panel-header-focus-outline-offset: dynamic(1px);
+
+/**
+ * @var {color}
+ * The color of Panel title text when header is focused
+ */
+$panel-header-focus-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The background color of Panel title text when header is focused
+ */
+$panel-header-focus-background-color: dynamic(null);
 
 /**
  * @var {number/list}

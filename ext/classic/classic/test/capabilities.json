@@ -1,41 +1,41 @@
 [
     {
-        "platform": "Windows XP",
+        "platform": "Windows 7",
         "browserName": "internet explorer",
         "version": "8",
         "prerun": {
-            "executable": "http://saucelabs-tunnel:1841/js-timeout-fix.bat"
+            "executable": "https://qa.sencha.com/js-timeout-fix.bat"
         },
         "enablePersistentHover": false,
-        "chunks": 20
+        "chunks": 15
     },
     {
         "platform": "Windows 7",
         "browserName": "internet explorer",
         "version": "9",
         "enablePersistentHover": false,
-        "chunks": 20
+        "chunks": 10
     },
     {
         "platform": "Windows 7",
         "browserName": "internet explorer",
         "version": "10",
         "enablePersistentHover": false,
-        "chunks": 20
+        "chunks": 10
     },
     {
         "platform": "Windows 7",
         "browserName": "internet explorer",
         "version": "11",
         "enablePersistentHover": false,
-        "chunks": 15
+        "chunks": 10
     },
     {
         "browserName": "MicrosoftEdge",
         "platform": "Windows 10",
-        "version": "13.10586",
+        "version": "latest",
         "enablePersistentHover": false,
-        "chunks": 20
+        "chunks": 10
     },
     {
         "platform": "iOS",
@@ -44,30 +44,42 @@
         "appiumVersion": "1.5.3",
         "deviceOrientation": "landscape",
         "deviceName": "iPad Retina Simulator",
-        "chunks": 15
+        "chunks": 10
     },
     {
         "platform": "OS X 10.9",
         "browserName": "safari",
         "version": "7",
-        "chunks": 15
+        "chunks": 10
     },
     {
         "platform": "OS X 10.10",
         "browserName": "safari",
         "version": "8",
-        "chunks": 15
+        "chunks": 10
     },
+    {
+        "platform": "OS X 10.11",
+        "browserName": "safari",
+        "version": "9",
+        "chunks": 10
+    },
+//    {
+//        "platform": "OS X 10.12",
+//        "browserName": "safari",
+//        "version": "10",
+//        "chunks": 10
+//    },
     {
         "platform": "Windows 10",
         "browserName": "firefox",
-        "version": "48",
-        "chunks": 15
+        "version": "latest",
+        "chunks": 10
     },
     {
         "platform": "Windows 10",
         "browserName": "chrome",
-        "version": "52",
-        "chunks": 15
+        "version": "latest",
+        "chunks": 10
     }
 ]

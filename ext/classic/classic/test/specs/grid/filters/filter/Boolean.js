@@ -1,6 +1,6 @@
 describe("Ext.grid.filters.filter.Boolean", function() {
     var wasCalled = false,
-        grid, store;
+        menu, grid, store;
 
     function createGrid(storeCfg, gridCfg) {
         store = new Ext.data.Store(Ext.apply({
@@ -37,6 +37,22 @@ describe("Ext.grid.filters.filter.Boolean", function() {
             width: 400,
             renderTo: Ext.getBody()
         }, gridCfg));
+    }
+
+    function showFilterMenu() {
+        var headerCt = grid.headerCt,
+            filtersCheckItem,
+            header = grid.columnManager.getLast();
+
+        // Show the grid menu.
+        headerCt.showMenuBy(null, header.triggerEl.dom, header);
+
+        // Show the filter menu.
+        filtersCheckItem = headerCt.menu.items.last();
+        filtersCheckItem.activated = true;
+        filtersCheckItem.expandMenu(null, 0);
+
+        menu = filtersCheckItem.menu;
     }
 
     afterEach(function() {
@@ -129,6 +145,53 @@ describe("Ext.grid.filters.filter.Boolean", function() {
                     expect(grid.columnManager.getHeaderByDataIndex('adult').filter.active).toBe(false);
                 });
             });
+        });
+    });
+
+    describe("activating", function() {
+        it("should filter false by default", function() {
+            var filter;
+
+            createGrid(null, {
+                columns: [
+                    { header: 'Name',  dataIndex: 'name', width: 100 },
+                    { header: 'Adult', dataIndex: 'adult',
+                        filter: {
+                            type: 'boolean',
+                            value: undefined
+                        },
+                    width: 100 }
+                ]
+            });
+
+            filter = grid.columnManager.getHeaderByDataIndex('adult').filter;
+
+            filter.activate();
+
+            expect(store.getRange().length).toBe(2);
+        });
+
+        it("should not have a default value if defaultValue is null", function() {
+            var menu, items; 
+
+            createGrid(null, {
+                columns: [
+                    { header: 'Name',  dataIndex: 'name', width: 100 },
+                    { header: 'Adult', dataIndex: 'adult',
+                        filter: {
+                            type: 'boolean',
+                            defaultValue: null
+                        },
+                    width: 100 }
+                ]
+            });
+
+            showFilterMenu();
+            menu = grid.columnManager.getHeaderByDataIndex('adult').filter.menu;
+            items = menu.items.getRange();
+
+            expect(items[0].checked).toBe(false);
+            expect(items[1].checked).toBe(false);
         });
     });
 });

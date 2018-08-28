@@ -290,6 +290,11 @@
         &.#{$prefix}form-text-file {
             color: $ui-file-field-color;
         }
+
+        &.#{$prefix}webkit-border-box-bug {
+            // workaround for https://bugs.webkit.org/show_bug.cgi?id=137693
+            height: calc(100% + #{vertical($ui-padding)});
+        }
     }
 
     .#{$prefix}placeholder-label-#{$ui} {

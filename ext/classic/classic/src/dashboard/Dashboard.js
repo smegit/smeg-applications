@@ -53,11 +53,11 @@ Ext.define('Ext.dashboard.Dashboard', {
      * An array designating the width of columns in your dashboard's default state as described
      * by the {@link #cfg-defaultContent} property. For example:
      *
-     *    columnWidths: [
-     *       0.35,
-     *       0.40,
-     *       0.25
-     *    ]
+     *     columnWidths: [
+     *        0.35,
+     *        0.40,
+     *        0.25
+     *     ]
      *    
      * As you can see, this array contains the default widths for the 3 columns in the dashboard's 
      * initial view. The column widths should total to an integer value, typically 1 as shown
@@ -140,6 +140,7 @@ Ext.define('Ext.dashboard.Dashboard', {
         }
 
         me.callParent();
+        me.addStateEvents('remove');
     },
 
     applyParts: function (parts, collection) {
@@ -240,9 +241,8 @@ Ext.define('Ext.dashboard.Dashboard', {
         var cycle = this.cycleLayout;
         return Ext.apply({
             items : [],
-            bubbleEvents : ['add', 'remove', 'childmove', 'resize'],
+            bubbleEvents : ['add', 'childmove', 'resize'],
             listeners: {
-                remove: this.onRemoveItem,
                 expand  : cycle,
                 collapse : cycle,
                 scope: this
@@ -262,6 +262,10 @@ Ext.define('Ext.dashboard.Dashboard', {
 
         view.bubbleEvents = Ext.Array.from(view.bubbleEvents).concat(['expand', 'collapse']);
         view.stateful = me.stateful;
+        view.listeners = {
+            removed: this.onItemRemoved,
+            scope: this
+        };
         return view;
     },
 
@@ -297,16 +301,16 @@ Ext.define('Ext.dashboard.Dashboard', {
         var columnWidths = state.columnWidths,
             items = me.items.items,
             length = items.length,
+            columnLength = columnWidths ? columnWidths.length : 0,
             i, n;
 
         // Splitters have not been inserted so the length is sans-splitter
-        if (columnWidths) {
-            n = columnWidths.length;
+        if (columnLength) {
             me.columnWidths = [];
 
             for (i = 0; i < length; ++i) {
                 me.columnWidths.push(
-                    items[i].columnWidth = (i < n) ? columnWidths[i] : (1 / length)
+                    items[i].columnWidth = (i < columnLength) ? columnWidths[i] : (1 / length)
                 );
             }
         }
@@ -326,10 +330,16 @@ Ext.define('Ext.dashboard.Dashboard', {
             }
         }
 
-        state.columnWidths = columnWidths;
         state.idSeed = me.idSeed;
         state.items = me.serializeItems();
-        me.columnWidths = columnWidths;
+        // only overwrite column widths if they are defined in the state
+        if (columnWidths.length) {
+            state.columnWidths = me.columnWidths = columnWidths;
+        }   
+        // no column widths are defined from the state, let's remove it so any defaults can be used instead
+        else {
+            delete state.columnWidths;
+        }     
 
         return state;
     },
@@ -423,7 +433,7 @@ Ext.define('Ext.dashboard.Dashboard', {
         return ret;
     },
 
-    onRemoveItem: function (column, item) {
+    onItemRemoved: function (item, column) {
         // Removing items from a Dashboard is a persistent action, so we must remove the
         // state data for it or leak it.
         if (item.stateful && !item.isMoving) {

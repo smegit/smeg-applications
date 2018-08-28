@@ -342,10 +342,12 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
      * Called before the start of a view's layout run
      */
     beforeTableLayout: function(ownerContext) {
-        var dom = this.view.body.dom;
+        var dom = this.view.body.dom,
+            size;
         if (dom) {
-            ownerContext.bodyHeight = dom.offsetHeight;
-            ownerContext.bodyWidth = dom.offsetWidth;
+            size = this.grid.getElementSize(dom);
+            ownerContext.bodyHeight = size.height;
+            ownerContext.bodyWidth = size.width;
         }
     },
 
@@ -357,7 +359,7 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
     afterTableLayout: function(ownerContext) {
         var me = this,
             view = me.view,
-            renderedBlockHeight;
+            renderedBlockHeight, size;
 
         // The rendered block has changed height.
         // This could happen if a cellWrap: true column has changed width.
@@ -365,7 +367,8 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
         if (ownerContext.bodyHeight && view.body.dom) {
             delete me.rowHeight;
             me.refreshSize();
-            renderedBlockHeight = view.body.dom.offsetHeight;
+            renderedBlockHeight = me.grid.getElementHeight(view.body.dom);
+    
             if (renderedBlockHeight !== ownerContext.bodyHeight) {
                 me.onViewResize(view, null, view.el.lastBox.height);
 
@@ -411,7 +414,7 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
         }
 
         // Cache the rendered block height.
-        me.bodyHeight = view.body.dom.offsetHeight;
+        me.bodyHeight = me.grid.getElementHeight(view.body.dom);
         
         // Calculates scroll range.
         // Also calculates rowHeight if we do not have an own rowHeight property.
@@ -763,7 +766,7 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
 
         // Only need to change display if the view is currently empty, or
         // change intersects the rendered view.
-        me.refreshView();
+        me.refreshView(rows.startIndex);
     },
 
     /**
@@ -1129,6 +1132,7 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
         else if (storeCount < viewSize) {
             startIndex = 0;
             endIndex = maxIndex;
+            me.nextRefreshStartIndex = 0;
         }
         // We're starting from nothing, but there's a locking partner with the range info, so match that
         else if (startIndex == null && !rows.getCount() && lockingPartnerRows && lockingPartnerRows.getCount()) {
@@ -1179,7 +1183,6 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
             previousFirstItem,
             previousLastItem,
             prevRowCount = rows.getCount(),
-            newNodes,
             viewMoved = startIndex !== rows.startIndex && !me.isStoreLoading,
             calculatedTop = -1,
             scrollIncrement,
@@ -1205,7 +1208,7 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
             view.clearViewEl(true);
             view.refreshCounter++;
             if (range.length) {
-                newNodes = view.doAdd(range, startIndex);
+                view.doAdd(range, startIndex);
 
                 if (viewMoved) {
                     // Try to find overlap between newly rendered block and old block
@@ -1314,9 +1317,7 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
             calculatedTop,
             lockingPartner = (view.lockingPartner && !fromLockingPartner && !me.doNotMirror) && view.lockingPartner.bufferedRenderer,
             variableRowHeight = me.variableRowHeight,
-            oldBodyHeight = me.bodyHeight,
-            layoutCount = view.componentLayoutCounter,
-            activeEl, containsFocus, i, newRows, newTop, newFocus, noOverlap,
+            activeEl, containsFocus, i, newRows, newTop, noOverlap,
             oldStart, partnerNewRows, pos, removeCount, topAdditionSize, topBufferZone;
 
         // View may have been destroyed since the DelayedTask was kicked off.
@@ -1363,7 +1364,6 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
 
         // The new range encompasses the current range. Refresh and keep the scroll position stable
         if (start < rows.startIndex && end > rows.endIndex) {
-
             // How many rows will be added at top. So that we can reposition the table to maintain scroll position
             topAdditionSize = rows.startIndex - start;
 
@@ -1372,13 +1372,12 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
             newRows = view.doAdd(range, start);
             view.fireItemMutationEvent('itemadd', range, start, newRows, view);
             for (i = 0; i < topAdditionSize; i++) {
-                increment -= newRows[i].offsetHeight;
+                increment -= me.grid.getElementHeight(newRows[i]);
             }
 
             // We've just added a bunch of rows to the top of our range, so move upwards to keep the row appearance stable
            newTop = me.bodyTop + increment;
-        }
-        else {
+        } else {
             // No overlapping nodes; we'll need to render the whole range.
             // teleported flag is set in getFirstVisibleRowIndex/getLastVisibleRowIndex if
             // the table body has moved outside the viewport bounds
@@ -1409,6 +1408,7 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
                 }
                 newRows = rows.scroll(Ext.Array.slice(range, rows.endIndex + 1 - start), 1, removeCount);
 
+                scroller.scrollTo(null, me.scrollTop);
                 // We only have to bump the table down by the height of removed rows if rows are not a standard size
                 if (variableRowHeight) {
                     // Bump the table downwards by the height scraped off the top
@@ -1425,6 +1425,7 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
                 oldStart = rows.startIndex;
                 newRows = rows.scroll(Ext.Array.slice(range, 0, rows.startIndex - start), -1, removeCount);
 
+                scroller.scrollTo(null, me.scrollTop);
                 // We only have to bump the table up by the height of top-added rows if rows are not a standard size
                 if (variableRowHeight) {
                     // Bump the table upwards by the height added to the top
@@ -1439,7 +1440,6 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
                             newTop = 0;
                         }
                     }
-
                     // Not at zero yet, but the position has moved into negative range
                     else if (newTop < 0) {
                         increment = rows.startIndex * me.rowHeight;
@@ -1452,7 +1452,6 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
                     newTop = calculatedTop;
                 }
             }
-
             // The position property is the scrollTop value *at which the table was last correct*
             // MUST be set at table render/adjustment time
             me.position = me.scrollTop;
@@ -1472,19 +1471,8 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
                     view.renderingRows = true;
                     view.onFocusLeave({});
                     view.renderingRows = false;
-                    // Try to focus the contextual column header.
-                    // Failing that, look inside it for a tabbable element.
-                    // Failing that, focus the view.
-                    // Focus MUST NOT just silently die due to DOM removal
-                    if (pos.column.focusable) {
-                        newFocus = pos.column;
-                    } else {
-                        newFocus = pos.column.el.findTabbableElements()[0];
-                    }
-                    if (!newFocus) {
-                        newFocus = view.el;
-                    }
-                    newFocus.focus();
+                    
+                    me.getNewFocusTarget(pos).focus();
                 }
             }
         }
@@ -1538,6 +1526,38 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
         }
         //</debug>
         return newRows;
+    },
+    
+    /**
+     * Gets the next focus target based on the position
+     * @param {Ext.grid.CellContext} pos
+     * @returns {Ext.Component}
+     * @since 6.2.2
+     */
+    getNewFocusTarget: function(pos) {
+        var me = this,
+            grid = me.grid,
+            view = me.view,
+            column = pos.column,
+            hiddenHeaders = column.isHidden() || grid.hideHeaders,
+            tabbableItems;
+        
+        // Focus MUST NOT silently die due to DOM removal. Focus will be moved in the following order
+        // as available:
+        // Try focusing the contextual column header
+        if (column.focusable && !hiddenHeaders) {
+            return column;
+        }
+        
+        tabbableItems = column.el.findTabbableElements();
+        
+        // Failing that, look inside it for a tabbable element
+        if (tabbableItems && tabbableItems.length) {
+            return tabbableItems[0];
+        }
+        
+        // Failing that, find the available focus target of the grid or focus the view
+        return grid.findFocusTarget() || view.el;
     },
 
     syncRowHeights: function(itemEls, partnerItemEls) {
@@ -1602,7 +1622,7 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
             }
         }
         // body height might have changed with change of rows, and possible syncRowHeights call.
-        me.bodyHeight = lockingPartner.bodyHeight = view.body.dom.offsetHeight;
+        me.bodyHeight = lockingPartner.bodyHeight = me.grid.getElementHeight(view.body.dom);
     },
 
     setBodyTop: function(bodyTop, skipStretchView) {
@@ -1621,7 +1641,7 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
 
         // If this is the last page, correct the scroll range to be just enough to fit.
         if (me.variableRowHeight) {
-            me.bodyHeight = body.dom.offsetHeight;
+            me.bodyHeight = me.grid.getElementHeight(body.dom);
 
             // We are displaying the last row, so ensure the scroll range finishes exactly at the bottom of the view body
             if (rows.endIndex === store.getCount() - 1) {
@@ -1679,7 +1699,7 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
             targetTop = bodyTop + elements[target].offsetTop;
 
             // If target is entirely above the viewport, chop downwards
-            if (targetTop + elements[target].offsetHeight <= viewportTop) {
+            if (targetTop + me.grid.getElementHeight(elements[target]) <= viewportTop) {
                 return me.getFirstVisibleRowIndex(target + 1, endRow, viewportTop, viewportBottom);
             }
 
@@ -1738,7 +1758,7 @@ Ext.define('Ext.grid.plugin.BufferedRenderer', {
             if (targetTop > viewportBottom) {
                 return me.getLastVisibleRowIndex(startRow, target - 1, viewportTop, viewportBottom);
             }
-            targetBottom = targetTop + elements[target].offsetHeight;
+            targetBottom = targetTop + me.grid.getElementHeight(elements[target]);
 
             // Target is last
             if (targetBottom >= viewportBottom) {

@@ -2946,6 +2946,27 @@ describe('Ext.grid.plugin.BufferedRenderer', function () {
             expect(view.bufferedRenderer.getFirstVisibleRowIndex()).toBe(500 + view.bufferedRenderer.trailingBufferZone);
         });
     });
+
+    describe('scrolling position', function() {
+        it('should not scroll up when fetching a new range of rows', function() {
+            makeGrid(null,{
+                data: createData(1000, false, true),
+            });
+
+            grid.getNavigationModel().setPosition(0, 0);
+
+            jasmine.waitsForScroll(scroller, function() {
+                if (view.all.startIndex !== 0) {
+                    return true;
+                }
+                scroller.scrollBy(0, 10);
+            }, 'view is scrolled to the last record');
+
+            runs(function() {
+                expect(view.getScrollY()).not.toBeLessThan(600);
+            });
+        });
+    });
     
     describe('non scrolling grids', function() {
         it('should not throw an error', function() {

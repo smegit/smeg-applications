@@ -10,7 +10,7 @@
  *     ]
  *
  */
- Ext.define('Ext.grid.column.RowNumberer', {
+Ext.define('Ext.grid.column.RowNumberer', {
     extend: 'Ext.grid.column.Column',
     xtype: 'rownumberer',
 
@@ -24,29 +24,52 @@
     },
 
     onAdded: function(parent, instanced) {
-        var me = this;
+        var me = this,
+            grid;
 
         me.callParent([parent, instanced]);
-        me.checkWidth();
-        me.storeListeners = me.grid.getStore().on({
-            datachanged: me.checkWidth,
+
+        grid = me.grid;
+
+        me.gridListeners = grid.on({
+            storechange: 'attachStoreListeners',
             scope: me,
             destroyable: true
-        });
+        })
+        me.attachStoreListeners(grid.getStore());
     },
 
     onRemoved: function(destroying) {
-        this.storeListeners.destroy();
+        Ext.destroy(this.gridListeners, this.storeListeners);
         this.callParent([destroying]);
     },
 
     checkWidth: function() {
-        var size = String(this.grid.getStore().getCount());
-        
-        this.setWidth((size.length + 1) + 'em');
+        var store = this.grid.getStore(),
+            size = 0;
+
+        if (store) {
+            size = String(store.getCount()).length;
+        }
+        this.setWidth((size + 1) + 'em');
     },
 
     applyWidth: function(w) {
         return w;
-    }
+    },
+
+     privates: {
+        attachStoreListeners: function(store) {
+            Ext.destroy(this.storeListeners);
+
+            if(store) {
+                this.storeListeners = store.on({
+                    datachanged: 'checkWidth',
+                    scope: this,
+                    destroyable: true
+                });
+            }
+            this.checkWidth();
+        }
+     }
 });

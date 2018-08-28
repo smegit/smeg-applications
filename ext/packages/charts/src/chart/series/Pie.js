@@ -203,7 +203,7 @@ Ext.define('Ext.chart.series.Pie', {
             totalAngle = me.getTotalAngle(),
             clockwise = me.getClockwise() ? 1 : -1,
             sprites = me.getSprites(),
-            chart, sprite;
+            chart, sprite, labels;
 
         if (!sprites) {
             return;
@@ -239,13 +239,16 @@ Ext.define('Ext.chart.series.Pie', {
         if (recordCount < me.sprites.length) {
             for (i = recordCount; i < me.sprites.length; i++) {
                 sprite = me.sprites[i];
-                // Don't want the 'labels' Markers and its 'template' sprite to be destroyed
-                // with the PieSlice MarkerHolder, as it is also used by other pie slices.
-                // So we release 'labels' before destroying the PieSlice.
-                // But first, we have to clear the instances of the 'labels'
-                // Markers created by the PieSlice MarkerHolder.
-                sprite.getMarker('labels').clear(sprite.getId());
-                sprite.releaseMarker('labels');
+                labels = sprite.getMarker('labels');
+                if (labels) {
+                    // Don't want the 'labels' Markers and its 'template' sprite to be destroyed
+                    // with the PieSlice MarkerHolder, as it is also used by other pie slices.
+                    // So we release 'labels' before destroying the PieSlice.
+                    // But first, we have to clear the instances of the 'labels'
+                    // Markers created by the PieSlice MarkerHolder.
+                    labels.clear(sprite.getId());
+                    sprite.releaseMarker('labels');
+                }
                 sprite.destroy();
             }
             me.sprites.length = recordCount;

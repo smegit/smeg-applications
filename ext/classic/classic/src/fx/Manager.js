@@ -400,5 +400,6 @@ Ext.define('Ext.fx.Manager', {
         me.targetArr = {};
         me.items.clear();
         me.targets.clear();
+        me.clearFxQueue();
     }
 });

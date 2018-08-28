@@ -109,8 +109,6 @@ describe('Ext.grid.header.Container', function () {
                 { header: 'Phone', headerId: 'c', dataIndex: 'phone', flex: 1, hidden: true }
             ];
 
-            new Ext.state.Provider();
-
             createGrid({}, {
                 columns: columns,
                 stateful: true,
@@ -133,6 +131,43 @@ describe('Ext.grid.header.Container', function () {
             expect(grid.headerCt.gridVisibleColumns.length).toBe(3);
         });
 
+        it('should constrain the grid view width to the visible columns width when enableLocking is true', function() {
+            var columns = [
+                // It's necessary to pass in columns with a headerId property for this test.
+                { header: 'Name',  id: 'a', dataIndex: 'name', width: 200 },
+                { header: 'Email', id: 'b', dataIndex: 'email', width: 200 },
+                { header: 'Phone', id: 'c', dataIndex: 'phone', width: 200}
+            ];
+
+            createGrid({}, {
+                width: 400,
+                enableLocking: true,
+                columns: columns,
+                stateful: true,
+                stateId: 'foo',
+                listeners: {
+                    beforerender: {
+                        fn: function () {
+                            var state = [{
+                                id: 'a'
+                            }, {
+                                id: 'b'
+                            }, {
+                                id: 'c',
+                                hidden: true
+                            }];
+
+                            this.applyState({
+                                columns: state
+                            });
+                        }
+                    }
+                }
+            });
+
+            expect(grid.normalGrid.getView().el.dom.scrollWidth).toBe(400);
+        });
+
         it('should keep track of state information for visible grid columns when moved', function () {
             // This spec simulates a stateful bug: EXTJSIV-10262. This bug occurs when a previously hidden
             // header is shown and then moved. The bug occurs because the gridVisibleColumns cache is created
@@ -144,8 +179,6 @@ describe('Ext.grid.header.Container', function () {
                 { header: 'Email', headerId: 'b', dataIndex: 'email', flex: 1 },
                 { header: 'Phone', headerId: 'c', dataIndex: 'phone', flex: 1, hidden: true }
             ];
-
-            new Ext.state.Provider();
 
             createGrid({}, {
                 columns: columns,
@@ -184,8 +217,6 @@ describe('Ext.grid.header.Container', function () {
                     { header: 'Email', headerId: 'b', dataIndex: 'email', flex: 1 },
                     { header: 'Phone', headerId: 'c', dataIndex: 'phone', flex: 1 }
                 ];
-
-            new Ext.state.Provider();
 
             createGrid({}, {
                 columns: initialColumns,

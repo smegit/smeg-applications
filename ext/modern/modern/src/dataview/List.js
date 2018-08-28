@@ -135,8 +135,7 @@ Ext.define('Ext.dataview.List', {
         container: {
             lazy: true,
             $value: {
-                xtype: 'container',
-                scrollable: {}
+                xtype: 'container'
             }
         },
 
@@ -286,11 +285,7 @@ Ext.define('Ext.dataview.List', {
          */
         useSimpleItems: true,
 
-        /**
-         * @cfg {Object} scrollable
-         * @private
-         */
-        scrollable: null,
+        scrollable: true,
 
         /**
          * @cfg {String} scrollDock
@@ -403,12 +398,6 @@ Ext.define('Ext.dataview.List', {
 
         // We make this List's scrollable the inner containers scrollable
         me.scrollElement = container.innerElement;
-
-        container.getScrollable().on({
-            scroll: 'onScroll',
-            refresh: 'onScrollerRefresh',
-            scope: me
-        });
     },
 
     /**
@@ -419,14 +408,6 @@ Ext.define('Ext.dataview.List', {
         }, this.getContainer());
 
         return Ext.create(config);
-    },
-
-    getScrollable: function() {
-        var container = this.container;
-        
-        if (container && !container.destroyed) {
-            return container.getScrollable();
-        }
     },
 
     // We override DataView's initialize method with an empty function
@@ -472,6 +453,12 @@ Ext.define('Ext.dataview.List', {
             mouseover: 'onItemMouseOver',
             mouseout: 'onItemMouseOut',
             delegate: me.itemSelector,
+            scope: me
+        });
+
+        container.getScrollable().on({
+            scroll: 'onScroll',
+            refresh: 'onScrollerRefresh',
             scope: me
         });
 
@@ -1457,6 +1444,14 @@ Ext.define('Ext.dataview.List', {
         if (this.initialized) {
             this.handleGroupChange();
         }
+    },
+
+    applyScrollable: function(scrollable) {
+        var container = this.container;
+
+        container.setScrollable(scrollable);
+
+        return container.getScrollable();
     },
 
     onStoreGroupChange: function() {

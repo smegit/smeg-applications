@@ -81,9 +81,10 @@ describe("Ext.app.Application", function() {
         Ext.undefine('TestApplication.view.Viewport');
         Ext.undefine('TestApplication.Application');
 
-        if (Ext.isIE) {
+        if (Ext.isIE8) {
             Ext.global.TestApplication = undefined;
             Ext.global.CtrlApplication = undefined;
+            addGlobal(['TestApplication', 'CtrlApplication']);
         } else {
             delete Ext.global.TestApplication;
             delete Ext.global.CtrlApplication;
@@ -152,6 +153,8 @@ describe("Ext.app.Application", function() {
                 } catch (e) {
                     Ext.global.Foo = undefined;
                     Ext.global.TestApplication = null;
+                    
+                    addGlobal('Foo');
                 }
 
                 Ext.undefine('TestApplication.AbstractApplication');

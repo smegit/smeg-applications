@@ -99,8 +99,8 @@ Ext.define('Ext.chart.series.Cartesian', {
                 if (index !== -1) {
                     item = {
                         series: me,
-                        category: me.getItemInstancing() ? 'items' : 'markers',
                         index: index,
+                        category: me.getItemInstancing() ? 'items' : 'markers',
                         record: store.getData().items[index],
                         field: me.getYField(),
                         sprite: sprite
@@ -156,23 +156,6 @@ Ext.define('Ext.chart.series.Cartesian', {
             sprite.setAnimation(animation);
         }
         return sprites;
-    },
-
-    provideLegendInfo: function (target) {
-        var me = this,
-            style = me.getSubStyleWithTheme(),
-            fill = style.fillStyle;
-
-        if (Ext.isArray(fill)) {
-            fill = fill[0];
-        }
-        target.push({
-            name: me.getTitle() || me.getYField() || me.getId(),
-            mark: (Ext.isObject(fill) ? fill.stops && fill.stops[0].color : fill) || style.strokeStyle || 'black',
-            disabled: me.getHidden(),
-            series: me.getId(),
-            index: 0
-        });
     },
 
     getXRange: function () {

@@ -431,6 +431,7 @@ Ext.define('Ext.dom.Element', function(Element) {
          * add at least one listener to it, for performance reasons.
          *
          * @param {Ext.dom.Element} this The component instance.
+         * @param {Object} info The element's new size parameters.
          */
         /**
          * @event scroll
@@ -550,7 +551,6 @@ Ext.define('Ext.dom.Element', function(Element) {
          */
 
         /**
-         * @constructor
          * Creates new Element directly by passing an id or the HTMLElement.  This
          * constructor should not be called directly.  Always use {@link Ext#get Ext.get()}
          * or {@link Ext#fly Ext#fly()} instead.
@@ -641,6 +641,7 @@ Ext.define('Ext.dom.Element', function(Element) {
 
         inheritableStatics: {
             /**
+             * @property
              * @private
              * @static
              * @inheritable
@@ -729,7 +730,7 @@ Ext.define('Ext.dom.Element', function(Element) {
             useDelegatedEvents: true,
 
             /**
-             * @property {Object}
+             * @property {Object} validNodeTypes
              * @private
              * @static
              * @inheritable
@@ -1223,12 +1224,14 @@ Ext.define('Ext.dom.Element', function(Element) {
              * @return {Number}
              */
             getViewportScale: function() {
-                // on deskop devices, the devicePixel ratio gives us the level of zoom that
+                // on desktop devices, the devicePixel ratio gives us the level of zoom that
                 // the user specified using ctrl +/- and or by selecting a zoom level from
                 // the menu.
                 // On android/iOS devicePixel ratio is a fixed number that represents the
                 // screen pixel density (e.g. always "2" on apple retina devices)
-                var top = WIN.top;
+
+                // WIN_TOP is guarded against cross-frame access in the closure above
+                var top = WIN_TOP;
 
                 return ((Ext.isiOS || Ext.isAndroid) ? 1 :
                     (top.devicePixelRatio || // modern browsers
@@ -1247,7 +1250,8 @@ Ext.define('Ext.dom.Element', function(Element) {
             getViewportTouchScale: function(forceRead) {
                 var scale = 1,
                     hidden = 'hidden',
-                    top = WIN.top,
+                    // WIN_TOP is guarded against cross-frame access in the closure above
+                    top = WIN_TOP,
                     cachedScale;
 
                 if (!forceRead) {
@@ -1355,8 +1359,8 @@ Ext.define('Ext.dom.Element', function(Element) {
                 deltaX = documentWidth - Element._documentWidth;
                 deltaY = documentHeight - Element._documentHeight;
 
-                Element._windowWidth = documentWidth;
-                Element._windowHeight = documentHeight;
+                Element._documentWidth = documentWidth;
+                Element._documentHeight = documentHeight;
 
                 // If the focus entered or left an editable element within a brief threshold
                 // of time, then this resize event MAY be due to a virtual keyboard being
@@ -2209,7 +2213,11 @@ Ext.define('Ext.dom.Element', function(Element) {
         },
 
         /**
-         * Selects a single child at any depth below this element based on the passed CSS selector (the selector should not contain an id).
+         * Selects a single child at any depth below this element based on the passed
+         * CSS selector (the selector should not contain an id).
+         *
+         * Use {@link #getById} if you need to get a reference to a child element via id.
+         *
          * @param {String} selector The CSS selector
          * @param {Boolean} [returnDom=false] `true` to return the DOM node instead of Ext.dom.Element
          * @return {HTMLElement/Ext.dom.Element} The child Ext.dom.Element (or DOM node if `returnDom` is `true`)
@@ -5656,10 +5664,10 @@ Ext.define('Ext.dom.Element', function(Element) {
         eventMap[click] = tap;
         eventMap[dblclick] = doubletap;
 
-        if (Ext.isWebKit && Ext.os.is.Desktop) {
-            // Touch enabled webkit browsers on windows8 fire both mouse events and touch
-            // events. so we have to attach listeners for both kinds when either one is
-            // requested.  There are a couple rules to keep in mind:
+        if (Ext.os.is.Desktop) {
+            // Touch enabled desktop browsers on windows such as Firefox and Chrome fire
+            // both mouse events and touch events, so we have to attach listeners for both
+            // kinds when either one is requested.  There are a couple rules to keep in mind:
             // 1. When the mouse is used, only a mouse event is fired
             // 2. When interacting with the touch screen touch events are fired.
             // 3. After a touchstart/touchend sequence, if there was no touchmove in
@@ -5742,12 +5750,16 @@ Ext.define('Ext.dom.Element', function(Element) {
     /**
      * @member Ext
      * @method select
+     * Shorthand for {@link Ext.dom.Element#method-select Ext.dom.Element.select}<br><br>
+     * @inheritdoc Ext.dom.Element#method-select
      */
     Ext.select = Element.select;
 
     /**
      * @member Ext
      * @method query
+     * Shorthand for {@link Ext.dom.Element#method-query Ext.dom.Element.query}<br><br>
+     * @inheritdoc Ext.dom.Element#method-query
      */
     Ext.query = Element.query;
 

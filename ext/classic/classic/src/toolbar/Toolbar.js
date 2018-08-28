@@ -485,7 +485,11 @@ Ext.define('Ext.toolbar.Toolbar', {
         // A widget that is announced as a toolbar but is *not* navigable
         // with arrow keys is highly confusing to disabled users relying on
         // hearing.
-        if (component.needArrowKeys && me.enableFocusableContainer) {
+        // Newer edition of WAI-ARIA allows for arrow-processing elements in
+        // Toolbars, so let the users force the flag if they wish so:
+        // https://www.w3.org/TR/wai-aria-practices/#toolbar
+        if (component.needArrowKeys && me.enableFocusableContainer &&
+            !me.hasOwnProperty('enableFocusableContainer')) {
             me.enableFocusableContainer = false;
             me.ariaRole = 'group';
         }

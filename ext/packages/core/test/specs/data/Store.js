@@ -2,8 +2,8 @@
 
 describe("Ext.data.Store", function() {
     var fakeScope = {},
-        abeRaw, aaronRaw, edRaw, tommyRaw,
-        abeRec, aaronRec, edRec, tommyRec,
+        abeRaw, aaronRaw, edRaw, tommyRaw, fredRaw, kevinRaw, scottRaw,
+        abeRec, aaronRec, edRec, tommyRec, fredRec, kevinRec, scottRec,
         store, User, data, spy;
 
     function customSort(v) {
@@ -56,6 +56,27 @@ describe("Ext.data.Store", function() {
         data = store.data;
     }
 
+    function permutator(arr) {
+        var result = [],
+            permute = function (arr, m) {
+                m = m || [];
+                if (!arr.length) {
+                    result.push(m);
+                } else {
+                    for (var i = 0; i < arr.length; i++) {
+                        var curr = arr.slice(),
+                            next = curr.splice(i, 1);
+
+                        permute(curr.slice(), m.concat(next));
+                    }
+                }
+            };
+
+            permute(arr);
+
+            return result;
+    }
+
     function completeWithData(data) {
         Ext.Ajax.mockComplete({
             status: 200,
@@ -98,6 +119,9 @@ describe("Ext.data.Store", function() {
         abeRaw   = {name: 'Abe Elias',    email: 'abe@sencha.com',   evilness: 70,  group: 'admin', old: false, age: 20, valid: 'yes'};
         aaronRaw = {name: 'Aaron Conran', email: 'aaron@sencha.com', evilness: 5,   group: 'admin', old: true,  age: 26, valid: 'yes'};
         tommyRaw = {name: 'Tommy Maintz', email: 'tommy@sencha.com', evilness: -15, group: 'code',  old: true,  age: 70, valid: 'yes'};
+        fredRaw = {name: 'Fred Moseley', email: 'fred.moseley@sencha.com', evilness: -10, group: 'support',  old: true,  age: 70, valid: 'yes'};
+        kevinRaw = {name: 'Kevin Cassidy', email: 'kevin.cassidy@sencha.com', evilness: -10, group: 'support',  old: true,  age: 70, valid: 'yes'};
+        scottRaw = {name: 'Scott Martin', email: 'scott.martin@sencha.com', evilness: -10, group: 'support',  old: true,  age: 70, valid: 'yes'};
     });
 
     afterEach(function() {
@@ -105,7 +129,7 @@ describe("Ext.data.Store", function() {
         Ext.undefine('spec.User');
         Ext.data.Model.schema.clear();
         store = spy = User = data = Ext.destroy(store);
-        edRaw = edRec = abeRaw = abeRec = aaronRaw = aaronRec = tommyRaw = tommyRec = null;
+        edRaw = edRec = abeRaw = abeRec = aaronRaw = aaronRec = tommyRaw = tommyRec = fredRaw = fredRec = kevinRaw = kevinRec = scottRaw = scottRec = null;
     });
 
     describe("initializing", function() {
@@ -4990,8 +5014,24 @@ describe("Ext.data.Store", function() {
         
         describe("remote", function() {
             describe("during construction", function() {
-                it("should not trigger a load", function() {
-                    var loadSpy = spyOn(Ext.data.ProxyStore.prototype, 'load'),
+                it("should trigger a load", function () {
+                    var loadSpy = spyOn(Ext.data.ProxyStore.prototype, 'load').andCallThrough(),
+                        flushLoadSpy = spyOn(Ext.data.Store.prototype, 'flushLoad');
+                    createStore({
+                        autoLoad: true,
+                        remoteSort: true,
+                        asynchronousLoad: true,
+                        grouper: {
+                            property: 'group'
+                        }
+                    });
+        
+                    expect(loadSpy).toHaveBeenCalled();
+                    expect(flushLoadSpy).not.toHaveBeenCalled();
+                });
+    
+                it("should not trigger a load", function () {
+                    var loadSpy = spyOn(Ext.data.ProxyStore.prototype, 'load').andCallThrough(),
                         flushLoadSpy = spyOn(Ext.data.Store.prototype, 'flushLoad');
                     createStore({
                         remoteSort: true,
@@ -5000,9 +5040,8 @@ describe("Ext.data.Store", function() {
                             property: 'group'
                         }
                     });
-
-                    // group() triggers a load, but being async, it does not get flushed
-                    expect(loadSpy).toHaveBeenCalled();
+                    
+                    expect(loadSpy).not.toHaveBeenCalled();
                     expect(flushLoadSpy).not.toHaveBeenCalled();
                 });
             });
@@ -6302,7 +6341,7 @@ describe("Ext.data.Store", function() {
         });
     });
     
-    describe("aggregation", function(){     
+    describe("aggregation", function() {
     
         beforeEach(function() {
             createStore({
@@ -7023,6 +7062,94 @@ describe("Ext.data.Store", function() {
                 expect(store.removed.length).toBe(1);
                 store.rejectChanges();
                 expect(store.removed.length).toBe(0);
+            });
+
+            describe("restoring to original position", function() {
+                beforeEach(function() {
+                    createStore();
+                    addStoreData();
+                    store.add(fredRaw, kevinRaw, scottRaw);
+                    fredRec = store.getAt(4);
+                    kevinRec = store.getAt(5);
+                    scottRec = store.getAt(6);
+                });
+
+                it("should work when records are removed in ascending order", function() {
+                    store.remove(edRec);
+                    store.remove(aaronRec);
+                    store.remove(fredRec);
+                    store.remove(scottRec);
+
+                    store.rejectChanges();
+
+                    expect(store.getRange()).toEqual([edRec, abeRec, aaronRec, tommyRec, fredRec, kevinRec, scottRec]);
+                });
+
+                it("should work when records are removed in descending order", function() {
+                    store.remove(kevinRec);
+                    store.remove(tommyRec);
+                    store.remove(aaronRec);
+                    store.remove(abeRec);
+
+                    store.rejectChanges();
+                    expect(store.getRange()).toEqual([edRec, abeRec, aaronRec, tommyRec, fredRec, kevinRec, scottRec]);
+                });
+
+                it("should work with a block of sequential records", function() {
+                    store.remove([aaronRec, tommyRec, fredRec, kevinRec]);
+
+                    store.rejectChanges();
+                    expect(store.getRange()).toEqual([edRec, abeRec, aaronRec, tommyRec, fredRec, kevinRec, scottRec]);
+                });
+
+                it("should work with a block of random non-sequential records", function() {
+                    store.remove([abeRec, scottRec, fredRec]);
+
+                    store.rejectChanges();
+                    expect(store.getRange()).toEqual([edRec, abeRec, aaronRec, tommyRec, fredRec, kevinRec, scottRec]);
+                });
+
+                it("should work with multiple block removals", function() {
+                    store.remove([aaronRec, scottRec]);
+                    store.remove([fredRec, edRec]);
+
+                    store.rejectChanges();
+                    expect(store.getRange()).toEqual([edRec, abeRec, aaronRec, tommyRec, fredRec, kevinRec, scottRec]);
+                });
+
+                it("should work when removing all records", function() {
+                    store.removeAll();
+
+                    store.rejectChanges();
+
+                    expect(store.getRange()).toEqual([edRec, abeRec, aaronRec, tommyRec, fredRec, kevinRec, scottRec]);
+                });
+
+                it("should work when removing in random order", function() {
+                    var a1 = permutator([edRec, aaronRec, fredRec]),
+                        a2 = permutator([abeRec, tommyRec, kevinRec, scottRec]), 
+                        i, j;
+
+                    var test = function(a1, a2) {
+                        var remove = a1.concat(a2),
+                            i;
+
+                        for (i = 0; i < remove.length; i++) {
+                            store.remove(remove[i]);
+                        }
+
+                        store.rejectChanges();
+
+                        expect(store.getRange()).toEqual([edRec, abeRec, aaronRec, tommyRec, fredRec, kevinRec, scottRec]);
+                    };
+
+                    for (i = 0; i < a1.length; i++) {
+                        for (j=0; j < a2.length; j++) {
+                            test(a1, a2);
+                            test(a2, a1);
+                        }
+                    }
+                });
             });
 
             describe('with and without sorters', function () {

@@ -111,7 +111,7 @@ Ext.define('Ext.chart.series.Bar', {
 
     updateXAxis: function (xAxis) {
         //<debug>
-        if (!this.is3D && xAxis.type !== 'category') {
+        if (!this.is3D && !xAxis.isCategory) {
             Ext.raise("'bar' series should be used with a 'category' axis. Please refer to the bar series docs.");
         }
         //</debug>

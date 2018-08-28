@@ -237,6 +237,10 @@ describe("Ext.data.writer.Writer", function(){
 
                 afterEach(function() {
                     Ext.undefine('MyModel');
+                    
+                    if (Ext.isIE8) {
+                        addGlobal('MyModel');
+                    }
                 });
                 
                 it("should serialize Dates using the dateFormat", function() {

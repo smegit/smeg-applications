@@ -33,7 +33,7 @@
  *
  * To leverage the `{@link Ext.data.Model#proxy proxy}` facilities defined by each Model
  * class, there is the `getSaveBatch` method. That method returns an `Ext.data.Batch`
- * object populated with the necessary `create`, `update` and `destory` operations to
+ * object populated with the necessary `create`, `update` and `destroy` operations to
  * save all of the changes in the Session.
  * 
  * @since 5.0.0
@@ -576,6 +576,51 @@ Ext.define('Ext.data.Session', {
     }, 
 
     //-------------------------------------------------------------------------
+
+    /**
+     * Template method, will be called by Model after a record is committed.
+     * @param {Ext.data.Model} record The record.
+     *
+     * @protected
+     * @since 6.2.0
+     */
+    afterCommit: function (record) {
+        this.trackRecordState(record);
+    },
+
+    /**
+     * Template method, will be called by Model after a record is dropped.
+     * @param {Ext.data.Model} record The record.
+     *
+     * @protected
+     * @since 6.2.0
+     */
+    afterDrop: function (record) {
+        this.trackRecordState(record);
+    },
+
+    /**
+     * Template method, will be called by Model after a record is edited.
+     * @param {Ext.data.Model} record The record.
+     *
+     * @protected
+     * @since 6.2.0
+     */
+    afterEdit: function (record) {
+        this.trackRecordState(record);
+    },
+
+    /**
+     * Template method, will be called by Model after a record is erased (a drop
+     * that is committed).
+     * @param {Ext.data.Model} record The record.
+     *
+     * @protected
+     */
+    afterErase: function(record) {
+        this.evict(record);
+    },
+
     privates: {
         /**
          * Add a record instance to this session. Called by model.
@@ -603,50 +648,6 @@ Ext.define('Ext.data.Session', {
             for (roleName in associations) {
                 associations[roleName].checkMembership(me, record);
             }
-        },
-
-        /**
-         * Template method, will be called by Model after a record is committed.
-         * @param {Ext.data.Model} record The record.
-         *
-         * @protected
-         * @since 6.2.0
-         */
-        afterCommit: function (record) {
-            this.trackRecordState(record);
-        },
-
-        /**
-         * Template method, will be called by Model after a record is dropped.
-         * @param {Ext.data.Model} record The record.
-         *
-         * @protected
-         * @since 6.2.0
-         */
-        afterDrop: function (record) {
-            this.trackRecordState(record);
-        },
-
-        /**
-         * Template method, will be called by Model after a record is edited.
-         * @param {Ext.data.Model} record The record.
-         *
-         * @protected
-         * @since 6.2.0
-         */
-        afterEdit: function (record) {
-            this.trackRecordState(record);
-        },
-
-        /**
-         * Template method, will be called by Model after a record is erased (a drop
-         * that is committed).
-         * @param {Ext.data.Model} record The record.
-         *
-         * @protected
-         */
-        afterErase: function(record) {
-            this.evict(record);
         },
 
         /**

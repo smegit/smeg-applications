@@ -239,6 +239,7 @@ describe("Ext.direct.RemotingProvider", function() {
         }
         catch (e) {
             window.Direct = undefined;
+            addGlobal('Direct');
         }
     });
     

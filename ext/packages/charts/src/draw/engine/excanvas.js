@@ -1,6 +1,5 @@
 // @define Ext.draw.engine.excanvas
 /**
- * @class Ext.draw.engine.excanvas
  * @private
  * @define Ext.draw.engine.excanvas
  */
@@ -574,7 +573,6 @@ if (!document.createElement('canvas').getContext) {
   }
 
   /**
-   * @class CanvasRenderingContext2D_
    * This class implements CanvasRenderingContext2D interface as described by
    * the WHATWG.
    * @param {HTMLElement} canvasElement The element that the 2D context should

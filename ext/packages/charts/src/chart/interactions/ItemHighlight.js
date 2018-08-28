@@ -72,7 +72,7 @@ Ext.define('Ext.chart.interactions.ItemHighlight', {
                         // Unless it's the same tooltip instance that we are about to show.
                         // In which case, we are just going to reposition it.
                         if (tipItem && tipItem !== item && tipItem.series.getTooltip() !== tooltip) {
-                            tipItem.series.hideTooltip(tipItem);
+                            tipItem.series.hideTooltip(tipItem, true);
                         }
 
                         if (tooltip.getTrackMouse()) {
@@ -86,7 +86,6 @@ Ext.define('Ext.chart.interactions.ItemHighlight', {
                 // there will be no flickery reshow.
                 else if (tipItem) {
                     tipItem.series.hideTooltip(tipItem);
-                    me.tipItem = tipItem = null;
                 }
             }
             return false;

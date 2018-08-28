@@ -5,7 +5,7 @@
  * menu, tooltip, etc.  You can see usages of the various configuration
  * possibilities in the example below.
  *
- *     @example @preview 
+ *     @example preview 
  *     Ext.create('Ext.button.Segmented', {            
  *          renderTo: Ext.getBody(),
  *          allowMultiple: true,
@@ -85,7 +85,7 @@ Ext.define('Ext.button.Segmented', {
          * @cfg {String/Number/String[]/Number[]}
          * @accessor
          * The value of this button.  When {@link #allowMultiple} is `false`, value is a
-         * String or Number.  When {@link #allowMultiple is `true`, value is an array
+         * String or Number.  When {@link #allowMultiple} is `true`, value is an array
          * of values.  A value corresponds to a child button's {@link Ext.button.Button#value
          * value}, or its index if no child button values match the given value.
          *

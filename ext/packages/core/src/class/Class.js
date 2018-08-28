@@ -381,6 +381,55 @@
 
         Class.triggerExtended.apply(Class, arguments);
 
+        /**
+         * @cfg {Object} eventedConfig
+         * Config options defined within `eventedConfig` will auto-generate the setter /
+         * getter methods (see {@link #cfg-config config} for more information on
+         * auto-generated getter / setter methods).  Additionally, when an
+         * `eventedConfig` is set it will also fire a before{cfg}change and {cfg}change
+         * event when the value of the eventedConfig is changed from its originally
+         * defined value.
+         *
+         * **Note:** When creating a custom class you'll need to extend Ext.Evented
+         *
+         * Example custom class:
+         *
+         *     Ext.define('MyApp.util.Test', {
+         *         extend: 'Ext.Evented',
+         *
+         *         eventedConfig: {
+         *             foo: null
+         *         }
+         *     });
+         *
+         * In this example, the `foo` config will initially be null.  Changing it via
+         * `setFoo` will fire the `beforefoochange` event.  The call to the setter can be
+         * halted by returning `false` from a listener on the **before** event.
+         *
+         *     var test = Ext.create('MyApp.util.Test', {
+         *         listeners: {
+         *             beforefoochange: function (instance, newValue, oldValue) {
+         *                 return newValue !== 'bar';
+         *             },
+         *             foochange: function (instance, newValue, oldValue) {
+         *                console.log('foo changed to:', newValue);
+         *             }
+         *         }
+         *     });
+         *
+         *     test.setFoo('bar');
+         *
+         * The `before` event handler can be used to validate changes to `foo`.
+         * Returning `false` will prevent the setter from changing the value of the
+         * config.  In the previous example the `beforefoochange` handler returns false
+         * so `foo` will not be updated and `foochange` will not be fired.
+         *
+         *     test.setFoo('baz');
+         *
+         * Setting `foo` to 'baz' will not be prevented by the `before` handler.  Foo
+         * will be set to the value: 'baz' and the `foochange` event will be fired.
+         */
+
         if (data.onClassExtended) {
             Class.onExtended(data.onClassExtended, Class);
             delete data.onClassExtended;
@@ -616,7 +665,7 @@
      * Within the class, this.name still has the default value of "Mr. Unknown". However, it's now publicly accessible
      * without sacrificing encapsulation, via setter and getter methods.
      *
-     *     var jacky = new Person({
+     *     var jacky = new My.sample.Person({
      *         name: "Jacky",
      *         age: 35
      *     });
@@ -624,12 +673,8 @@
      *     alert(jacky.getAge());      // alerts 35
      *     alert(jacky.getGender());   // alerts "Male"
      *
-     *     jacky.walk(10);             // alerts "Jacky is walking 10 steps"
-     *
      *     jacky.setName("Mr. Nguyen");
      *     alert(jacky.getName());     // alerts "Mr. Nguyen"
-     *
-     *     jacky.walk(10);             // alerts "Mr. Nguyen is walking 10 steps"
      *
      * Notice that we changed the class constructor to invoke this.initConfig() and pass in the provided config object.
      * Two key things happened:
@@ -644,7 +689,7 @@
      *    previous value.
      *
      * By standardize this common pattern, the default generated setters provide two extra template methods that you
-     * can put your own custom logics into, i.e: an "applyFoo" and "updateFoo" method for a "foo" config item, which are
+     * can put your own custom logic into, i.e: an "applyFoo" and "updateFoo" method for a "foo" config item, which are
      * executed before and after the value is actually set, respectively. Back to the example class, let's validate that
      * age must be a valid positive number, and fire an 'agechange' if the value is modified.
      *
@@ -674,7 +719,7 @@
      *         // ...
      *     });
      *
-     *     var jacky = new Person({
+     *     var jacky = new My.sample.Person({
      *         name: "Jacky",
      *         age: 'invalid'
      *     });

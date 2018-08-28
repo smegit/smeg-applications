@@ -210,6 +210,7 @@ Ext.define('Ext.draw.sprite.Instancing', {
         template.preRender(surface, ctx, rect);
         template.useAttributes(ctx, surfaceRect);
 
+        template.isSpriteInstance = true;
         for (i = 0; i < ln; i++) {
             if (instances[i].hidden) {
                 continue;
@@ -220,6 +221,7 @@ Ext.define('Ext.draw.sprite.Instancing', {
             template.render(surface, ctx, rect);
             ctx.restore();
         }
+        template.isSpriteInstance = false;
 
         template.attr = originalAttr;
     },

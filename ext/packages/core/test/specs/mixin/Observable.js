@@ -955,6 +955,10 @@ function makeObservableSuite(isMixin) {
 
                     afterEach(function() {
                         Ext.undefine('A');
+                        
+                        if (Ext.isIE8) {
+                            addGlobal('A');
+                        }
                     });
 
                     it("should call the handlers in priority order", function() {

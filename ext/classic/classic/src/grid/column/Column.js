@@ -1742,7 +1742,7 @@ Ext.define('Ext.grid.column.Column', {
      * and as such will *not* have the {@link #locked} flag set.
      */
     isLocked: function() {
-        return this.locked || !!this.up('[isColumn][locked]', '[isRootHeader]');
+        return this.locked || !!this.up('[lockedCt]', '[isRootHeader]');
     },
 
     hasMultipleVisibleChildren: function(result) {

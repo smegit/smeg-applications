@@ -101,13 +101,13 @@ Ext.define('Ext.sparkline.Line', {
          * Omitting aither means an open ended range. For example to render green spots on all values less than 50
          * and red on values higher than 50 use:
          *
-         *    {
-         *        // Open ended range, with max value 49
-         *        ":49": "green",
+         *     {
+         *         // Open ended range, with max value 49
+         *         ":49": "green",
          *
-         *        // Open ended range, with min value 50
-         *        "50:": "red"
-         *    }
+         *         // Open ended range, with min value 50
+         *         "50:": "red"
+         *     }
          */
         valueSpots: null
     },

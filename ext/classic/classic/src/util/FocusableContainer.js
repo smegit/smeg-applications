@@ -151,12 +151,42 @@ Ext.define('Ext.util.FocusableContainer', {
                 scope: me,
 
                 tab: me.onFocusableContainerTabKey,
-                enter: me.onFocusableContainerEnterKey,
-                space: me.onFocusableContainerSpaceKey,
-                up: me.onFocusableContainerUpKey,
-                down: me.onFocusableContainerDownKey,
-                left: me.onFocusableContainerLeftKey,
-                right: me.onFocusableContainerRightKey
+                enter: {
+                    handler: me.onFocusableContainerEnterKey,
+                    ctrl: false,
+                    shift: false,
+                    alt: false
+                },
+                space: {
+                    handler: me.onFocusableContainerSpaceKey,
+                    ctrl: false,
+                    shift: false,
+                    alt: false
+                },
+                up: {
+                    handler: me.onFocusableContainerUpKey,
+                    ctrl: false,
+                    shift: false,
+                    alt: false
+                },
+                down: {
+                    handler: me.onFocusableContainerDownKey,
+                    ctrl: false,
+                    shift: false,
+                    alt: false
+                },
+                left: {
+                    handler: me.onFocusableContainerLeftKey,
+                    ctrl: false,
+                    shift: false,
+                    alt: false
+                },
+                right: {
+                    handler: me.onFocusableContainerRightKey,
+                    ctrl: false,
+                    shift: false,
+                    alt: false
+                }
             });
         },
         

@@ -754,22 +754,21 @@ Ext.define('Ext.mixin.Bindable', {
          * @since 5.0.0
          */
         initBindable: function () {
-            this.initBindable = Ext.emptyFn;
-            this.getBind();
-            this.getPublishes();
+            var me = this;
+
+            me.initBindable = Ext.emptyFn;
+            me.getBind();
+            me.getPublishes();
 
             // If we have binds, the applyBind method will call getTwoWayBindable to ensure
             // we have the necessary updaters. If we have no binds then applyBind will not
             // be called and we will ignore our twoWayBindable config (which is fine).
             //
-            // If we have publishes or binds then the viewModel will be requested. If not
-            // this viewModel will be lazily requested by a descendant via inheritedState
-            // or not at all. If there is no descendant using bind or publishes, then the
-            // viewModel will sit and wait.
-            //
-            // As goes the fate of the viewModel so goes the fate of the session. If we
-            // have requested the viewModel then the session will also be spun up. If not,
-            // we wait for a descendant or the user to request them.
+            // If we have publishes or binds then the viewModel will be requested.
+            if (!me.viewModel) {
+                // Force VM creation now
+                me.getViewModel();
+            }
         },
 
         /**
@@ -864,18 +863,22 @@ Ext.define('Ext.mixin.Bindable', {
          * @private
          */
         updateViewModel: function (viewModel) {
-            var state = this.getInherited(),
-                controller = this.getController();
+            var me = this,
+                state = me.getInherited(),
+                controller = me.getController();
 
             if (viewModel) {
                 state.viewModel = viewModel;
-                viewModel.setView(this);
+                viewModel.setView(me);
                 if (controller) {
                     controller.initViewModel(viewModel);
                 }
             } else {
                 delete state.viewModel;
             }
+            // In classic, this does nothing, in modern it will save a local
+            // reference
+            me.viewModel = viewModel;
         }
     } // private
 });

@@ -1,3 +1,6 @@
+/**
+ * @class Ext.scroll.Scroller
+ */
 Ext.define(null, {
     override: 'Ext.scroll.Scroller',
     

@@ -32,16 +32,16 @@ Ext.define('Ext.data.TreeModel', {
      *
      * Example:
      *
-     *    Ext.define('myApp.World', {
-     *        childType: 'Territory'
-     *    });
+     *     Ext.define('myApp.World', {
+     *         childType: 'Territory'
+     *     });
      *
-     *    ...
+     *     ...
      *
-     *    store: {
-     *        id: 'myTreeStore',
-     *        model: 'myApp.World' // The hidden root will know to create 'Territory' type children.
-     *    }
+     *     store: {
+     *         id: 'myTreeStore',
+     *         model: 'myApp.World' // The hidden root will know to create 'Territory' type children.
+     *     }
      *
      * If the root is hidden, and the first level of visible nodes are going to be the `myApp.Territory` class,
      * then the hidden root must not be of the `myApp.Territory` class. Otherwise, it would try to read in the

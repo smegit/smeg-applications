@@ -24,10 +24,10 @@
  *         }
  *     });
  *
- *     // a new MixedCollection with the 3 names longer than 4 characters
+ *     // a new MixedCollection with the 2 names longer than 4 characters
  *     var longNames = allNames.filter(longNameFilter);
  *
- *     // a new MixedCollection with the 2 people of age 32:
+ *     // a new MixedCollection with the 1 person of age 32:
  *     var youngFolk = allNames.filter(ageFilter);
  */
 Ext.define('Ext.util.Filter', {
@@ -205,8 +205,8 @@ Ext.define('Ext.util.Filter', {
         /**
          * Checks if two filters have the same properties (Property, Operator and Value).
          *
-         * @param {Ext.util.Filter} filter The first filter to be compared
-         * @param {Ext.util.Filter} filter The second filter to be compared
+         * @param {Ext.util.Filter} filter1 The first filter to be compared
+         * @param {Ext.util.Filter} filter2 The second filter to be compared
          * @return {Boolean} `true` if they have the same properties.
          * @since 6.2.0
          */

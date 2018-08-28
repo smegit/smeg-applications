@@ -5,7 +5,7 @@
  *
  * This is useful for components which render arbitrary and transient child elements
  * such as DataViews and Charts. It allows notification of mousenter events from 
- * child nodes witghout having to add  listeners to each child element.
+ * child nodes without having to add  listeners to each child element.
  */
 Ext.define('Ext.plugin.MouseEnter', {
     extend: 'Ext.plugin.Abstract',

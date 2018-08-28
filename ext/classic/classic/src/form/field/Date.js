@@ -527,21 +527,26 @@ Ext.define('Ext.form.field.Date', {
      * @return {Ext.form.field.Date} this
      */
     setValue: function(v) {
-        var me = this;
+        var me = this,
+            rawDate,
+            utilDate = Ext.Date;
 
         me.lastValue = me.rawDateText;
         me.lastDate = me.rawDate;
         if (Ext.isDate(v)) {
-            me.rawDate  = v;
+            rawDate = me.rawDate  = v;
             me.rawDateText = me.formatDate(v);
         }
         else {
-            me.rawDate = me.rawToValue(v);
+            rawDate = me.rawDate = me.rawToValue(v);
             me.rawDateText = me.formatDate(v);
-            if (me.rawDate === v) {
-                me.rawDate = null;
+            if (rawDate === v) {
+                rawDate = me.rawDate = null;
                 me.rawDateText = '';
             }
+        }
+        if (rawDate && !utilDate.formatContainsHourInfo(me.format)) {
+            me.rawDate = utilDate.clearTime(rawDate, true);
         }
         me.callParent(arguments);
     },

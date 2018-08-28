@@ -215,10 +215,14 @@ Ext.define('Ext.grid.plugin.RowWidget', {
                     // Extract the data row from each row.
                     // We do not interfere with tabbing in the the expander row.
                     focusEl = Ext.fly(this.getRow(rows.item(i)));
+
+                    if (!focusEl) {
+                        continue;
+                    }
+
                     if (enableTabbing) {
                         focusEl.restoreTabbableState(/* skipSelf = */ true);
-                    }
-                    else {
+                    } else {
                         // Do NOT includeSaved
                         // Once an item has had tabbability saved, do not increment its save level
                         focusEl.saveTabbableState({
@@ -267,7 +271,9 @@ Ext.define('Ext.grid.plugin.RowWidget', {
 
             Ext.suspendLayouts();
             for (itemIndex = rows.startIndex, recordIndex = 0; itemIndex <= rows.endIndex; itemIndex++, recordIndex++) {
-                me.addWidget(view, records[recordIndex]);
+                if (me.recordsExpanded[records[recordIndex].internalId]) {
+                    me.addWidget(view, records[recordIndex]);
+                }
             }
             Ext.resumeLayouts(true);
         },

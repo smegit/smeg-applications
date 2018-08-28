@@ -61,7 +61,7 @@ Ext.define('Ext.ux.rating.Picker', {
         minimum: 1,
 
         /**
-         * @cfg {Number} [limit=1]
+         * @cfg {Number} [limit]
          * The maximum allowed `{@link #value}` (rating).
          */
         limit: 5,

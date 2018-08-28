@@ -1,8 +1,8 @@
 Ext.define('Shopping.view.cart.CustomerDetail', {
-    extend : 'Ext.Container',
-    xtype  : 'cart-customerdetail',
+    extend: 'Ext.Container',
+    xtype: 'cart-customerdetail',
 
-    requires : [
+    requires: [
         'Ext.form.FieldContainer',
         'Ext.form.FieldSet',
         'Ext.form.Label',
@@ -10,352 +10,362 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
         'Ext.layout.container.HBox'
     ],
 
-    layout         : {
-        type  : 'hbox',
-        align : 'stretch'
+    controller: 'cart',
+    layout: {
+        type: 'hbox',
+        align: 'stretch'
     },
-    margin         : 0,
-    release        : false,
-    baseLabelWidth : 90,
-    initComponent  : function () {
+    margin: 0,
+    release: false,
+    baseLabelWidth: 90,
+    initComponent: function () {
         var me = this;
 
         Ext.apply(me, {
-            items : me.buildItems(me.cartOptions)
+            items: me.buildItems(me.cartOptions)
         });
         me.callParent(arguments);
     },
-    buildItems     : function () {
+    buildItems: function () {
         var me = this;
         return [{
-            xtype       : 'fieldset',
-            title       : 'Customer Details',
-            cls         : 'cart-fieldset',
-            flex        : 1,
-            itemId      : 'customerfieldset',
-            defaultType : 'textfield',
-            margin      : '0 10 0 0',
-            padding     : '0 20',
-            defaults    : {
-                labelAlign : 'left',
-                labelWidth : me.baseLabelWidth,
-                readOnly   : me.release,
-                disabled   : me.release,
-                width      : '100%'
+            xtype: 'fieldset',
+            title: 'Customer Details',
+            cls: 'cart-fieldset',
+            flex: 1,
+            itemId: 'customerfieldset',
+            defaultType: 'textfield',
+            margin: '0 10 0 0',
+            padding: '0 20',
+            defaults: {
+                labelAlign: 'left',
+                labelWidth: me.baseLabelWidth,
+                readOnly: me.release,
+                disabled: me.release,
+                width: '100%'
             },
-            items       : [{
-                name       : 'OACSTNAM',
-                fieldLabel : 'Name',
-                allowBlank : false,
-                readOnly   : me.release,
-                disabled   : me.release,
-                bind       : {
-                    value : '{cartValues.OACSTNAM}'
+            items: [{
+                name: 'OACSTNAM',
+                fieldLabel: 'Name',
+                allowBlank: false,
+                readOnly: me.release,
+                disabled: me.release,
+                bind: {
+                    value: '{cartValues.OACSTNAM}'
                 }
             }, {
-                itemId       : 'customerSearch',
-                name         : 'OACSTST1',
-                gApiAddrType : 'baseAddressLine1',
-                fieldLabel   : 'Address',
-                allowBlank   : false,
-                bind         : {
-                    value : '{cartValues.OACSTST1}'
+                itemId: 'customerSearch',
+                name: 'OACSTST1',
+                gApiAddrType: 'baseAddressLine1',
+                fieldLabel: 'Address',
+                allowBlank: false,
+                bind: {
+                    value: '{cartValues.OACSTST1}'
                 },
-                listeners    : {
-                    afterrender : 'onAfterRenderAddressSearch'
+                listeners: {
+                    afterrender: 'onAfterRenderAddressSearch'
                 }
             }, {
-                name           : 'OACSTST2',
-                fieldLabel     : '&nbsp;',
-                labelSeparator : '',
-                addressLine2   : true,
-                bind           : {
-                    value : '{cartValues.OACSTST2}'
+                name: 'OACSTST2',
+                fieldLabel: '&nbsp;',
+                labelSeparator: '',
+                addressLine2: true,
+                bind: {
+                    value: '{cartValues.OACSTST2}'
                 }
             }, {
-                xtype          : 'fieldcontainer',
-                labelWidth     : me.baseLabelWidth,
-                labelSeparator : '',
-                fieldLabel     : '&nbsp;',
-                readOnly       : false,
-                disabled       : false,
-                layout         : {
-                    type  : 'hbox',
-                    align : 'stretch'
+                xtype: 'fieldcontainer',
+                labelWidth: me.baseLabelWidth,
+                labelSeparator: '',
+                fieldLabel: '&nbsp;',
+                readOnly: false,
+                disabled: false,
+                layout: {
+                    type: 'hbox',
+                    align: 'stretch'
                 },
-                defaults       : {
-                    xtype     : 'textfield',
-                    hideLabel : true,
-                    readOnly  : me.release,
-                    disabled  : me.release
+                defaults: {
+                    xtype: 'textfield',
+                    hideLabel: true,
+                    readOnly: me.release,
+                    disabled: me.release
                 },
-                items          : [{
-                    name         : 'OACSTCTY',
-                    allowBlank   : false,
-                    margin       : '0 8 0 0',
-                    gApiAddrType : 'locality',
-                    gApiAddrAttr : 'long_name',
-                    emptyText    : 'City',
-                    flex         : 1,
-                    bind         : {
-                        value : '{cartValues.OACSTCTY}'
+                items: [{
+                    name: 'OACSTCTY',
+                    allowBlank: false,
+                    margin: '0 8 0 0',
+                    gApiAddrType: 'locality',
+                    gApiAddrAttr: 'long_name',
+                    emptyText: 'City',
+                    flex: 1,
+                    bind: {
+                        value: '{cartValues.OACSTCTY}'
                     }
                 }, {
-                    name         : 'OACSTSTA',
-                    allowBlank   : false,
-                    margin       : '0 8 0 0',
-                    gApiAddrType : 'administrative_area_level_1',
-                    gApiAddrAttr : 'short_name',
-                    emptyText    : 'State',
-                    width        : 50,
-                    bind         : {
-                        value : '{cartValues.OACSTSTA}'
+                    name: 'OACSTSTA',
+                    allowBlank: false,
+                    margin: '0 8 0 0',
+                    gApiAddrType: 'administrative_area_level_1',
+                    gApiAddrAttr: 'short_name',
+                    emptyText: 'State',
+                    width: 50,
+                    bind: {
+                        value: '{cartValues.OACSTSTA}'
                     }
                 }, {
-                    name         : 'OACSTPST',
-                    allowBlank   : false,
-                    gApiAddrType : 'postal_code',
-                    gApiAddrAttr : 'long_name',
-                    emptyText    : 'Post Code',
-                    width        : 73,
-                    bind         : {
-                        value : '{cartValues.OACSTPST}'
+                    name: 'OACSTPST',
+                    allowBlank: false,
+                    gApiAddrType: 'postal_code',
+                    gApiAddrAttr: 'long_name',
+                    emptyText: 'Post Code',
+                    width: 73,
+                    bind: {
+                        value: '{cartValues.OACSTPST}'
                     }
                 }]
             }, {
-                name           : 'OACSTCOU',
-                gApiAddrType   : 'country',
-                gApiAddrAttr   : 'long_name',
-                fieldLabel     : '&nbsp;',
-                labelSeparator : '',
-                emptyText      : 'Country',
-                bind           : {
-                    value : '{cartValues.OACSTCOU}'
+                name: 'OACSTCOU',
+                gApiAddrType: 'country',
+                gApiAddrAttr: 'long_name',
+                fieldLabel: '&nbsp;',
+                labelSeparator: '',
+                emptyText: 'Country',
+                bind: {
+                    value: '{cartValues.OACSTCOU}'
                 }
             }, {
-                xtype      : 'fieldcontainer',
-                fieldLabel : 'Phone',
-                layout     : {
-                    type  : 'hbox',
-                    align : 'stretch'
+                xtype: 'fieldcontainer',
+                fieldLabel: 'Phone',
+                layout: {
+                    type: 'hbox',
+                    align: 'stretch'
                 },
-                readOnly   : false,
-                disabled   : false,
-                defaults   : {
-                    xtype     : 'textfield',
-                    hideLabel : true,
-                    readOnly  : me.release,
-                    disabled  : me.release,
-                    flex      : 1
+                readOnly: false,
+                disabled: false,
+                defaults: {
+                    xtype: 'textfield',
+                    hideLabel: true,
+                    readOnly: me.release,
+                    disabled: me.release,
+                    flex: 1
                 },
-                items      : [{
-                    name       : 'OACSTPH1',
-                    allowBlank : false,
-                    margin     : '0 8 0 0',
-                    bind       : {
-                        value : '{cartValues.OACSTPH1}'
+                items: [{
+                    name: 'OACSTPH1',
+                    allowBlank: false,
+                    margin: '0 8 0 0',
+                    bind: {
+                        value: '{cartValues.OACSTPH1}'
                     }
                 }, {
-                    name : 'OACSTPH2',
-                    bind : {
-                        value : '{cartValues.OACSTPH2}'
+                    name: 'OACSTPH2',
+                    bind: {
+                        value: '{cartValues.OACSTPH2}'
                     }
                 }]
             }, {
-                name       : 'OACSTEML',
-                fieldLabel : 'Email',
-                vtype      : 'email',
-                margin     : '0 0 8 0',
-                allowBlank : false,
-                bind       : {
-                    value : '{cartValues.OACSTEML}'
+                name: 'OACSTEML',
+                fieldLabel: 'Email',
+                vtype: 'email',
+                margin: '0 0 8 0',
+                allowBlank: false,
+                bind: {
+                    value: '{cartValues.OACSTEML}'
                 }
             }]
         }, {
-            xtype          : 'fieldset',
-            title          : 'Delivery Address (if different delivery)',
-            cls            : 'cart-fieldset',
-            flex           : 1,
-            itemId         : 'deliveryfieldset',
-            reference      : 'deliveryfieldset',
-            defaultType    : 'textfield',
-            defaults       : {
-                labelAlign : 'left',
-                labelWidth : me.baseLabelWidth,
-                anchor     : '100%',
-                disabled   : true
+            xtype: 'fieldset',
+            title: 'Delivery Address (if different delivery)',
+            cls: 'cart-fieldset',
+            flex: 1,
+            itemId: 'deliveryfieldset',
+            reference: 'deliveryfieldset',
+            defaultType: 'textfield',
+            defaults: {
+                labelAlign: 'left',
+                labelWidth: me.baseLabelWidth,
+                anchor: '100%',
+                disabled: false
             },
-            margin         : '0 0 0 10',
-            padding        : '0 20',
-            checkboxToggle : true,
-            collapsable    : true,
-            checkbox       : {
-                itemId    : 'deliveryChkbox',
-                value     : false,
-                listeners : {
-                    scope  : me,
-                    change : function (cmp, value) {
+            margin: '0 0 0 10',
+            padding: '0 20',
+            checkboxToggle: true,
+            collapsable: true,
+            checkbox: {
+                itemId: 'deliveryChkbox',
+                value: false,
+                listeners: {
+                    scope: me,
+                    change: function (cmp, value) {
+                        console.log('checkbox changed' + value);
                         this.down('#deliveryfieldset').setExpanded(value);
+                        //this.down('#deliveryfieldset').down('checkbox').setValue(value);
                     }
+                    //change: 'onDelBoxChk'
                 }
             },
-            items          : [{
-                name       : 'OADELNAM',
-                fieldLabel : 'Name',
-                bind       : {
-                    value : {
-                        single : me.release,
-                        bindTo : '{cartValues.OADELNAM}'
+            items: [{
+                name: 'OADELNAM',
+                fieldLabel: 'Name',
+                bind: {
+                    value: {
+                        single: me.release,
+                        bindTo: '{cartValues.OADELNAM}'
                     }
                 }
             }, {
-                itemId       : 'deliverySearch',
-                name         : 'OADELST1',
-                gApiAddrType : 'baseAddressLine1',
-                fieldLabel   : 'Address',
-                allowBlank   : false,
-                bind         : {
-                    value : {
-                        single : me.release,
-                        bindTo : '{cartValues.OADELST1}'
+                itemId: 'deliverySearch',
+                name: 'OADELST1',
+                gApiAddrType: 'baseAddressLine1',
+                fieldLabel: 'Address',
+                allowBlank: false,
+                bind: {
+                    value: {
+                        single: me.release,
+                        bindTo: '{cartValues.OADELST1}'
                     }
                 },
-                listeners    : {
-                    afterrender : 'onAfterRenderAddressSearch'
+                listeners: {
+                    afterrender: 'onAfterRenderAddressSearch'
                 }
             }, {
-                name           : 'OADELST2',
-                fieldLabel     : '&nbsp;',
-                labelSeparator : '',
-                addressLine2   : true,
-                bind           : {
-                    value : {
-                        single : me.release,
-                        bindTo : '{cartValues.OADELST2}'
+                name: 'OADELST2',
+                fieldLabel: '&nbsp;',
+                labelSeparator: '',
+                addressLine2: true,
+                bind: {
+                    value: {
+                        single: me.release,
+                        bindTo: '{cartValues.OADELST2}'
                     }
                 }
             }, {
-                xtype          : 'fieldcontainer',
-                labelWidth     : me.baseLabelWidth,
-                labelSeparator : '',
-                fieldLabel     : '&nbsp;',
-                layout         : {
-                    type  : 'hbox',
-                    align : 'stretch'
+                xtype: 'fieldcontainer',
+                labelWidth: me.baseLabelWidth,
+                labelSeparator: '',
+                fieldLabel: '&nbsp;',
+                layout: {
+                    type: 'hbox',
+                    align: 'stretch'
                 },
-                defaults       : {
-                    xtype     : 'textfield',
-                    hideLabel : true
+                defaults: {
+                    xtype: 'textfield',
+                    hideLabel: true
                 },
-                items          : [{
-                    name         : 'OADELCTY',
-                    allowBlank   : false,
-                    margin       : '0 8 0 0',
-                    gApiAddrType : 'locality',
-                    gApiAddrAttr : 'long_name',
-                    emptyText    : 'City',
-                    flex         : 1,
-                    bind         : {
-                        value : {
-                            single : me.release,
-                            bindTo : '{cartValues.OADELCTY}'
+                items: [{
+                    name: 'OADELCTY',
+                    allowBlank: false,
+                    margin: '0 8 0 0',
+                    gApiAddrType: 'locality',
+                    gApiAddrAttr: 'long_name',
+                    emptyText: 'City',
+                    flex: 1,
+                    bind: {
+                        value: {
+                            single: me.release,
+                            bindTo: '{cartValues.OADELCTY}'
                         }
                     }
                 }, {
-                    name         : 'OADELSTA',
-                    allowBlank   : false,
-                    margin       : '0 8 0 0',
-                    gApiAddrType : 'administrative_area_level_1',
-                    gApiAddrAttr : 'short_name',
-                    emptyText    : 'State',
-                    width        : 50,
-                    bind         : {
-                        value : {
-                            single : me.release,
-                            bindTo : '{cartValues.OADELSTA}'
+                    name: 'OADELSTA',
+                    allowBlank: false,
+                    margin: '0 8 0 0',
+                    gApiAddrType: 'administrative_area_level_1',
+                    gApiAddrAttr: 'short_name',
+                    emptyText: 'State',
+                    width: 50,
+                    bind: {
+                        value: {
+                            single: me.release,
+                            bindTo: '{cartValues.OADELSTA}'
                         }
                     }
                 }, {
-                    name         : 'OADELPST',
-                    allowBlank   : false,
-                    gApiAddrType : 'postal_code',
-                    gApiAddrAttr : 'long_name',
-                    emptyText    : 'Post Code',
-                    width        : 73,
-                    bind         : {
-                        value : {
-                            single : me.release,
-                            bindTo : '{cartValues.OADELPST}'
+                    name: 'OADELPST',
+                    allowBlank: false,
+                    gApiAddrType: 'postal_code',
+                    gApiAddrAttr: 'long_name',
+                    emptyText: 'Post Code',
+                    width: 73,
+                    bind: {
+                        value: {
+                            single: me.release,
+                            bindTo: '{cartValues.OADELPST}'
                         }
                     }
                 }]
             }, {
-                name           : 'OADELCOU',
-                gApiAddrType   : 'country',
-                gApiAddrAttr   : 'long_name',
-                fieldLabel     : '&nbsp;',
-                labelSeparator : '',
-                emptyText      : 'Country',
-                bind           : {
-                    value : {
-                        single : me.release,
-                        bindTo : '{cartValues.OADELCOU}'
+                name: 'OADELCOU',
+                gApiAddrType: 'country',
+                gApiAddrAttr: 'long_name',
+                fieldLabel: '&nbsp;',
+                labelSeparator: '',
+                emptyText: 'Country',
+                bind: {
+                    value: {
+                        single: me.release,
+                        bindTo: '{cartValues.OADELCOU}'
                     }
                 }
             }, {
-                xtype     : 'fieldcontainer',
-                layout    : {
-                    type  : 'hbox',
-                    align : 'stretch'
+                xtype: 'fieldcontainer',
+                fieldLabel: 'Phone',
+                layout: {
+                    type: 'hbox',
+                    align: 'stretch'
                 },
-                hideLabel : true,
-                defaults  : {
-                    xtype     : 'textfield',
-                    hideLabel : true,
-                    flex      : 1
+                readOnly: false,
+                disabled: true,
+                defaults: {
+                    xtype: 'textfield',
+                    hideLabel: true,
+                    readOnly: me.release,
+                    //disabled: me.release,
+                    flex: 1
                 },
-                items     : [{
-                    flex  : 0,
-                    xtype : 'label',
-                    text  : 'Phone:',
-                    cls   : 'x-form-item-label x-form-item-label-default',
-                    width : me.baseLabelWidth + 5
-                }, {
-                    name       : 'OADELPH1',
-                    allowBlank : false,
-                    margin     : '0 16 0 0',
-                    bind       : {
-                        value : {
-                            single : me.release,
-                            bindTo : '{cartValues.OADELPH1}'
+                items: [
+                    //         {
+                    //     flex: 0,
+                    //     xtype: 'label',
+                    //     //text: 'Phone:',
+                    //     cls: 'x-form-item-label x-form-item-label-default',
+                    //     width: me.baseLabelWidth + 5
+                    // },
+                    {
+                        name: 'OADELPH1',
+                        allowBlank: false,
+                        margin: '0 16 0 0',
+                        bind: {
+                            value: {
+                                single: me.release,
+                                bindTo: '{cartValues.OADELPH1}'
+                            }
                         }
-                    }
-                }, {
-                    name : 'OADELPH2',
-                    bind : {
-                        value : {
-                            single : me.release,
-                            bindTo : '{cartValues.OADELPH2}'
+                    }, {
+                        name: 'OADELPH2',
+                        bind: {
+                            value: {
+                                single: me.release,
+                                bindTo: '{cartValues.OADELPH2}'
+                            }
                         }
-                    }
-                }]
+                    }]
             }, {
-                name       : 'OADELEML',
-                fieldLabel : 'Email',
-                margin     : '0 0 8 0',
-                vtype      : 'email',
-                bind       : {
-                    value : {
-                        single : me.release,
-                        bindTo : '{cartValues.OADELEML}'
+                name: 'OADELEML',
+                fieldLabel: 'Email',
+                margin: '0 0 8 0',
+                vtype: 'email',
+                bind: {
+                    value: {
+                        single: me.release,
+                        bindTo: '{cartValues.OADELEML}'
                     }
                 }
             }],
-            listeners      : {
-                scope          : me,
-                afterrender    : function (cmp) {
+            listeners: {
+                scope: me,
+                afterrender: function (cmp) {
                     var cartValues = this.lookupViewModel().get('cartValues'),
-                        checkbox   = this.down('#deliveryChkbox');
+                        checkbox = this.down('#deliveryChkbox');
 
                     if (!Ext.isEmpty(cartValues) && !Ext.isEmpty(cartValues.OADELST1)) {
                         checkbox.setValue(true);
@@ -365,11 +375,11 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                         cmp.setExpanded(false);
                     }
                 },
-                beforecollapse : function (cmp) {
-                    var fields     = cmp.query('field'),
+                beforecollapse: function (cmp) {
+                    var fields = cmp.query('field'),
                         containers = cmp.query('fieldcontainer'),
-                        labels     = cmp.query('label'),
-                        regex      = new RegExp('checkbox', "i"),
+                        labels = cmp.query('label'),
+                        regex = new RegExp('checkbox', "i"),
                         field;
 
                     for (var i = 0; i < fields.length; i++) {
@@ -388,11 +398,11 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                     }
                     return false;
                 },
-                beforeexpand   : function (cmp) {
-                    var fields     = cmp.query('field'),
+                beforeexpand: function (cmp) {
+                    var fields = cmp.query('field'),
                         containers = cmp.query('fieldcontainer'),
-                        labels     = cmp.query('label'),
-                        regex      = new RegExp('checkbox', "i"),
+                        labels = cmp.query('label'),
+                        regex = new RegExp('checkbox', "i"),
                         field;
                     for (var i = 0; i < fields.length; i++) {
                         field = fields[i];

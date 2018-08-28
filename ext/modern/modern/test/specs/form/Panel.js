@@ -825,6 +825,51 @@ describe('Ext.form.Panel', function() {
                 });
             });
         });
+    
+        describe('standard', function () {
+            var frameDom, frame, id;
+        
+            beforeEach(function () {
+                frameDom = document.createElement('iframe');
+                frame = Ext.get(frameDom);
+                id = frame.id;
+            });
+        
+            afterEach(function () {
+                frame = panel = Ext.destroy(panel, frame);
+            });
+        
+            it('should cause the frame to reload during submit', function () {
+                var spy = jasmine.createSpy();
+            
+                create({
+                    standardSubmit: true,
+                    url: 'foo'
+                });
+            
+                frame.set({
+                    name: id,
+                    src: Ext.SSL_SECURE_URL
+                });
+            
+                document.body.appendChild(frameDom);
+                if (document.frames) {
+                    document.frames[id].name = id;
+                }
+            
+                frame.on({
+                    load: spy
+                });
+            
+                panel.el.set({
+                    target: id,
+                    method: 'POST',
+                });
+                panel.submit();
+            
+                waitsForSpy(spy, 'form to submit');
+            });
+        });
     });
 
     describe("reset", function () {

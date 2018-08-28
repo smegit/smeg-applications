@@ -9,7 +9,7 @@
  *
  *  - **`asText`** - Removes any tags and converts the value to a string
  *  - **`asUCText`** - Removes any tags and converts the value to an uppercase string
- *  - **`asUCText`** - Converts the value to an uppercase string
+ *  - **`asUCString`** - Converts the value to an uppercase string
  *  - **`asDate`** - Converts the value into Unix epoch time
  *  - **`asFloat`** - Converts the value to a floating point number
  *  - **`asInt`** - Converts the value to an integer number

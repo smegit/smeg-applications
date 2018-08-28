@@ -111,12 +111,13 @@ Ext.define('Ext.form.field.Checkbox', {
     // inputEl should always retain the same size, never stretch
     stretchInputElFixed: false,
 
+    /**
+     * @property {Ext.dom.Element} boxLabelEl
+     * A reference to the label element created for the {@link #boxLabel}. Only present if the component has been
+     * rendered and has a boxLabel configured.
+     */
+
     childEls: [
-        /**
-         * @property {Ext.dom.Element} boxLabelEl
-         * A reference to the label element created for the {@link #boxLabel}. Only present if the component has been
-         * rendered and has a boxLabel configured.
-         */
         'boxLabelEl',
         'innerWrapEl',
         'displayEl'

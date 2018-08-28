@@ -141,21 +141,21 @@ Ext.define('Ext.Template', {
      *
      * Finds the following expressions within a format string
      *
-     *                     {AND?}
-     *                     /   \
-     *                   /       \
-     *                 /           \
-     *               /               \
-     *            OR                  AND?
-     *           /  \                 / \
-     *          /    \               /   \
-     *         /      \             /     \
-     *    (\d+)  ([a-z_][\w\-]*)   /       \
-     *     index       name       /         \
-     *                           /           \
-     *                          /             \
-     *                   \:([a-z_\.]*)   (?:\((.*?)?\))?
-     *                      formatFn           args
+     *                      {AND?}
+     *                      /   \
+     *                    /       \
+     *                  /           \
+     *                /               \
+     *             OR                  AND?
+     *            /  \                 / \
+     *           /    \               /   \
+     *          /      \             /     \
+     *     (\d+)  ([a-z_][\w\-]*)   /       \
+     *      index       name       /         \
+     *                            /           \
+     *                           /             \
+     *                    \:([a-z_\.]*)   (?:\((.*?)?\))?
+     *                       formatFn           args
      *
      * Numeric index or (name followed by optional formatting function and args)
      * @private

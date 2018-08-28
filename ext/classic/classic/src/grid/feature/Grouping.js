@@ -1,6 +1,5 @@
 /**
  * This feature allows to display the grid rows aggregated into groups as specified by the {@link Ext.data.Store#grouper grouper}
- *
  * underneath. The groups can also be expanded and collapsed.
  *
  * ## Extra Events
@@ -33,7 +32,6 @@
  * {@link Ext.util.Grouper groupers} on the feature that it can then use to lookup 
  * internal group information when grouping by different fields.
  *
- *     @example
  *     var feature = Ext.create('Ext.grid.feature.Grouping', {
  *         startCollapsed: true,
  *         groupers: [{
@@ -63,12 +61,10 @@
  *         title: 'Employees',
  *         store: store,
  *         columns: [
- *             { text: 'Name', dataIndex: 'name' },
- *             { text: 'Seniority', dataIndex: 'seniority' }
+ *             { text: 'Name', dataIndex: 'name', flex: 1 },
+ *             { text: 'Seniority', dataIndex: 'seniority', flex: 1 }
  *         ],
  *         features: [{ftype:'grouping'}],
- *         width: 200,
- *         height: 275,
  *         renderTo: Ext.getBody()
  *     });
  *
@@ -295,12 +291,18 @@ Ext.define('Ext.grid.feature.Grouping', {
                         '{%',
                             // Group title is visible if not locking, or we are the locked side, or the locked side has no columns/
                             // Use visibility to keep row heights synced without intervention.
-                            'var groupTitleStyle = (!values.view.lockingPartner || (values.view.ownerCt === values.view.ownerCt.ownerLockable.lockedGrid) || (values.view.lockingPartner.headerCt.getVisibleGridColumns().length === 0)) ? "" : "visibility:hidden";',
+                            'var groupTitleStyle = (!values.view.lockingPartner || (values.view.ownerCt === values.view.ownerCt.ownerLockable.lockedGrid) || (values.view.lockingPartner.headerCt.getVisibleGridColumns().length === 0)) ? "" : "visibility:hidden",',
+                                'tooltip = "";',
+        
+                            // Only display a tooltip if the group is collapsible
+                            'if (me.collapsible) {',
+                                'tooltip = Ext.String.format(\'data-qtip="{0}"\', values.isCollapsedGroup ? me.expandTip : me.collapseTip);',
+                            '}',
                         '%}',
                         // TODO. Make the group header tabbable with tabIndex="0" and enable grid navigation "Action Mode"
                         // to activate it.
                         '<div data-groupname="{groupName:htmlEncode}" class="', Ext.baseCSSPrefix, 'grid-group-hd {collapsibleCls}" nottabindex="0" hidefocus="on" {ariaCellInnerAttr}>',
-                            '<div class="', Ext.baseCSSPrefix, 'grid-group-title" style="{[groupTitleStyle]}" {ariaGroupTitleAttr} data-qtip="{[values.isCollapsedGroup ? me.expandTip : me.collapseTip]}">',
+                            '<div class="', Ext.baseCSSPrefix, 'grid-group-title" style="{[groupTitleStyle]}" {ariaGroupTitleAttr} {[tooltip]}>',
                                 '{[values.groupHeaderTpl.apply(values.groupRenderInfo, parent) || "&#160;"]}',
                             '</div>',
                         '</div>',
@@ -1121,17 +1123,18 @@ Ext.define('Ext.grid.feature.Grouping', {
      * the group.
      * @private
      */
-    onGroupClick: function(view, rowElement, groupName, e) {
+    onGroupClick: function (view, rowElement, groupName, e) {
         var me = this,
             metaGroupCache = me.getCache(),
             groupIsCollapsed = !me.isExpanded(groupName),
+            dataSource = me.dataSource,
             g;
-
+    
         if (me.collapsible) {
             // CTRL means collapse all others.
             if (e.ctrlKey) {
-                Ext.suspendLayouts();
-
+                dataSource.suspendEvent('replace');
+            
                 for (g in metaGroupCache) {
                     if (g === groupName) {
                         if (groupIsCollapsed) {
@@ -1141,13 +1144,20 @@ Ext.define('Ext.grid.feature.Grouping', {
                         me.doCollapseExpand(true, g, false);
                     }
                 }
-
-                Ext.resumeLayouts(true);
+            
+                // Save the churn of multi collapsing by coalescing all
+                // operations into a single refresh.
+                dataSource.resumeEvent('replace');
+                dataSource.fireEvent('refresh', dataSource);
+                me.afterCollapseExpand(false, groupName, true);
+                if (me.lockingPartner) {
+                    me.lockingPartner.afterCollapseExpand(false, groupName, true);
+                }
                 return;
             }
-
+        
             if (groupIsCollapsed) {
-               me.expand(groupName);
+                me.expand(groupName);
             } else {
                 me.collapse(groupName);
             }

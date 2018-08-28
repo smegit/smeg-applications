@@ -11,7 +11,7 @@
  * to edit a date, it would be useful to specify {@link Ext.form.field.Date} as the editor.
  *
  * If the `editor` config on a column contains a `field` property, then the `editor` config is used to create
- * the wrapping {@link Ext.grid.CellEditorCellEditor}, and the `field` property is used to create the editing 
+ * the wrapping {@link Ext.grid.CellEditor CellEditor}, and the `field` property is used to create the editing 
  * input field.
  *
  * ## Example
@@ -538,7 +538,8 @@ Ext.define('Ext.grid.plugin.CellEditing', {
                 // Apply the field's editorCfg to the CellEditor config.
                 // See Editor#createColumnField. A Column's editor config may
                 // be used to specify the CellEditor config if it contains a field property.
-                editor = new Ext.grid.CellEditor(Ext.apply({
+                editor = Ext.widget(Ext.apply({
+                    xtype: 'celleditor',
                     floating: true,
                     editorId: editorId,
                     field: editor

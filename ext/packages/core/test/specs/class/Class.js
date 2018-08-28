@@ -3255,6 +3255,10 @@ describe("Ext.Class", function() {
             delete Ext.ClassManager.nameCreatedListeners['Foo.Nothing'];
 
             obj = createFnsCalled = null;
+            
+            if (Ext.isIE8) {
+                addGlobal('Foo');
+            }
         });
 
         it("should call the createdFn", function () {

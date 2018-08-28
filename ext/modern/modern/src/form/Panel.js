@@ -575,7 +575,8 @@ Ext.define('Ext.form.Panel', {
 
     doBeforeSubmit: function(me, formValues, options) {
         var form = options.form || {},
-            multipartDetected = false;
+            multipartDetected = false,
+            body = document.body;
 
         if(this.getMultipartDetection() === true) {
             this.getFieldsAsArray().forEach(function(field) {
@@ -611,9 +612,16 @@ Ext.define('Ext.form.Panel', {
                     field.getComponent().setDisabled(false);
                 }
             }
+            
+            body.appendChild(form);
 
             form.method = (options.method || form.method).toLowerCase();
             form.submit();
+            
+            // If the form is targeting a different DOM such as an iframe, then this
+            // resource will remain in the current body since it does not reload upon
+            // submit so we need to explicitly remove it.
+            body.removeChild(form);
         } else {
             var api = me.getApi(),
                 url = options.url || me.getUrl(),

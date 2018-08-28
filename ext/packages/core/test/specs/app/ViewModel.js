@@ -2905,6 +2905,38 @@ describe("Ext.app.ViewModel", function() {
             });
         });
 
+        describe("data configuration", function() {
+            it("should have an independent value when the child and parent share a key with the same value", function() {
+                grandSubViewModel.destroy();
+                subViewModel.destroy();
+                viewModel.destroy();
+
+                createViewModel(false, {
+                    data: {
+                        foo: 'foo'
+                    }
+                });
+
+                subViewModel = new Ext.app.ViewModel({
+                    parent: viewModel,
+                    data: {
+                        foo: 'foo'
+                    }
+                });
+
+                expect(viewModel.get('foo')).toBe('foo');
+                expect(subViewModel.get('foo')).toBe('foo');
+
+                viewModel.set('foo', 2);
+                expect(viewModel.get('foo')).toBe(2);
+                expect(subViewModel.get('foo')).toBe('foo');
+
+                subViewModel.set('foo', 3);
+                expect(viewModel.get('foo')).toBe(2);
+                expect(subViewModel.get('foo')).toBe(3);
+            });
+        });
+
         describe('with formulas', function () {
             var foo = 0,
                 bar = 0,

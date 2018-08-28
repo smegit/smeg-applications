@@ -643,7 +643,7 @@ Ext.define('Ext.Container', {
         var me = this,
             addingArray = true,
             addedItems = [],
-            i, ln, item, newActiveItem, instanced;
+            i, ln, item, instanced;
 
         if (!Ext.isArray(newItems)) {
             newItems = [newItems];
@@ -663,10 +663,6 @@ Ext.define('Ext.Container', {
                 me.doAdd(item, instanced);
                 delete item.$initParent;
 
-                if (!newActiveItem && !me.getActiveItem() && me.innerItems.length > 0 && item.isInnerItem()) {
-                    newActiveItem = item;
-                }
-
                 addedItems.push(item);
             }
             //<debug>
@@ -676,8 +672,8 @@ Ext.define('Ext.Container', {
             //</debug>
         }
 
-        if (newActiveItem) {
-            me.setActiveItem(newActiveItem);
+        if ((me.isConfiguring || !me.getActiveItem()) && me.innerItems.length > 0) {
+            me.setActiveItem(me.initialConfig.activeItem || 0);
         }
 
         return addingArray ? addedItems : addedItems[0];
@@ -1203,10 +1199,16 @@ Ext.define('Ext.Container', {
      */
     applyActiveItem: function(activeItem, currentActiveItem) {
         var me = this,
-            innerItems = me.getInnerItems();
+            innerItems = me.getInnerItems(),
+            initialConfig = me.initialConfig,
+            initialActive = initialConfig.activeItem || activeItem;
 
         // Make sure the items are already initialized
         me.getItems();
+
+        if (me.isConfiguring && !initialConfig.activeItem) {
+            activeItem = initialActive;
+        }
 
         // No items left to be active, reset back to 0 on falsy changes
         if (!activeItem && innerItems.length === 0) {

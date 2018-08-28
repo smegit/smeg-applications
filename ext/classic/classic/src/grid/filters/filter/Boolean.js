@@ -42,7 +42,7 @@
  *             width: 125,
  *             filter: {
  *                 type: 'boolean',
- *                 value: 'true',
+ *                 value: true,
  *                 yesText: 'True',
  *                 noText: 'False'
  *             }
@@ -81,6 +81,21 @@ Ext.define('Ext.grid.filters.filter.Boolean', {
 
     updateBuffer: 0,
 
+    constructor: function(config) {
+        var me = this,
+            filterValue;
+
+        me.callParent([config]);
+
+        if (me.filter) {
+            filterValue = me.filter.getValue();
+
+            if (Ext.isEmpty(filterValue, true) && me.defaultValue !== null) {
+                me.filter.setValue(!!me.defaultValue);
+            }
+        }
+    },
+
     /**
      * @private
      * Template method that is to initialize the filter and install required menu items.
@@ -107,7 +122,7 @@ Ext.define('Ext.grid.filters.filter.Boolean', {
             text: me.noText,
             filterKey: 0,
             group: gId,
-            checked: !me.defaultValue,
+            checked: !me.defaultValue && me.defaultValue !== null,
             hideOnClick: false,
             listeners: listeners
         }, itemDefaults)]);

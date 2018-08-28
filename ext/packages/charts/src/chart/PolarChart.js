@@ -113,6 +113,7 @@ Ext.define('Ext.chart.PolarChart', {
             applyThickness = true;
 
         try {
+            me.chartLayoutCount++;
             me.animationSuspendCount++;
             if (this.callParent() === false) {
                 applyThickness = false;
@@ -235,6 +236,8 @@ Ext.define('Ext.chart.PolarChart', {
             if (applyThickness) {
                 me.resumeThicknessChanged();
             }
+            me.chartLayoutCount--;
+            me.checkLayoutEnd();
         }
     },
 

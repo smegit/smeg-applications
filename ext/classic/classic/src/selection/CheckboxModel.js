@@ -77,6 +77,13 @@ Ext.define('Ext.selection.CheckboxModel', {
      * selection will still occur regardless.
      */
     checkOnly: false,
+
+    /* @cfg {Boolean} [locked=false]
+     * If set to true, the checkbox column will be locked.
+     * Note: For this config to work, it is necessary to configure the grid with `enableLocking: true`,
+     * if no other columns are initially locked.
+     */
+     locked: false,
     
     /**
      * @cfg {Boolean} [showHeaderCheckbox=false]
@@ -165,13 +172,13 @@ Ext.define('Ext.selection.CheckboxModel', {
 
     beforeViewRender: function(view) {
         var me = this,
-            ownerLockable = view.grid.ownerLockable;
+            ownerLockable = view.grid.ownerLockable,
+            isLocked = me.locked || me.config && me.config.locked;
 
         me.callParent(arguments);
 
         // Preserve behaviour of false, but not clear why that would ever be done.
         if (me.injectCheckbox !== false) {
-
             // The check column gravitates to the locked side unless
             // the locked side is emptied, in which case it migrates to the normal side.
             if (ownerLockable && !me.lockListeners) {
@@ -186,7 +193,7 @@ Ext.define('Ext.selection.CheckboxModel', {
             // If the controlling grid is NOT lockable, there's only one chance to add the column, so add it.
             // If the view is the locked one and there are locked headers, add the column.
             // If the view is the normal one and we have not already added the column, add it.
-            if (!ownerLockable || (view.isLockedView && me.hasLockedHeader()) || (view.isNormalView && !me.column)) {
+            if (!ownerLockable || (view.isLockedView && (me.hasLockedHeader() || isLocked)) || (view.isNormalView && !me.column)) {
                 me.addCheckbox(view);
                 // Listen for reconfigure of outermost grid panel.
                 me.mon(view.ownerGrid, {
@@ -381,7 +388,7 @@ Ext.define('Ext.selection.CheckboxModel', {
             cls: Ext.baseCSSPrefix + 'selmodel-column',
             editRenderer: me.editRenderer || me.renderEmpty,            
             locked: me.hasLockedHeader(),
-            processEvent: me.processColumnEvent,
+            processEvent: Ext.emptyFn,
 
             // It must not attempt to set anything in the records on toggle.
             // We handle that in onHeaderClick.
@@ -398,7 +405,6 @@ Ext.define('Ext.selection.CheckboxModel', {
             config.tabIndex = undefined;
             config.ariaRole = 'presentation';
             config.focusable = false;
-            config.cellFocusable = false;
         }
         else {
             config.useAriaElements = true;
@@ -410,39 +416,6 @@ Ext.define('Ext.selection.CheckboxModel', {
         }
         
         return config;
-    },
-
-    /**
-     * @private
-     * Process and refire events routed from the Ext.panel.Table's processEvent method.
-     * Also fires any configured click handlers. By default, cancels the mousedown event to prevent selection.
-     * Returns the event handler's status to allow canceling of GridView's bubbling process.
-     */
-    processColumnEvent: function(type, view, cell, recordIndex, cellIndex, e, record, row) {
-        var navModel = view.getNavigationModel();
-
-        if (navModel.position.isEqual(e.position)) {
-            return;
-        }
-
-        // Fire a navigate event upon SPACE in actionable mode.
-        // SPACE events are ignored by the NavModel in actionable mode.
-        // `this` is the Column instance!
-        if ((e.type === 'keydown' && view.actionableMode && e.getKey() === e.SPACE) ||
-            (!this.checkOnly && e.type === this.triggerEvent)) {
-            navModel.fireEvent('navigate', {
-                view: view,
-                navigationModel: navModel,
-                keyEvent: e,
-                position: e.position,
-                recordIndex: recordIndex,
-                record: record,
-                item: e.item,
-                cell: e.position.cellElement,
-                columnIndex: e.position.colIdx,
-                column: e.position.column
-            });
-        }
     },
 
     toggleRecord: function (record, recordIndex, checked, cell) {
