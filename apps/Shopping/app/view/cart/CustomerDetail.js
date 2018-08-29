@@ -308,28 +308,24 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 }
             }, {
                 xtype: 'fieldcontainer',
-                fieldLabel: 'Phone',
                 layout: {
                     type: 'hbox',
                     align: 'stretch'
                 },
-                readOnly: false,
-                disabled: true,
+                hideLabel: true,
                 defaults: {
                     xtype: 'textfield',
                     hideLabel: true,
-                    readOnly: me.release,
-                    //disabled: me.release,
                     flex: 1
                 },
                 items: [
-                    //         {
-                    //     flex: 0,
-                    //     xtype: 'label',
-                    //     //text: 'Phone:',
-                    //     cls: 'x-form-item-label x-form-item-label-default',
-                    //     width: me.baseLabelWidth + 5
-                    // },
+                    {
+                        flex: 0,
+                        xtype: 'label',
+                        text: 'Phone:',
+                        cls: 'x-form-item-label x-form-item-label-default',
+                        width: me.baseLabelWidth + 5
+                    },
                     {
                         name: 'OADELPH1',
                         allowBlank: false,
