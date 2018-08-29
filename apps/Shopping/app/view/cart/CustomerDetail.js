@@ -196,7 +196,7 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
                 listeners: {
                     scope: me,
                     change: function (cmp, value) {
-                        console.log('checkbox changed' + value);
+                        //console.log('checkbox changed' + value);
                         this.down('#deliveryfieldset').setExpanded(value);
                         //this.down('#deliveryfieldset').down('checkbox').setValue(value);
                     }

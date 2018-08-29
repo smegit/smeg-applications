@@ -707,7 +707,7 @@ Ext.define('Shopping.view.cart.CartController', {
             vm = me.getViewModel(),
             view = me.getView();
 
-        console.info(vm);
+        //console.info(vm);
         Ext.ComponentQuery.query('app-main')[0].add({
             xtype: 'notes',
             viewModel: {
@@ -826,8 +826,8 @@ Ext.define('Shopping.view.cart.CartController', {
      * onClickSave - save the current order
      */
     onClickSave: function () {
-        console.log('onClickSave');
-        console.info(this);
+        // console.log('onClickSave');
+        // console.info(this);
         var me = this,
             cartInfo = me.getCartInformation();
 
@@ -1105,8 +1105,8 @@ Ext.define('Shopping.view.cart.CartController', {
      */
     saveCart: function (formData, products, maskText) {
         // added 
-        console.log('saveCart called');
-        console.info(formData);
+        // console.log('saveCart called');
+        // console.info(formData);
         var me = this,
             delField = me.lookupReference('deliveryfieldset'),
 
@@ -1130,18 +1130,11 @@ Ext.define('Shopping.view.cart.CartController', {
             });
         }
 
-        console.info(delField);
-        // if (me..getInternalVar()) {
-        //     console.log('in saveCart => ' + this.getInternalVar());
-        // } else {
-        //     console.log('in saveCart11 => ' + this.getInternalVar());
-        //     delete formData['OADELEML'];
-        //     delete formData['OADELPH1'];
-        // }
+
 
         Ext.apply(params, formData);
-        console.log('Before posting ');
-        console.info(formData);
+        // console.log('Before posting ');
+        // console.info(formData);
         Ext.Ajax.request({
             url: '/valence/vvcall.pgm',
             method: 'POST',

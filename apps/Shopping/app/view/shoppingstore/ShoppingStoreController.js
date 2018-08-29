@@ -62,7 +62,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             card = me.lookupReference('card'),
             mainCart = me.lookupReference('cartcontainer'),
             stockDefault = mainVm.get('defaultStockLocation');
-        console.log('stockDefault => ' + stockDefault);
+        // console.log('stockDefault => ' + stockDefault);
 
         if (!Ext.isEmpty(stockDefault)) {
             var productsStore = vm.getStore('products');
@@ -664,11 +664,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     console.info(parent.Portal);
                     if (!Ext.isEmpty(parent.Portal)) {
                         // console.log('in parent Portal');
-                        console.info(parent.Portal.getApplication());
+                        // console.info(parent.Portal.getApplication());
                         parent.Portal.getApplication().fireEvent('smegagentchanged', selectedAgent);
-                        //parent.Portal.getApplication().fireEvent('sayHello');
-
-
                     }
                     mainController.getOptions(selectedAgent)
                         .then(function (content) {
@@ -704,7 +701,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     onCellClickExistCart: function (cmp, td, cellIndex, rec) {
-        console.log('onCellClickExistCart');
+        // console.log('onCellClickExistCart');
         var me = this,
             grid = cmp.grid,
             store = grid.getStore(),

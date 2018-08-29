@@ -4,7 +4,7 @@ Ext.define('Shopping.view.main.MainController', {
     initViewModel: function () {
         var me = this,
             updateAgent = new Ext.util.DelayedTask(function () {
-                console.log('updateAgent');
+                //console.log('updateAgent');
                 me.onSmegAgentSetPortal();
             });
 
@@ -13,7 +13,7 @@ Ext.define('Shopping.view.main.MainController', {
         // from the hook
         //
         window.smegAgentChanged = Ext.bind(function () {
-            console.log('window.smegAgentChanged');
+            //console.log('window.smegAgentChanged');
             updateAgent.delay(500);
         }, me);
 
@@ -107,8 +107,8 @@ Ext.define('Shopping.view.main.MainController', {
                         });
                     }
 
-                    console.info(vmObj);
-                    console.info(d);
+                    // console.info(vmObj);
+                    // console.info(d);
 
                     vm.set(vmObj);
 

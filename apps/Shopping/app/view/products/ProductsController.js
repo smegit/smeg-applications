@@ -34,11 +34,11 @@ Ext.define('Shopping.view.products.ProductsController', {
     },
 
     onChangeStockLocation: function (cmp, value) {
-        console.log('onChangeStockLocation called ' + value);
+        //console.log('onChangeStockLocation called ' + value);
         var me = this,
             store = me.getView().lookupViewModel(true).getStore('products');
 
-        console.info(store);
+        // console.info(store);
         if (!Ext.isEmpty(value)) {
             Ext.apply(store.getProxy().extraParams, {
                 stkloc: value
@@ -88,7 +88,7 @@ Ext.define('Shopping.view.products.ProductsController', {
     },
 
     onViewCart: function () {
-        console.log('onViewCart called');
+        //console.log('onViewCart called');
         this.getView().fireEvent('viewcart');
     }
 });
