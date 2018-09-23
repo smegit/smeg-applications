@@ -93,19 +93,19 @@
     }
 
     .prd-desc{
-      display: inline;
-      width: 80%;
       overflow: hidden;
-      text-overflow: ellipsis;
       padding-left: 15px;
       margin-bottom: 10px;
       font-size: 15px;
       font-weight: 500;
+
+      white-space: nowrap;
+      overflow: hidden;
     }
 
     // Added
     .prd-model{
-      padding: 10px 15px;
+      padding: 0px 15px 10px 15px;
       font-size: 15px;
       font-weight: 500;
     }

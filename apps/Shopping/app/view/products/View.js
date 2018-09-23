@@ -38,10 +38,33 @@ Ext.define('Shopping.view.products.View', {
         selModel: {
             enableKeyNav: false
         },
+        // listeners: {
+        //     render: function (_this, dv, record, item, index, e) {
+        //         var view = this,
+        //             store = view.getStore(),
+        //             tip = Ext.create('Ext.tip.ToolTip', {
+        //                 target: view.el,
+        //                 delegate: view.itemSelector,
+        //                 trackMouse: false,
+        //                 renderTo: Ext.getBody(),
+        //                 listeners: {
+        //                     beforeshow: function (tip) {
+        //                         var record = view.getRecord(tip.triggerElement);
+        //                         tip.update(record.get('PRODDESC'));
+        //                         console.log('beforeshow called');
+        //                         console.info(view);
+        //                     }
+        //                 }
+        //             });
+        //     }
+        // },
         tpl: ['<tpl for=".">',
             '<div class="prd-wrap">',
             '<div class="inner {[this.getProductSpecialCls(values,xindex)]}">',
-            '<div class="prd-desc">{PRODDESC}</div>',
+            '<div data-qtip="{PRODDESC}" class="prd-desc">{PRODDESC}</div>',
+
+
+
             '<div class="prd-model">Model: {MODEL}</div>',
             '<div class="prd-info-group">',
             '{[this.getPriceText(values,xindex)]}',

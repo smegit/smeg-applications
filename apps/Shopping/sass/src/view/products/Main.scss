@@ -183,6 +183,9 @@
 
     .prd-desc{
       margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      //text-overflow: ellipsis;
     }
     // Add
     .prd-stock {

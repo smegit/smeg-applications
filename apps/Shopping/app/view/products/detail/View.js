@@ -24,7 +24,7 @@ Ext.define('Shopping.view.products.detail.View', {
     tpl: [
         '<div class="prd-detail-wrap">',
         '<div class="prd-detail-header">',
-        '<div class="prd-desc">{[values.Product[0].PRODDESC]}</div>',
+        '<div data-qtip="{[values.Product[0].PRODDESC]}" class="prd-desc">{[values.Product[0].PRODDESC]}</div>',
         '<div class="prd-model">Model: {[values.Product[0].MODEL]}</div>',
         '<div class="prd-ean">EAN: <b>{[values.Product[0].EAN]}</b></div>',
 
