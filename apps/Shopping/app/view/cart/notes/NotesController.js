@@ -165,5 +165,9 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         });
 
         return deferred.promise;
+    },
+
+    setCurrentView: function (view, params) {
+
     }
 });

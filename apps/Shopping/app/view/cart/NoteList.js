@@ -1,82 +1,106 @@
 Ext.define('Shopping.view.cart.NoteList', {
-    extend: 'Ext.form.FieldSet',
+    extend: 'Ext.grid.Panel',
+    xtype: 'notelist',
     requires: [
-        'Ext.form.field.TextArea',
-        'Ext.grid.Panel',
-        'Shopping.view.cart.notes.NotesModel',
+        // 'Ext.form.field.TextArea',
+        //'Shopping.view.cart.notes.NotesModel',
         //'Shopping.view.cart.notes.NotesController',
-        'Shopping.view.cart.CartController'
+        //'Shopping.view.cart.CartController'
+
+        'Ext.grid.feature.Summary',
 
 
     ],
-    xtype: 'notelist',
-    collapsible: true,
-    collapsed: true,
-    viewModel: {
-        type: 'notes'
-    },
-    controller: 'cart',
+
     title: 'Notes',
-    cls: 'cart-fieldset',
-    padding: '5 18 8 15',
-    layout: {
-        type: 'vbox',
-        align: 'stretch'
+    ui: 'background',
+    features: [{
+        ftype: 'summary'
+    }],
+    cls: 'cart-list',
+    overCls: 'cart-list-over',
+    viewConfig: {
+        emptyText: 'No Items have been added to this Order'
     },
 
-    listeners: {
-        beforeexpand: 'onBeforeExpand'
-    },
+    //collapsible: true,
+    // viewModel: {
+    //     type: 'notes'
+    // },
+    // bind: {
+    //     store: 'Notes'
+    // },
+    // controller: 'cart',
+    //padding: '5 18 8 15',
+    // layout: {
+    //     type: 'vbox',
+    //     align: 'stretch'
+    // },
+
+    // listeners: {
+    //     beforeexpand: 'onBeforeExpand',
+    //     beforerender: 'onBeforeRender'
+    // },
 
 
     initComponent: function () {
-        var me = this,
-            vm = me.getViewModel();
-        console.log('initComponent called' + 'orderKey => ' + vm.get('activeCartNumber'));
-        console.info(vm);
-        Ext.apply(me, {
-            items: me.buildItems()
-        });
-        me.callParent(arguments);
+        // var me = this,
+        //     vm = me.getViewModel();
+        // console.log('initComponent called' + 'orderKey => ' + vm.get('activeCartNumber'));
+        // console.info(vm);
+        // Ext.apply(me, {
+        //     columns: me.buildColumns()
+        // });
+        // me.callParent(arguments);
 
     },
 
-    buildItems: function () {
-        var me = this;
-        return [{
-            xtype: 'grid',
+    columns: {
+        items: [{
+            text: 'Date / Time',
+            dataIndex: 'OFNOTE',
+            align: 'center',
+            width: 150
+        }, {
+            text: 'Note',
+            dataIndex: 'OFNOTE',
+            cellWrap: true,
             flex: 1,
-            bind: {
-                store: '{Notes}'
-            },
-            autoLoad: true,
-            viewConfig: {
-                markDirty: false,
-                stripRows: true,
-                columnLines: true
-            },
-            columns: {
-                items: [{
-                    text: 'Date / Time',
-                    dataIndex: 'OFNOTE',
-                    align: 'center',
-                    width: 150
-                }, {
-                    text: 'Note',
-                    dataIndex: 'OFNOTE',
-                    cellWrap: true,
-                    flex: 1,
-                    // renderer: function (v) {
-                    //     return v.replace(new RegExp('\r?\n', 'g'), '<br/>');
-                    // }
-                }, {
-                    text: 'By',
-                    align: 'center',
-                    dataIndex: 'OFNOTE',
-                    width: 100
-                }]
-            }
-        }];
+            // renderer: function (v) {
+            //     return v.replace(new RegExp('\r?\n', 'g'), '<br/>');
+            // }
+        }, {
+            text: 'By',
+            align: 'center',
+            dataIndex: 'OFNOTE',
+            width: 100
+        }]
     }
+
+
+    // buildColumns: function () {
+    //     var me = this,
+    //         cols = [{
+    //             text: 'Date / Time',
+    //             dataIndex: 'OFNOTE',
+    //             align: 'center',
+    //             width: 150
+    //         }, {
+    //             text: 'Note',
+    //             dataIndex: 'OFNOTE',
+    //             cellWrap: true,
+    //             flex: 1,
+    //             // renderer: function (v) {
+    //             //     return v.replace(new RegExp('\r?\n', 'g'), '<br/>');
+    //             // }
+    //         }, {
+    //             text: 'By',
+    //             align: 'center',
+    //             dataIndex: 'OFNOTE',
+    //             width: 100
+    //         }]
+    // }
+
+
 
 })

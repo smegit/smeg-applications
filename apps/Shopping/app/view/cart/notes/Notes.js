@@ -173,15 +173,22 @@ Ext.define('Shopping.view.cart.notes.Notes', {
         var me = this;
         return {
             items: ['->', {
-                text: 'Cancel',
-                itemId: 'cancelButton',
+                xtype: 'button',
+                text: 'Create',
+                ui: 'blue',
                 listeners: {
-                    scope: me,
-                    click: function () {
-                        me.onEsc();
-                    }
+                    click: 'onClickCreate'
                 }
             }, {
+                    text: 'Cancel',
+                    itemId: 'cancelButton',
+                    listeners: {
+                        scope: me,
+                        click: function () {
+                            me.onEsc();
+                        }
+                    }
+                }, {
                     xtype: 'button',
                     text: 'Add',
                     ui: 'blue',

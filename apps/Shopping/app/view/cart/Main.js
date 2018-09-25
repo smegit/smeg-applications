@@ -5,7 +5,8 @@ Ext.define('Shopping.view.cart.Main', {
     requires: [
         'Shopping.view.cart.List',
         'Shopping.view.cart.Form',
-        'Shopping.view.cart.CartController'
+        'Shopping.view.cart.CartController',
+        //'Shopping.view.cart.NoteList'
     ],
     controller: 'cart',
     cls: 'cart',
@@ -130,11 +131,6 @@ Ext.define('Shopping.view.cart.Main', {
                         click: 'onClickNotes'
                     }
                 }
-            }, {
-                xtype: 'button',
-                iconCls: 'button-home-medium',
-                text: 'Notes',
-                scale: 'medium'
             }, {
                 xtype: 'component',
                 flex: 1

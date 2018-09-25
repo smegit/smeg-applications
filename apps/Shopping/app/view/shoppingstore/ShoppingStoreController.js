@@ -196,7 +196,9 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     onViewCart: function (rec) {
+        console.info(this.lookupReference('card').getLayout());
         this.lookupReference('card').getLayout().setActiveItem(1);
+
     },
 
     onAddToCart: function (e, dtlQuantity) {
@@ -523,6 +525,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             url: '/valence/vvcall.pgm',
             params: params,
             success: function (r) {
+                console.info(r);
                 obj = Ext.decode(r.responseText);
                 var continueFnc = function () {
                     var products = obj.CartDtl,
@@ -538,6 +541,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                         repRec, product, field, fldValue, prodQuantity,
                         delvDate, ninetyDate, todayDate;
 
+                    console.info(cartItemStore);
                     if (!Ext.isEmpty(obj.CartHdr)) {
                         Ext.apply(formValues, obj.CartHdr[0]);
                     }
@@ -630,6 +634,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                         cartCount: cartItemCount,
                         activeCartNumber: cartKey
                     });
+                    console.info(me);
                     me.onViewCart();
 
                     vm.notify();

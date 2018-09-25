@@ -268,7 +268,7 @@ Ext.define('Shopping.view.cart.CartController', {
                     if (!d.success || d.success === "false") {
                         var respProducts = d.CartDtl;
                         if (respProducts && respProducts.length > 0) {
-                            var str = vm.getStore('cartItems'),
+                            var str = vm.getStore(''),
                                 rec;
                             for (var i = 0; i < respProducts.length; i++) {
                                 rec = str.findRecord('product_id', respProducts[i].OBITM);
@@ -1453,12 +1453,31 @@ Ext.define('Shopping.view.cart.CartController', {
     },
 
     onBeforeExpand: function () {
-        console.log('debug onBeforeExpand called');
-        var me = this,
-            vm = me.getViewModel(),
-            view = me.getView(),
-            orderNumber = view.lookupViewModel(true).get('activeCartNumber');
-        console.info(view.lookupViewModel(true).get('activeCartNumber'));
-        vm.set('orderKey', orderNumber);
+        // console.log('debug onBeforeExpand called');
+        // var me = this,
+        //     vm = me.getViewModel(),
+        //     view = me.getView(),
+        //     viewup = view.up(),
+        //     orderNumber = view.lookupViewModel(true).get('activeCartNumber');
+        // console.info(orderNumber);
+        // vm.set('orderKey', orderNumber);
+
+    },
+
+    onBeforeRender: function () {
+        console.log('onBeforeRender called');
     }
+
+
+    // Ext.ComponentQuery.query('app-main')[0].add({
+    //     xtype: 'notes',
+    //     viewModel: {
+    //         data: {
+    //             orderKey: vm.get('activeCartNumber')
+    //         }
+    //     }
+    // }).show();
+
+
+
 });

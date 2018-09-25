@@ -12,7 +12,7 @@ Ext.define('Shopping.view.cart.Form', {
         'Shopping.view.cart.FollowUp',
         'Shopping.view.cart.DeliveryOptions',
 
-        'Shopping.view.cart.NoteList'
+        //'Shopping.view.cart.NoteList'
     ],
     xtype: 'cartform',
     release: false,
@@ -159,9 +159,9 @@ Ext.define('Shopping.view.cart.Form', {
             });
         }
 
-        baseItems.push({
-            xtype: 'notelist'
-        });
+        // baseItems.push({
+        //     xtype: 'notelist'
+        // });
         return baseItems;
     }
 });
