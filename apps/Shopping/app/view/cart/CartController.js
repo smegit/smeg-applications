@@ -5,7 +5,9 @@ Ext.define('Shopping.view.cart.CartController', {
         'Shopping.view.cart.PaymentForm',
         'Shopping.view.cart.Payments',
         'Shopping.view.cart.Print',
-        'Shopping.view.cart.notes.Notes'
+        'Shopping.view.cart.notes.Notes',
+
+        //'Shopping.view.cart.NoteList'
     ],
     alias: 'controller.cart',
     listen: {
@@ -703,11 +705,13 @@ Ext.define('Shopping.view.cart.CartController', {
     },
 
     onClickNotes: function () {
+        console.log('debug onClickNotes called');
         var me = this,
             vm = me.getViewModel(),
             view = me.getView();
 
-        //console.info(vm);
+        console.info(vm);
+        console.log(vm.get('activeCartNumber'));
         Ext.ComponentQuery.query('app-main')[0].add({
             xtype: 'notes',
             viewModel: {
@@ -1446,5 +1450,15 @@ Ext.define('Shopping.view.cart.CartController', {
         });
 
         return deferred.promise;
+    },
+
+    onBeforeExpand: function () {
+        console.log('debug onBeforeExpand called');
+        var me = this,
+            vm = me.getViewModel(),
+            view = me.getView(),
+            orderNumber = view.lookupViewModel(true).get('activeCartNumber');
+        console.info(view.lookupViewModel(true).get('activeCartNumber'));
+        vm.set('orderKey', orderNumber);
     }
 });

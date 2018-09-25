@@ -138,6 +138,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
                     return (rec.get('viewReleaseQty') > 0);
                 }
             ]
-        }
+        },
     }
 });

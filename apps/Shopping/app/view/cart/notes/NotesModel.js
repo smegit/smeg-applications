@@ -15,6 +15,7 @@ Ext.define('Shopping.view.cart.notes.NotesModel', {
                     pgm: 'EC1050',
                     action: 'getNotes',
                     OAORDKEY: '{orderKey}'
+                    //OAORDKEY: '20000503'
                 },
                 reader: {
                     type: 'json',
@@ -25,6 +26,19 @@ Ext.define('Shopping.view.cart.notes.NotesModel', {
                 property: 'dateTime',
                 direction: 'DESC'
             }]
+        },
+        noteTypes: {
+            data: [
+                { name: 'enquiry', label: 'Enquiry' },
+                { name: 'follow_up', label: 'Follow Up' },
+                { name: 'service', label: 'Service' }
+            ]
+        },
+        noteActions: {
+            data: [
+                { name: 'phone', label: 'Phone' },
+                { name: 'email', label: 'Email' }
+            ]
         }
     }
 });
