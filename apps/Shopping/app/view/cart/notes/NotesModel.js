@@ -23,7 +23,8 @@ Ext.define('Shopping.view.cart.notes.NotesModel', {
                 }
             },
             sorters: [{
-                property: 'dateTime',
+                //property: 'dateTime',
+                property: 'OFCRTDATE',
                 direction: 'DESC'
             }]
         },
@@ -38,6 +39,12 @@ Ext.define('Shopping.view.cart.notes.NotesModel', {
             data: [
                 { name: 'phone', label: 'Phone' },
                 { name: 'email', label: 'Email' }
+            ]
+        },
+        noteStatus: {
+            data: [
+                { name: 'ongoing', label: 'Ongoing' },
+                { name: 'complete', label: 'Complete' }
             ]
         }
     }

@@ -16,7 +16,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
         type: 'notes'
     },
     controller: 'notes',
-    title: 'Notes',
+    // title: 'Notes',
     height: 500,
     width: 730,
     layout: {
@@ -38,10 +38,20 @@ Ext.define('Shopping.view.cart.notes.Notes', {
         });
         me.callParent(arguments);
     },
+
     buildItems: function () {
         var me = this;
         return [{
+            xtype: 'container',
+            flex: 1,
+            itemId: 'contentPanel'
+        }]
+    },
+    buildItems1: function () {
+        var me = this;
+        return [{
             xtype: 'grid',
+            // height: auto,
             flex: 1,
             bind: {
                 store: '{Notes}'
@@ -134,7 +144,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                 },
                 {
                     xtype: 'combo',
-                    reference: 'noteTo',
+                    reference: 'noteDetail',
                     flex: 1,
                     style: "padding-top:5px",
                     fieldLabel: 'To',
@@ -174,31 +184,47 @@ Ext.define('Shopping.view.cart.notes.Notes', {
         return {
             items: ['->', {
                 xtype: 'button',
-                text: 'Create',
+                text: 'Add2',
                 ui: 'blue',
+                itemId: 'add2',
+                //reference: 'add2',
                 listeners: {
-                    click: 'onClickCreate'
+                    click: 'onClickAdd2'
                 }
             }, {
                     text: 'Cancel',
                     itemId: 'cancelButton',
                     listeners: {
-                        scope: me,
-                        click: function () {
-                            me.onEsc();
-                        }
+                        // scope: me,
+                        // click: function (e) {
+                        //     console.info(e);
+                        //     me.onEsc();
+                        // }
+                        click: 'onClickCancel'
                     }
-                }, {
+                },
+                // {
+                //     xtype: 'button',
+                //     text: 'Add',
+                //     ui: 'blue',
+                //     bind: {
+                //         disabled: '{disableAddButton}'
+                //     },
+                //     listeners: {
+                //         click: 'onClickAdd'
+                //     }
+                // }
+                {
                     xtype: 'button',
                     text: 'Add',
                     ui: 'blue',
-                    bind: {
-                        disabled: '{disableAddButton}'
-                    },
+                    itemId: 'add2',
+                    //reference: 'add2',
                     listeners: {
-                        click: 'onClickAdd'
+                        click: 'onClickAdd2'
                     }
-                }]
+                }
+            ]
         };
     }
 });
