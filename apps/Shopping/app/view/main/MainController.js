@@ -116,7 +116,11 @@ Ext.define('Shopping.view.main.MainController', {
                     me.loadPaymentOptions(d);
                     me.loadStockLocations(d);
 
+                    // load note type options
+                    me.loadNoteTypeOptions(d);
+                    me.loadNoteActionOptions(d);
 
+                    console.info(d);
                     deferred.resolve(d);
                 }
             }
@@ -182,5 +186,26 @@ Ext.define('Shopping.view.main.MainController', {
                 Shopping.getApplication().fireEvent('agentselected', content);
                 Valence.common.util.Helper.destroyLoadMask();
             });
+    },
+
+    loadNoteTypeOptions: function (content) {
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('NoteTypeOptions');
+        if (!Ext.isEmpty(store) && !Ext.isEmpty(content.noteTypes)) {
+            store.loadRawData(content.noteTypes);
+        }
+        console.info(store);
+    },
+
+    loadNoteActionOptions: function (content) {
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('NoteActionOptions');
+        if (!Ext.isEmpty(store) && !Ext.isEmpty(content.noteActions)) {
+            store.loadRawData(content.noteActions);
+        }
+        console.info(store);
     }
+
 });

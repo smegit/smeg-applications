@@ -86,18 +86,19 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
     //     }
     // },
 
-    onBeforeCloseUpdate: function () {
-        var me = this,
-            vm = me.getViewModel(),
-            rec = vm.get('selectedRec');
+    // onBeforeCloseUpdate: function () {
+    //     var me = this,
+    //         vm = me.getViewModel(),
+    //         rec = vm.get('selectedRec');
 
-        rec.reject();
+    //     rec.reject();
 
-        me.lookupReference('noteText').focus();
-    },
+    //     me.lookupReference('noteText').focus();
+    // },
 
-    onItemClick: function (cmp, rec) {
+    onItemClick: function (cmp, rec, item, index, e) {
         console.log('onItemDblClick called');
+        console.info(e);
         var me = this,
             vm = me.getViewModel(),
             view = me.getView(),
@@ -106,6 +107,8 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         console.info(addBtn);
         me.setCurrentView('noteform');
         addBtn.setText('Update');
+        // won't need after upgrade
+        e.stopPropagation();
     },
 
     // onItemClick: function (cmp, rec) {
@@ -195,6 +198,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
     setCurrentView: function (view, params) {
         console.log('setCurrentView called');
         var me = this,
+            vm = me.getViewModel(),
             contentPanel = me.getView().down('#contentPanel');
 
         // console.info(!contentPanel);
@@ -250,17 +254,17 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         // noteText.reset();
 
         // console.info(contentPanel);
-        console.info(noteDetail);
-        console.info(noteAction);
+        //console.info(noteDetail);
+        //console.info(noteAction);
 
 
 
         if (contentPanel === 'noteform') {
-            // console.log('save the record or update the record');
-            // console.info(noteType.getValue());
-            // console.info(noteAction.getValue());
-            // console.info(noteDetail.getRawValue());
-            // console.info(noteFollowUpDate.getValue());
+            console.log('save the record or update the record');
+            console.info(noteType.getValue());
+            console.info(noteAction.getValue());
+            console.info(noteDetail.getRawValue());
+            console.info(noteFollowUpDate.getValue());
             // // save new note
             // console.info(Ext.Object.getKeys(theNote.data));
             if (!(Ext.Object.getKeys(theNote.data).indexOf('OFCRTDATE') > -1)) {
@@ -268,7 +272,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
 
 
                 // validate data - email
-                if (noteAction.getValue() === 'email') {
+                if (noteAction.getValue() === 'E') {
                     var ereg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
                     var testResult = ereg.test(noteDetail.getRawValue());
                     if (!testResult) {
@@ -279,7 +283,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                 }
 
                 // validate data - phone number
-                if (noteAction.getValue() === 'phone') {
+                if (noteAction.getValue() === 'P') {
                     var phoneReg = /^\d+$/;
                     var phoneNumber = noteDetail.getRawValue();
                     var testResult = phoneReg.test(phoneNumber);
@@ -356,6 +360,12 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
 
     validateFormData: function () {
 
+    },
+
+    onSelect: function (combo, record, eOpts) {
+        console.log('onSelect called');
+        console.info(eOpts);
+        return false;
     }
 
 

@@ -3,7 +3,9 @@ Ext.define('Shopping.view.main.MainModel', {
     requires: [
         // 'Shopping.model.DeliveryOption',
         'Shopping.model.PaymentOption',
-        'Shopping.model.StockLocation'
+        'Shopping.model.StockLocation',
+        'Shopping.model.NoteTypeOption',
+        'Shopping.model.NoteActionOption',
     ],
     alias: 'viewmodel.main',
     data: {
@@ -23,6 +25,14 @@ Ext.define('Shopping.view.main.MainModel', {
         },
         StockLocations: {
             model: 'Shopping.model.StockLocation',
+            autoLoad: false
+        },
+        NoteTypeOptions: {
+            model: 'Shopping.model.NoteTypeOption',
+            autoLoad: false
+        },
+        NoteActionOptions: {
+            model: 'Shopping.model.NoteActionOption',
             autoLoad: false
         }
     }

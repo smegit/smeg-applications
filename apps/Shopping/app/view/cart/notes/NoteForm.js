@@ -2,7 +2,8 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
     extend: 'Ext.form.Panel',
     xtype: 'noteform',
     requires: [
-
+        // 'Shopping.model.NoteTypeOption',
+        // 'Shopping.model.NoteActionOption',
     ],
     //title: 'Login',
     //frame: true,
@@ -14,14 +15,24 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
     //controller: 'notes',
     defaultType: 'textfield',
 
-    viewModel: {
-        type: 'notes'
-    },
+    // viewModel: {
+    //     //type: 'notes'
+    //     // type: 'main'
+    // },
 
     layout: {
         type: 'vbox',
         align: 'stretch'
     },
+    // initComponent: function () {
+    //     var me = this;
+    //     Ext.apply(me, {
+    //         items: me.buildItems()
+    //     });
+    //     me.callParent(arguments);
+    // },
+
+
     items: [{
         xtype: 'container',
         layout: {
@@ -32,25 +43,57 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             xtype: 'combo',
             fieldLabel: 'Note Type',
             reference: 'noteType',
-            displayField: 'label',
-            valueField: 'name',
+            displayField: 'NOTETYPED',
+            valueField: 'NOTETYPEC',
             publishes: 'value',
             padding: '5',
-            flex: 1,
+            labelWidth: 80,
+            //flex: 1,
             bind: {
-                store: '{noteTypes}'
+                store: '{NoteTypeOptions}'
+            },
+            //store: '{NoteTypeOptions}',
+            listeners: {
+                // preventDefault: true,
+                // stopEvent: true,
+                // stopPropagation: true,
+                //select: 'onSelect',
+                select: {
+                    //element: 'el',
+                    //delegate: '',
+                    preventDefault: true,
+                    stopEvent: true,
+                    stopPropagation: true,
+                    // fn: function (evt) {
+                    //     console.log('select');
+                    //     console.info(evt);
+                    // }
+                }
             }
+
         }, {
             xtype: 'combo',
             fieldLabel: 'Action',
             reference: 'noteAction',
-            displayField: 'label',
-            valueField: 'name',
+            displayField: 'NOTEACTD',
+            valueField: 'NOTEACTC',
             padding: '5',
+            labelWidth: 80,
+
+            // flex: 1,
+            bind: {
+                store: '{NoteActionOptions}',
+                // disabled: '{noteType.value !== "follow_up"}',
+            }
+        }, {
+            xtype: 'checkboxfield',
+            name: 'noteComplete',
+            //fieldLabel: 'Complete',
+            boxLabel: 'completed',
+            reference: 'noteComplete',
             flex: 1,
             bind: {
-                store: '{noteActions}',
-                // disabled: '{noteType.value !== "follow_up"}',
+                value: '{theNote.OFFUPCMP}'
             }
         }]
     }, {
@@ -62,10 +105,11 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
         items: [{
             xtype: 'combo',
             editable: true,
-            flex: 1,
+            //flex: 1,
             padding: '5',
             fieldLabel: 'Detail',
             reference: 'noteDetail',
+            labelWidth: 80,
             bind: {
                 //disabled: '{noteType.value !== "follow_up"}',
             }
@@ -74,7 +118,9 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             fieldLabel: 'Date',
             reference: 'noteFollowUpDate',
             padding: '5',
-            flex: 1,
+            labelWidth: 80,
+
+            // flex: 1,
             bind: {
                 //disabled: '{noteType.value !== "follow_up"}',
             }
@@ -91,27 +137,13 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             reference: 'noteText',
             emptyText: 'Note',
             bind: '{theNote.OFNOTE}',
+            labelWidth: 80,
             flex: 1,
             padding: '5',
             listeners: {
                 change: 'onChangeNote'
             }
         }]
-    }, {
-        xtype: 'container',
-        layout: {
-            type: 'hbox',
-            align: 'stretch'
-        },
-        items: [{
-            xtype: 'checkboxfield',
-            name: 'noteComplete',
-            fieldLabel: 'Complete',
-            boxLabel: 'completed',
-            reference: 'noteComplete',
-            bind: {
-                value: '{theNote.OFFUPCMP}'
-            }
-        }]
     }]
+
 })

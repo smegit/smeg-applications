@@ -1,7 +1,7 @@
 Ext.define('Shopping.view.cart.notes.NotesModel', {
     extend: 'Ext.app.ViewModel',
     requires: [
-        'Shopping.model.Note'
+        'Shopping.model.Note',
     ],
     alias: 'viewmodel.notes',
     stores: {
@@ -28,19 +28,43 @@ Ext.define('Shopping.view.cart.notes.NotesModel', {
                 direction: 'DESC'
             }]
         },
-        noteTypes: {
-            data: [
-                { name: 'enquiry', label: 'Enquiry' },
-                { name: 'follow_up', label: 'Follow Up' },
-                { name: 'service', label: 'Service' }
-            ]
-        },
-        noteActions: {
-            data: [
-                { name: 'phone', label: 'Phone' },
-                { name: 'email', label: 'Email' }
-            ]
-        },
+        // noteTypes: {
+        //     proxy: {
+        //         type: 'ajax',
+        //         url: '/valence/vvcall.pgm',
+        //         extraParams: {
+        //             pgm: 'EC1010',
+        //             action: 'getOptions',
+        //         },
+        //         reader: {
+        //             type: 'json',
+        //             rootProperty: 'noteTypes'
+        //         }
+        //     },
+        // data: [
+        //     { name: 'enquiry', label: 'Enquiry' },
+        //     { name: 'follow_up', label: 'Follow Up' },
+        //     { name: 'service', label: 'Service' }
+        // ]
+        // },
+        // noteActions: {
+        //     proxy: {
+        //         type: 'ajax',
+        //         url: '/valence/vvcall.pgm',
+        //         extraParams: {
+        //             pgm: 'EC1010',
+        //             action: 'getOptions',
+        //         },
+        //         reader: {
+        //             type: 'json',
+        //             rootProperty: 'noteActions'
+        //         }
+        //     },
+        //     // data: [
+        //     //     { name: 'phone', label: 'Phone' },
+        //     //     { name: 'email', label: 'Email' }
+        //     // ]
+        // },
         noteStatus: {
             data: [
                 { name: 'ongoing', label: 'Ongoing' },

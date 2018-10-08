@@ -9,6 +9,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
         'Ext.toolbar.Fill',
         'Shopping.view.cart.notes.NotesController',
         'Shopping.view.cart.notes.NotesModel',
+        'Shopping.view.main.MainModel',
         'Valence.common.widget.DockedSearch'
     ],
     xtype: 'notes',
@@ -19,12 +20,14 @@ Ext.define('Shopping.view.cart.notes.Notes', {
     // title: 'Notes',
     height: 500,
     width: 730,
-    layout: {
-        type: 'vbox',
-        align: 'stretch'
-    },
+    // layout: {
+    //     type: 'vbox',
+    //     align: 'stretch'
+    // },
     closable: true,
     modal: true,
+    autoShow: true,
+    layout: 'fit',
     defaultFocus: 'textarea',
     maximizable: true,
     bind: {
@@ -47,6 +50,12 @@ Ext.define('Shopping.view.cart.notes.Notes', {
             itemId: 'contentPanel'
         }]
     },
+
+    // itmes: [{
+    //     xtype: 'container',
+    //     flex: 1,
+    //     itemId: 'contentPanel'
+    // }],
     buildItems1: function () {
         var me = this;
         return [{
