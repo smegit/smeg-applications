@@ -227,6 +227,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * @param action
      */
     depositRelease: function (cmp, action) {
+        console.log('depositRelease called');
         var me = this,
             vm = me.getViewModel(),
             deferred = Ext.create('Ext.Deferred'),

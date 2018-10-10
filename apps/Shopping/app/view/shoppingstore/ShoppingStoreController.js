@@ -13,6 +13,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     ],
 
     init: function () {
+        //console.log('init called');
         var me = this,
             vm = me.getViewModel();
 
@@ -56,12 +57,18 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     agentSelected: function (content) {
+        console.log('agentSelected called');
         var me = this,
             vm = me.getViewModel(),
+            view = me.getView('categories'),
             mainVm = me.getView().lookupViewModel(true),
             card = me.lookupReference('card'),
             mainCart = me.lookupReference('cartcontainer'),
-            stockDefault = mainVm.get('defaultStockLocation');
+            stockDefault = mainVm.get('defaultStockLocation'),
+            catTree = me.lookupReference('catsRef');
+        var catView = Ext.ComponentQuery.query('categories')[0].getView();
+
+
         // console.log('stockDefault => ' + stockDefault);
 
         if (!Ext.isEmpty(stockDefault)) {
@@ -72,6 +79,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         }
 
         if (Ext.isEmpty(mainCart)) {
+            console.log('mainCart is empty');
             mainCart = Ext.create('Shopping.view.cart.Main', {
                 cartOptions: mainVm.get('cartOptions'),
                 listeners: {
@@ -84,11 +92,25 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             });
             card.add(mainCart);
         } else {
+            console.log('mainCart not empty');
             me.resetCart();
             me.onClickGoBack();
         }
 
-        vm.getStore('categories').load();
+        //if (vm.getStore('categories').loadCount >= 1)
+        vm.getStore('categories').load({
+            scope: me,
+            callback: function () {
+                console.log('callback called');
+                //Ext.ComponentQuery.query('categories')[0].getView().expendAll();
+                vm.getStore('categories').getRoot().expand();
+
+            }
+        });
+        console.info(Ext.ComponentQuery.query('categories')[0].getView());
+
+
+
     },
 
     onAfterRenderSearchSavedOrders: function (cmp) {
@@ -99,6 +121,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     onSelectStockLocation: function (fld, rec) {
+        console.log('onSelectStockLocation called');
         var me = this,
             vm = me.getViewModel(),
             str = vm.getStore('products'),
@@ -106,7 +129,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             val = rec.get('STKCOD');
 
         vm.set('STKLOC', val);
-
+        console.info(vm);
         Ext.apply(extraParams, {
             stkloc: val
         });
@@ -123,8 +146,9 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     onClickGoBack: function () {
+        console.log('onClickGoBack called');
         var me = this;
-        me.getViewModel().getStore('products').load();
+        //me.getViewModel().getStore('products').load();
         me.lookupReference('card').getLayout().setActiveItem(0);
     },
 
@@ -279,13 +303,17 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     onSelectionChangeEntities: function (sm, recs) {
+        console.log('onSelectionChangeEntities called');
         var me = this,
             rec = recs[0],
             vm = me.getViewModel(),
             str = vm.getStore('products'),
             xp = str.getProxy().extraParams;
 
+        // console.info(str);
+        // console.info(rec);
         if (rec) {
+            console.log('rec is not null');
             Ext.apply(xp, {
                 cat: rec.get('CATID')
             });

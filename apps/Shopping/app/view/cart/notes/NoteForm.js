@@ -48,11 +48,12 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             publishes: 'value',
             padding: '5',
             labelWidth: 80,
+            labelStyle: 'text-align: center',
             //flex: 1,
             bind: {
                 store: '{NoteTypeOptions}'
             },
-            //store: '{NoteTypeOptions}',
+
             listeners: {
                 // preventDefault: true,
                 // stopEvent: true,
@@ -79,6 +80,7 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             valueField: 'NOTEACTC',
             padding: '5',
             labelWidth: 80,
+            labelStyle: 'text-align: center',
 
             // flex: 1,
             bind: {
@@ -110,6 +112,7 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             fieldLabel: 'Detail',
             reference: 'noteDetail',
             labelWidth: 80,
+            labelStyle: 'text-align: center',
             bind: {
                 //disabled: '{noteType.value !== "follow_up"}',
             }
@@ -119,6 +122,7 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             reference: 'noteFollowUpDate',
             padding: '5',
             labelWidth: 80,
+            labelStyle: 'text-align: center',
 
             // flex: 1,
             bind: {
@@ -138,6 +142,8 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             emptyText: 'Note',
             bind: '{theNote.OFNOTE}',
             labelWidth: 80,
+            labelStyle: 'text-align: center',
+            height: 250,
             flex: 1,
             padding: '5',
             listeners: {

@@ -25,6 +25,7 @@ Ext.define('Shopping.view.products.Heading', {
             width: 305,
             labelWidth: 95,
             height: 32,
+            editable: false,
             valueField: 'STKCOD',
             displayField: 'STKDSC',
             reference: 'stocklocs',

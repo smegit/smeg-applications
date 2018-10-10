@@ -22,18 +22,18 @@
 
 // Change view to tree panel
 Ext.define('Shopping.view.products.Categories', {
-    extend      : 'Ext.tree.Panel',
-    alias           : 'widget.categories',
-    cls             : 'category',
-    reference       : 'cats',
-    bind            : {
-        store : '{categories}'
+    extend: 'Ext.tree.Panel',
+    alias: 'widget.categories',
+    cls: 'category',
+    reference: 'cats',
+    bind: {
+        store: '{categories}'
     },
     title: 'Product',
-    rootVisible : false,
-    useArrows       : true,
-    emptyText       : 'No Categories',
-    itemSelector    : 'div.cat-wrap',
-    overItemCls     : 'cat-wrap-over',
-    selectedItemCls : 'cat-wrap-sel',
+    rootVisible: false,
+    useArrows: true,
+    emptyText: 'No Categories',
+    itemSelector: 'div.cat-wrap',
+    overItemCls: 'cat-wrap-over',
+    selectedItemCls: 'cat-wrap-sel',
 });

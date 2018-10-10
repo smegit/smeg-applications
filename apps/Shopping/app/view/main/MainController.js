@@ -13,7 +13,7 @@ Ext.define('Shopping.view.main.MainController', {
         // from the hook
         //
         window.smegAgentChanged = Ext.bind(function () {
-            //console.log('window.smegAgentChanged');
+            console.log('window.smegAgentChanged');
             updateAgent.delay(500);
         }, me);
 
@@ -21,6 +21,7 @@ Ext.define('Shopping.view.main.MainController', {
         //
         me.getOptions()
             .then(function (content) {
+                console.log('get the initial options');
                 Valence.common.util.Helper.destroyLoadMask();
                 Shopping.getApplication().fireEvent('agentselected', content);
             }, function (content) {
@@ -46,6 +47,7 @@ Ext.define('Shopping.view.main.MainController', {
      *   multiple agencies and if they can ask them what agency
      */
     getOptions: function (agent) {
+        console.log('getOptions called');
         var me = this,
             vm = me.getViewModel(),
             deferred = Ext.create('Ext.Deferred'),
@@ -107,7 +109,7 @@ Ext.define('Shopping.view.main.MainController', {
                         });
                     }
 
-                    // console.info(vmObj);
+                    console.info(vmObj);
                     // console.info(d);
 
                     vm.set(vmObj);
@@ -173,6 +175,7 @@ Ext.define('Shopping.view.main.MainController', {
     },
 
     onSmegAgentSetPortal: function () {
+        console.log('onSmegAgentSetPortal called');
         var me = this;
 
         Valence.common.util.Helper.loadMask({
@@ -195,7 +198,7 @@ Ext.define('Shopping.view.main.MainController', {
         if (!Ext.isEmpty(store) && !Ext.isEmpty(content.noteTypes)) {
             store.loadRawData(content.noteTypes);
         }
-        console.info(store);
+        //console.info(store);
     },
 
     loadNoteActionOptions: function (content) {
@@ -205,7 +208,7 @@ Ext.define('Shopping.view.main.MainController', {
         if (!Ext.isEmpty(store) && !Ext.isEmpty(content.noteActions)) {
             store.loadRawData(content.noteActions);
         }
-        console.info(store);
+        //console.info(store);
     }
 
 });

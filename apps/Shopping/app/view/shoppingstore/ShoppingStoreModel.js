@@ -96,7 +96,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
     stores: {
         cartReps: {
             model: 'Shopping.model.CartRep',
-            autoLoad: true
+            autoLoad: false
         },
         cartItems: {
             model: 'Shopping.model.CartItem',
@@ -113,12 +113,13 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
             type: 'tree',
             model: 'Shopping.model.Category',
             autoLoad: false,
-            pageSize: 0,
+            //pageSize: 0,
             root: {
                 text: 'Products',
-                expanded: true
+                expanded: false
             },
             folderSort: true
+            //lazyFill: true
         },
         existingCarts: {
             model: 'Shopping.model.ExistingCart',

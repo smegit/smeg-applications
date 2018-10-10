@@ -5,6 +5,7 @@ Ext.define('Shopping.view.products.ProductsController', {
     init: function () {
         var me = this,
             catStore = me.getCategoriesStore();
+        console.info(catStore);
 
         if (!Ext.isEmpty(catStore)) {
             catStore.on({
@@ -23,6 +24,7 @@ Ext.define('Shopping.view.products.ProductsController', {
     },
 
     getCategoriesStore: function () {
+        console.log('getCategoriesStore called');
         var me = this,
             view = me.getView();
 
@@ -34,7 +36,7 @@ Ext.define('Shopping.view.products.ProductsController', {
     },
 
     onChangeStockLocation: function (cmp, value) {
-        //console.log('onChangeStockLocation called ' + value);
+        console.log('onChangeStockLocation called ' + value);
         var me = this,
             store = me.getView().lookupViewModel(true).getStore('products');
 
@@ -64,7 +66,9 @@ Ext.define('Shopping.view.products.ProductsController', {
     },
 
     onLoadCategories: function (cmp, recs) {
+        console.log('onLoadCategories called');
         var me = this;
+        console.info(recs);
 
         if (!Ext.isEmpty(recs)) {
             me.lookupReference('cats').getSelectionModel().select(recs[0]);
@@ -74,13 +78,14 @@ Ext.define('Shopping.view.products.ProductsController', {
     },
 
     onSelectFirstCat: function () {
-        var me = this,
-            catStore = me.getCategoriesStore(),
-            firstRec = (!Ext.isEmpty(catStore) && catStore.getCount() > 0) ? catStore.getAt(0) : null;
+        console.log('onSelectFirstCat called');
+        // var me = this,
+        //     catStore = me.getCategoriesStore(),
+        //     firstRec = (!Ext.isEmpty(catStore) && catStore.getCount() > 0) ? catStore.getAt(0) : null;
 
-        if (!Ext.isEmpty(firstRec)) {
-            me.lookupReference('cats').getSelectionModel().select(firstRec);
-        }
+        // if (!Ext.isEmpty(firstRec)) {
+        //     //me.lookupReference('cats').getSelectionModel().select(firstRec);
+        // }
     },
 
     onUnmaskProductsView: function () {
