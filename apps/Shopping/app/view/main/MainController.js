@@ -137,7 +137,7 @@ Ext.define('Shopping.view.main.MainController', {
             store = vm.getStore('DeliveryOptions');
 
         if (!Ext.isEmpty(store) && !Ext.isEmpty(content.Delms)) {
-            store.loadRawData(content.Delms);
+            //store.loadRawData(content.Delms);
         }
     },
 
@@ -147,7 +147,7 @@ Ext.define('Shopping.view.main.MainController', {
             store = vm.getStore('PaymentOptions');
 
         if (!Ext.isEmpty(store) && !Ext.isEmpty(content.Payms)) {
-            store.loadRawData(content.Payms);
+            //store.loadRawData(content.Payms);
         }
     },
 
@@ -192,6 +192,7 @@ Ext.define('Shopping.view.main.MainController', {
     },
 
     loadNoteTypeOptions: function (content) {
+        console.log('loadNoteTypeOptions called');
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('NoteTypeOptions');
@@ -202,6 +203,8 @@ Ext.define('Shopping.view.main.MainController', {
     },
 
     loadNoteActionOptions: function (content) {
+        console.log('loadNoteActionOptions called');
+
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('NoteActionOptions');

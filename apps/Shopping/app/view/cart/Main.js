@@ -43,27 +43,29 @@ Ext.define('Shopping.view.cart.Main', {
                 defaults: {
                     flex: 1
                 },
-                items: [{
-                    xtype: 'combo',
-                    cls: 'fld-in-header',
-                    queryMode: 'local',
-                    flex: 0,
-                    width: 305,
-                    height: 32,
-                    labelWidth: 95,
-                    valueField: 'STKCOD',
-                    displayField: 'STKDSC',
-                    reference: 'stocklocs',
-                    fieldLabel: 'Stock Location',
-                    forceSelection: true,
-                    listeners: {
-                        select: 'onSelectStockLocation'
-                    },
-                    bind: {
-                        store: '{StockLocations}',
-                        value: '{STKLOC}'
+                items: [
+                    {
+                        xtype: 'combo',
+                        cls: 'fld-in-header',
+                        queryMode: 'local',
+                        flex: 0,
+                        width: 305,
+                        height: 32,
+                        labelWidth: 95,
+                        valueField: 'STKCOD',
+                        displayField: 'STKDSC',
+                        reference: 'stocklocs',
+                        fieldLabel: 'Stock Location',
+                        forceSelection: true,
+                        listeners: {
+                            select: 'onSelectStockLocation'
+                        },
+                        bind: {
+                            store: '{StockLocations}',
+                            value: '{STKLOC}'
+                        }
                     }
-                }]
+                ]
             }, '->', {
                 text: 'Continue Shopping',
                 ui: 'white',

@@ -20,10 +20,12 @@ Ext.define('Shopping.view.cart.notes.NoteList', {
             },
             autoScroll: true,
             autoLoad: true,
+            //columnLines: true,
             viewConfig: {
-                markDirty: false,
+                markDirty: true,
                 stripRows: true,
-                columnLines: true
+                columnLines: true,
+                rowLines: true
             },
             columns: {
                 items: [{
@@ -42,8 +44,17 @@ Ext.define('Shopping.view.cart.notes.NoteList', {
                 },
                 {
                     text: 'Type',
-                    dataIndex: 'OFTYPE'
+                    dataIndex: 'OFTYPE',
+                    renderer: function (v) {
 
+                        var mainVm = this.getView().up('app-main').getViewModel(),
+                            typeStore = mainVm.getStore('NoteTypeOptions'),
+                            idx = typeStore.find('NOTETYPEC', v),
+                            rec = typeStore.getAt(idx);
+                        if (rec) {
+                            return rec.get('NOTETYPES')
+                        }
+                    }
                 },
                 {
                     text: 'By',

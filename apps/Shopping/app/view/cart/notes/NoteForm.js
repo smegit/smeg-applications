@@ -4,6 +4,8 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
     requires: [
         // 'Shopping.model.NoteTypeOption',
         // 'Shopping.model.NoteActionOption',
+        'Ext.form.field.Checkbox',
+        'Ext.form.field.ComboBox',
     ],
     //title: 'Login',
     //frame: true,
@@ -45,13 +47,17 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             reference: 'noteType',
             displayField: 'NOTETYPED',
             valueField: 'NOTETYPEC',
+            editable: false,
+            allowBlank: false,
             publishes: 'value',
+            queryMode: 'local',
             padding: '5',
             labelWidth: 80,
             labelStyle: 'text-align: center',
             //flex: 1,
             bind: {
-                store: '{NoteTypeOptions}'
+                store: '{NoteTypeOptions}',
+                value: '{theNote.OFTYPE}'
             },
 
             listeners: {
@@ -76,8 +82,11 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             xtype: 'combo',
             fieldLabel: 'Action',
             reference: 'noteAction',
+            allowBlank: false,
             displayField: 'NOTEACTD',
             valueField: 'NOTEACTC',
+            editable: false,
+            queryMode: 'local',
             padding: '5',
             labelWidth: 80,
             labelStyle: 'text-align: center',
@@ -86,6 +95,7 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             bind: {
                 store: '{NoteActionOptions}',
                 // disabled: '{noteType.value !== "follow_up"}',
+                value: '{theNote.OFFUPACT}'
             }
         }, {
             xtype: 'checkboxfield',
@@ -96,7 +106,7 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             flex: 1,
             bind: {
                 value: '{theNote.OFFUPCMP}'
-            }
+            },
         }]
     }, {
         xtype: 'container',
@@ -105,20 +115,24 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             align: 'stretch'
         },
         items: [{
-            xtype: 'combo',
+            //xtype: 'combo',
+            xtype: 'textfield',
             editable: true,
             //flex: 1,
             padding: '5',
             fieldLabel: 'Detail',
             reference: 'noteDetail',
+            msgTarget: 'qtip',
             labelWidth: 80,
             labelStyle: 'text-align: center',
             bind: {
                 //disabled: '{noteType.value !== "follow_up"}',
+                value: '{theNote.OFFUPDET}'
             }
         }, {
             xtype: 'datefield',
             fieldLabel: 'Date',
+            editable: false,
             reference: 'noteFollowUpDate',
             padding: '5',
             labelWidth: 80,
@@ -127,6 +141,7 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             // flex: 1,
             bind: {
                 //disabled: '{noteType.value !== "follow_up"}',
+                value: '{theNote.OFFUPDAT}'
             }
         }]
     }, {

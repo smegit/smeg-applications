@@ -98,7 +98,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
 
     onItemClick: function (cmp, rec, item, index, e) {
         console.log('onItemDblClick called');
-        console.info(e);
+        console.info(rec);
         var me = this,
             vm = me.getViewModel(),
             view = me.getView(),
@@ -130,10 +130,10 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
     // },
 
     processNote: function (data, maskMessage) {
-        console.log('debugy processNote called');
-        console.log('data => ');
-        console.info(data);
-        console.info(maskMessage);
+        // console.log('debugy processNote called');
+        // console.log('data => ');
+        // console.info(data);
+        // console.info(maskMessage);
         var me = this,
             deferred = Ext.create('Ext.Deferred'),
             vm = me.getViewModel(),
@@ -196,7 +196,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
     },
 
     setCurrentView: function (view, params) {
-        console.log('setCurrentView called');
+        //console.log('setCurrentView called');
         var me = this,
             vm = me.getViewModel(),
             contentPanel = me.getView().down('#contentPanel');
@@ -246,16 +246,10 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         var noteType = me.lookupReference('noteType'),
             noteAction = me.lookupReference('noteAction'),
             noteDetail = me.lookupReference('noteDetail'),
+            noteComplete = me.lookupReference('noteComplete'),
             noteFollowUpDate = me.lookupReference('noteFollowUpDate'),
             noteText = me.lookupReference('noteText'),
             theNote = vm.get('theNote');
-        //noteType.reset();
-        // addNote.reset();
-        // noteText.reset();
-
-        // console.info(contentPanel);
-        //console.info(noteDetail);
-        //console.info(noteAction);
 
 
 
@@ -263,72 +257,97 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             console.log('save the record or update the record');
             console.info(noteType.getValue());
             console.info(noteAction.getValue());
-            console.info(noteDetail.getRawValue());
+            console.info(noteDetail.getValue());
             console.info(noteFollowUpDate.getValue());
+            console.info(noteComplete.getValue());
+
+
+            // validate data - email
+            if (noteAction.getValue() === 'E') {
+                var ereg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+                var testResult = ereg.test(noteDetail.getRawValue());
+                if (!testResult) {
+                    noteDetail.markInvalid('Invalid Email Address');
+                    Valence.util.Helper.showSnackbar('Please enter a valid email address.');
+                    return false;
+                }
+            }
+
+            // validate data - phone number
+            if (noteAction.getValue() === 'P') {
+                var phoneReg = /^\d+$/;
+                var phoneNumber = noteDetail.getRawValue();
+                var testResult = phoneReg.test(phoneNumber);
+                if (!testResult) {
+                    noteDetail.markInvalid('Phone number should contain numbers only.');
+                    Valence.util.Helper.showSnackbar('Phone number should contain numbers only.');
+                    return false;
+                }
+            }
+
+            // validate data -  follow up date
+            if (noteType.getValue() == 'F') {
+                if (noteAction.getValue() == null || noteDetail.getValue() == null || noteFollowUpDate.getValue() == null) {
+                    if (noteAction.getValue() == null) {
+
+                        noteAction.markInvalid('Follow up note must have an action');
+                        //Valence.util.Helper.showSnackbar('Follow up note must have a date');
+                    }
+                    if (noteDetail.getValue() == '') {
+                        noteDetail.markInvalid('Follow up note must have detail');
+                    }
+                    if (noteFollowUpDate.getValue() == null) {
+                        noteFollowUpDate.markInvalid('Follow up note must have a date');
+                        // Valence.util.Helper.showSnackbar('Follow up note must have a date');
+                    }
+                    Valence.util.Helper.showSnackbar('Follow up note must have action, detail and date.');
+                    return false;
+                }
+
+            }
+
+            // validate data - Neither note type nor note text should be empty.
+            if (noteType.getValue() == null || noteText.getValue() == '') {
+                if (noteType.getValue() == null) {
+                    me.lookupReference('noteType').markInvalid('Note type cannot be empty.');
+                }
+                if (noteText.getValue() == '') {
+                    me.lookupReference('noteText').markInvalid('Note content cannot be empty.');
+                }
+                Valence.util.Helper.showSnackbar('Please enter note type and note.');
+                return false;
+            }
+
+
             // // save new note
             // console.info(Ext.Object.getKeys(theNote.data));
             if (!(Ext.Object.getKeys(theNote.data).indexOf('OFCRTDATE') > -1)) {
                 console.log('saving new note');
-
-
-                // validate data - email
-                if (noteAction.getValue() === 'E') {
-                    var ereg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
-                    var testResult = ereg.test(noteDetail.getRawValue());
-                    if (!testResult) {
-                        me.lookupReference('noteDetail').focus();
-                        Valence.util.Helper.showSnackbar('Please enter a valid email address.');
-                        return false;
-                    }
-                }
-
-                // validate data - phone number
-                if (noteAction.getValue() === 'P') {
-                    var phoneReg = /^\d+$/;
-                    var phoneNumber = noteDetail.getRawValue();
-                    var testResult = phoneReg.test(phoneNumber);
-                    if (!testResult) {
-                        Valence.util.Helper.showSnackbar('Phone number should contain numbers only.');
-                        return false;
-                    }
-                }
-
-                // validate data - Neither note type nor note text should be empty.
-                if (noteType.getValue() === '' || noteText.getValue() === '') {
-                    if (noteType.getValue() === '') {
-                        me.lookupReference('noteType').focus;
-                    } else {
-                        me.lookupReference('noteText').focus();
-                    }
-                    Valence.util.Helper.showSnackbar('Please enter note type and note.');
-                    return false;
-
-                }
-
-
                 // Need to add more attributes when back end is ready
                 me.processNote(Ext.clone({
-                    OFNOTE: noteText.getValue(),
                     OFTYPE: noteType.getValue(),
                     OFFUPACT: noteAction.getValue(),
+                    OFFUPCMP: noteComplete.getValue(),
                     OFFUPDET: noteDetail.getRawValue(),
-                    OFFUACDAT: noteFollowUpDate.getValue()
-
+                    OFFUPDAT: noteFollowUpDate.getValue(),
+                    OFNOTE: noteText.getValue(),
                 }), 'Saving')
                     .then(function (data) {
+                        console.info(data);
                         if (!Ext.isEmpty(data.success)) {
                             delete data.success;
                         }
                         me.setCurrentView('notelist');
                         btn.setText('Add');
-
                     });
             } else {
                 // Update the existing note
                 console.log('updating existing note');
                 if (theNote.dirty) {
+                    console.info(theNote.data);
                     me.processNote(Ext.clone(theNote.data), 'updating')
-                        .then(function () {
+                        .then(function (data) {
+                            console.info(data);
                             theNote.commit();
                             Valence.util.Helper.showSnackbar('Updated');
                             me.setCurrentView('notelist');
