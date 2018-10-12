@@ -26,14 +26,6 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
         type: 'vbox',
         align: 'stretch'
     },
-    // initComponent: function () {
-    //     var me = this;
-    //     Ext.apply(me, {
-    //         items: me.buildItems()
-    //     });
-    //     me.callParent(arguments);
-    // },
-
 
     items: [{
         xtype: 'container',
@@ -45,6 +37,7 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             xtype: 'combo',
             fieldLabel: 'Note Type',
             reference: 'noteType',
+            id: 'noteType',
             displayField: 'NOTETYPED',
             valueField: 'NOTETYPEC',
             editable: false,
@@ -59,30 +52,22 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
                 store: '{NoteTypeOptions}',
                 value: '{theNote.OFTYPE}'
             },
-
-            listeners: {
-                // preventDefault: true,
-                // stopEvent: true,
-                // stopPropagation: true,
-                //select: 'onSelect',
-                select: {
-                    //element: 'el',
-                    //delegate: '',
-                    preventDefault: true,
-                    stopEvent: true,
-                    stopPropagation: true,
-                    // fn: function (evt) {
-                    //     console.log('select');
-                    //     console.info(evt);
-                    // }
+            // Stop the click evt from propagation otherwise the modal will disappear
+            listConfig: {
+                listeners: {
+                    el: {
+                        click: {
+                            fn: function (ev, anchor) {
+                                ev.stopPropagation()
+                            }
+                        }
+                    }
                 }
             }
-
         }, {
             xtype: 'combo',
             fieldLabel: 'Action',
             reference: 'noteAction',
-            allowBlank: false,
             displayField: 'NOTEACTD',
             valueField: 'NOTEACTC',
             editable: false,
@@ -96,6 +81,19 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
                 store: '{NoteActionOptions}',
                 // disabled: '{noteType.value !== "follow_up"}',
                 value: '{theNote.OFFUPACT}'
+            },
+
+            // Stop the click evt from propagation otherwise the modal will disappear
+            listConfig: {
+                listeners: {
+                    el: {
+                        click: {
+                            fn: function (ev, anchor) {
+                                ev.stopPropagation()
+                            }
+                        }
+                    }
+                }
             }
         }, {
             xtype: 'checkboxfield',
@@ -137,11 +135,17 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             padding: '5',
             labelWidth: 80,
             labelStyle: 'text-align: center',
-
+            id: 'fuDatePicker',
+            showToday: false,
+            minValue: new Date(),
+            maxValue: Ext.Date.add(new Date(), Ext.Date.YEAR, 1), //1 Year from the current date
             // flex: 1,
             bind: {
                 //disabled: '{noteType.value !== "follow_up"}',
                 value: '{theNote.OFFUPDAT}'
+            },
+            listeners: {
+                //expand: 'onClickDatePicker'
             }
         }]
     }, {

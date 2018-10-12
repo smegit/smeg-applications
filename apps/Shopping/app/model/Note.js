@@ -14,5 +14,11 @@ Ext.define('Shopping.model.Note', {
                     return false
                 }
             }
+        }, {
+            name: 'OFFUPDAT',
+            convert: function (v, rec) {
+                if (v == '0001-01-01')
+                    return null;
+            }
         }]
 });

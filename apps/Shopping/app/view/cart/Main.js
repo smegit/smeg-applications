@@ -52,6 +52,7 @@ Ext.define('Shopping.view.cart.Main', {
                         width: 305,
                         height: 32,
                         labelWidth: 95,
+                        editable: false,
                         valueField: 'STKCOD',
                         displayField: 'STKDSC',
                         reference: 'stocklocs',

@@ -289,7 +289,6 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             if (noteType.getValue() == 'F') {
                 if (noteAction.getValue() == null || noteDetail.getValue() == null || noteFollowUpDate.getValue() == null) {
                     if (noteAction.getValue() == null) {
-
                         noteAction.markInvalid('Follow up note must have an action');
                         //Valence.util.Helper.showSnackbar('Follow up note must have a date');
                     }
@@ -367,25 +366,10 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             // change text add to 'save'
             btn.setText('Save');
         }
-
-
-        // on form page then add new record
-
-
     },
-
-
-    // validation 
-
-    validateFormData: function () {
-
-    },
-
-    onSelect: function (combo, record, eOpts) {
-        console.log('onSelect called');
-        console.info(eOpts);
-        return false;
-    }
-
-
+    // onClickDatePicker: function () {
+    //     console.log('onClickDatePicker called');
+    //     //var todayBtn =
+    //     console.info(Ext.get('fuDatePicker').query('a'))
+    // }
 });
