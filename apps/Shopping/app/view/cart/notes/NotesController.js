@@ -4,20 +4,32 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         'Ext.*',
         'Shopping.model.Note',
         'Shopping.view.cart.notes.Update',
-
+        //'Shopping.view.cart.notes.Notes',
         'Shopping.view.cart.notes.NoteList',
         'Shopping.view.cart.notes.NoteForm'
     ],
     alias: 'controller.notes',
     initViewModel: function (vm) {
+        var cartVm = this.getView().up().down('shoppingstore').getViewModel();
+        console.info(cartVm);
+        console.log('initViewModel called');
         vm.set({
             disableAddButton: true,
-            disableUpdateButton: true
+            disableUpdateButton: true,
+            orderKey: cartVm.get('activeCartNumber')
         });
     },
 
     init: function () {
         this.setCurrentView('notelist');
+    },
+    getNotesStore: function () {
+        var me = this,
+            view = me.getView();
+        return view.lookupViewModel().getStore('Notes');
+    },
+    onLoadNotes: function () {
+        console.log('onLoadNotes called');
     },
 
     onChangeNote: function (cmp, value) {
@@ -106,9 +118,9 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         console.info(rec);
         console.info(addBtn);
         me.setCurrentView('noteform');
-        addBtn.setText('Update');
+        addBtn.setText('Save');
         // won't need after upgrade
-        e.stopPropagation();
+        //e.stopPropagation();
     },
 
     // onItemClick: function (cmp, rec) {
@@ -229,6 +241,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         console.info(addBtn);
         console.info(contentPanel);
         if (contentPanel === 'noteform') {
+            //var myGrid = 
             me.setCurrentView('notelist');
             addBtn.setText('Add');
         } else {
@@ -336,6 +349,8 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                         if (!Ext.isEmpty(data.success)) {
                             delete data.success;
                         }
+                        vm.getStore('Notes').add(Ext.create('Shopping.model.Note', data));
+
                         me.setCurrentView('notelist');
                         btn.setText('Add');
                     });
@@ -372,4 +387,24 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
     //     //var todayBtn =
     //     console.info(Ext.get('fuDatePicker').query('a'))
     // }
+    onBeforeShow: function () {
+        console.log('onBeforeShow called');
+        var me = this,
+            vm = me.getViewModel();
+        console.info(vm);
+    },
+    onClose: function () {
+        var me = this;
+        var noteWin = Ext.ComponentQuery.query('window[title*="Notes"]')[0];
+        var notesWindow = me.lookupReference('notesWin');
+        console.log('onClose called');
+        // console.info(noteWin);
+        // console.info(me.getView());
+        // me.getView().show();
+    },
+    // onLoad: function (this, records, successful, operation, eOpts) {
+    //     console.log('onLoad called');
+    // }
+
+
 });

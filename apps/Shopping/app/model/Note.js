@@ -3,7 +3,7 @@ Ext.define('Shopping.model.Note', {
     fields: ['OFNOTE', 'OFCRTUSER', 'OFCRTDATE', 'OFCRTTIME', 'OFSEQ', 'OFTYPE', 'OFFUPDET', 'OFFUPACT', {
         name: 'dateTime',
         convert: function (v, rec) {
-            return Ext.util.Format.date(new Date(rec.get('OFCRTDATE') + ' ' + rec.get('OFCRTTIME')), 'd/m/Y H:i');
+            return new Date(rec.get('OFCRTDATE') + ' ' + rec.get('OFCRTTIME'));
         }
     }, {
             name: 'OFFUPCMP',

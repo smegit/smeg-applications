@@ -709,18 +709,35 @@ Ext.define('Shopping.view.cart.CartController', {
         console.log('debug onClickNotes called');
         var me = this,
             vm = me.getViewModel(),
-            view = me.getView();
+            noteModel = me.lookupReference('notesWin');
+        //mainVm = me.getView(),
+        view = me.getView();
 
+
+
+        //
         console.info(vm);
+        console.info(view);
         console.log(vm.get('activeCartNumber'));
+        //vm.getStore('Notes').load();
         Ext.ComponentQuery.query('app-main')[0].add({
             xtype: 'notes',
             viewModel: {
                 data: {
-                    orderKey: vm.get('activeCartNumber')
+                    //orderKey: vm.get('activeCartNumber')
                 }
+            },
+            listeners: {
+                beforeshow: function (cmp) {
+                    console.info(cmp);
+
+                }
+
+
             }
         }).show();
+        var noteModel = this.getView().down().up('notes');
+        console.info(noteModel);
     },
 
     /**

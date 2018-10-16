@@ -26,6 +26,9 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
         type: 'vbox',
         align: 'stretch'
     },
+    listeners: {
+        show: 'show'
+    },
 
     items: [{
         xtype: 'container',
@@ -40,6 +43,8 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             id: 'noteType',
             displayField: 'NOTETYPED',
             valueField: 'NOTETYPEC',
+            forceSelection: true,
+            enableKeyEvents: true,
             editable: false,
             allowBlank: false,
             publishes: 'value',
@@ -53,24 +58,27 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
                 value: '{theNote.OFTYPE}'
             },
             // Stop the click evt from propagation otherwise the modal will disappear
-            listConfig: {
-                listeners: {
-                    el: {
-                        click: {
-                            fn: function (ev, anchor) {
-                                ev.stopPropagation()
-                            }
-                        }
-                    }
-                }
-            }
+            // listConfig: {
+            //     listeners: {
+            //         el: {
+            //             click: {
+            //                 fn: function (ev, anchor) {
+            //                     ev.stopPropagation()
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
         }, {
             xtype: 'combo',
-            fieldLabel: 'Action',
+            fieldLabel: 'Follow Up',
             reference: 'noteAction',
             displayField: 'NOTEACTD',
             valueField: 'NOTEACTC',
-            editable: false,
+            editable: true,
+            allowBlank: true,
+            defaultValue: null,
+            publishes: 'value',
             queryMode: 'local',
             padding: '5',
             labelWidth: 80,
@@ -84,25 +92,27 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             },
 
             // Stop the click evt from propagation otherwise the modal will disappear
-            listConfig: {
-                listeners: {
-                    el: {
-                        click: {
-                            fn: function (ev, anchor) {
-                                ev.stopPropagation()
-                            }
-                        }
-                    }
-                }
-            }
+            // listConfig: {
+            //     listeners: {
+            //         el: {
+            //             click: {
+            //                 fn: function (ev, anchor) {
+            //                     ev.stopPropagation()
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
         }, {
             xtype: 'checkboxfield',
             name: 'noteComplete',
             //fieldLabel: 'Complete',
             boxLabel: 'completed',
             reference: 'noteComplete',
+            publishes: 'value',
             flex: 1,
             bind: {
+                disabled: '{noteAction.value == null}',
                 value: '{theNote.OFFUPCMP}'
             },
         }]
@@ -121,10 +131,11 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             fieldLabel: 'Detail',
             reference: 'noteDetail',
             msgTarget: 'qtip',
+            publishes: 'value',
             labelWidth: 80,
             labelStyle: 'text-align: center',
             bind: {
-                //disabled: '{noteType.value !== "follow_up"}',
+                disabled: '{noteAction.value == null}',
                 value: '{theNote.OFFUPDET}'
             }
         }, {
@@ -141,7 +152,7 @@ Ext.define('Shopping.view.cart.notes.NoteForm', {
             maxValue: Ext.Date.add(new Date(), Ext.Date.YEAR, 1), //1 Year from the current date
             // flex: 1,
             bind: {
-                //disabled: '{noteType.value !== "follow_up"}',
+                disabled: '{noteAction.value == null}',
                 value: '{theNote.OFFUPDAT}'
             },
             listeners: {

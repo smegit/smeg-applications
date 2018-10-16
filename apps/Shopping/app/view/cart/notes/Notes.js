@@ -13,6 +13,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
         'Valence.common.widget.DockedSearch'
     ],
     xtype: 'notes',
+    reference: 'notesWin',
     viewModel: {
         type: 'notes'
     },
@@ -24,15 +25,31 @@ Ext.define('Shopping.view.cart.notes.Notes', {
     //     type: 'vbox',
     //     align: 'stretch'
     // },
-    closable: true,
+    closable: false,
     modal: true,
-    autoShow: true,
     layout: 'fit',
     defaultFocus: 'textarea',
     maximizable: true,
     bind: {
         title: 'Notes - {orderKey}'
     },
+    listeners: {
+        close: 'onClose'
+    },
+    // listeners: {
+    //     resize: function (win, width, height, eOpts) {
+    //         var notelist = this.lookupReference('notelist');
+    //         console.log('resize called');
+    //         console.info(notelist);
+    //         if (notelist.getHeight() == '400') {
+    //             console.log('reset the height to 600');
+    //             //notelist.setHeight('300');
+    //         }
+    //         //this.lookupReference('notelist').setHeight('600');
+    //         console.info(notelist);
+    //         //win.center();
+    //     }
+    // },
     initComponent: function () {
         var me = this;
         Ext.apply(me, {

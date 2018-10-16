@@ -147,7 +147,7 @@ Ext.define('Shopping.view.main.MainController', {
             store = vm.getStore('PaymentOptions');
 
         if (!Ext.isEmpty(store) && !Ext.isEmpty(content.Payms)) {
-            //store.loadRawData(content.Payms);
+            store.loadRawData(content.Payms);
         }
     },
 
