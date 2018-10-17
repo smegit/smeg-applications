@@ -19,7 +19,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
     },
     controller: 'notes',
     // title: 'Notes',
-    height: 500,
+    height: 700,
     width: 730,
     // layout: {
     //     type: 'vbox',

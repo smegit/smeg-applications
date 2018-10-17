@@ -10,12 +10,15 @@ Ext.define('Shopping.view.cart.notes.NoteList', {
     // },
 
     //autoLoad: true,
+    autoDestroy: false,
     layout: 'fit',
     items: [
         {
             xtype: 'grid',
             //flex: 1,
-            reference: 'notelist',
+            reference: 'noteslist',
+            id: 'notelist',
+            autoDestroy: false,
             autoHeight: true,
             maxHeight: 800,
             //layout: 'fit',
@@ -33,7 +36,7 @@ Ext.define('Shopping.view.cart.notes.NoteList', {
                 store: '{Notes}',
                 selection: '{theNote}'
             },
-            autoScroll: true,
+            //autoScroll: true,
             autoLoad: false,
 
             //autoHeight: true,
@@ -107,7 +110,10 @@ Ext.define('Shopping.view.cart.notes.NoteList', {
                 }]
             }],
             listeners: {
-                itemclick: 'onItemClick'
+                itemclick: 'onItemClick',
+                load: 'onLoad',
+                beforeload: 'onLoad',
+                deactivate: 'onDeactivate'
             }
         }
     ],

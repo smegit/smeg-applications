@@ -122,6 +122,9 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         // won't need after upgrade
         //e.stopPropagation();
     },
+    onDeactivate: function () {
+        console.log('deactivate called');
+    },
 
     // onItemClick: function (cmp, rec) {
     //     console.log('onItemDblClick called');
@@ -214,13 +217,14 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             contentPanel = me.getView().down('#contentPanel');
 
         // console.info(!contentPanel);
-        // console.info(view);
+        console.info(vm.getStore('Notes'));
         //console.info(contentPanel.down());
         //console.info(contentPanel.down().xtype === view);
         if (!contentPanel || view === '' || (contentPanel.down() && contentPanel.down().xtype === view)) {
             //console.log('before returning false');
             return false;
         }
+
 
         Ext.suspendLayouts();
         contentPanel.removeAll(true);
@@ -230,6 +234,21 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             }, params)
         );
         Ext.resumeLayouts(true);
+        if (view == 'notelist' && vm.getStore('Notes') != null) {
+            // console.log('setting notelist');
+            // console.info(vm.getStore('Notes'));
+            // console.info(Ext.getCmp('notelist').getView());
+            // // console.info(me.lookupReference('noteslist').down('tableview'));
+            // Ext.getCmp('notelist').getView().setStore(vm.getStore('Notes'));
+            // Ext.getCmp('notelist').getView().gird.reload();
+            // console.info(Ext.getCmp('notelist').getView());
+
+            // console.info(me.lookupReference('noteslist').down('tableview'));
+            //vm.getStore('Notes').load();
+
+
+        }
+
     },
 
     onClickCancel: function (e) {
@@ -350,8 +369,11 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                             delete data.success;
                         }
                         vm.getStore('Notes').add(Ext.create('Shopping.model.Note', data));
+                        console.info(vm.getStore('Notes'));
 
+                        // Ext.getCmp('notelist').getView().setStore(vm.getStore('Notes'));
                         me.setCurrentView('notelist');
+
                         btn.setText('Add');
                     });
             } else {
@@ -402,9 +424,9 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         // console.info(me.getView());
         // me.getView().show();
     },
-    // onLoad: function (this, records, successful, operation, eOpts) {
-    //     console.log('onLoad called');
-    // }
+    onLoad: function () {
+        console.log('onLoad called');
+    }
 
 
 });

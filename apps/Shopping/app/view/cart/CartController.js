@@ -708,8 +708,8 @@ Ext.define('Shopping.view.cart.CartController', {
     onClickNotes: function () {
         console.log('debug onClickNotes called');
         var me = this,
-            vm = me.getViewModel(),
-            noteModel = me.lookupReference('notesWin');
+            vm = me.getViewModel();
+        //noteModel = me.lookupReference('notesWin');
         //mainVm = me.getView(),
         view = me.getView();
 
@@ -728,16 +728,70 @@ Ext.define('Shopping.view.cart.CartController', {
                 }
             },
             listeners: {
-                beforeshow: function (cmp) {
+                //     beforeshow: function (cmp) {
+                //         console.info(cmp.getViewModel().getStore('Notes'));
+                //     },
+                afterrender: function (cmp) {
+                    console.log('after render called');
+                    //var store = cmp.getStore();
+                    //store.load.defer(100, store);
+                    //console.info(cmp.getViewModel().getStore('Notes'));
+                    //cmp.lookupReference('notelist').getView().refresh();
+                },
+                delay: 200,
+                // activate: function (cmp) {
+                //     console.info(cmp.lookupReference('notelist'));
+                //     console.info(cmp.getViewModel().getStore('Notes'));
+                //     var nodeStore = cmp.getViewModel().getStore('Notes');
+                //     console.info(nodeStore);
+                //     if (nodeStore) {
+                //         nodeStore.load();
+                //         console.info(nodeStore);
+                //         Ext.getCmp('notelist').getView().refresh();
+                //         console.info(Ext.ComponentQuery.query('notes')[0].lookupReference('notelist'));
+                //     }
+                // },
+                //     beforeload: function (cmp) {
+                //         console.info(cmp.getViewModel().getStore('Notes'));
+                //     },
+                show: function (cmp) {
                     console.info(cmp);
+                    console.log('show called');
+                    var store = cmp.getViewModel().getStore('Notes');
+                    console.info(store);
+                    console.info(cmp.down('notelist').down('grid'));
+                    store.load({
+                        //scope: me,
+                        callback: function (records, operation, success) {
+                            console.info(records);
+                            console.info(operation);
+                            console.info(success);
+                            console.info(cmp.getViewModel().getStore('Notes'));
+                            //cmp.getView().refresh();
+                            //cmp.down('notelist').grid.refresh();
+                            console.info(Ext.getCmp('notelist').getView().getStore());
+                            Ext.getCmp('notelist').getView().setStore(cmp.getViewModel().getStore('Notes'));
+                            //setTimeout(function () { Ext.getCmp('notelist').getView().refresh(); }, 3000);
 
+                            console.info(cmp.down('tableview'));
+                        }
+                    });
+                    //Ext.getCmp('notelist').getView().refresh();
+                    //setTimeout(function () { Ext.getCmp('notelist').getView().refresh(); }, 3000);
+                    console.info(Ext.getCmp('notelist').getView().getStore());
                 }
-
-
             }
         }).show();
-        var noteModel = this.getView().down().up('notes');
+        var noteModel = this.getView().up().down('notes');
+        var noteWin = me.lookupReference('notesWin');
+        var noteView = Ext.ComponentQuery.query('notes')[0];
+        var noteVm = noteView.getViewModel();
         console.info(noteModel);
+        console.info(noteWin);
+        console.info(Ext.ComponentQuery.query('notes')[0].lookupReference('notelist'));
+        console.info(noteVm.getStore('Notes'));
+        //setTimeout(function () { Ext.getCmp('notelist').getView().refresh(); }, 3000);
+
     },
 
     /**
