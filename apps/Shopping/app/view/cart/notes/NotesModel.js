@@ -24,7 +24,8 @@ Ext.define('Shopping.view.cart.notes.NotesModel', {
             },
             sorters: [{
                 //property: 'dateTime',
-                property: 'OFCRTDATE',
+                //property: 'OFCRTDATE',
+                property: 'OFSEQ',
                 direction: 'DESC'
             }]
         },

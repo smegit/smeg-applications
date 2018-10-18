@@ -10,7 +10,9 @@ Ext.define('Shopping.view.cart.notes.Notes', {
         'Shopping.view.cart.notes.NotesController',
         'Shopping.view.cart.notes.NotesModel',
         'Shopping.view.main.MainModel',
-        'Valence.common.widget.DockedSearch'
+        'Valence.common.widget.DockedSearch',
+
+        'Ext.grid.*'
     ],
     xtype: 'notes',
     reference: 'notesWin',
@@ -20,14 +22,14 @@ Ext.define('Shopping.view.cart.notes.Notes', {
     controller: 'notes',
     // title: 'Notes',
     height: 700,
-    width: 730,
+    width: '80%',
     bodyPadding: 5,
 
     // layout: {
     //     type: 'vbox',
     //     align: 'stretch'
     // },
-    closable: true,
+    closable: false,
     modal: true,
     layout: {
         type: 'hbox',
@@ -35,12 +37,13 @@ Ext.define('Shopping.view.cart.notes.Notes', {
     },
     defaultFocus: 'textarea',
     maximizable: true,
-    maximized: true,
+    //maximized: true,
     bind: {
         title: 'Notes - {orderKey}'
     },
     listeners: {
-        close: 'onClose'
+        //close: 'onClose',
+        beforeshow: 'onBeforeShow'
     },
     // listeners: {
     //     resize: function (win, width, height, eOpts) {
@@ -91,7 +94,8 @@ Ext.define('Shopping.view.cart.notes.Notes', {
             {
                 xtype: 'grid',
                 //title: 'Notes',
-                reference: '',
+
+                reference: 'notelist',
                 width: '50%',
                 margin: '0 5 0 0',
                 bind: {
@@ -105,6 +109,10 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                     stripRows: true,
                     columnLines: true
                 },
+                resizable: true,
+                // plugins: {
+                //     //gridfilters: true
+                // },
                 columns: {
                     items: [{
                         xtype: 'datecolumn',
@@ -118,17 +126,20 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         text: 'Created By',
                         align: 'center',
                         dataIndex: 'OFCRTUSER',
-                        width: 60
+                        width: 60,
+                        //filter: 'list'
                     }, {
                         text: 'Updated by',
                         align: 'center',
                         dataIndex: 'OFCHGUSER',
-                        width: 60
+                        width: 60,
+                        // filter: 'list'
                     }, {
                         text: 'Type',
                         dataIndex: 'OFTYPE',
                         align: 'center',
                         width: 60,
+                        //filter: 'list',
                         renderer: function (v) {
 
                             var mainVm = this.getView().up('app-main').getViewModel(),
@@ -144,9 +155,9 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         dataIndex: 'OFNOTE',
                         //cellWrap: true,
                         flex: 1,
-                        renderer: function (v) {
-                            return v.replace(/(?:\r\n|\r|\n)/g, ' ');
-                        }
+                        // renderer: function (v) {
+                        //     return v.replace(/(?:\r\n|\r|\n)/g, ' ');
+                        // }
                     }]
                 },
                 dockedItems: [{
@@ -167,10 +178,6 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                 }],
                 listeners: {
                     itemclick: 'onItemClick',
-                    load: 'onLoad',
-                    beforeload: 'onLoad',
-                    deactivate: 'onDeactivate',
-                    added: 'onLoad',
                 }
 
             },
@@ -197,7 +204,6 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         forceSelection: true,
                         enableKeyEvents: true,
                         editable: false,
-                        allowBlank: false,
                         publishes: 'value',
                         queryMode: 'local',
                         padding: '5',

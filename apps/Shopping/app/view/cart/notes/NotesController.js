@@ -113,12 +113,12 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         console.info(rec);
         var me = this,
             vm = me.getViewModel(),
-            view = me.getView(),
-            addBtn = view.up().down('#add2');
+            view = me.getView();
+        //addBtn = view.up().down('#add2');
         console.info(rec);
-        console.info(addBtn);
-        me.setCurrentView('noteform');
-        addBtn.setText('Save');
+        //console.info(addBtn);
+        //me.setCurrentView('noteform');
+        //addBtn.setText('Save');
         // won't need after upgrade
         //e.stopPropagation();
     },
@@ -320,7 +320,8 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         var me = this,
             //contentPanel = me.getView().down('#contentPanel').down().xtype,
             vm = me.getViewModel(),
-            noteForm = me.getView().down('noteform');
+            noteForm = me.getView().down('noteform'),
+            newRecord;
         var noteType = me.lookupReference('noteType'),
             noteAction = me.lookupReference('noteAction'),
             noteDetail = me.lookupReference('noteDetail'),
@@ -369,9 +370,18 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         }
 
         // validate data - If follow_up = 'email' then date cannot be empty
-        // if (noteAction.getValue() == 'E') {
-        //     if (noteDetail.getValue() == null || !noteFollowUpDate.getValue())
-        // }
+        if (noteAction.getValue() == 'E') {
+            if (noteDetail.getValue() == null) {
+                noteDetail.markInvalid('Note detail is required');
+            }
+            if (noteDetail.getValue() == null) {
+                noteFollowUpDate.markInvalid('Note follow up date is required');
+            }
+            if (noteDetail.getValue() == null || noteDetail.getValue() == null) {
+                return false;
+            }
+        }
+        if (!noteDetail.isValid) return false;
 
 
         // // save new note
@@ -388,45 +398,58 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                 OFNOTE: noteText.getValue(),
             }), 'Saving')
                 .then(function (data) {
+                    var resp = data;
                     console.info(data);
                     if (!Ext.isEmpty(data.success)) {
                         delete data.success;
                     }
+                    //data.dateTime = new Date(date.OFCRTDATE + ' ' + data.OFCRTTIME);
+                    //var dt = new Date(date.OFCRTDATE + ' ' + data.OFCRTTIME);
+                    if (!Ext.isEmpty(data.dateTime)) {
+                        delete data.dateTime;
+                    }
+
+                    var t = data.OFCRTTIME.replace(/\./g, ":");
+                    Ext.apply(data, {
+                        OFCRTTIME: t
+                    });
+                    console.info(data);
+                    //console.log(data.OFCRTDATE + ' ' + data.OFCRTTIME + ' ' + data.dateTime);
+                    console.info(Ext.create('Shopping.model.Note', data));
                     vm.getStore('Notes').add(Ext.create('Shopping.model.Note', data));
+
+                    // OFCRTDATE: data.OFCRTDATE,
+                    // OFCRTTIME: data.OFCRTTIME,
+                    // OFCRTUSER: data.OFCRTUSER,
+                    // OFFUPACT: data.OFFUPACT,
+                    // OFFUPCMP: data.OFFUPCMP,
+                    // OFFUPDET: data.OFFUPDET,
+                    // OFNOTE: data.OFNOTE,
+                    // OFSEQ: data.OFSEQ,
+                    // OFTYPE: data.OFTYPE,
                     console.info(vm.getStore('Notes'));
+                    console.info(me.lookupReference('notelist'));
+                    //me.lookupReference('notelist').getView().refresh();
 
                     // Ext.getCmp('notelist').getView().setStore(vm.getStore('Notes'));
-                    me.setCurrentView('notelist');
-
-                    btn.setText('Add');
                 });
         } else {
             // Update the existing note
-            console.log('updating existing note');
             if (theNote.dirty) {
+                console.log('updating existing note');
                 console.info(theNote.data);
                 me.processNote(Ext.clone(theNote.data), 'updating')
                     .then(function (data) {
                         console.info(data);
                         theNote.commit();
                         Valence.util.Helper.showSnackbar('Updated');
-                        me.setCurrentView('notelist');
-                        btn.setText('Add');
                     })
             } else {
-                me.setCurrentView('notelist');
-                btn.setText('Add');
+                console.log('nothing should be done.');
             }
         }
-
-        this.setCurrentView('noteform');
-
         // Clear the form cache 
         vm.set('theNote', {});
-
-        // change text add to 'save'
-        btn.setText('Save');
-
     },
     // onClickDatePicker: function () {
     //     console.log('onClickDatePicker called');
@@ -450,6 +473,21 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
     },
     onLoad: function () {
         console.log('onLoad called');
+    },
+    onClickAddNote: function () {
+        console.log('onClickAddNote called');
+        var me = this,
+            vm = me.getViewModel();
+        console.info(vm);
+        vm.set('theNote', {});
+    },
+
+    onBeforeShow: function () {
+        console.log('onBeforeShow called');
+        var me = this,
+            vm = me.getViewModel();
+        console.info(vm);
+        vm.set('theNote', {});
     }
 
 
