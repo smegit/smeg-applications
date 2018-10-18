@@ -269,12 +269,58 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
 
     },
 
-    onClickAdd2: function (btn, e) {
-        console.log('onClickAdd2 called');
+    detailValidation: function () {
+        console.log('detailValidation called');
+        var me = this,
+            noteAction = me.lookupReference('noteAction'),
+            noteDetail = me.lookupReference('noteDetail');
+        // validate data - email
+        if (noteAction.getValue() === 'E') {
+            var ereg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+            var testResult = ereg.test(noteDetail.getRawValue());
+            if (!testResult) {
+                noteDetail.markInvalid('Invalid Email Address');
+                Valence.util.Helper.showSnackbar('Please enter a valid email address.');
+                return false;
+            }
+        }
+        // validate data - phone number
+        if (noteAction.getValue() === 'P') {
+            var phoneReg = /^\d+$/;
+            var phoneNumber = noteDetail.getRawValue();
+            var testResult = phoneReg.test(phoneNumber);
+            if (!testResult) {
+                noteDetail.markInvalid('Phone number should contain numbers only.');
+                Valence.util.Helper.showSnackbar('Phone number should contain numbers only.');
+                return false;
+            }
+        }
+        return false;
+    },
+    dateValidation: function () {
+        console.log('dateValidation called');
+        var me = this,
+            noteAction = me.lookupReference('noteAction'),
+            noteFollowUpDate = me.lookupReference('noteFollowUpDate');
+        // validate date - date
+        if (noteAction.getValue() === 'E') {
+            var fuDate = noteFollowUpDate.getValue();
+            if (!fuDate) {
+                noteFollowUpDate.markInvalid('Date is required for sending email');
+                return false;
+            }
+        }
+        return false;
+    },
+
+
+    onClickSave: function (btn, e) {
+        console.log('onSave called');
         // on list page then show note form
         var me = this,
-            contentPanel = me.getView().down('#contentPanel').down().xtype,
-            vm = me.getViewModel();
+            //contentPanel = me.getView().down('#contentPanel').down().xtype,
+            vm = me.getViewModel(),
+            noteForm = me.getView().down('noteform');
         var noteType = me.lookupReference('noteType'),
             noteAction = me.lookupReference('noteAction'),
             noteDetail = me.lookupReference('noteDetail'),
@@ -282,127 +328,105 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             noteFollowUpDate = me.lookupReference('noteFollowUpDate'),
             noteText = me.lookupReference('noteText'),
             theNote = vm.get('theNote');
+        console.log('save the record or update the record');
+        console.info(noteType.getValue());
+        console.info(noteAction.getValue());
+        console.info(noteDetail.getValue());
+        console.info(noteFollowUpDate.getValue());
+        console.info(noteComplete.getValue());
+        console.info(noteForm);
+
+        // // validate data -  follow up date
+        // if (noteType.getValue() == 'F') {
+        //     if (noteAction.getValue() == null || noteDetail.getValue() == null || noteFollowUpDate.getValue() == null) {
+        //         if (noteAction.getValue() == null) {
+        //             noteAction.markInvalid('Follow up note must have an action');
+        //             //Valence.util.Helper.showSnackbar('Follow up note must have a date');
+        //         }
+        //         if (noteDetail.getValue() == '') {
+        //             noteDetail.markInvalid('Follow up note must have detail');
+        //         }
+        //         if (noteFollowUpDate.getValue() == null) {
+        //             noteFollowUpDate.markInvalid('Follow up note must have a date');
+        //             // Valence.util.Helper.showSnackbar('Follow up note must have a date');
+        //         }
+        //         Valence.util.Helper.showSnackbar('Follow up note must have action, detail and date.');
+        //         return false;
+        //     }
+        // }
 
 
-
-        if (contentPanel === 'noteform') {
-            console.log('save the record or update the record');
-            console.info(noteType.getValue());
-            console.info(noteAction.getValue());
-            console.info(noteDetail.getValue());
-            console.info(noteFollowUpDate.getValue());
-            console.info(noteComplete.getValue());
-
-
-            // validate data - email
-            if (noteAction.getValue() === 'E') {
-                var ereg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
-                var testResult = ereg.test(noteDetail.getRawValue());
-                if (!testResult) {
-                    noteDetail.markInvalid('Invalid Email Address');
-                    Valence.util.Helper.showSnackbar('Please enter a valid email address.');
-                    return false;
-                }
+        // validate data - Neither note type nor note text should be empty.
+        if (noteType.getValue() == null || noteText.getValue() == '') {
+            if (noteType.getValue() == null) {
+                me.lookupReference('noteType').markInvalid('Note type cannot be empty.');
             }
-
-            // validate data - phone number
-            if (noteAction.getValue() === 'P') {
-                var phoneReg = /^\d+$/;
-                var phoneNumber = noteDetail.getRawValue();
-                var testResult = phoneReg.test(phoneNumber);
-                if (!testResult) {
-                    noteDetail.markInvalid('Phone number should contain numbers only.');
-                    Valence.util.Helper.showSnackbar('Phone number should contain numbers only.');
-                    return false;
-                }
+            if (noteText.getValue() == '') {
+                me.lookupReference('noteText').markInvalid('Note content cannot be empty.');
             }
+            Valence.util.Helper.showSnackbar('Please enter note type and note.');
+            return false;
+        }
 
-            // validate data -  follow up date
-            if (noteType.getValue() == 'F') {
-                if (noteAction.getValue() == null || noteDetail.getValue() == null || noteFollowUpDate.getValue() == null) {
-                    if (noteAction.getValue() == null) {
-                        noteAction.markInvalid('Follow up note must have an action');
-                        //Valence.util.Helper.showSnackbar('Follow up note must have a date');
+        // validate data - If follow_up = 'email' then date cannot be empty
+        // if (noteAction.getValue() == 'E') {
+        //     if (noteDetail.getValue() == null || !noteFollowUpDate.getValue())
+        // }
+
+
+        // // save new note
+        // console.info(Ext.Object.getKeys(theNote.data));
+        if (!(Ext.Object.getKeys(theNote.data).indexOf('OFCRTDATE') > -1)) {
+            console.log('saving new note');
+            // Need to add more attributes when back end is ready
+            me.processNote(Ext.clone({
+                OFTYPE: noteType.getValue(),
+                OFFUPACT: noteAction.getValue(),
+                OFFUPCMP: noteComplete.getValue(),
+                OFFUPDET: noteDetail.getRawValue(),
+                OFFUPDAT: noteFollowUpDate.getValue(),
+                OFNOTE: noteText.getValue(),
+            }), 'Saving')
+                .then(function (data) {
+                    console.info(data);
+                    if (!Ext.isEmpty(data.success)) {
+                        delete data.success;
                     }
-                    if (noteDetail.getValue() == '') {
-                        noteDetail.markInvalid('Follow up note must have detail');
-                    }
-                    if (noteFollowUpDate.getValue() == null) {
-                        noteFollowUpDate.markInvalid('Follow up note must have a date');
-                        // Valence.util.Helper.showSnackbar('Follow up note must have a date');
-                    }
-                    Valence.util.Helper.showSnackbar('Follow up note must have action, detail and date.');
-                    return false;
-                }
+                    vm.getStore('Notes').add(Ext.create('Shopping.model.Note', data));
+                    console.info(vm.getStore('Notes'));
 
-            }
+                    // Ext.getCmp('notelist').getView().setStore(vm.getStore('Notes'));
+                    me.setCurrentView('notelist');
 
-            // validate data - Neither note type nor note text should be empty.
-            if (noteType.getValue() == null || noteText.getValue() == '') {
-                if (noteType.getValue() == null) {
-                    me.lookupReference('noteType').markInvalid('Note type cannot be empty.');
-                }
-                if (noteText.getValue() == '') {
-                    me.lookupReference('noteText').markInvalid('Note content cannot be empty.');
-                }
-                Valence.util.Helper.showSnackbar('Please enter note type and note.');
-                return false;
-            }
-
-
-            // // save new note
-            // console.info(Ext.Object.getKeys(theNote.data));
-            if (!(Ext.Object.getKeys(theNote.data).indexOf('OFCRTDATE') > -1)) {
-                console.log('saving new note');
-                // Need to add more attributes when back end is ready
-                me.processNote(Ext.clone({
-                    OFTYPE: noteType.getValue(),
-                    OFFUPACT: noteAction.getValue(),
-                    OFFUPCMP: noteComplete.getValue(),
-                    OFFUPDET: noteDetail.getRawValue(),
-                    OFFUPDAT: noteFollowUpDate.getValue(),
-                    OFNOTE: noteText.getValue(),
-                }), 'Saving')
+                    btn.setText('Add');
+                });
+        } else {
+            // Update the existing note
+            console.log('updating existing note');
+            if (theNote.dirty) {
+                console.info(theNote.data);
+                me.processNote(Ext.clone(theNote.data), 'updating')
                     .then(function (data) {
                         console.info(data);
-                        if (!Ext.isEmpty(data.success)) {
-                            delete data.success;
-                        }
-                        vm.getStore('Notes').add(Ext.create('Shopping.model.Note', data));
-                        console.info(vm.getStore('Notes'));
-
-                        // Ext.getCmp('notelist').getView().setStore(vm.getStore('Notes'));
+                        theNote.commit();
+                        Valence.util.Helper.showSnackbar('Updated');
                         me.setCurrentView('notelist');
-
                         btn.setText('Add');
-                    });
+                    })
             } else {
-                // Update the existing note
-                console.log('updating existing note');
-                if (theNote.dirty) {
-                    console.info(theNote.data);
-                    me.processNote(Ext.clone(theNote.data), 'updating')
-                        .then(function (data) {
-                            console.info(data);
-                            theNote.commit();
-                            Valence.util.Helper.showSnackbar('Updated');
-                            me.setCurrentView('notelist');
-                            btn.setText('Add');
-                        })
-                } else {
-                    me.setCurrentView('notelist');
-                    btn.setText('Add');
-                }
+                me.setCurrentView('notelist');
+                btn.setText('Add');
             }
-        } else {
-            this.setCurrentView('noteform');
-
-            // Clear the form cache 
-            vm.set('theNote', {});
-
-            // change text add to 'save'
-            btn.setText('Save');
         }
+
+        this.setCurrentView('noteform');
+
+        // Clear the form cache 
+        vm.set('theNote', {});
+
+        // change text add to 'save'
+        btn.setText('Save');
+
     },
     // onClickDatePicker: function () {
     //     console.log('onClickDatePicker called');

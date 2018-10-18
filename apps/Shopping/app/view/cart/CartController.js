@@ -754,32 +754,32 @@ Ext.define('Shopping.view.cart.CartController', {
                 //     beforeload: function (cmp) {
                 //         console.info(cmp.getViewModel().getStore('Notes'));
                 //     },
-                show: function (cmp) {
-                    console.info(cmp);
-                    console.log('show called');
-                    var store = cmp.getViewModel().getStore('Notes');
-                    console.info(store);
-                    console.info(cmp.down('notelist').down('grid'));
-                    store.load({
-                        //scope: me,
-                        callback: function (records, operation, success) {
-                            console.info(records);
-                            console.info(operation);
-                            console.info(success);
-                            console.info(cmp.getViewModel().getStore('Notes'));
-                            //cmp.getView().refresh();
-                            //cmp.down('notelist').grid.refresh();
-                            console.info(Ext.getCmp('notelist').getView().getStore());
-                            Ext.getCmp('notelist').getView().setStore(cmp.getViewModel().getStore('Notes'));
-                            //setTimeout(function () { Ext.getCmp('notelist').getView().refresh(); }, 3000);
+                // show: function (cmp) {
+                //     console.info(cmp);
+                //     console.log('show called');
+                //     var store = cmp.getViewModel().getStore('Notes');
+                //     console.info(store);
+                //     console.info(cmp.down('notelist').down('grid'));
+                //     store.load({
+                //         //scope: me,
+                //         callback: function (records, operation, success) {
+                //             console.info(records);
+                //             console.info(operation);
+                //             console.info(success);
+                //             console.info(cmp.getViewModel().getStore('Notes'));
+                //             //cmp.getView().refresh();
+                //             //cmp.down('notelist').grid.refresh();
+                //             console.info(Ext.getCmp('notelist').getView().getStore());
+                //             Ext.getCmp('notelist').getView().setStore(cmp.getViewModel().getStore('Notes'));
+                //             //setTimeout(function () { Ext.getCmp('notelist').getView().refresh(); }, 3000);
 
-                            console.info(cmp.down('tableview'));
-                        }
-                    });
-                    //Ext.getCmp('notelist').getView().refresh();
-                    //setTimeout(function () { Ext.getCmp('notelist').getView().refresh(); }, 3000);
-                    console.info(Ext.getCmp('notelist').getView().getStore());
-                }
+                //             console.info(cmp.down('tableview'));
+                //         }
+                //     });
+                //     //Ext.getCmp('notelist').getView().refresh();
+                //     //setTimeout(function () { Ext.getCmp('notelist').getView().refresh(); }, 3000);
+                //     console.info(Ext.getCmp('notelist').getView().getStore());
+                // }
             }
         }).show();
         var noteModel = this.getView().up().down('notes');

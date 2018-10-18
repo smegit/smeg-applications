@@ -113,7 +113,8 @@ Ext.define('Shopping.view.cart.notes.NoteList', {
                 itemclick: 'onItemClick',
                 load: 'onLoad',
                 beforeload: 'onLoad',
-                deactivate: 'onDeactivate'
+                deactivate: 'onDeactivate',
+                added: 'onLoad',
             }
         }
     ],

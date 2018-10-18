@@ -1,6 +1,7 @@
 Ext.define('Shopping.view.cart.notes.NoteForm', {
     extend: 'Ext.form.Panel',
     xtype: 'noteform',
+    reference: 'noteForm',
     requires: [
         // 'Shopping.model.NoteTypeOption',
         // 'Shopping.model.NoteActionOption',
