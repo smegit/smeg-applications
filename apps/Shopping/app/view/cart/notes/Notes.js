@@ -21,7 +21,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
     },
     controller: 'notes',
     // title: 'Notes',
-    height: 700,
+    height: '90%',
     width: '80%',
     bodyPadding: 5,
 
@@ -96,7 +96,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                 //title: 'Notes',
 
                 reference: 'notelist',
-                width: '50%',
+                width: '40%',
                 margin: '0 5 0 0',
                 bind: {
                     store: '{Notes}',
@@ -122,19 +122,20 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         align: 'center',
                         width: 120,
                     },
+                    // {
+                    //     text: 'Created By',
+                    //     align: 'center',
+                    //     dataIndex: 'OFCRTUSER',
+                    //     width: 60,
+                    //     //filter: 'list'
+                    // }, {
+                    //     text: 'Updated by',
+                    //     align: 'center',
+                    //     dataIndex: 'OFCHGUSER',
+                    //     width: 60,
+                    //     // filter: 'list'
+                    // },
                     {
-                        text: 'Created By',
-                        align: 'center',
-                        dataIndex: 'OFCRTUSER',
-                        width: 60,
-                        //filter: 'list'
-                    }, {
-                        text: 'Updated by',
-                        align: 'center',
-                        dataIndex: 'OFCHGUSER',
-                        width: 60,
-                        // filter: 'list'
-                    }, {
                         text: 'Type',
                         dataIndex: 'OFTYPE',
                         align: 'center',
@@ -186,8 +187,14 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                 //title: 'Details',
                 reference: '',
                 flex: 1,
-                bodyPadding: 10,
+                //bodyPadding: 10,
+                padding: '10 10 0 10',
                 defaultType: 'textfield',
+                layout: {
+                    type: 'vbox',
+                    align: 'stretch'
+                },
+
                 items: [{
                     xtype: 'container',
                     layout: {
@@ -196,9 +203,10 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                     },
                     items: [{
                         xtype: 'combo',
-                        fieldLabel: 'Note Type',
+                        fieldLabel: 'Type',
                         reference: 'noteType',
                         id: 'noteType',
+                        cls: 'note-type',
                         displayField: 'NOTETYPED',
                         valueField: 'NOTETYPEC',
                         forceSelection: true,
@@ -207,8 +215,9 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         publishes: 'value',
                         queryMode: 'local',
                         padding: '5',
-                        labelWidth: 80,
-                        labelStyle: 'text-align: center',
+                        labelWidth: 60,
+                        //labelStyle: 'width: auto;',
+                        //labelStyle: 'text-align: right',
                         //flex: 1,
                         bind: {
                             store: '{NoteTypeOptions}',
@@ -230,6 +239,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         xtype: 'combo',
                         fieldLabel: 'Follow Up',
                         reference: 'noteAction',
+                        cls: 'note-type',
                         displayField: 'NOTEACTD',
                         valueField: 'NOTEACTC',
                         editable: true,
@@ -238,10 +248,9 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         publishes: 'value',
                         queryMode: 'local',
                         padding: '5',
-                        labelWidth: 80,
-                        labelStyle: 'text-align: center',
-
-                        // flex: 1,
+                        labelWidth: 70,
+                        labelStyle: 'min-width: 40px',
+                        //labelStyle: 'text-align: right',
                         bind: {
                             store: '{NoteActionOptions}',
                             // disabled: '{noteType.value !== "follow_up"}',
@@ -260,7 +269,58 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         //         }
                         //     }
                         // }
-                    }, {
+                    },
+                    {
+                        xtype: 'datefield',
+                        fieldLabel: 'Date',
+                        editable: false,
+                        reference: 'noteFollowUpDate',
+                        padding: '5',
+                        cls: 'note-type',
+                        labelWidth: 60,
+                        //width: 160,
+                        //labelWidth: false,
+                        //labelStyle: 'width: auto',
+                        // labelStyle: 'text-align: right',
+                        id: 'fuDatePicker',
+                        showToday: false,
+                        minValue: new Date(),
+                        maxValue: Ext.Date.add(new Date(), Ext.Date.YEAR, 1), //1 Year from the current date
+                        // flex: 1,
+                        bind: {
+                            disabled: '{noteAction.value == null}',
+                            value: '{theNote.OFFUPDAT}'
+                        },
+                        listeners: {
+                            //expand: 'onClickDatePicker'
+                            focusleave: 'dateValidation'
+                        }
+                    },
+                    {
+                        //xtype: 'combo',
+                        xtype: 'textfield',
+                        editable: true,
+                        //flex: 1,
+                        padding: '5',
+                        fieldLabel: 'Detail',
+                        reference: 'noteDetail',
+                        msgTarget: 'qtip',
+                        publishes: 'value',
+                        cls: 'note-type',
+                        labelWidth: 50,
+                        //width: 160,
+                        // labelWidth: false,
+                        // labelStyle: 'width: auto',
+                        //labelStyle: 'text-align: right',
+                        bind: {
+                            disabled: '{noteAction.value == null}',
+                            value: '{theNote.OFFUPDET}'
+                        },
+                        listeners: {
+                            focusleave: 'detailValidation'
+                        }
+                    },
+                    {
                         xtype: 'checkboxfield',
                         name: 'noteComplete',
                         //fieldLabel: 'Complete',
@@ -279,62 +339,70 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         type: 'hbox',
                         align: 'stretch'
                     },
-                    items: [{
-                        //xtype: 'combo',
-                        xtype: 'textfield',
-                        editable: true,
-                        //flex: 1,
-                        padding: '5',
-                        fieldLabel: 'Detail',
-                        reference: 'noteDetail',
-                        msgTarget: 'qtip',
-                        publishes: 'value',
-                        labelWidth: 80,
-                        labelStyle: 'text-align: center',
-                        bind: {
-                            disabled: '{noteAction.value == null}',
-                            value: '{theNote.OFFUPDET}'
+                    items: [
+
+                        {
+                            xtype: 'textfield',
+                            editable: true,
+                            fieldLabel: 'Created',
+                            padding: '5',
+                            disabled: true,
+                            //cls: 'note-type',
+                            labelWidth: 60,
+                            //labelStyle: 'width: auto',
+                            // remove default styling for element wrapping the input element
+                            inputWrapCls: '',
+                            // remove default styling for div wrapping the input element and trigger button(s)
+                            triggerWrapCls: '',
+                            // remove the input element's background
+                            fieldStyle: 'background:none',
+                            bind: {
+                                value: '{theNote.OFCRTUSER} {theNote.OFCRTDATE} {theNote.OFCRTTIME}',
+                                //visible: '{theNote == null ? false: true}'
+
+                            }
                         },
-                        listeners: {
-                            focusleave: 'detailValidation'
-                        }
-                    }, {
-                        xtype: 'datefield',
-                        fieldLabel: 'Date',
-                        editable: false,
-                        reference: 'noteFollowUpDate',
-                        padding: '5',
-                        labelWidth: 80,
-                        labelStyle: 'text-align: center',
-                        id: 'fuDatePicker',
-                        showToday: false,
-                        minValue: new Date(),
-                        maxValue: Ext.Date.add(new Date(), Ext.Date.YEAR, 1), //1 Year from the current date
-                        // flex: 1,
-                        bind: {
-                            disabled: '{noteAction.value == null}',
-                            value: '{theNote.OFFUPDAT}'
-                        },
-                        listeners: {
-                            //expand: 'onClickDatePicker'
-                            focusleave: 'dateValidation'
-                        }
-                    }]
+                        { xtype: 'tbfill' },
+                        {
+                            xtype: 'textfield',
+                            editable: true,
+                            fieldLabel: 'Updated',
+                            padding: '5',
+                            disabled: true,
+                            //cls: 'note-type',
+
+                            labelWidth: 60,
+                            labelStyle: 'width: auto',
+
+                            // remove default styling for element wrapping the input element
+                            inputWrapCls: '',
+                            // remove default styling for div wrapping the input element and trigger button(s)
+                            triggerWrapCls: '',
+                            // remove the input element's background
+                            fieldStyle: 'background:none',
+                            //flex: 1,
+                            bind: {
+                                value: '{theNote.OFCHGUSER} {theNote.OFCHGDATE} {theNote.OFCHGTIME}',
+                                visible: '{theNote.OFCHGUSER == "" ? false: true}'
+                            }
+                        }, { xtype: 'tbfill' }, { xtype: 'tbfill' }
+                    ]
                 }, {
                     xtype: 'container',
                     layout: {
                         type: 'hbox',
                         align: 'stretch'
                     },
+                    flex: 1,
                     items: [{
                         xtype: 'textarea',
-                        fieldLabel: 'Note',
+                        //fieldLabel: 'Note',
                         reference: 'noteText',
                         emptyText: 'Note',
                         bind: '{theNote.OFNOTE}',
-                        labelWidth: 80,
-                        labelStyle: 'text-align: center',
-                        height: 250,
+                        // labelWidth: 80,
+                        // labelStyle: 'text-align: center',
+                        //height: 250,
                         flex: 1,
                         padding: '5',
                         listeners: {
@@ -528,7 +596,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                 listeners: {
                     click: 'onClickSave'
                 }
-            }, { xtype: 'tbfill' }]
+            }]
         }
     }
 });
