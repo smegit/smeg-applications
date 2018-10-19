@@ -43,7 +43,8 @@ Ext.define('Shopping.view.cart.notes.Notes', {
     },
     listeners: {
         //close: 'onClose',
-        beforeshow: 'onBeforeShow'
+        beforeshow: 'onBeforeShowWindow',
+        afterrender: 'onAfterRenderWindow'
     },
     // listeners: {
     //     resize: function (win, width, height, eOpts) {
@@ -179,6 +180,19 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                 }],
                 listeners: {
                     itemclick: 'onItemClick',
+                    beforeselect: 'onBeforeSelect',
+                    beforeitemclick: 'onBeforeItemClick',
+                    load: 'onLoadNoteList',
+                    beforeshow: 'onLoadNoteList',
+                    afterrender: function (grid) {
+                        console.log('afterrender notes');
+                        // console.info(grid);
+                        // grid.store.on('load', function (store, records, options) {
+                        //     console.log('onLoad notes');
+                        //     grid.getSelectionModel().selectFirstRow();
+                        // })
+                    }
+
                 }
 
             },
@@ -568,12 +582,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                 text: 'Cancel',
                 itemId: 'cancelButton',
                 listeners: {
-                    // scope: me,
-                    click: function (e) {
-                        console.info(e);
-                        me.onEsc();
-                    }
-                    //click: 'onClickCancel'
+                    click: 'onClickCancel'
                 }
             },
             // {
