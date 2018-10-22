@@ -109,12 +109,12 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
     // },
 
     onItemClick: function (cmp, rec, item, index, e) {
-        console.log('onItemDblClick called');
+        console.log('onItemClick called');
         console.info(rec);
         var me = this,
             vm = me.getViewModel(),
             view = me.getView();
-        //me.lookupReference('noteText').focus();
+        me.lookupReference('noteText').focus();
         //addBtn = view.up().down('#add2');
         //console.info(rec);
         //console.info(addBtn);
@@ -258,32 +258,31 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         var me = this,
             vm = me.getViewModel(),
             theNote = vm.get('theNote');
-        if (theNote) {
-            if (theNote.dirty) {
-                Ext.MessageBox.show({
-                    title: 'Save Changes?',
-                    msg: 'You are closing a page that has unsaved changes.<br />Would you like to save your changes?',
-                    buttons: Ext.MessageBox.YESNO,
-                    scope: me,
-                    fn: function (btn) {
-                        console.info(btn);
-                        if (btn == 'yes') {
-                            console.log('you pressed yes');
-                            me.onClickSave();
-                        } else {
-                            console.log('you pressed no');
-                            me.getView().close();
-                        }
-                    },
-                    //animateTarget: btn,
-                    icon: Ext.MessageBox.QUESTION,
-                });
-            } else {
-                me.getView().close();
-            }
+        console.info(theNote);
+
+        if (theNote.dirty) {
+            Ext.MessageBox.show({
+                title: 'Save Changes?',
+                msg: 'You are closing a page that has unsaved changes.<br />Would you like to save your changes?',
+                buttons: Ext.MessageBox.YESNO,
+                scope: me,
+                fn: function (btn) {
+                    console.info(btn);
+                    if (btn == 'yes') {
+                        console.log('you pressed yes');
+                        me.onClickSave();
+                    } else {
+                        console.log('you pressed no');
+                        me.getView().close();
+                    }
+                },
+                //animateTarget: btn,
+                icon: Ext.MessageBox.QUESTION,
+            });
         } else {
             me.getView().close();
         }
+
 
 
 
@@ -552,42 +551,40 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         console.info(rec);
         console.info(index);
         var me = this,
-            vm = me.getViewModel();
-        theNote = vm.get('theNote');
-        if (theNote) {
-            if (theNote.dirty) {
-                console.log('theNote dirty');
+            vm = me.getViewModel(),
+            theNote = vm.get('theNote');
+        console.info(theNote);
+        if (theNote.dirty) {
+            console.log('theNote dirty');
+            // Todo - confirm window to save data
+            Ext.MessageBox.show({
+                title: 'Save Changes?',
+                msg: 'You are closing a page that has unsaved changes.<br />Would you like to save your changes?',
+                buttons: Ext.MessageBox.YESNO,
+                scope: me,
+                fn: function (btn) {
+                    console.info(btn);
+                    if (btn == 'yes') {
+                        console.log('you pressed yes');
+                        me.onClickSave();
+                    } else {
+                        console.log('you pressed no');
+                        theNote.reject();
+                        me.lookupReference('notelist').getSelectionModel().select(index);
 
-                // Todo - confirm window to save data
-                Ext.MessageBox.show({
-                    title: 'Save Changes?',
-                    msg: 'You are closing a page that has unsaved changes.<br />Would you like to save your changes?',
-                    buttons: Ext.MessageBox.YESNO,
-                    scope: me,
-                    fn: function (btn) {
-                        console.info(btn);
-                        if (btn == 'yes') {
-                            console.log('you pressed yes');
-                            me.onClickSave();
-                        } else {
-                            console.log('you pressed no');
-                            theNote.reject();
-                            me.lookupReference('notelist').getSelectionModel().select(index);
-
-                            return true;
-                        }
-                    },
-                    //animateTarget: btn,
-                    icon: Ext.MessageBox.QUESTION,
-                });
-                return false;
-            }
+                        return true;
+                    }
+                },
+                //animateTarget: btn,
+                icon: Ext.MessageBox.QUESTION,
+            });
+            return false;
         }
         //return false;
     },
-    onBeforeItemClick: function () {
-        console.log('onBeforeItemClick');
-    },
+    // onBeforeItemClick: function () {
+    //     console.log('onBeforeItemClick');
+    // },
 
     onMessageBoxClick: function (btn) {
         var me = this;
@@ -604,6 +601,10 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
     },
     onAfterRenderNoteList: function (cmp) {
         console.log('onAfterRenderNotesList called');
+        var me = this;
+
+        me.lookupReference('notelist').getSelectionModel().select(0);
+
     }
 
 

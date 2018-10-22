@@ -104,7 +104,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                     selection: '{theNote}'
                 },
                 frame: true,
-                autoLoad: false,
+                autoLoad: true,
                 viewConfig: {
                     markDirty: false,
                     stripRows: true,
@@ -181,10 +181,9 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                 listeners: {
                     itemclick: 'onItemClick',
                     beforeselect: 'onBeforeSelect',
-                    beforeitemclick: 'onBeforeItemClick',
+                    //beforeitemclick: 'onBeforeItemClick',
                     load: 'onLoadNoteList',
-                    beforeshow: 'onLoadNoteList',
-                    //afterrender: 'onAfterRenderNoteList'
+                    afterrender: 'onAfterRenderNoteList'
                 }
 
             },
