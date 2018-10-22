@@ -43,7 +43,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
     },
     listeners: {
         //close: 'onClose',
-        beforeshow: 'onBeforeShowWindow',
+        // beforeshow: 'onBeforeShowWindow',
         //afterrender: 'onAfterRenderWindow'
     },
     // listeners: {
@@ -573,7 +573,12 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                 text: 'Cancel',
                 itemId: 'cancelButton',
                 listeners: {
-                    click: 'onClickCancel'
+                    // scope: me,
+                    click: function (e) {
+                        console.info(e);
+                        me.onEsc();
+                    }
+                    //click: 'onClickCancel'
                 }
             },
             // {

@@ -21,7 +21,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
     },
 
     init: function () {
-        //this.setCurrentView('notelist');
+        this.setCurrentView('notelist');
     },
     getNotesStore: function () {
         var me = this,
@@ -116,7 +116,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             view = me.getView();
         me.lookupReference('noteText').focus();
         //addBtn = view.up().down('#add2');
-        //console.info(rec);
+        console.info(rec);
         //console.info(addBtn);
         //me.setCurrentView('noteform');
         //addBtn.setText('Save');
@@ -335,9 +335,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
 
 
     onClickSave: function (btn, e) {
-
         console.log('onSave called');
-        if (btn == 'no') return false;
         // on list page then show note form
         var me = this,
             //contentPanel = me.getView().down('#contentPanel').down().xtype,
@@ -462,13 +460,19 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             }
         }
         // Clear the form cache 
-        //vm.set('theNote', {});
+        vm.set('theNote', {});
     },
     // onClickDatePicker: function () {
     //     console.log('onClickDatePicker called');
     //     //var todayBtn =
     //     console.info(Ext.get('fuDatePicker').query('a'))
     // }
+    onBeforeShow: function () {
+        console.log('onBeforeShow called');
+        var me = this,
+            vm = me.getViewModel();
+        console.info(vm);
+    },
     onClose: function () {
         var me = this;
         var noteWin = Ext.ComponentQuery.query('window[title*="Notes"]')[0];
@@ -536,13 +540,11 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
 
     },
 
-    onBeforeShowWindow: function () {
+    onBeforeShow: function () {
         console.log('onBeforeShow called');
         var me = this,
             vm = me.getViewModel();
         console.info(vm);
-
-
         vm.set('theNote', {});
     },
     onBeforeSelect: function (rowModel, rec, index) {
@@ -606,7 +608,6 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         me.lookupReference('notelist').getSelectionModel().select(0);
 
     }
-
 
 
 });
