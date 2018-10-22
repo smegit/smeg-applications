@@ -796,7 +796,7 @@ Ext.define('Shopping.view.cart.CartController', {
                             //cmp.down('notelist').grid.refresh();
                             console.info(cmp.lookupReference('notelist').getSelectionModel());
                             cmp.lookupReference('notelist').getSelectionModel().select(0);
-                            cmp.lookupReference('noteText').blur();
+                            //cmp.lookupReference('noteText').blur();
                             //cmp.lookupReference('notelist').getView().refresh();
                             //cmp.lookupReference('notelist').getView().refresh(););
                             //Ext.getCmp('notelist').getView().setStore(cmp.getViewModel().getStore('Notes'));

@@ -141,9 +141,9 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         dataIndex: 'OFTYPE',
                         align: 'center',
                         width: 60,
+                        align: 'left',
                         //filter: 'list',
                         renderer: function (v) {
-
                             var mainVm = this.getView().up('app-main').getViewModel(),
                                 typeStore = mainVm.getStore('NoteTypeOptions'),
                                 idx = typeStore.find('NOTETYPEC', v),
@@ -184,6 +184,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                     beforeitemclick: 'onBeforeItemClick',
                     load: 'onLoadNoteList',
                     beforeshow: 'onLoadNoteList',
+                    select: 'onNoteListSelect'
                     //afterrender: 'onAfterRenderNoteList'
                 }
 
@@ -199,6 +200,11 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                 layout: {
                     type: 'vbox',
                     align: 'stretch'
+                },
+                listeners: {
+                    show: 'onFormShow',
+                    beforeshow: 'onFormShow',
+                    activate: 'onFormShow'
                 },
 
                 items: [{
