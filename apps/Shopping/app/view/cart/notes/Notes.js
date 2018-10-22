@@ -44,7 +44,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
     listeners: {
         //close: 'onClose',
         beforeshow: 'onBeforeShowWindow',
-        afterrender: 'onAfterRenderWindow'
+        //afterrender: 'onAfterRenderWindow'
     },
     // listeners: {
     //     resize: function (win, width, height, eOpts) {
@@ -104,7 +104,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                     selection: '{theNote}'
                 },
                 frame: true,
-                autoLoad: true,
+                autoLoad: false,
                 viewConfig: {
                     markDirty: false,
                     stripRows: true,
@@ -184,15 +184,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                     beforeitemclick: 'onBeforeItemClick',
                     load: 'onLoadNoteList',
                     beforeshow: 'onLoadNoteList',
-                    afterrender: function (grid) {
-                        console.log('afterrender notes');
-                        // console.info(grid);
-                        // grid.store.on('load', function (store, records, options) {
-                        //     console.log('onLoad notes');
-                        //     grid.getSelectionModel().selectFirstRow();
-                        // })
-                    }
-
+                    //afterrender: 'onAfterRenderNoteList'
                 }
 
             },
