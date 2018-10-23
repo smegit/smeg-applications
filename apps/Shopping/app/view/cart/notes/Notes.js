@@ -254,9 +254,9 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         cls: 'note-type',
                         displayField: 'NOTEACTD',
                         valueField: 'NOTEACTC',
-                        editable: true,
+                        editable: false,
                         allowBlank: true,
-                        defaultValue: null,
+                        forceSelection: true,
                         publishes: 'value',
                         queryMode: 'local',
                         padding: '5',
@@ -268,6 +268,24 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             // disabled: '{noteType.value !== "follow_up"}',
                             value: '{theNote.OFFUPACT}'
                         },
+                        listeners: {
+                            beforeselect: function () {
+                                console.log('select called');
+                            },
+                            select: 'onSelectNoteAction'
+                        },
+                        listConfig: {
+                            listeners: {
+                                el: {
+                                    click: {
+                                        // fn: function (ev, anchor) {
+                                        //     console.log('click');
+                                        // }
+                                        fn: 'onNoteActionItemClick'
+                                    }
+                                }
+                            }
+                        }
 
                         // Stop the click evt from propagation otherwise the modal will disappear
                         // listConfig: {
@@ -326,7 +344,8 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         //labelStyle: 'text-align: right',
                         bind: {
                             disabled: '{noteAction.value == null}',
-                            value: '{theNote.OFFUPDET}'
+                            value: '{theNote.OFFUPDET}',
+                            //fieldLabel: '{note}'
                         },
                         listeners: {
                             focusleave: 'detailValidation'

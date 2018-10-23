@@ -547,7 +547,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                             me.onClickSave();
                         } else {
                             console.log('you pressed no');
-                            theNote.reject();
+                            //theNote.reject();
                             vm.set('theNote', {});
                             me.lookupReference('noteType').focus();
                             console.info(me.lookupReference('notelist').getSelectionModel());
@@ -642,7 +642,33 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         console.log('noNoteListSelect called');
         var me = this;
         me.lookupReference('noteText').focus();
+    },
+
+    onNoteActionItemClick: function (evt) {
+        console.log('onNoteActionItemClick called');
+        console.info(evt);
+        var me = this;
+        console.info(me.lookupReference('noteAction'));
+    },
+
+    onSelectNoteAction: function (combo, record) {
+        // Change the detail lable
+        var me = this,
+            noteDetail = me.lookupReference('noteDetail');
+        console.info(record);
+        if (!Ext.isEmpty(record)) {
+            if (record.data.NOTEACTC == 'P') {
+                noteDetail.setFieldLabel('Phone')
+            } else if (record.data.NOTEACTC == 'E') {
+                noteDetail.setFieldLabel('Email');
+            } else if (record.data.NOTEACTC == 'V') {
+                noteDetail.setHidden(true);
+            }
+        }
+
+
     }
+
 
 
 });

@@ -204,14 +204,20 @@ Ext.define('Shopping.view.main.MainController', {
 
     loadNoteActionOptions: function (content) {
         console.log('loadNoteActionOptions called');
+        console.info(content);
+
+        var noteActionOpts = content.noteActions;
 
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('NoteActionOptions');
         if (!Ext.isEmpty(store) && !Ext.isEmpty(content.noteActions)) {
+            //noteActionOpts.push({ "NOTEACTC": ' ', "NOTEACTD": ' ', "NOTEACTS": ' ', "NOTEACTV": ' ' });
+            //console.info(noteActionOpts);
             store.loadRawData(content.noteActions);
+            store.insert(0, [{ 'NOTEACTC': null, 'NOTEACTD': "None", 'NOTEACTS': null, 'NOTEACTV': null }]);
         }
-        //console.info(store);
+        console.info(store);
     }
 
 });
