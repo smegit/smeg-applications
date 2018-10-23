@@ -27,12 +27,7 @@ Ext.define('Shopping.view.cart.notes.NotesModel', {
                 //property: 'OFCRTDATE',
                 property: 'OFSEQ',
                 direction: 'DESC'
-            }],
-            listeners: {
-                // load: function () {
-                //     //this.grid.getSelectionModel().selectFirstRow();
-                // }
-            }
+            }]
         },
         // noteTypes: {
         //     proxy: {
