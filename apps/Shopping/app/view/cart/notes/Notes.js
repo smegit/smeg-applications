@@ -274,18 +274,18 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             },
                             select: 'onSelectNoteAction'
                         },
-                        listConfig: {
-                            listeners: {
-                                el: {
-                                    click: {
-                                        // fn: function (ev, anchor) {
-                                        //     console.log('click');
-                                        // }
-                                        fn: 'onNoteActionItemClick'
-                                    }
-                                }
-                            }
-                        }
+                        // listConfig: {
+                        //     listeners: {
+                        //         el: {
+                        //             click: {
+                        //                 // fn: function (ev, anchor) {
+                        //                 //     console.log('click');
+                        //                 // }
+                        //                 fn: 'onNoteActionItemClick'
+                        //             }
+                        //         }
+                        //     }
+                        // }
 
                         // Stop the click evt from propagation otherwise the modal will disappear
                         // listConfig: {
@@ -308,12 +308,13 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         padding: '5',
                         cls: 'note-type',
                         labelWidth: 60,
+                        format: "d/m/Y",
                         //width: 160,
                         //labelWidth: false,
                         //labelStyle: 'width: auto',
                         // labelStyle: 'text-align: right',
                         id: 'fuDatePicker',
-                        showToday: false,
+                        showToday: true,
                         minValue: new Date(),
                         maxValue: Ext.Date.add(new Date(), Ext.Date.YEAR, 1), //1 Year from the current date
                         // flex: 1,

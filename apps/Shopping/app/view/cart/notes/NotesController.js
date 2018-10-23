@@ -261,8 +261,38 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         var me = this,
             vm = me.getViewModel(),
             theNote = vm.get('theNote');
-        if (theNote) {
-            if (theNote.dirty) {
+        if (!Ext.Object.isEmpty(theNote)) {
+            // if the form has unsaved selected value
+            if (theNote.hasOwnProperty('data')) {
+                if (theNote.dirty) {
+                    Ext.MessageBox.show({
+                        title: 'Save Changes?',
+                        msg: 'You are closing a page that has unsaved changes.<br />Would you like to save your changes?',
+                        buttons: Ext.MessageBox.YESNO,
+                        scope: me,
+                        fn: function (btn) {
+                            console.info(btn);
+                            if (btn == 'yes') {
+                                console.log('you pressed yes');
+                                if (me.onClickSave()) {
+                                    setTimeout(function () {
+                                        me.getView().close();
+                                    }, 300);
+                                }
+                            } else {
+                                console.log('you pressed no');
+                                theNote.reject();
+                                me.getView().close();
+                            }
+                        },
+                        //animateTarget: btn,
+                        icon: Ext.MessageBox.QUESTION,
+                    });
+                } else {
+                    me.getView().close();
+                }
+            } else {
+                // if the form has unsaved and newly added value
                 Ext.MessageBox.show({
                     title: 'Save Changes?',
                     msg: 'You are closing a page that has unsaved changes.<br />Would you like to save your changes?',
@@ -272,26 +302,25 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                         console.info(btn);
                         if (btn == 'yes') {
                             console.log('you pressed yes');
-                            me.onClickSave();
+                            if (me.onClickSave()) {
+                                setTimeout(function () {
+                                    me.getView().close();
+                                }, 300);
+                            }
+
                         } else {
                             console.log('you pressed no');
-                            theNote.reject();
+                            //theNote.reject();
                             me.getView().close();
                         }
                     },
                     //animateTarget: btn,
                     icon: Ext.MessageBox.QUESTION,
                 });
-            } else {
-                me.getView().close();
             }
         } else {
             me.getView().close();
         }
-
-
-
-
     },
 
     detailValidation: function () {
@@ -450,6 +479,8 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                     me.lookupReference('notelist').getView().focusRow(0);
                     me.lookupReference('noteText').focus();
 
+                    return true;
+
                     // Ext.getCmp('notelist').getView().setStore(vm.getStore('Notes'));
                 });
         } else {
@@ -457,15 +488,20 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             if (theNote.dirty) {
                 console.log('updating existing note');
                 console.info(theNote.data);
-                me.processNote(Ext.clone(theNote.data), 'updating')
+                var record = theNote.data;
+                // unkown reason: theNote.data has 'OFFUPDAT' undefined
+                Ext.apply(record, { "OFFUPDAT": noteFollowUpDate.getValue() })
+                me.processNote(record, 'updating')
                     .then(function (data) {
                         console.info(data);
                         theNote.commit();
                         me.lookupReference('noteText').focus();
                         Valence.util.Helper.showSnackbar('Updated');
+                        return true;
                     })
             } else {
                 console.log('nothing should be done.');
+                return true;
             }
         }
         // Clear the form cache 
@@ -582,12 +618,12 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         console.info(rec);
         console.info(index);
         var me = this,
-            vm = me.getViewModel();
-        theNote = vm.get('theNote');
-        if (theNote) {
+            vm = me.getViewModel(),
+            theNote = vm.get('theNote');
+        console.info(theNote);
+        if (!Ext.Object.isEmpty(theNote)) {
             if (theNote.dirty) {
                 console.log('theNote dirty');
-
                 // Todo - confirm window to save data
                 Ext.MessageBox.show({
                     title: 'Save Changes?',
@@ -599,6 +635,11 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                         if (btn == 'yes') {
                             console.log('you pressed yes');
                             me.onClickSave();
+
+                            setTimeout(function () {
+                                console.log('hello world');
+                                me.lookupReference('notelist').getSelectionModel().select(index);
+                            }, 300);
                         } else {
                             console.log('you pressed no');
                             theNote.reject();
@@ -612,8 +653,9 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                 });
                 return false;
             }
+            //return false;
         }
-        //return false;
+
     },
     onBeforeItemClick: function () {
         console.log('onBeforeItemClick');
@@ -658,9 +700,11 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         console.info(record);
         if (!Ext.isEmpty(record)) {
             if (record.data.NOTEACTC == 'P') {
-                noteDetail.setFieldLabel('Phone')
+                noteDetail.setFieldLabel('Phone');
+                noteDetail.setHidden(false);
             } else if (record.data.NOTEACTC == 'E') {
                 noteDetail.setFieldLabel('Email');
+                noteDetail.setHidden(false);
             } else if (record.data.NOTEACTC == 'V') {
                 noteDetail.setHidden(true);
             }

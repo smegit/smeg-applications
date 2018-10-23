@@ -19,7 +19,8 @@ Ext.define('Shopping.model.Note', {
         }, {
             name: 'OFFUPDAT',
             convert: function (v, rec) {
-                if (v == '0001-01-01')
+                console.info(v);
+                if (v === '0001-01-01')
                     return null;
             }
         }]
