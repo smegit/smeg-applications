@@ -29,11 +29,23 @@ Ext.define('Shopping.view.main.MainModel', {
         },
         NoteTypeOptions: {
             model: 'Shopping.model.NoteTypeOption',
-            autoLoad: false
+            autoLoad: false,
+
         },
         NoteActionOptions: {
             model: 'Shopping.model.NoteActionOption',
-            autoLoad: false
+            autoLoad: false,
+            // listeners: {
+            //     write: function (store) {
+            //         console.log('datachanged noteAction called');
+            //         store.insert(0, { 'NOTEACTC': null, 'NOTEACTD': null, 'NOTEACTS': null, 'NOTEACTV': null })
+            //     }
+            // }
+
+            // data: [
+            //     { 'NOTEACTC': null, 'NOTEACTD': null, 'NOTEACTS': null, 'NOTEACTV': null },
+            //     { 'NOTEACTC': '1', 'NOTEACTD': '1', 'NOTEACTS': '1', 'NOTEACTV': '1' }
+            // ]
         }
     }
 });

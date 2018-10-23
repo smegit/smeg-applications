@@ -141,9 +141,9 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         dataIndex: 'OFTYPE',
                         align: 'center',
                         width: 60,
+                        align: 'left',
                         //filter: 'list',
                         renderer: function (v) {
-
                             var mainVm = this.getView().up('app-main').getViewModel(),
                                 typeStore = mainVm.getStore('NoteTypeOptions'),
                                 idx = typeStore.find('NOTETYPEC', v),
@@ -183,7 +183,9 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                     beforeselect: 'onBeforeSelect',
                     //beforeitemclick: 'onBeforeItemClick',
                     load: 'onLoadNoteList',
-                    afterrender: 'onAfterRenderNoteList'
+                    beforeshow: 'onLoadNoteList',
+                    select: 'onNoteListSelect'
+                    //afterrender: 'onAfterRenderNoteList'
                 }
 
             },
@@ -198,6 +200,11 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                 layout: {
                     type: 'vbox',
                     align: 'stretch'
+                },
+                listeners: {
+                    show: 'onFormShow',
+                    beforeshow: 'onFormShow',
+                    activate: 'onFormShow'
                 },
 
                 items: [{
@@ -247,9 +254,9 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         cls: 'note-type',
                         displayField: 'NOTEACTD',
                         valueField: 'NOTEACTC',
-                        editable: true,
+                        editable: false,
                         allowBlank: true,
-                        defaultValue: null,
+                        forceSelection: true,
                         publishes: 'value',
                         queryMode: 'local',
                         padding: '5',
@@ -261,6 +268,24 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             // disabled: '{noteType.value !== "follow_up"}',
                             value: '{theNote.OFFUPACT}'
                         },
+                        listeners: {
+                            beforeselect: function () {
+                                console.log('select called');
+                            },
+                            select: 'onSelectNoteAction'
+                        },
+                        listConfig: {
+                            listeners: {
+                                el: {
+                                    click: {
+                                        // fn: function (ev, anchor) {
+                                        //     console.log('click');
+                                        // }
+                                        fn: 'onNoteActionItemClick'
+                                    }
+                                }
+                            }
+                        }
 
                         // Stop the click evt from propagation otherwise the modal will disappear
                         // listConfig: {
@@ -319,7 +344,8 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         //labelStyle: 'text-align: right',
                         bind: {
                             disabled: '{noteAction.value == null}',
-                            value: '{theNote.OFFUPDET}'
+                            value: '{theNote.OFFUPDET}',
+                            //fieldLabel: '{note}'
                         },
                         listeners: {
                             focusleave: 'detailValidation'

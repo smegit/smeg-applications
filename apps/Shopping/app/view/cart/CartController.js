@@ -785,30 +785,30 @@ Ext.define('Shopping.view.cart.CartController', {
                     var store = cmp.getViewModel().getStore('Notes');
                     // console.info(store);
                     // console.info(cmp.down('notelist').down('grid'));
-                    // store.load({
-                    //     //scope: me,
-                    //     callback: function (records, operation, success) {
-                    //         console.info(records);
-                    //         console.info(operation);
-                    //         console.info(success);
-                    //         console.info(cmp.getViewModel().getStore('Notes'));
-                    //         //cmp.getView().refresh();
-                    //         //cmp.down('notelist').grid.refresh();
-                    //         console.info(cmp.lookupReference('notelist').getSelectionModel());
-                    //         cmp.lookupReference('notelist').getSelectionModel().select(0);
-                    //         //cmp.lookupReference('noteText').blur();
-                    //         //cmp.lookupReference('notelist').getView().refresh();
-                    //         //cmp.lookupReference('notelist').getView().refresh(););
-                    //         //Ext.getCmp('notelist').getView().setStore(cmp.getViewModel().getStore('Notes'));
-                    //         //setTimeout(function () { Ext.getCmp('notelist').getView().refresh(); }, 3000);
+                    store.load({
+                        //scope: me,
+                        callback: function (records, operation, success) {
+                            console.info(records);
+                            console.info(operation);
+                            console.info(success);
+                            console.info(cmp.getViewModel().getStore('Notes'));
+                            //cmp.getView().refresh();
+                            //cmp.down('notelist').grid.refresh();
+                            console.info(cmp.lookupReference('notelist').getSelectionModel());
+                            cmp.lookupReference('notelist').getSelectionModel().select(0);
+                            //cmp.lookupReference('noteText').blur();
+                            //cmp.lookupReference('notelist').getView().refresh();
+                            //cmp.lookupReference('notelist').getView().refresh(););
+                            //Ext.getCmp('notelist').getView().setStore(cmp.getViewModel().getStore('Notes'));
+                            //setTimeout(function () { Ext.getCmp('notelist').getView().refresh(); }, 3000);
 
-                    //         //console.info(cmp.down('tableview'));
-                    //         //}
+                            //console.info(cmp.down('tableview'));
+                            //}
 
-                    //         //Ext.getCmp('notelist').getView().refresh();
-                    //         //setTimeout(function () { Ext.getCmp('notelist').getView().refresh(); }, 3000);
-                    //     }
-                    // });
+                            //Ext.getCmp('notelist').getView().refresh();
+                            //setTimeout(function () { Ext.getCmp('notelist').getView().refresh(); }, 3000);
+                        }
+                    });
                 }
             }
         }).show();
