@@ -3,6 +3,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
     requires: [
         'Ext.button.Button',
         'Ext.form.field.TextArea',
+        'Ext.form.*',
         'Ext.grid.Panel',
         'Ext.layout.container.Fit',
         'Ext.layout.container.VBox',
@@ -12,7 +13,8 @@ Ext.define('Shopping.view.cart.notes.Notes', {
         'Shopping.view.main.MainModel',
         'Valence.common.widget.DockedSearch',
 
-        'Ext.grid.*'
+        'Ext.grid.*',
+        'Ext.grid.filters.Filters'
     ],
     xtype: 'notes',
     reference: 'notesWin',
@@ -96,6 +98,10 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                 xtype: 'grid',
                 //title: 'Notes',
 
+                requires: [
+                    'Ext.grid.*',
+                    'Ext.grid.filters.Filters'
+                ],
                 reference: 'notelist',
                 width: '40%',
                 margin: '0 5 0 0',
@@ -111,9 +117,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                     columnLines: true
                 },
                 resizable: true,
-                // plugins: {
-                //     //gridfilters: true
-                // },
+                plugins: 'gridfilters',
                 columns: {
                     items: [{
                         xtype: 'datecolumn',
@@ -122,6 +126,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         dataIndex: 'dateTime',
                         align: 'center',
                         width: 120,
+                        filter: true
                     },
                     // {
                     //     text: 'Created By',
@@ -151,7 +156,18 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             if (rec) {
                                 return rec.get('NOTETYPES')
                             }
+                        },
+                        filter: {
+                            type: 'list',
+                            // labelField: 'NOTETYPEC',
+                            // labelIndex: 'NOTETYPEC',
+                            // store: function () {
+                            //     var mainVm = this.getView().up('app-main').getViewModel(),
+                            //         typeStore = mainVm.getStore('NoteTypeOptions');
+                            //     return typeStore;
+                            // }
                         }
+
                     }, {
                         text: 'Note',
                         dataIndex: 'OFNOTE',
@@ -181,9 +197,9 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                 listeners: {
                     itemclick: 'onItemClick',
                     beforeselect: 'onBeforeSelect',
-                    beforeitemclick: 'onBeforeItemClick',
-                    load: 'onLoadNoteList',
-                    beforeshow: 'onLoadNoteList',
+                    //beforeitemclick: 'onBeforeItemClick',
+                    //load: 'onLoadNoteList',
+                    //beforeshow: 'onLoadNoteList',
                     select: 'onNoteListSelect'
                     //afterrender: 'onAfterRenderNoteList'
                 }
@@ -204,7 +220,8 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                 listeners: {
                     show: 'onFormShow',
                     beforeshow: 'onFormShow',
-                    activate: 'onFormShow'
+                    activate: 'onFormShow',
+                    dirtychange: 'onFormDirtyChange'
                 },
 
                 items: [{
@@ -235,6 +252,14 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             store: '{NoteTypeOptions}',
                             value: '{theNote.OFTYPE}'
                         },
+                        listeners: {
+                            dirtychange: function (field, newValue, oldValue) {
+                                console.log('form changed');
+                            },
+                            //change: 'onSelectTypeChange',
+                            select: 'onTypeSelect'
+                        }
+
                         // Stop the click evt from propagation otherwise the modal will disappear
                         // listConfig: {
                         //     listeners: {
@@ -324,7 +349,8 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         },
                         listeners: {
                             //expand: 'onClickDatePicker'
-                            focusleave: 'dateValidation'
+                            focusleave: 'dateValidation',
+                            select: 'onTypeSelect'
                         }
                     },
                     {
@@ -349,7 +375,11 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             //fieldLabel: '{note}'
                         },
                         listeners: {
-                            focusleave: 'detailValidation'
+                            focusleave: 'detailValidation',
+
+                            // when change and set save button enabled
+                            change: 'onTypeSelect',
+                            //keyup: 'onTypeSelect'
                         }
                     },
                     {
@@ -364,6 +394,9 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             disabled: '{noteAction.value == null}',
                             value: '{theNote.OFFUPCMP}'
                         },
+                        listeners: {
+                            change: 'onTypeSelect'
+                        }
                     }]
                 }, {
                     xtype: 'container',
@@ -437,8 +470,17 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         //height: 250,
                         flex: 1,
                         padding: '5',
+                        enableKeyEvents: true,
                         listeners: {
-                            change: 'onChangeNote'
+                            // keyup: function () {
+                            //     console.log('key up');
+                            // },
+                            change: 'onChangeNote',
+                            // dirtychange: function (field, newValue, oldValue) {
+                            //     console.log('form changed');
+                            // },
+
+
                         }
                     }]
                 }]
@@ -589,6 +631,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
             items: [{
                 xtype: 'button',
                 text: 'Add Note',
+                reference: 'addNoteBtn',
                 //ui: 'blue',
                 //itemId: 'add2',
                 //reference: 'add2',
@@ -597,8 +640,10 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                 }
             },
             { xtype: 'tbfill' }, {
-                text: 'Cancel',
+                text: 'Exit',
                 itemId: 'cancelButton',
+                reference: 'exitBtn',
+
                 listeners: {
                     click: 'onClickCancel'
                 }
@@ -618,8 +663,9 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                 xtype: 'button',
                 text: 'Save',
                 ui: 'blue',
+                disabled: true,
                 //itemId: 'add2',
-                //reference: 'add2',
+                reference: 'saveBtn',
                 listeners: {
                     click: 'onClickSave'
                 }

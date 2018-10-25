@@ -795,7 +795,12 @@ Ext.define('Shopping.view.cart.CartController', {
                             //cmp.getView().refresh();
                             //cmp.down('notelist').grid.refresh();
                             console.info(cmp.lookupReference('notelist').getSelectionModel());
-                            cmp.lookupReference('notelist').getSelectionModel().select(0);
+                            if (records.length > 0) {
+                                cmp.lookupReference('notelist').getSelectionModel().select(0);
+                            } else {
+                                cmp.lookupReference('noteType').focus();
+                            }
+
                             //cmp.lookupReference('noteText').blur();
                             //cmp.lookupReference('notelist').getView().refresh();
                             //cmp.lookupReference('notelist').getView().refresh(););

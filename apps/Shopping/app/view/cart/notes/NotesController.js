@@ -33,11 +33,75 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
     },
 
     onChangeNote: function (cmp, value) {
+        console.log('onChangeNote called');
         var me = this,
-            vm = me.getViewModel();
+            vm = me.getViewModel(),
+            theNote = vm.get('theNote');
+        me.lookupReference('saveBtn').setDisabled(true);
+        console.info(theNote);
+        if (!Ext.Object.isEmpty(theNote)) {
+            console.log('debugy');
+            if (theNote.hasOwnProperty('data')) {
+                console.log('has data');
+                if (theNote.dirty) {
+                    console.log('has dirty');
+                    me.lookupReference('saveBtn').setDisabled(false);
+                    me.lookupReference('addNoteBtn').setHidden(true);
+                    me.lookupReference('exitBtn').setText('Cancel');
+                }
+            } else {
+                me.lookupReference('saveBtn').setDisabled(false);
+                me.lookupReference('addNoteBtn').setHidden(true);
+                me.lookupReference('exitBtn').setText('Cancel');
+            }
 
-        vm.set('disableAddButton', Ext.isEmpty(value));
+        }
+
+        //vm.set('disableAddButton', Ext.isEmpty(value));
     },
+    // onSelectTypeChange: function () {
+    //     console.log('onSelectTypeChange');
+    //     var me = this,
+    //         vm = me.getViewModel(),
+    //         theNote = vm.get('theNote');
+    //     console.info(theNote);
+    //     setTimeout(function () {
+    //         if (theNote.dirty) {
+    //             console.log('debugy');
+    //             me.lookupReference('saveBtn').setDisabled(false);
+    //         }
+    //     }, 200);
+
+    // },
+
+    // enable the save button
+    onTypeSelect: function () {
+        console.log('onTypeSelect');
+        var me = this,
+            vm = me.getViewModel(),
+            theNote = vm.get('theNote');
+        console.info(theNote);
+        // setTimeout(function () {
+
+        // }, 300);
+        if (!Ext.Object.isEmpty(theNote)) {
+            console.log('debugy');
+            if (theNote.hasOwnProperty('data')) {
+                if (theNote.dirty) {
+                    me.lookupReference('saveBtn').setDisabled(false);
+                    me.lookupReference('addNoteBtn').setHidden(true);
+                    me.lookupReference('exitBtn').setText('Cancel');
+                }
+            } else {
+                console.log('has note data');
+                me.lookupReference('saveBtn').setDisabled(false);
+                me.lookupReference('addNoteBtn').setHidden(true);
+                me.lookupReference('exitBtn').setText('Cancel');
+            }
+
+        }
+    },
+
 
     onChangeUpdateText: function (cmp, value) {
         var me = this,
@@ -274,15 +338,24 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                             console.info(btn);
                             if (btn == 'yes') {
                                 console.log('you pressed yes');
-                                if (me.onClickSave()) {
-                                    setTimeout(function () {
-                                        me.getView().close();
-                                    }, 300);
-                                }
+                                me.onClickSave()
+                                    .then(function (data) {
+                                        if (data.success) {
+                                            console.log('saved and exit');
+                                            me.lookupReference('notelist').setDisabled(false);
+                                            //me.getView().close();
+                                            me.lookupReference('addNoteBtn').setHidden(false);
+                                        }
+                                    });
                             } else {
                                 console.log('you pressed no');
                                 theNote.reject();
-                                me.getView().close();
+                                me.lookupReference('notelist').setDisabled(false);
+                                me.lookupReference('exitBtn').setText('Exit');
+                                me.lookupReference('saveBtn').setDisabled(true);
+                                me.lookupReference('noteText').focus();
+                                me.lookupReference('addNoteBtn').setHidden(false);
+                                //me.getView().close();
                             }
                         },
                         //animateTarget: btn,
@@ -302,16 +375,27 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                         console.info(btn);
                         if (btn == 'yes') {
                             console.log('you pressed yes');
-                            if (me.onClickSave()) {
-                                setTimeout(function () {
-                                    me.getView().close();
-                                }, 300);
-                            }
+                            me.onClickSave()
+                                .then(function (data) {
+                                    if (data.success) {
+                                        me.lookupReference('notelist').setDisabled(false);
+                                        //me.getView().close();
+                                    }
+                                });
 
                         } else {
                             console.log('you pressed no');
+                            me.lookupReference('exitBtn').setText('Exit');
+                            me.lookupReference('notelist').setDisabled(false);
+                            me.lookupReference('notelist').getSelectionModel().select(0);
+                            me.lookupReference('notelist').getView().focusRow(0);
+                            me.lookupReference('noteText').focus();
+                            me.lookupReference('addNoteBtn').setHidden(false);
+
+                            //vm.set('theNote', {});
+                            //me.lookupReference('noteType').focus();
                             //theNote.reject();
-                            me.getView().close();
+                            //me.getView().close();
                         }
                     },
                     //animateTarget: btn,
@@ -319,7 +403,13 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                 });
             }
         } else {
-            me.getView().close();
+            me.lookupReference('exitBtn').setText('Exit');
+            me.lookupReference('notelist').setDisabled(false);
+            me.lookupReference('notelist').getSelectionModel().select(0);
+            me.lookupReference('notelist').getView().focusRow(0);
+            me.lookupReference('noteText').focus();
+            me.lookupReference('addNoteBtn').setHidden(false);
+            //me.getView().close();
         }
     },
 
@@ -370,6 +460,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
 
     onClickSave: function (btn, e) {
 
+        var deferred = new Ext.Deferred(); // create the Ext.Deferred object
         console.log('onSave called');
         if (btn == 'no') return false;
         // on list page then show note form
@@ -422,6 +513,8 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                 me.lookupReference('noteText').markInvalid('Note content cannot be empty.');
             }
             Valence.util.Helper.showSnackbar('Please enter note type and note.');
+
+            deferred.reject({ 'success': false });
             return false;
         }
 
@@ -434,10 +527,18 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                 noteFollowUpDate.markInvalid('Note follow up date is required');
             }
             if (noteDetail.getValue() == null || noteDetail.getValue() == null) {
+                //return false;
+                deferred.reject({ 'success': false });
                 return false;
             }
         }
-        if (!noteDetail.isValid) return false;
+        if (!noteDetail.isValid) {
+            deferred.reject({ 'success': false });
+            return false;
+        }
+
+
+
 
 
         // // save new note
@@ -467,7 +568,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
 
                     var t = data.OFCRTTIME.replace(/\./g, ":");
                     Ext.apply(data, {
-                        OFCRTTIME: t
+                        OFCRTTIME: t,
                     });
                     console.info(data);
                     //console.log(data.OFCRTDATE + ' ' + data.OFCRTTIME + ' ' + data.dateTime);
@@ -475,11 +576,18 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                     vm.getStore('Notes').add(Ext.create('Shopping.model.Note', data));
                     console.info(vm.getStore('Notes'));
                     console.info(me.lookupReference('notelist'));
+                    vm.set('justsaved', true);
                     me.lookupReference('notelist').getSelectionModel().select(0);
                     me.lookupReference('notelist').getView().focusRow(0);
                     me.lookupReference('noteText').focus();
+                    me.lookupReference('saveBtn').setDisabled(true);
+                    me.lookupReference('notelist').setDisabled(false);
+                    me.lookupReference('addNoteBtn').setHidden(false);
+                    me.lookupReference('exitBtn').setText('Exit');
 
-                    return true;
+                    //return true;
+                    deferred.resolve({ 'success': true });
+
 
                     // Ext.getCmp('notelist').getView().setStore(vm.getStore('Notes'));
                 });
@@ -496,16 +604,24 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                         console.info(data);
                         theNote.commit();
                         me.lookupReference('noteText').focus();
+                        me.lookupReference('saveBtn').setDisabled(true);
+                        me.lookupReference('addNoteBtn').setHidden(false);
+                        me.lookupReference('notelist').setDisabled(false);
+                        me.lookupReference('exitBtn').setText('Exit');
                         Valence.util.Helper.showSnackbar('Updated');
-                        return true;
+                        //return true;
+
+                        deferred.resolve({ 'success': true });
+
                     })
             } else {
                 console.log('nothing should be done.');
-                return true;
+                //return true;
             }
         }
         // Clear the form cache 
         //vm.set('theNote', {});
+        return deferred.promise;
     },
     // onClickDatePicker: function () {
     //     console.log('onClickDatePicker called');
@@ -529,18 +645,136 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         var me = this,
             vm = me.getViewModel(),
             notelist = me.lookupReference('notelist');
+        //notelist.setDisabled(true);
+        me.lookupReference('exitBtn').setText('Cancel');
+        me.lookupReference('addNoteBtn').setHidden(true);
         console.info(vm);
+        console.info(notelist);
 
         var theNote = vm.get('theNote');
         console.info(theNote);
         console.info(Ext.Object.isEmpty(theNote));
-
+        vm.set('theNote', {});
+        me.lookupReference('noteType').focus();
+        //console.info(me.lookupReference('notelist').getSelectionModel());
+        notelist.getSelectionModel().deselectAll();
+        //notelist.setDisableSelection(true);
         // if unsaved note
+        // if (!Ext.Object.isEmpty(theNote)) {
+        //     console.info(theNote.hasOwnProperty('data'));
+        //     console.info(theNote.dirty);
+        //     if (theNote.hasOwnProperty('data')) {
+        //         if (theNote.dirty) {
+        //             Ext.MessageBox.show({
+        //                 title: 'Save Changes?',
+        //                 msg: 'You are closing a page that has unsaved changes.<br />Would you like to save your changes?',
+        //                 buttons: Ext.MessageBox.YESNO,
+        //                 scope: me,
+        //                 fn: function (btn) {
+        //                     console.info(btn);
+        //                     if (btn == 'yes') {
+        //                         console.log('you pressed yes');
+        //                         me.onClickSave()
+        //                             .then(function (data) {
+        //                                 if (data.success) {
+        //                                     vm.set('theNote', {});
+        //                                     me.lookupReference('noteType').focus();
+        //                                     console.info(me.lookupReference('notelist').getSelectionModel());
+        //                                     notelist.getSelectionModel().deselectAll();
+        //                                 }
+        //                             });
+        //                     } else {
+        //                         console.log('you pressed no');
+        //                         theNote.reject();
+        //                         vm.set('theNote', {});
+        //                         me.lookupReference('noteType').focus();
+        //                         console.info(me.lookupReference('notelist').getSelectionModel());
+        //                         notelist.getSelectionModel().deselectAll();
+        //                         //return true;
+        //                     }
+        //                 },
+        //                 //animateTarget: btn,
+        //                 icon: Ext.MessageBox.QUESTION,
+        //             });
+        //         } else {
+        //             vm.set('theNote', {});
+        //             me.lookupReference('noteType').focus();
+        //             console.info(me.lookupReference('notelist').getSelectionModel());
+        //             notelist.getSelectionModel().deselectAll();
+        //         }
+        //     } else {
+        //         Ext.MessageBox.show({
+        //             title: 'Save Changes?',
+        //             msg: 'You are closing a page that has unsaved changes.<br />Would you like to save your changes?',
+        //             buttons: Ext.MessageBox.YESNO,
+        //             scope: me,
+        //             fn: function (btn) {
+        //                 console.info(btn);
+        //                 if (btn == 'yes') {
+        //                     console.log('you pressed yes');
+        //                     me.onClickSave()
+        //                         .then(function (data) {
+        //                             if (data.success) {
+        //                                 vm.set('theNote', {});
+        //                                 me.lookupReference('noteType').focus();
+        //                                 console.info(me.lookupReference('notelist').getSelectionModel());
+        //                                 notelist.getSelectionModel().deselectAll();
+        //                             }
+        //                         });
+        //                 } else {
+        //                     console.log('you pressed no');
+        //                     //theNote.reject();
+        //                     vm.set('theNote', {});
+        //                     me.lookupReference('noteType').focus();
+        //                     console.info(me.lookupReference('notelist').getSelectionModel());
+        //                     notelist.getSelectionModel().deselectAll();
+        //                     //return true;
+        //                 }
+        //             },
+        //             //animateTarget: btn,
+        //             icon: Ext.MessageBox.QUESTION,
+        //         });
+        //     }
+        // } else {
+        //     vm.set('theNote', {});
+        //     me.lookupReference('noteType').focus();
+        //     //console.info(me.lookupReference('notelist').getSelectionModel());
+        //     notelist.getSelectionModel().deselectAll();
+        // }
+    },
+
+    onBeforeShowWindow: function () {
+        console.log('onBeforeShow called');
+        var me = this,
+            vm = me.getViewModel();
+        console.info(vm);
+        vm.set('theNote', {});
+    },
+    onBeforeSelect: function (rowModel, rec, index) {
+        console.log('onBeforeSelect called');
+        console.info(rowModel);
+        console.info(rec);
+        console.info(index);
+        var me = this,
+            vm = me.getViewModel(),
+            theNote = vm.get('theNote'),
+            justsaved = vm.get('justsaved');
+
+        console.info(theNote);
+        console.log(justsaved);
+
+        console.log(me.lookupReference('exitBtn').getText());
+        if (me.lookupReference('exitBtn').getText() == 'CANCEL') {
+            Ext.MessageBox.alert('Note', 'You are editing a note, please SAVE or CANCEL before viewing another one.');
+            return false;
+        }
+
+        console.log(me.lookupReference('saveBtn'));
         if (!Ext.Object.isEmpty(theNote)) {
-            console.info(theNote.hasOwnProperty('data'));
-            console.info(theNote.dirty);
             if (theNote.hasOwnProperty('data')) {
                 if (theNote.dirty) {
+                    console.log('theNote dirty');
+                    // Todo - confirm window to save data
                     Ext.MessageBox.show({
                         title: 'Save Changes?',
                         msg: 'You are closing a page that has unsaved changes.<br />Would you like to save your changes?',
@@ -550,112 +784,41 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                             console.info(btn);
                             if (btn == 'yes') {
                                 console.log('you pressed yes');
-                                me.onClickSave();
+                                me.onClickSave()
+                                    .then(function (data) {
+                                        if (data.success) {
+                                            console.log('hello world');
+                                            me.lookupReference('notelist').getSelectionModel().select(index);
+                                            me.lookupReference('addNoteBtn').setHidden(false);
+                                            me.lookupReference('exitBtn').setText('Exit');
+                                        }
+                                    });
                             } else {
                                 console.log('you pressed no');
                                 theNote.reject();
-                                vm.set('theNote', {});
-                                me.lookupReference('noteType').focus();
-                                console.info(me.lookupReference('notelist').getSelectionModel());
-                                notelist.getSelectionModel().deselectAll();
-                                //return true;
+                                me.lookupReference('notelist').getSelectionModel().select(index);
+                                me.lookupReference('addNoteBtn').setHidden(false);
+                                me.lookupReference('exitBtn').setText('Exit');
+                                return true;
                             }
                         },
                         //animateTarget: btn,
                         icon: Ext.MessageBox.QUESTION,
                     });
-                } else {
-                    vm.set('theNote', {});
-                    me.lookupReference('noteType').focus();
-                    console.info(me.lookupReference('notelist').getSelectionModel());
-                    notelist.getSelectionModel().deselectAll();
+                    return false;
                 }
+
             } else {
-                Ext.MessageBox.show({
-                    title: 'Save Changes?',
-                    msg: 'You are closing a page that has unsaved changes.<br />Would you like to save your changes?',
-                    buttons: Ext.MessageBox.YESNO,
-                    scope: me,
-                    fn: function (btn) {
-                        console.info(btn);
-                        if (btn == 'yes') {
-                            console.log('you pressed yes');
-                            me.onClickSave();
-                        } else {
-                            console.log('you pressed no');
-                            //theNote.reject();
-                            vm.set('theNote', {});
-                            me.lookupReference('noteType').focus();
-                            console.info(me.lookupReference('notelist').getSelectionModel());
-                            notelist.getSelectionModel().deselectAll();
-                            //return true;
-                        }
-                    },
-                    //animateTarget: btn,
-                    icon: Ext.MessageBox.QUESTION,
-                });
+
+                me.lookupReference('addNoteBtn').setHidden(false);
+                me.lookupReference('exitBtn').setText('Exit');
             }
+            me.lookupReference('addNoteBtn').setHidden(false);
+            me.lookupReference('exitBtn').setText('Exit');
         } else {
-            vm.set('theNote', {});
-            me.lookupReference('noteType').focus();
-            //console.info(me.lookupReference('notelist').getSelectionModel());
-            notelist.getSelectionModel().deselectAll();
+            me.lookupReference('addNoteBtn').setHidden(false);
+            me.lookupReference('exitBtn').setText('Exit');
         }
-    },
-
-    onBeforeShowWindow: function () {
-        console.log('onBeforeShow called');
-        var me = this,
-            vm = me.getViewModel();
-        console.info(vm);
-
-
-        //vm.set('theNote', {});
-    },
-    onBeforeSelect: function (rowModel, rec, index) {
-        console.log('onBeforeSelect called');
-        console.info(rowModel);
-        console.info(rec);
-        console.info(index);
-        var me = this,
-            vm = me.getViewModel(),
-            theNote = vm.get('theNote');
-        console.info(theNote);
-        if (!Ext.Object.isEmpty(theNote)) {
-            if (theNote.dirty) {
-                console.log('theNote dirty');
-                // Todo - confirm window to save data
-                Ext.MessageBox.show({
-                    title: 'Save Changes?',
-                    msg: 'You are closing a page that has unsaved changes.<br />Would you like to save your changes?',
-                    buttons: Ext.MessageBox.YESNO,
-                    scope: me,
-                    fn: function (btn) {
-                        console.info(btn);
-                        if (btn == 'yes') {
-                            console.log('you pressed yes');
-                            me.onClickSave();
-
-                            setTimeout(function () {
-                                console.log('hello world');
-                                me.lookupReference('notelist').getSelectionModel().select(index);
-                            }, 300);
-                        } else {
-                            console.log('you pressed no');
-                            theNote.reject();
-                            me.lookupReference('notelist').getSelectionModel().select(index);
-
-                            return true;
-                        }
-                    },
-                    //animateTarget: btn,
-                    icon: Ext.MessageBox.QUESTION,
-                });
-                return false;
-            }
-            //return false;
-        }
-
     },
     onBeforeItemClick: function () {
         console.log('onBeforeItemClick');
@@ -696,7 +859,9 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
     onSelectNoteAction: function (combo, record) {
         // Change the detail lable
         var me = this,
-            noteDetail = me.lookupReference('noteDetail');
+            vm = me.getViewModel(),
+            theNote = vm.get('theNote');
+        noteDetail = me.lookupReference('noteDetail');
         console.info(record);
         if (!Ext.isEmpty(record)) {
             if (record.data.NOTEACTC == 'P') {
@@ -709,8 +874,19 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                 noteDetail.setHidden(true);
             }
         }
+        console.info(theNote);
+        if (theNote.dirty) {
+            console.log('debugy');
+            me.lookupReference('saveBtn').setDisabled(false);
+            me.lookupReference('addNoteBtn').setHidden(true);
+            me.lookupReference('exitBtn').setText('Cancel');
+        }
 
 
+    },
+
+    onFormDirtyChange: function () {
+        console.log('onFormDirtyChange called');
     }
 
 
