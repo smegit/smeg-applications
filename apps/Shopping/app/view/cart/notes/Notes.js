@@ -422,7 +422,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             // remove the input element's background
                             fieldStyle: 'background:none',
                             bind: {
-                                value: '{theNote.OFCRTUSER} {theNote.OFCRTDATE} {theNote.OFCRTTIME}',
+                                value: '{theNote.OFCRTDATE} {theNote.OFCRTTIME} {theNote.OFCRTUSER}',
                                 //visible: '{theNote == null ? false: true}'
 
                             }
@@ -447,7 +447,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             fieldStyle: 'background:none',
                             //flex: 1,
                             bind: {
-                                value: '{theNote.OFCHGUSER} {theNote.OFCHGDATE} {theNote.OFCHGTIME}',
+                                value: '{theNote.OFCHGDATE} {theNote.OFCHGTIME} {theNote.OFCHGUSER}',
                                 visible: '{theNote.OFCHGUSER == "" ? false: true}'
                             }
                         }, { xtype: 'tbfill' }, { xtype: 'tbfill' }
@@ -472,15 +472,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         padding: '5',
                         enableKeyEvents: true,
                         listeners: {
-                            // keyup: function () {
-                            //     console.log('key up');
-                            // },
                             change: 'onChangeNote',
-                            // dirtychange: function (field, newValue, oldValue) {
-                            //     console.log('form changed');
-                            // },
-
-
                         }
                     }]
                 }]
