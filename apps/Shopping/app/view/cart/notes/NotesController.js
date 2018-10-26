@@ -49,6 +49,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                     if (theNote.dirty) {
                         console.log('has dirty');
                         me.lookupReference('saveBtn').setDisabled(false);
+                        me.lookupReference('saveBtn').setHidden(false);
                         me.lookupReference('addNoteBtn').setHidden(true);
                         me.lookupReference('exitBtn').setText('Cancel');
                         console.log('dirty end');
@@ -56,6 +57,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                 } else {
                     console.log('not dirty');
                     me.lookupReference('saveBtn').setDisabled(false);
+                    me.lookupReference('saveBtn').setHidden(false);
                     me.lookupReference('addNoteBtn').setHidden(true);
                     me.lookupReference('exitBtn').setText('Cancel');
                     console.log('not dirty end');
@@ -97,12 +99,14 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             if (theNote.hasOwnProperty('data')) {
                 if (theNote.dirty) {
                     me.lookupReference('saveBtn').setDisabled(false);
+                    me.lookupReference('saveBtn').setHidden(false);
                     me.lookupReference('addNoteBtn').setHidden(true);
                     me.lookupReference('exitBtn').setText('Cancel');
                 }
             } else {
                 console.log('has note data');
                 me.lookupReference('saveBtn').setDisabled(false);
+                me.lookupReference('saveBtn').setHidden(false);
                 me.lookupReference('addNoteBtn').setHidden(true);
                 me.lookupReference('exitBtn').setText('Cancel');
             }
@@ -353,6 +357,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                                             me.lookupReference('notelist').setDisabled(false);
                                             //me.getView().close();
                                             me.lookupReference('addNoteBtn').setHidden(false);
+                                            me.lookupReference('saveBtn').setHidden(true);
                                         }
                                     });
                             } else {
@@ -361,6 +366,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                                 me.lookupReference('notelist').setDisabled(false);
                                 me.lookupReference('exitBtn').setText('Exit');
                                 me.lookupReference('saveBtn').setDisabled(true);
+                                me.lookupReference('saveBtn').setHidden(true);
                                 me.lookupReference('noteText').focus();
                                 me.lookupReference('addNoteBtn').setHidden(false);
                                 //me.getView().close();
@@ -398,6 +404,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                             me.lookupReference('notelist').getSelectionModel().select(0);
                             me.lookupReference('notelist').getView().focusRow(0);
                             me.lookupReference('noteText').focus();
+                            me.lookupReference('saveBtn').setHidden(true);
                             me.lookupReference('addNoteBtn').setHidden(false);
 
                             //vm.set('theNote', {});
@@ -417,6 +424,10 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             me.lookupReference('notelist').getView().focusRow(0);
             me.lookupReference('noteText').focus();
             me.lookupReference('addNoteBtn').setHidden(false);
+            me.lookupReference('saveBtn').setHidden(true);
+            if (me.lookupReference('exitBtn').getText() == 'EXIT') {
+                //me.getView().close();
+            }
             //me.getView().close();
         }
     },
@@ -584,6 +595,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                     console.info(me.lookupReference('notelist'));
                     //vm.set('justsaved', true);
                     me.lookupReference('saveBtn').setDisabled(true);
+                    me.lookupReference('saveBtn').setHidden(true);
                     me.lookupReference('notelist').setDisabled(false);
                     me.lookupReference('addNoteBtn').setHidden(false);
                     me.lookupReference('exitBtn').setText('Exit');
@@ -612,6 +624,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                         theNote.commit();
                         me.lookupReference('noteText').focus();
                         me.lookupReference('saveBtn').setDisabled(true);
+                        me.lookupReference('saveBtn').setHidden(true);
                         me.lookupReference('addNoteBtn').setHidden(false);
                         me.lookupReference('notelist').setDisabled(false);
                         me.lookupReference('exitBtn').setText('Exit');
@@ -625,6 +638,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                 console.log('nothing should be done.');
                 me.lookupReference('noteText').focus();
                 me.lookupReference('saveBtn').setDisabled(true);
+                me.lookupReference('saveBtn').setHidden(true);
                 me.lookupReference('addNoteBtn').setHidden(false);
                 me.lookupReference('notelist').setDisabled(false);
                 me.lookupReference('exitBtn').setText('Exit');
@@ -660,6 +674,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         //notelist.setDisabled(true);
         me.lookupReference('exitBtn').setText('Cancel');
         me.lookupReference('addNoteBtn').setHidden(true);
+        me.lookupReference('saveBtn').setHidden(false);
         console.info(vm);
         console.info(notelist);
 
@@ -802,6 +817,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                                             console.log('hello world');
                                             me.lookupReference('notelist').getSelectionModel().select(index);
                                             me.lookupReference('addNoteBtn').setHidden(false);
+                                            me.lookupReference('saveBtn').setHidden(true);
                                             me.lookupReference('exitBtn').setText('Exit');
                                         }
                                     });
@@ -810,6 +826,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                                 theNote.reject();
                                 me.lookupReference('notelist').getSelectionModel().select(index);
                                 me.lookupReference('addNoteBtn').setHidden(false);
+                                me.lookupReference('saveBtn').setHidden(true);
                                 me.lookupReference('exitBtn').setText('Exit');
                                 return true;
                             }
@@ -823,11 +840,14 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             } else {
 
                 me.lookupReference('addNoteBtn').setHidden(false);
+                me.lookupReference('saveBtn').setHidden(true);
                 me.lookupReference('exitBtn').setText('Exit');
             }
             me.lookupReference('addNoteBtn').setHidden(false);
+            me.lookupReference('saveBtn').setHidden(true);
             me.lookupReference('exitBtn').setText('Exit');
         } else {
+            me.lookupReference('saveBtn').setHidden(true);
             me.lookupReference('addNoteBtn').setHidden(false);
             me.lookupReference('exitBtn').setText('Exit');
         }
@@ -841,7 +861,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         console.log('onMessageBoxClick called');
         if (btn == 'yes') {
             console.log('you pressed yes');
-            me.onClickSave;
+            //me.onClickSave;
         } else {
             console.log('you pressed no');
         }
@@ -856,9 +876,24 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         console.log('onFormShow called');
     },
     onNoteListSelect: function () {
-        console.log('noNoteListSelect called');
-        var me = this;
+        console.log('onNoteListSelect called');
+        var me = this,
+            vm = me.getViewModel(),
+            theNote = vm.get('theNote');
         me.lookupReference('noteText').focus();
+        // if (!Ext.Object.isEmpty(theNote)) {
+        //     if (theNote.hasOwnProperty('data')) {
+        //         console.info(theNote.data.OFCRTDATE);
+        //         var d = Ext.Date.format(new Date(theNote.data.OFCRTDATE), 'j/n/Y');
+        //         console.info(d);
+        //         var v = d + ' ' + theNote.data.OFCRTTIME.slice(0, 5) + ' ' + theNote.data.OFCRTUSER;
+        //         me.lookupReference('noteCreated').setValue(v);
+
+        //     }
+        // }
+
+
+
     },
 
     onNoteActionItemClick: function (evt) {
@@ -890,6 +925,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         if (theNote.dirty) {
             console.log('debugy');
             me.lookupReference('saveBtn').setDisabled(false);
+            me.lookupReference('saveBtn').setHidden(false);
             me.lookupReference('addNoteBtn').setHidden(true);
             me.lookupReference('exitBtn').setText('Cancel');
         }

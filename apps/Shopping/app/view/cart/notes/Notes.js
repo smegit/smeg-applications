@@ -410,6 +410,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             xtype: 'textfield',
                             editable: true,
                             fieldLabel: 'Created',
+                            reference: 'noteCreated',
                             padding: '5',
                             disabled: true,
                             //cls: 'note-type',
@@ -424,8 +425,11 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             bind: {
                                 value: '{theNote.OFCRTDATE} {theNote.OFCRTTIME} {theNote.OFCRTUSER}',
                                 //visible: '{theNote == null ? false: true}'
+                            },
+                            // setValue: function () {
+                            //     return 'value';
+                            // }
 
-                            }
                         },
                         { xtype: 'tbfill' },
                         {
@@ -620,48 +624,54 @@ Ext.define('Shopping.view.cart.notes.Notes', {
     buildBBar: function () {
         var me = this;
         return {
-            items: [{
-                xtype: 'button',
-                text: 'Add Note',
-                reference: 'addNoteBtn',
-                //ui: 'blue',
-                //itemId: 'add2',
-                //reference: 'add2',
-                listeners: {
-                    click: 'onClickAddNote'
-                }
-            },
-            { xtype: 'tbfill' }, {
-                text: 'Exit',
-                itemId: 'cancelButton',
-                reference: 'exitBtn',
+            items: [
+                { xtype: 'tbfill' },
+                {
+                    xtype: 'button',
+                    text: 'Add Note',
+                    ui: 'blue',
+                    reference: 'addNoteBtn',
+                    //ui: 'blue',
+                    //itemId: 'add2',
+                    //reference: 'add2',
+                    listeners: {
+                        click: 'onClickAddNote'
+                    }
+                },
+                {
+                    xtype: 'button',
+                    text: 'Save',
+                    ui: 'blue',
+                    disabled: true,
+                    hidden: true,
+                    //itemId: 'add2',
+                    reference: 'saveBtn',
+                    listeners: {
+                        click: 'onClickSave'
+                    }
+                },
+                {
+                    text: 'Exit',
+                    itemId: 'cancelButton',
+                    reference: 'exitBtn',
 
-                listeners: {
-                    click: 'onClickCancel'
+                    listeners: {
+                        click: 'onClickCancel'
+                    }
                 }
-            },
-            // {
-            //     xtype: 'button',
-            //     text: 'Add',
-            //     ui: 'blue',
-            //     bind: {
-            //         disabled: '{disableAddButton}'
-            //     },
-            //     listeners: {
-            //         click: 'onClickAdd'
-            //     }
-            // }
-            {
-                xtype: 'button',
-                text: 'Save',
-                ui: 'blue',
-                disabled: true,
-                //itemId: 'add2',
-                reference: 'saveBtn',
-                listeners: {
-                    click: 'onClickSave'
-                }
-            }]
+
+                // {
+                //     xtype: 'button',
+                //     text: 'Add',
+                //     ui: 'blue',
+                //     bind: {
+                //         disabled: '{disableAddButton}'
+                //     },
+                //     listeners: {
+                //         click: 'onClickAdd'
+                //     }
+                // }
+            ]
         }
     }
 });
