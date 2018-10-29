@@ -23,5 +23,26 @@ Ext.define('Shopping.model.Note', {
                 if (v === '0001-01-01')
                     return null;
             }
+        }, {
+            name: 'OFTYPERENDER',
+            convert: function (v, rec) {
+                //console.info(rec.get('OFTYPE'));
+                var mainVm = Ext.getCmp('app-main').getViewModel(),
+                    typeStore = mainVm.getStore('NoteTypeOptions'),
+                    index = typeStore.find('NOTETYPEC', rec.get('OFTYPE')),
+                    record = typeStore.getAt(index);
+                if (record) {
+                    return record.get('NOTETYPES')
+                }
+                // if (rec.get('OFTYPE') == 'O') {
+                //     return 'Order';
+                // } else if (rec.get('OFTYPE') == 'S') {
+                //     return 'Service';
+                // } else if (rec.get('OFTYPE') == 'U') {
+                //     return 'General';
+                // } else if (rec.get('OFTYPE') == 'I') {
+                //     return 'Info';
+                // }
+            }
         }]
 });

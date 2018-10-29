@@ -341,81 +341,96 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             // if the form has unsaved selected value
             if (theNote.hasOwnProperty('data')) {
                 if (theNote.dirty) {
-                    Ext.MessageBox.show({
-                        title: 'Save Changes?',
-                        msg: 'You are closing a page that has unsaved changes.<br />Would you like to save your changes?',
-                        buttons: Ext.MessageBox.YESNO,
-                        scope: me,
-                        fn: function (btn) {
-                            console.info(btn);
-                            if (btn == 'yes') {
-                                console.log('you pressed yes');
-                                me.onClickSave()
-                                    .then(function (data) {
-                                        if (data.success) {
-                                            console.log('saved and exit');
-                                            me.lookupReference('notelist').setDisabled(false);
-                                            //me.getView().close();
-                                            me.lookupReference('addNoteBtn').setHidden(false);
-                                            me.lookupReference('saveBtn').setHidden(true);
-                                        }
-                                    });
-                            } else {
-                                console.log('you pressed no');
-                                theNote.reject();
-                                me.lookupReference('notelist').setDisabled(false);
-                                me.lookupReference('exitBtn').setText('Exit');
-                                me.lookupReference('saveBtn').setDisabled(true);
-                                me.lookupReference('saveBtn').setHidden(true);
-                                me.lookupReference('noteText').focus();
-                                me.lookupReference('addNoteBtn').setHidden(false);
-                                //me.getView().close();
-                            }
-                        },
-                        //animateTarget: btn,
-                        icon: Ext.MessageBox.QUESTION,
-                    });
+                    // Ext.MessageBox.show({
+                    //     title: 'Save Changes?',
+                    //     msg: 'You are closing a page that has unsaved changes.<br />Would you like to save your changes?',
+                    //     buttons: Ext.MessageBox.YESNO,
+                    //     scope: me,
+                    //     fn: function (btn) {
+                    //         console.info(btn);
+                    //         if (btn == 'yes') {
+                    //             console.log('you pressed yes');
+                    //             me.onClickSave()
+                    //                 .then(function (data) {
+                    //                     if (data.success) {
+                    //                         console.log('saved and exit');
+                    //                         me.lookupReference('notelist').setDisabled(false);
+                    //                         //me.getView().close();
+                    //                         me.lookupReference('addNoteBtn').setHidden(false);
+                    //                         me.lookupReference('saveBtn').setHidden(true);
+                    //                     }
+                    //                 });
+                    //         } else {
+                    //             console.log('you pressed no');
+                    //             theNote.reject();
+                    //             me.lookupReference('notelist').setDisabled(false);
+                    //             me.lookupReference('exitBtn').setText('Exit');
+                    //             me.lookupReference('saveBtn').setDisabled(true);
+                    //             me.lookupReference('saveBtn').setHidden(true);
+                    //             me.lookupReference('noteText').focus();
+                    //             me.lookupReference('addNoteBtn').setHidden(false);
+                    //             //me.getView().close();
+                    //         }
+                    //     },
+                    //     //animateTarget: btn,
+                    //     icon: Ext.MessageBox.QUESTION,
+                    // });
+                    theNote.reject();
+                    me.lookupReference('notelist').setDisabled(false);
+                    me.lookupReference('exitBtn').setText('Exit');
+                    me.lookupReference('saveBtn').setDisabled(true);
+                    me.lookupReference('saveBtn').setHidden(true);
+                    me.lookupReference('noteText').focus();
+                    me.lookupReference('addNoteBtn').setHidden(false);
+                    //me.getView().close();
                 } else {
                     me.getView().close();
                 }
             } else {
                 // if the form has unsaved and newly added value
-                Ext.MessageBox.show({
-                    title: 'Save Changes?',
-                    msg: 'You are closing a page that has unsaved changes.<br />Would you like to save your changes?',
-                    buttons: Ext.MessageBox.YESNO,
-                    scope: me,
-                    fn: function (btn) {
-                        console.info(btn);
-                        if (btn == 'yes') {
-                            console.log('you pressed yes');
-                            me.onClickSave()
-                                .then(function (data) {
-                                    if (data.success) {
-                                        me.lookupReference('notelist').setDisabled(false);
-                                        //me.getView().close();
-                                    }
-                                });
+                // Ext.MessageBox.show({
+                //     title: 'Save Changes?',
+                //     msg: 'You are closing a page that has unsaved changes.<br />Would you like to save your changes?',
+                //     buttons: Ext.MessageBox.YESNO,
+                //     scope: me,
+                //     fn: function (btn) {
+                //         console.info(btn);
+                //         if (btn == 'yes') {
+                //             console.log('you pressed yes');
+                //             me.onClickSave()
+                //                 .then(function (data) {
+                //                     if (data.success) {
+                //                         me.lookupReference('notelist').setDisabled(false);
+                //                         //me.getView().close();
+                //                     }
+                //                 });
 
-                        } else {
-                            console.log('you pressed no');
-                            me.lookupReference('exitBtn').setText('Exit');
-                            me.lookupReference('notelist').setDisabled(false);
-                            me.lookupReference('notelist').getSelectionModel().select(0);
-                            me.lookupReference('notelist').getView().focusRow(0);
-                            me.lookupReference('noteText').focus();
-                            me.lookupReference('saveBtn').setHidden(true);
-                            me.lookupReference('addNoteBtn').setHidden(false);
+                //         } else {
+                //             console.log('you pressed no');
+                //             me.lookupReference('exitBtn').setText('Exit');
+                //             me.lookupReference('notelist').setDisabled(false);
+                //             me.lookupReference('notelist').getSelectionModel().select(0);
+                //             me.lookupReference('notelist').getView().focusRow(0);
+                //             me.lookupReference('noteText').focus();
+                //             me.lookupReference('saveBtn').setHidden(true);
+                //             me.lookupReference('addNoteBtn').setHidden(false);
 
-                            //vm.set('theNote', {});
-                            //me.lookupReference('noteType').focus();
-                            //theNote.reject();
-                            //me.getView().close();
-                        }
-                    },
-                    //animateTarget: btn,
-                    icon: Ext.MessageBox.QUESTION,
-                });
+                //             //vm.set('theNote', {});
+                //             //me.lookupReference('noteType').focus();
+                //             //theNote.reject();
+                //             //me.getView().close();
+                //         }
+                //     },
+                //     //animateTarget: btn,
+                //     icon: Ext.MessageBox.QUESTION,
+                // });
+                me.lookupReference('exitBtn').setText('Exit');
+                me.lookupReference('notelist').setDisabled(false);
+                me.lookupReference('notelist').getSelectionModel().select(0);
+                me.lookupReference('notelist').getView().focusRow(0);
+                me.lookupReference('noteText').focus();
+                me.lookupReference('saveBtn').setHidden(true);
+                me.lookupReference('addNoteBtn').setHidden(false);
             }
         } else {
             me.lookupReference('exitBtn').setText('Exit');
@@ -682,6 +697,8 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         console.info(theNote);
         console.info(Ext.Object.isEmpty(theNote));
         vm.set('theNote', {});
+        me.lookupReference('noteCreated').setValue(null);
+        me.lookupReference('noteUpdated').setValue(null);
         me.lookupReference('noteType').focus();
         //console.info(me.lookupReference('notelist').getSelectionModel());
         notelist.getSelectionModel().deselectAll();
@@ -875,22 +892,40 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
     onFormShow: function () {
         console.log('onFormShow called');
     },
-    onNoteListSelect: function () {
+    onNoteListSelect: function (d, rec) {
         console.log('onNoteListSelect called');
+        console.info(d);
+        console.info(rec);
         var me = this,
             vm = me.getViewModel(),
             theNote = vm.get('theNote');
-        me.lookupReference('noteText').focus();
-        // if (!Ext.Object.isEmpty(theNote)) {
-        //     if (theNote.hasOwnProperty('data')) {
-        //         console.info(theNote.data.OFCRTDATE);
-        //         var d = Ext.Date.format(new Date(theNote.data.OFCRTDATE), 'j/n/Y');
-        //         console.info(d);
-        //         var v = d + ' ' + theNote.data.OFCRTTIME.slice(0, 5) + ' ' + theNote.data.OFCRTUSER;
-        //         me.lookupReference('noteCreated').setValue(v);
 
-        //     }
-        // }
+        console.info(theNote);
+        me.lookupReference('noteCreated').setValue(null);
+        me.lookupReference('noteUpdated').setValue(null);
+
+
+        me.lookupReference('noteText').focus();
+        if (!Ext.Object.isEmpty(rec)) {
+            if (rec.hasOwnProperty('data')) {
+                console.info(rec.data.OFCRTDATE);
+
+                var createdDateTime = Ext.Date.format(new Date(rec.data.dateTime), 'j/n/Y H:i');
+                me.lookupReference('noteCreated').setValue(createdDateTime + ' ' + rec.data.OFCRTUSER);
+
+                if (rec.data.hasOwnProperty('OFCHGDATE') && rec.data.hasOwnProperty('OFCHGTIME')) {
+                    if (rec.data.OFCHGDATE != '0001-01-01' && rec.data.OFCHGTIME != '00:00:00') {
+                        var updateDateTime = Ext.Date.format(new Date(rec.data.OFCHGDATE + ' ' + rec.data.OFCHGTIME), 'j/n/Y H:i');
+                        me.lookupReference('noteUpdated').setValue(updateDateTime + ' ' + rec.data.OFCHGUSER);
+                        console.info(updateDateTime);
+                    }
+                }
+
+                console.info(createdDateTime);
+                //var v = d + ' ' + rec.data.OFCRTTIME.slice(0, 5) + ' ' + rec.data.OFCRTUSER;
+
+            }
+        }
 
 
 

@@ -15,6 +15,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
 
         'Ext.grid.*',
         'Ext.grid.filters.Filters'
+
     ],
     xtype: 'notes',
     reference: 'notesWin',
@@ -24,7 +25,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
     controller: 'notes',
     // title: 'Notes',
     height: '90%',
-    width: '80%',
+    width: '70%',
     bodyPadding: 5,
 
     // layout: {
@@ -98,12 +99,13 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                 xtype: 'grid',
                 //title: 'Notes',
 
+                enableColumnHide: false,
                 requires: [
                     'Ext.grid.*',
                     'Ext.grid.filters.Filters'
                 ],
                 reference: 'notelist',
-                width: '40%',
+                width: '30%',
                 margin: '0 5 0 0',
                 bind: {
                     store: '{Notes}',
@@ -143,29 +145,39 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                     // },
                     {
                         text: 'Type',
-                        dataIndex: 'OFTYPE',
+                        dataIndex: 'OFTYPERENDER',
                         align: 'center',
                         width: 60,
                         align: 'left',
                         //filter: 'list',
-                        renderer: function (v) {
-                            var mainVm = this.getView().up('app-main').getViewModel(),
-                                typeStore = mainVm.getStore('NoteTypeOptions'),
-                                idx = typeStore.find('NOTETYPEC', v),
-                                rec = typeStore.getAt(idx);
-                            if (rec) {
-                                return rec.get('NOTETYPES')
-                            }
-                        },
+                        // renderer: function (v) {
+                        //     var mainVm = this.getView().up('app-main').getViewModel(),
+                        //         typeStore = mainVm.getStore('NoteTypeOptions'),
+                        //         idx = typeStore.find('NOTETYPEC', v),
+                        //         rec = typeStore.getAt(idx);
+                        //     if (rec) {
+                        //         return rec.get('NOTETYPES')
+                        //     }
+                        // },
                         filter: {
                             type: 'list',
-                            // labelField: 'NOTETYPEC',
-                            // labelIndex: 'NOTETYPEC',
-                            // store: function () {
-                            //     var mainVm = this.getView().up('app-main').getViewModel(),
-                            //         typeStore = mainVm.getStore('NoteTypeOptions');
-                            //     return typeStore;
-                            // }
+                            //dataIndex: 'NOTETYPES',
+
+
+                            // labelField: 'NOTETYPES',
+                            // labelIndex: 'NOTETYPES',
+                            // bind: {
+                            //     store: '{NoteTypeOptions}',
+                            // },
+
+
+                            // labelField: 'NOTETYPES', // override default of 'text'
+                            // options: [
+                            //     { value: 'Order', name: 'Order' },
+                            //     { value: 'I', name: 'Info' },
+                            //     { value: 'U', name: 'General' },
+                            //     { value: 'S', name: 'Service' }
+                            // ]
                         }
 
                     }, {
@@ -224,12 +236,54 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                     dirtychange: 'onFormDirtyChange'
                 },
 
+
+
+                // items: [{
+                //     xtype: 'container',
+                //     layout: {
+                //         type: 'vbox',
+                //         align: 'stretch'
+                //     },
+                //     items: [{
+                //         xtype: 'container',
+                //         layout: {
+                //             type: 'hbox',
+                //             align: 'stretch'
+                //         },
+                //         items: []
+                //     }, {
+                //         xtype: 'container',
+                //         layout: {
+                //             type: 'hbox',
+                //             align: 'stretch'
+                //         },
+                //         items: []
+
+                //     }]
+                // }],
+
                 items: [{
                     xtype: 'container',
                     layout: {
                         type: 'hbox',
                         align: 'stretch'
                     },
+
+                    // plugins: {
+                    //     responsive: true
+                    // },
+                    // responsiveConfig: {
+                    //     'width < 600': {
+                    //         layout: {
+                    //             type: 'box',
+                    //             vertical: true,
+                    //             align: 'stretch'
+                    //         }
+                    //     },
+                    //     'width >= 600': {
+
+                    //     }
+                    //},
                     items: [{
                         xtype: 'combo',
                         fieldLabel: 'Type',
@@ -244,7 +298,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         publishes: 'value',
                         queryMode: 'local',
                         padding: '5',
-                        labelWidth: 60,
+                        labelWidth: 70,
                         //labelStyle: 'width: auto;',
                         //labelStyle: 'text-align: right',
                         //flex: 1,
@@ -332,7 +386,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         reference: 'noteFollowUpDate',
                         padding: '5',
                         cls: 'note-type',
-                        labelWidth: 60,
+                        labelWidth: 70,
                         format: "d/m/Y",
                         //width: 160,
                         //labelWidth: false,
@@ -364,7 +418,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         msgTarget: 'qtip',
                         publishes: 'value',
                         cls: 'note-type',
-                        labelWidth: 50,
+                        labelWidth: 70,
                         //width: 160,
                         // labelWidth: false,
                         // labelStyle: 'width: auto',
@@ -386,7 +440,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         xtype: 'checkboxfield',
                         name: 'noteComplete',
                         //fieldLabel: 'Complete',
-                        boxLabel: 'completed',
+                        boxLabel: 'Done',
                         reference: 'noteComplete',
                         publishes: 'value',
                         flex: 1,
@@ -411,10 +465,11 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             editable: true,
                             fieldLabel: 'Created',
                             reference: 'noteCreated',
+                            //cls: 'note-created',
                             padding: '5',
                             disabled: true,
                             //cls: 'note-type',
-                            labelWidth: 60,
+                            labelWidth: 70,
                             //labelStyle: 'width: auto',
                             // remove default styling for element wrapping the input element
                             inputWrapCls: '',
@@ -423,8 +478,8 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             // remove the input element's background
                             fieldStyle: 'background:none',
                             bind: {
-                                value: '{theNote.OFCRTDATE} {theNote.OFCRTTIME} {theNote.OFCRTUSER}',
-                                //visible: '{theNote == null ? false: true}'
+                                //value: '{theNote.OFCRTDATE} {theNote.OFCRTTIME} {theNote.OFCRTUSER}',
+                                //visible: '{theNote.OFCHGUSER == "" ? false: true}'
                             },
                             // setValue: function () {
                             //     return 'value';
@@ -432,16 +487,19 @@ Ext.define('Shopping.view.cart.notes.Notes', {
 
                         },
                         { xtype: 'tbfill' },
+                        { xtype: 'tbfill' },
+
                         {
                             xtype: 'textfield',
                             editable: true,
                             fieldLabel: 'Updated',
+                            reference: 'noteUpdated',
                             padding: '5',
                             disabled: true,
                             //cls: 'note-type',
 
-                            labelWidth: 60,
-                            labelStyle: 'width: auto',
+                            labelWidth: 70,
+                            //labelStyle: 'width: auto',
 
                             // remove default styling for element wrapping the input element
                             inputWrapCls: '',
@@ -451,8 +509,8 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             fieldStyle: 'background:none',
                             //flex: 1,
                             bind: {
-                                value: '{theNote.OFCHGDATE} {theNote.OFCHGTIME} {theNote.OFCHGUSER}',
-                                visible: '{theNote.OFCHGUSER == "" ? false: true}'
+                                //value: '{theNote.dateTime} {theNote.OFCHGUSER}',
+                                //visible: '{theNote.OFCHGUSER == "" ? false: true}'
                             }
                         }, { xtype: 'tbfill' }, { xtype: 'tbfill' }
                     ]
