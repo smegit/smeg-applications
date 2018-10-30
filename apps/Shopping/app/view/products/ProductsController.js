@@ -5,7 +5,7 @@ Ext.define('Shopping.view.products.ProductsController', {
     init: function () {
         var me = this,
             catStore = me.getCategoriesStore();
-        console.info(catStore);
+        //console.info(catStore);
 
         if (!Ext.isEmpty(catStore)) {
             catStore.on({
@@ -68,7 +68,7 @@ Ext.define('Shopping.view.products.ProductsController', {
     onLoadCategories: function (cmp, recs) {
         console.log('onLoadCategories called');
         var me = this;
-        console.info(recs);
+        //console.info(recs);
 
         if (!Ext.isEmpty(recs)) {
             me.lookupReference('cats').getSelectionModel().select(recs[0]);

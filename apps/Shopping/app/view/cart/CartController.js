@@ -706,7 +706,7 @@ Ext.define('Shopping.view.cart.CartController', {
     },
 
     onClickNotes: function () {
-        console.log('debug onClickNotes called');
+        //console.log('debug onClickNotes called');
         var me = this,
             vm = me.getViewModel();
         //noteModel = me.lookupReference('notesWin');
@@ -724,109 +724,24 @@ Ext.define('Shopping.view.cart.CartController', {
                 }
             },
             listeners: {
-                //     beforeshow: function (cmp) {
-                //         console.info(cmp.getViewModel().getStore('Notes'));
-                //     },
                 delay: 200,
                 afterrender: function (cmp) {
-                    console.log('after render called');
-                    //var store = cmp.getStore();
-                    //store.load.defer(100, store);
-                    // console.info(cmp.lookupReference('notelist').getSelectionModel());
-                    //cmp.lookupReference('notelist').getSelectionModel().select(2)
-                    // //cmp.lookupReference('notelist').getView().refresh();
-                    // var store = cmp.getViewModel().getStore('Notes');
-                    // // console.info(store);
-                    // // console.info(cmp.down('notelist').down('grid'));
-                    // store.load({
-                    //     //scope: me,
-                    //     callback: function (records, operation, success) {
-                    //         console.info(records);
-                    //         console.info(operation);
-                    //         console.info(success);
-                    //         console.info(cmp.getViewModel().getStore('Notes'));
-                    //         //cmp.getView().refresh();
-                    //         //cmp.down('notelist').grid.refresh();
-                    //         console.info(cmp.lookupReference('notelist').getSelectionModel());
-                    //         cmp.lookupReference('notelist').getSelectionModel().select(0);
-                    //         cmp.lookupReference('noteText').blur();
-                    //         //cmp.lookupReference('notelist').getView().refresh();
-                    //         //cmp.lookupReference('notelist').getView().refresh(););
-                    //         //Ext.getCmp('notelist').getView().setStore(cmp.getViewModel().getStore('Notes'));
-                    //         //setTimeout(function () { Ext.getCmp('notelist').getView().refresh(); }, 3000);
-
-                    //         //console.info(cmp.down('tableview'));
-                    //         //}
-
-                    //         //Ext.getCmp('notelist').getView().refresh();
-                    //         //setTimeout(function () { Ext.getCmp('notelist').getView().refresh(); }, 3000);
-                    //     }
-                    // });
                 },
-                //delay: 200,
-                // activate: function (cmp) {
-                //     console.info(cmp.lookupReference('notelist'));
-                //     console.info(cmp.getViewModel().getStore('Notes'));
-                //     var nodeStore = cmp.getViewModel().getStore('Notes');
-                //     console.info(nodeStore);
-                //     if (nodeStore) {
-                //         nodeStore.load();
-                //         console.info(nodeStore);
-                //         Ext.getCmp('notelist').getView().refresh();
-                //         console.info(Ext.ComponentQuery.query('notes')[0].lookupReference('notelist'));
-                //     }
-                // },
-                //     beforeload: function (cmp) {
-                //         console.info(cmp.getViewModel().getStore('Notes'));
-                //     },
                 show: function (cmp) {
-                    console.info(cmp);
-                    console.log('show called');
                     var store = cmp.getViewModel().getStore('Notes');
-                    // console.info(store);
-                    // console.info(cmp.down('notelist').down('grid'));
                     store.load({
                         //scope: me,
                         callback: function (records, operation, success) {
-                            console.info(records);
-                            console.info(operation);
-                            console.info(success);
-                            console.info(cmp.getViewModel().getStore('Notes'));
-                            //cmp.getView().refresh();
-                            //cmp.down('notelist').grid.refresh();
-                            console.info(cmp.lookupReference('notelist').getSelectionModel());
                             if (records.length > 0) {
                                 cmp.lookupReference('notelist').getSelectionModel().select(0);
                             } else {
                                 cmp.lookupReference('noteType').focus();
                             }
-
-                            //cmp.lookupReference('noteText').blur();
-                            //cmp.lookupReference('notelist').getView().refresh();
-                            //cmp.lookupReference('notelist').getView().refresh(););
-                            //Ext.getCmp('notelist').getView().setStore(cmp.getViewModel().getStore('Notes'));
-                            //setTimeout(function () { Ext.getCmp('notelist').getView().refresh(); }, 3000);
-
-                            //console.info(cmp.down('tableview'));
-                            //}
-
-                            //Ext.getCmp('notelist').getView().refresh();
-                            //setTimeout(function () { Ext.getCmp('notelist').getView().refresh(); }, 3000);
                         }
                     });
                 }
             }
         }).show();
-        //var noteModel = this.getView().up().down('notes');
-        //var notelist = me.down().lookupReference('notelist');
-        //var noteView = Ext.ComponentQuery.query('notes')[0];
-        //var noteVm = noteView.getViewModel();
-        //console.info(noteModel);
-        // console.info(notelist);
-        //console.info(Ext.ComponentQuery.query('notes')[0].lookupReference('notelist'));
-        //console.info(noteVm.getStore('Notes'));
-        //setTimeout(function () { Ext.getCmp('notelist').getView().refresh(); }, 3000);
-
     },
 
     /**
@@ -1558,33 +1473,4 @@ Ext.define('Shopping.view.cart.CartController', {
 
         return deferred.promise;
     },
-
-    onBeforeExpand: function () {
-        // console.log('debug onBeforeExpand called');
-        // var me = this,
-        //     vm = me.getViewModel(),
-        //     view = me.getView(),
-        //     viewup = view.up(),
-        //     orderNumber = view.lookupViewModel(true).get('activeCartNumber');
-        // console.info(orderNumber);
-        // vm.set('orderKey', orderNumber);
-
-    },
-
-    onBeforeRender: function () {
-        console.log('onBeforeRender called');
-    }
-
-
-    // Ext.ComponentQuery.query('app-main')[0].add({
-    //     xtype: 'notes',
-    //     viewModel: {
-    //         data: {
-    //             orderKey: vm.get('activeCartNumber')
-    //         }
-    //     }
-    // }).show();
-
-
-
 });

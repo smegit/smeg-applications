@@ -57,7 +57,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     agentSelected: function (content) {
-        console.log('agentSelected called');
+        //console.log('agentSelected called');
         var me = this,
             vm = me.getViewModel(),
             view = me.getView('categories'),
@@ -107,7 +107,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
             }
         });
-        console.info(Ext.ComponentQuery.query('categories')[0].getView());
+        //console.info(Ext.ComponentQuery.query('categories')[0].getView());
 
 
 
@@ -129,7 +129,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             val = rec.get('STKCOD');
 
         vm.set('STKLOC', val);
-        console.info(vm);
+        //console.info(vm);
         Ext.apply(extraParams, {
             stkloc: val
         });
@@ -220,7 +220,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     onViewCart: function (rec) {
-        console.info(this.lookupReference('card').getLayout());
+        //console.info(this.lookupReference('card').getLayout());
         this.lookupReference('card').getLayout().setActiveItem(1);
 
     },
@@ -553,7 +553,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             url: '/valence/vvcall.pgm',
             params: params,
             success: function (r) {
-                console.info(r);
+                //console.info(r);
                 obj = Ext.decode(r.responseText);
                 var continueFnc = function () {
                     var products = obj.CartDtl,
@@ -569,7 +569,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                         repRec, product, field, fldValue, prodQuantity,
                         delvDate, ninetyDate, todayDate;
 
-                    console.info(cartItemStore);
+                    //console.info(cartItemStore);
                     if (!Ext.isEmpty(obj.CartHdr)) {
                         Ext.apply(formValues, obj.CartHdr[0]);
                     }
@@ -662,7 +662,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                         cartCount: cartItemCount,
                         activeCartNumber: cartKey
                     });
-                    console.info(me);
+                    //console.info(me);
                     me.onViewCart();
 
                     vm.notify();
@@ -694,7 +694,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     // console.info(activeAgent);
 
 
-                    console.info(parent.Portal);
+                    //console.info(parent.Portal);
                     if (!Ext.isEmpty(parent.Portal)) {
                         // console.log('in parent Portal');
                         // console.info(parent.Portal.getApplication());

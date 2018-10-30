@@ -45,9 +45,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
         title: 'Notes - {orderKey}'
     },
     listeners: {
-        //close: 'onClose',
         beforeshow: 'onBeforeShowWindow',
-        //afterrender: 'onAfterRenderWindow'
     },
     // listeners: {
     //     resize: function (win, width, height, eOpts) {
@@ -307,9 +305,9 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             value: '{theNote.OFTYPE}'
                         },
                         listeners: {
-                            dirtychange: function (field, newValue, oldValue) {
-                                console.log('form changed');
-                            },
+                            // dirtychange: function (field, newValue, oldValue) {
+                            //     //console.log('form changed');
+                            // },
                             //change: 'onSelectTypeChange',
                             select: 'onTypeSelect'
                         }
@@ -348,36 +346,8 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             value: '{theNote.OFFUPACT}'
                         },
                         listeners: {
-                            beforeselect: function () {
-                                console.log('select called');
-                            },
                             select: 'onSelectNoteAction'
                         },
-                        // listConfig: {
-                        //     listeners: {
-                        //         el: {
-                        //             click: {
-                        //                 // fn: function (ev, anchor) {
-                        //                 //     console.log('click');
-                        //                 // }
-                        //                 fn: 'onNoteActionItemClick'
-                        //             }
-                        //         }
-                        //     }
-                        // }
-
-                        // Stop the click evt from propagation otherwise the modal will disappear
-                        // listConfig: {
-                        //     listeners: {
-                        //         el: {
-                        //             click: {
-                        //                 fn: function (ev, anchor) {
-                        //                     ev.stopPropagation()
-                        //                 }
-                        //             }
-                        //         }
-                        //     }
-                        // }
                     },
                     {
                         xtype: 'datefield',
@@ -470,6 +440,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             disabled: true,
                             //cls: 'note-type',
                             labelWidth: 70,
+                            width: 260,
                             //labelStyle: 'width: auto',
                             // remove default styling for element wrapping the input element
                             inputWrapCls: '',
@@ -478,7 +449,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             // remove the input element's background
                             fieldStyle: 'background:none',
                             bind: {
-                                //value: '{theNote.OFCRTDATE} {theNote.OFCRTTIME} {theNote.OFCRTUSER}',
+                                value: '{theNote.createdRender} {theNote.OFCRTUSER}',
                                 //visible: '{theNote.OFCHGUSER == "" ? false: true}'
                             },
                             // setValue: function () {
@@ -498,6 +469,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             disabled: true,
                             //cls: 'note-type',
 
+                            width: 260,
                             labelWidth: 70,
                             //labelStyle: 'width: auto',
 
@@ -509,7 +481,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             fieldStyle: 'background:none',
                             //flex: 1,
                             bind: {
-                                //value: '{theNote.dateTime} {theNote.OFCHGUSER}',
+                                value: '{theNote.updatedRender} {theNote.OFCHGUSER}',
                                 //visible: '{theNote.OFCHGUSER == "" ? false: true}'
                             }
                         }, { xtype: 'tbfill' }, { xtype: 'tbfill' }

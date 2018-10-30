@@ -109,7 +109,7 @@ Ext.define('Shopping.view.main.MainController', {
                         });
                     }
 
-                    console.info(vmObj);
+                    //console.info(vmObj);
                     // console.info(d);
 
                     vm.set(vmObj);
@@ -122,7 +122,7 @@ Ext.define('Shopping.view.main.MainController', {
                     me.loadNoteTypeOptions(d);
                     me.loadNoteActionOptions(d);
 
-                    console.info(d);
+                    //console.info(d);
                     deferred.resolve(d);
                 }
             }
@@ -204,7 +204,7 @@ Ext.define('Shopping.view.main.MainController', {
 
     loadNoteActionOptions: function (content) {
         console.log('loadNoteActionOptions called');
-        console.info(content);
+        //console.info(content);
 
         var noteActionOpts = content.noteActions;
 
@@ -217,7 +217,7 @@ Ext.define('Shopping.view.main.MainController', {
             store.loadRawData(content.noteActions);
             store.insert(0, [{ 'NOTEACTC': null, 'NOTEACTD': "None", 'NOTEACTS': null, 'NOTEACTV': null }]);
         }
-        console.info(store);
+        //console.info(store);
     }
 
 });

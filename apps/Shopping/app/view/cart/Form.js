@@ -153,11 +153,11 @@ Ext.define('Shopping.view.cart.Form', {
         });
 
 
-        if (!me.release) {
-            baseItems.push({
-                xtype: 'followup'
-            });
-        }
+        // if (!me.release) {
+        //     baseItems.push({
+        //         xtype: 'followup'
+        //     });
+        // }
 
         // baseItems.push({
         //     xtype: 'notelist'

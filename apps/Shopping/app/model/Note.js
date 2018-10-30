@@ -1,6 +1,6 @@
 Ext.define('Shopping.model.Note', {
     extend: 'Ext.data.Model',
-    fields: ['OFNOTE', 'OFCRTUSER', 'OFCRTDATE', 'OFCRTTIME', 'OFSEQ', 'OFTYPE', 'OFFUPDET', 'OFFUPACT', {
+    fields: ['OFNOTE', 'OFCRTUSER', 'OFCRTDATE', 'OFCRTTIME', 'OFSEQ', 'OFTYPE', 'OFFUPDET', 'OFFUPACT', 'OFCHGDATE', 'OFCHGTIME', 'OFCHGUSER', {
         name: 'dateTime',
         convert: function (v, rec) {
             //console.info(rec);
@@ -19,7 +19,7 @@ Ext.define('Shopping.model.Note', {
         }, {
             name: 'OFFUPDAT',
             convert: function (v, rec) {
-                console.info(v);
+                //console.info(v);
                 if (v === '0001-01-01')
                     return null;
             }
@@ -32,7 +32,7 @@ Ext.define('Shopping.model.Note', {
                     index = typeStore.find('NOTETYPEC', rec.get('OFTYPE')),
                     record = typeStore.getAt(index);
                 if (record) {
-                    return record.get('NOTETYPES')
+                    return record.get('NOTETYPES');
                 }
                 // if (rec.get('OFTYPE') == 'O') {
                 //     return 'Order';
@@ -43,6 +43,21 @@ Ext.define('Shopping.model.Note', {
                 // } else if (rec.get('OFTYPE') == 'I') {
                 //     return 'Info';
                 // }
+            }
+        }, {
+            name: 'createdRender',
+            convert: function (v, rec) {
+                // var t = rec.get('OFCRTTIME').replace(/\./g, ":");
+                return Ext.Date.format(new Date(rec.get('OFCRTDATE') + ' ' + rec.get('OFCRTTIME')), 'j/n/Y H:i');
+            },
+        }, {
+            name: 'updatedRender',
+            convert: function (v, rec) {
+                if (rec.get('OFCHGDATE') != null && rec.get('OFCHGDATE') != '0001-01-01') {
+                    return Ext.Date.format(new Date(rec.get('OFCHGDATE') + ' ' + rec.get('OFCHGTIME')), 'j/n/Y H:i');
+                } else {
+                    return null;
+                }
             }
         }]
 });
