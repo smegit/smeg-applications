@@ -296,7 +296,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         publishes: 'value',
                         queryMode: 'local',
                         padding: '5',
-                        labelWidth: 70,
+                        labelWidth: 50,
                         //labelStyle: 'width: auto;',
                         //labelStyle: 'text-align: right',
                         //flex: 1,
@@ -356,7 +356,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         reference: 'noteFollowUpDate',
                         padding: '5',
                         cls: 'note-type',
-                        labelWidth: 70,
+                        labelWidth: 50,
                         format: "d/m/Y",
                         //width: 160,
                         //labelWidth: false,
@@ -377,35 +377,35 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             select: 'onTypeSelect'
                         }
                     },
-                    {
-                        //xtype: 'combo',
-                        xtype: 'textfield',
-                        editable: true,
-                        //flex: 1,
-                        padding: '5',
-                        fieldLabel: 'Detail',
-                        reference: 'noteDetail',
-                        msgTarget: 'qtip',
-                        publishes: 'value',
-                        cls: 'note-type',
-                        labelWidth: 70,
-                        //width: 160,
-                        // labelWidth: false,
-                        // labelStyle: 'width: auto',
-                        //labelStyle: 'text-align: right',
-                        bind: {
-                            disabled: '{noteAction.value == null}',
-                            value: '{theNote.OFFUPDET}',
-                            //fieldLabel: '{note}'
-                        },
-                        listeners: {
-                            focusleave: 'detailValidation',
+                    // {
+                    //     //xtype: 'combo',
+                    //     xtype: 'textfield',
+                    //     editable: true,
+                    //     //flex: 1,
+                    //     padding: '5',
+                    //     fieldLabel: 'Detail',
+                    //     reference: 'noteDetail',
+                    //     msgTarget: 'qtip',
+                    //     publishes: 'value',
+                    //     cls: 'note-type',
+                    //     labelWidth: 50,
+                    //     //width: 160,
+                    //     // labelWidth: false,
+                    //     // labelStyle: 'width: auto',
+                    //     //labelStyle: 'text-align: right',
+                    //     bind: {
+                    //         disabled: '{noteAction.value == null}',
+                    //         value: '{theNote.OFFUPDET}',
+                    //         //fieldLabel: '{note}'
+                    //     },
+                    //     listeners: {
+                    //         focusleave: 'detailValidation',
 
-                            // when change and set save button enabled
-                            change: 'onTypeSelect',
-                            //keyup: 'onTypeSelect'
-                        }
-                    },
+                    //         // when change and set save button enabled
+                    //         change: 'onTypeSelect',
+                    //         //keyup: 'onTypeSelect'
+                    //     }
+                    // },
                     {
                         xtype: 'checkboxfield',
                         name: 'noteComplete',
@@ -439,8 +439,8 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             padding: '5',
                             disabled: true,
                             //cls: 'note-type',
-                            labelWidth: 70,
-                            width: 260,
+                            labelWidth: 50,
+                            width: 220,
                             //labelStyle: 'width: auto',
                             // remove default styling for element wrapping the input element
                             inputWrapCls: '',
@@ -457,9 +457,6 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             // }
 
                         },
-                        { xtype: 'tbfill' },
-                        { xtype: 'tbfill' },
-
                         {
                             xtype: 'textfield',
                             editable: true,
@@ -469,8 +466,8 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             disabled: true,
                             //cls: 'note-type',
 
-                            width: 260,
-                            labelWidth: 70,
+                            width: 220,
+                            labelWidth: 50,
                             //labelStyle: 'width: auto',
 
                             // remove default styling for element wrapping the input element
@@ -484,7 +481,37 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                                 value: '{theNote.updatedRender} {theNote.OFCHGUSER}',
                                 //visible: '{theNote.OFCHGUSER == "" ? false: true}'
                             }
-                        }, { xtype: 'tbfill' }, { xtype: 'tbfill' }
+                        },
+                        //{ xtype: 'tbfill' },
+                        {
+                            //xtype: 'combo',
+                            xtype: 'textfield',
+                            editable: true,
+                            flex: 1,
+                            padding: '5',
+                            fieldLabel: 'Detail',
+                            reference: 'noteDetail',
+                            msgTarget: 'qtip',
+                            publishes: 'value',
+                            cls: 'note-type',
+                            labelWidth: 40,
+                            //width: 200,
+                            // labelWidth: false,
+                            // labelStyle: 'width: auto',
+                            //labelStyle: 'text-align: right',
+                            bind: {
+                                disabled: '{noteAction.value == null}',
+                                value: '{theNote.OFFUPDET}',
+                                //fieldLabel: '{note}'
+                            },
+                            listeners: {
+                                focusleave: 'detailValidation',
+
+                                // when change and set save button enabled
+                                change: 'onTypeSelect',
+                                //keyup: 'onTypeSelect'
+                            }
+                        },
                     ]
                 }, {
                     xtype: 'container',

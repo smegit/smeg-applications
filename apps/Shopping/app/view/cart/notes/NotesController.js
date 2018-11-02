@@ -628,6 +628,8 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                     me.lookupReference('notelist').getSelectionModel().select(0);
                     me.lookupReference('notelist').getView().focusRow(0);
                     me.lookupReference('noteText').focus();
+                    Valence.util.Helper.showSnackbar('Saved');
+
 
 
                     //return true;
