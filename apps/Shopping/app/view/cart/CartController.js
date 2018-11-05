@@ -269,7 +269,7 @@ Ext.define('Shopping.view.cart.CartController', {
                     if (!d.success || d.success === "false") {
                         var respProducts = d.CartDtl;
                         if (respProducts && respProducts.length > 0) {
-                            var str = vm.getStore(''),
+                            var str = vm.getStore('cartItems'),
                                 rec;
                             for (var i = 0; i < respProducts.length; i++) {
                                 rec = str.findRecord('product_id', respProducts[i].OBITM);
@@ -453,23 +453,23 @@ Ext.define('Shopping.view.cart.CartController', {
             fieldInError = (!valid) ? form.down('field{isValid()===false}') : null;
 
         if (Ext.isEmpty(fieldInError)) {
-            var flwDate = me.lookupReference('followUpDte'),
-                flwDateValue = flwDate.getValue(),
-                flwMsg = me.lookupReference('followUpMsg'),
-                flwMsgValue = flwMsg.getValue(),
-                msg = 'This field is required',
-                markInvaild = function (fld) {
-                    fld.markInvalid(msg);
-                    fld.focus();
-                    valid = false;
-                }
-            //check to see if followup info was set and set correctly
-            //
-            if (!Ext.isEmpty(flwDateValue) && Ext.isEmpty(flwMsgValue)) {
-                markInvaild(flwMsg);
-            } else if (Ext.isEmpty(flwDateValue) && !Ext.isEmpty(flwMsgValue)) {
-                markInvaild(flwDate);
-            }
+            // var flwDate = me.lookupReference('followUpDte'),
+            //     flwDateValue = flwDate.getValue(),
+            //     flwMsg = me.lookupReference('followUpMsg'),
+            //     flwMsgValue = flwMsg.getValue(),
+            //     msg = 'This field is required',
+            //     markInvaild = function (fld) {
+            //         fld.markInvalid(msg);
+            //         fld.focus();
+            //         valid = false;
+            //     }
+            // //check to see if followup info was set and set correctly
+            // //
+            // if (!Ext.isEmpty(flwDateValue) && Ext.isEmpty(flwMsgValue)) {
+            //     markInvaild(flwMsg);
+            // } else if (Ext.isEmpty(flwDateValue) && !Ext.isEmpty(flwMsgValue)) {
+            //     markInvaild(flwDate);
+            // }
         } else {
             fieldInError.focus();
         }

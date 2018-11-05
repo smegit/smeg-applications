@@ -433,15 +433,23 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                 //     //animateTarget: btn,
                 //     icon: Ext.MessageBox.QUESTION,
                 // });
+                vm.set('theNote', {});
                 me.lookupReference('exitBtn').setText('Exit');
                 me.lookupReference('notelist').setDisabled(false);
-                me.lookupReference('notelist').getSelectionModel().select(0);
-                me.lookupReference('notelist').getView().focusRow(0);
-                me.lookupReference('noteText').focus();
+                console.info(me.lookupReference('notelist').getStore().getCount());
+                if (me.lookupReference('notelist').getStore().getCount() > 0) {
+                    me.lookupReference('notelist').getSelectionModel().select(0);
+                    me.lookupReference('notelist').getView().focusRow(0);
+                    me.lookupReference('noteText').focus();
+                } else {
+                    me.lookupReference('noteType').focus();
+                }
+
                 me.lookupReference('saveBtn').setHidden(true);
                 me.lookupReference('addNoteBtn').setHidden(false);
             }
         } else {
+            console.log('getcalled');
             me.lookupReference('exitBtn').setText('Exit');
             me.lookupReference('notelist').setDisabled(false);
             me.lookupReference('notelist').getSelectionModel().select(0);
@@ -452,7 +460,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             if (me.lookupReference('exitBtn').getText() == 'EXIT') {
                 //me.getView().close();
             }
-            //me.getView().close();
+            me.getView().close();
         }
     },
 
@@ -718,6 +726,8 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         // console.info(theNote);
         // console.info(Ext.Object.isEmpty(theNote));
         vm.set('theNote', {});
+        me.lookupReference('noteDetail').setHidden(true);
+        me.lookupReference('noteFollowUpDate').setHidden(true);
         me.lookupReference('noteCreated').setValue(null);
         me.lookupReference('noteUpdated').setValue(null);
         me.lookupReference('noteType').focus();
@@ -816,7 +826,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         vm.set('theNote', {});
     },
     onBeforeSelect: function (rowModel, rec, index) {
-        //console.log('onBeforeSelect called');
+        console.log('onBeforeSelect called');
         // console.info(rowModel);
         // console.info(rec);
         // console.info(index);
@@ -825,8 +835,29 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             theNote = vm.get('theNote'),
             justsaved = vm.get('justsaved');
 
-        // console.info(theNote);
+        console.info(theNote);
         // console.log(justsaved);
+
+        console.info(rec);
+        if (rec.hasOwnProperty('data')) {
+            if (rec.data.OFFUPACT == 'E') {
+                me.lookupReference('noteDetail').setFieldLabel('Email');
+                me.lookupReference('noteDetail').setHidden(false);
+                me.lookupReference('noteFollowUpDate').setHidden(false);
+            } else if (rec.data.OFFUPACT == 'P') {
+                me.lookupReference('noteDetail').setFieldLabel('Phone');
+                me.lookupReference('noteDetail').setHidden(false);
+                me.lookupReference('noteFollowUpDate').setHidden(false);
+            } else if (rec.data.OFFUPACT == 'V') {
+                me.lookupReference('noteDetail').setFieldLabel('Detail');
+                me.lookupReference('noteDetail').setHidden(true);
+                me.lookupReference('noteFollowUpDate').setHidden(false);
+            } else {
+                me.lookupReference('noteDetail').setFieldLabel('Detail');
+                me.lookupReference('noteDetail').setHidden(true);
+                me.lookupReference('noteFollowUpDate').setHidden(true);
+            }
+        }
 
         if (me.lookupReference('exitBtn').getText() == 'CANCEL') {
             Ext.MessageBox.alert('Note', 'You are editing a note, please SAVE or CANCEL before viewing another one.');
@@ -950,17 +981,25 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         // Change the detail lable
         var me = this,
             vm = me.getViewModel(),
-            theNote = vm.get('theNote');
-        noteDetail = me.lookupReference('noteDetail');
+            theNote = vm.get('theNote'),
+            noteDetail = me.lookupReference('noteDetail'),
+            noteFollowUpDate = me.lookupReference('noteFollowUpDate');
+
         //console.info(record);
         if (!Ext.isEmpty(record)) {
             if (record.data.NOTEACTC == 'P') {
                 noteDetail.setFieldLabel('Phone');
+                noteFollowUpDate.setHidden(false);
                 noteDetail.setHidden(false);
             } else if (record.data.NOTEACTC == 'E') {
                 noteDetail.setFieldLabel('Email');
+                noteFollowUpDate.setHidden(false);
                 noteDetail.setHidden(false);
             } else if (record.data.NOTEACTC == 'V') {
+                noteFollowUpDate.setHidden(false);
+                noteDetail.setHidden(true);
+            } else {
+                noteFollowUpDate.setHidden(true);
                 noteDetail.setHidden(true);
             }
         }

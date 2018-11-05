@@ -358,6 +358,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         cls: 'note-type',
                         labelWidth: 50,
                         format: "d/m/Y",
+                        hidden: true,
                         //width: 160,
                         //labelWidth: false,
                         //labelStyle: 'width: auto',
@@ -369,6 +370,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         // flex: 1,
                         bind: {
                             disabled: '{noteAction.value == null}',
+                            //visible: '{noteAction.value == null}',
                             value: '{theNote.OFFUPDAT}'
                         },
                         listeners: {
@@ -495,12 +497,14 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             publishes: 'value',
                             cls: 'note-type',
                             labelWidth: 40,
+                            hidden: true,
                             //width: 200,
                             // labelWidth: false,
                             // labelStyle: 'width: auto',
                             //labelStyle: 'text-align: right',
                             bind: {
                                 disabled: '{noteAction.value == null}',
+                                //visible: '{noteAction.value == null}',
                                 value: '{theNote.OFFUPDET}',
                                 //fieldLabel: '{note}'
                             },
