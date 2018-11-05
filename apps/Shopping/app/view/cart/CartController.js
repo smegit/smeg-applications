@@ -211,7 +211,7 @@ Ext.define('Shopping.view.cart.CartController', {
                     minWidth: 300,
                     msg: 'Not able to process at this time.',
                     buttons: [{
-                        text: 'Ok'
+                        text: 'Ok',
                     }]
                 });
                 deferred.reject();

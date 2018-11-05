@@ -436,7 +436,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                 vm.set('theNote', {});
                 me.lookupReference('exitBtn').setText('Exit');
                 me.lookupReference('notelist').setDisabled(false);
-                console.info(me.lookupReference('notelist').getStore().getCount());
+                //console.info(me.lookupReference('notelist').getStore().getCount());
                 if (me.lookupReference('notelist').getStore().getCount() > 0) {
                     me.lookupReference('notelist').getSelectionModel().select(0);
                     me.lookupReference('notelist').getView().focusRow(0);
@@ -449,18 +449,23 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                 me.lookupReference('addNoteBtn').setHidden(false);
             }
         } else {
-            console.log('getcalled');
+            //console.log('getcalled');
             me.lookupReference('exitBtn').setText('Exit');
             me.lookupReference('notelist').setDisabled(false);
-            me.lookupReference('notelist').getSelectionModel().select(0);
-            me.lookupReference('notelist').getView().focusRow(0);
-            me.lookupReference('noteText').focus();
+            if (me.lookupReference('notelist').getStore().getCount() > 0) {
+                me.lookupReference('notelist').getSelectionModel().select(0);
+                me.lookupReference('notelist').getView().focusRow(0);
+                me.lookupReference('noteText').focus();
+            } else {
+                me.lookupReference('noteType').focus();
+                me.getView().close();
+            }
             me.lookupReference('addNoteBtn').setHidden(false);
             me.lookupReference('saveBtn').setHidden(true);
             if (me.lookupReference('exitBtn').getText() == 'EXIT') {
                 //me.getView().close();
             }
-            me.getView().close();
+            //me.getView().close();
         }
     },
 
@@ -835,10 +840,10 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             theNote = vm.get('theNote'),
             justsaved = vm.get('justsaved');
 
-        console.info(theNote);
+        //console.info(theNote);
         // console.log(justsaved);
 
-        console.info(rec);
+        //console.info(rec);
         if (rec.hasOwnProperty('data')) {
             if (rec.data.OFFUPACT == 'E') {
                 me.lookupReference('noteDetail').setFieldLabel('Email');
