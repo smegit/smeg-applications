@@ -498,7 +498,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         return true;
     },
     dateValidation: function () {
-        //console.log('dateValidation called');
+        console.log('dateValidation called');
         var me = this,
             noteAction = me.lookupReference('noteAction'),
             noteFollowUpDate = me.lookupReference('noteFollowUpDate');
@@ -507,6 +507,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             var fuDate = noteFollowUpDate.getValue();
             if (!fuDate) {
                 noteFollowUpDate.markInvalid('Date is required for sending email');
+                Valence.util.Helper.showSnackbar('Date is required.');
                 return false;
             }
         }
@@ -719,7 +720,21 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         //console.log('onClickAddNote called');
         var me = this,
             vm = me.getViewModel(),
-            notelist = me.lookupReference('notelist');
+            notelist = me.lookupReference('notelist'),
+            noteType = me.lookupReference('noteType'),
+            noteAction = me.lookupReference('noteAction'),
+            noteFollowUpDate = me.lookupReference('noteFollowUpDate'),
+            noteComplete = me.lookupReference('noteComplete'),
+            noteDetail = me.lookupReference('noteDetail'),
+            noteText = me.lookupReference('noteText');
+
+        // Reset form fields
+        noteType.setDisabled(false);
+        noteAction.setDisabled(false);
+        //noteComplete.setDisabled(false);
+        //noteFollowUpDate.setDisabled(false);
+        //noteDetail.setDisabled(false);
+        //noteText.setDisabled(false);;
         //notelist.setDisabled(true);
         me.lookupReference('exitBtn').setText('Cancel');
         me.lookupReference('addNoteBtn').setHidden(true);
@@ -838,17 +853,42 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         var me = this,
             vm = me.getViewModel(),
             theNote = vm.get('theNote'),
-            justsaved = vm.get('justsaved');
+            justsaved = vm.get('justsaved'),
+            noteType = me.lookupReference('noteType'),
+            noteAction = me.lookupReference('noteAction'),
+            noteFollowUpDate = me.lookupReference('noteFollowUpDate'),
+            noteComplete = me.lookupReference('noteComplete'),
+            noteDetail = me.lookupReference('noteDetail'),
+            noteText = me.lookupReference('noteText');
 
         //console.info(theNote);
         // console.log(justsaved);
 
-        //console.info(rec);
+        // Reset form fields
+        noteType.setDisabled(false);
+        noteAction.setDisabled(false);
+        noteFollowUpDate.setDisabled(false);
+        noteDetail.setDisabled(false);
+        noteText.setDisabled(false);
+        noteComplete.setDisabled(false);
+
+        console.info(rec);
         if (rec.hasOwnProperty('data')) {
             if (rec.data.OFFUPACT == 'E') {
                 me.lookupReference('noteDetail').setFieldLabel('Email');
                 me.lookupReference('noteDetail').setHidden(false);
                 me.lookupReference('noteFollowUpDate').setHidden(false);
+                me.lookupReference('noteComplete').setDisabled(true);
+                if (rec.data.OFFUPCMP == '1') {
+                    //me.lookupReference('noteForm').setDisabled(true);
+                    console.info(me.lookupReference('noteForm'));
+                    noteType.setDisabled(true);
+                    noteAction.setDisabled(true);
+                    noteFollowUpDate.setDisabled(true);
+                    noteDetail.setDisabled(true);
+                    noteText.setDisabled(true);
+
+                }
             } else if (rec.data.OFFUPACT == 'P') {
                 me.lookupReference('noteDetail').setFieldLabel('Phone');
                 me.lookupReference('noteDetail').setHidden(false);
@@ -988,7 +1028,8 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             vm = me.getViewModel(),
             theNote = vm.get('theNote'),
             noteDetail = me.lookupReference('noteDetail'),
-            noteFollowUpDate = me.lookupReference('noteFollowUpDate');
+            noteFollowUpDate = me.lookupReference('noteFollowUpDate'),
+            noteComplete = me.lookupReference('noteComplete');
 
         //console.info(record);
         if (!Ext.isEmpty(record)) {
@@ -996,30 +1037,49 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                 noteDetail.setFieldLabel('Phone');
                 noteFollowUpDate.setHidden(false);
                 noteDetail.setHidden(false);
+                noteComplete.setDisabled(false);
             } else if (record.data.NOTEACTC == 'E') {
                 noteDetail.setFieldLabel('Email');
                 noteFollowUpDate.setHidden(false);
                 noteDetail.setHidden(false);
+                noteComplete.setDisabled(true);
             } else if (record.data.NOTEACTC == 'V') {
                 noteFollowUpDate.setHidden(false);
                 noteDetail.setHidden(true);
+                noteComplete.setDisabled(false);
             } else {
                 noteFollowUpDate.setHidden(true);
                 noteDetail.setHidden(true);
+                noteComplete.setHidden(true);
             }
         }
         //console.info(theNote);
-        if (theNote.dirty) {
-            //console.log('debugy');
-            me.lookupReference('saveBtn').setDisabled(false);
-            me.lookupReference('saveBtn').setHidden(false);
-            me.lookupReference('addNoteBtn').setHidden(true);
-            me.lookupReference('exitBtn').setText('Cancel');
+        if (!Ext.isEmpty(theNote)) {
+            if (theNote.hasOwnProperty('data')) {
+                if (theNote.dirty) {
+                    //console.log('debugy');
+                    me.lookupReference('saveBtn').setDisabled(false);
+                    me.lookupReference('saveBtn').setHidden(false);
+                    me.lookupReference('addNoteBtn').setHidden(true);
+                    me.lookupReference('exitBtn').setText('Cancel');
+                }
+            }
         }
     },
 
     onFormDirtyChange: function () {
         //console.log('onFormDirtyChange called');
+    },
+
+    onExpand: function () {
+        //console.log('onExpand called');
+        var me = this,
+            noteFollowUpDate = me.lookupReference('noteFollowUpDate');
+        noteFollowUpDate.setMinValue(new Date());
+        // console.info(me.lookupReference('noteFollowUpDate').getValue());
+        // if (noteFollowUpDate.getValue() != null) {
+        //     noteFollowUpDate.setValue(noteFollowUpDate.getValue());
+        // }
     }
 
 

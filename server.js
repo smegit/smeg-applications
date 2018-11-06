@@ -2,7 +2,7 @@
 //
 var base = 'sys.smeg.com.au',
     host = 'https://' + base,
-    hostport = 6051,
+    hostport = 6052,
     localport = 8889;
 
 // define server proxy

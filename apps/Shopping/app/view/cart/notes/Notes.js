@@ -218,7 +218,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
             {
                 xtype: 'form',
                 //title: 'Details',
-                reference: '',
+                reference: 'noteForm',
                 flex: 1,
                 //bodyPadding: 10,
                 padding: '10 10 0 10',
@@ -358,6 +358,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         cls: 'note-type',
                         labelWidth: 50,
                         format: "d/m/Y",
+                        formatText: '',
                         hidden: true,
                         //width: 160,
                         //labelWidth: false,
@@ -365,7 +366,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         // labelStyle: 'text-align: right',
                         id: 'fuDatePicker',
                         showToday: true,
-                        minValue: new Date(),
+                        //minValue: new Date(),
                         maxValue: Ext.Date.add(new Date(), Ext.Date.YEAR, 1), //1 Year from the current date
                         // flex: 1,
                         bind: {
@@ -376,7 +377,9 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         listeners: {
                             //expand: 'onClickDatePicker'
                             focusleave: 'dateValidation',
-                            select: 'onTypeSelect'
+                            select: 'onTypeSelect',
+                            expand: 'onExpand',
+                            beforeactivate: 'onExpand'
                         }
                     },
                     // {
@@ -417,8 +420,9 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         publishes: 'value',
                         flex: 1,
                         bind: {
-                            disabled: '{noteAction.value == null}',
-                            value: '{theNote.OFFUPCMP}'
+                            //disabled: '{noteAction.value == null}',
+                            value: '{theNote.OFFUPCMP}',
+                            hidden: '{noteAction.value == null}'
                         },
                         listeners: {
                             change: 'onTypeSelect'
