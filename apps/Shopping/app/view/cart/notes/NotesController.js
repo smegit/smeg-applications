@@ -579,13 +579,14 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         if (noteAction.getValue() == 'E') {
             //console.log('Email selected');
             if (noteDetail.getValue() == null || noteDetail.getValue() == '') {
-                noteDetail.markInvalid('Note detail is required');
+                noteDetail.markInvalid('Email is required');
             }
             if (noteFollowUpDate.getValue() == null || noteFollowUpDate.getValue() == '') {
-                noteFollowUpDate.markInvalid('Note follow up date is required');
+                noteFollowUpDate.markInvalid('Follow up date is required');
             }
             if (noteDetail.getValue() == null || noteDetail.getValue() == '' || noteFollowUpDate.getValue() == null || noteFollowUpDate.getValue() == '') {
                 //return false;
+                Valence.util.Helper.showSnackbar('Please enter follow up date and email.');
                 deferred.reject({ 'success': false });
                 return false;
             }
