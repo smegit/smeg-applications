@@ -485,7 +485,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         if (noteAction.getValue() === 'E') {
             var ereg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
             var v = noteDetail.getRawValue();
-            if (noteDetailOpts.find('EMLDSC', v, 0, false, true, true) < 0) {
+            if (noteDetailOpts.find('EMLDSC', v, 0, false, true, true) < 0 || v == 'Enter email address') {
                 var testResult = ereg.test(noteDetail.getRawValue());
                 if (!testResult) {
                     noteDetail.markInvalid('Invalid Email Address');
