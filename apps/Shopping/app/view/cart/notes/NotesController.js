@@ -85,8 +85,11 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
     // },
 
     // enable the save button
-    onTypeSelect: function () {
-        //console.log('onTypeSelect');
+    onTypeSelect: function (cmp, newValue, oldValue) {
+        // console.log('onTypeSelect');
+        // console.info(cmp);
+        // console.info(newValue);
+        // console.info(oldValue);
         var me = this,
             vm = me.getViewModel(),
             theNote = vm.get('theNote');
@@ -473,16 +476,24 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         //console.log('detailValidation called');
         var me = this,
             noteAction = me.lookupReference('noteAction'),
-            noteDetail = me.lookupReference('noteDetail');
+            noteDetail = me.lookupReference('noteDetail'),
+            vm = me.getViewModel(),
+            mainVm = Ext.getCmp('app-main').getViewModel(),
+            noteDetailOpts = mainVm.getStore('NoteDetailOptions');
+        //console.info(noteDetailOpts);
         // validate data - email
         if (noteAction.getValue() === 'E') {
             var ereg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
-            var testResult = ereg.test(noteDetail.getRawValue());
-            if (!testResult) {
-                noteDetail.markInvalid('Invalid Email Address');
-                Valence.util.Helper.showSnackbar('Please enter a valid email address.');
-                return false;
+            var v = noteDetail.getRawValue();
+            if (noteDetailOpts.find('EMLDSC', v, 0, false, true, true) < 0) {
+                var testResult = ereg.test(noteDetail.getRawValue());
+                if (!testResult) {
+                    noteDetail.markInvalid('Invalid Email Address');
+                    Valence.util.Helper.showSnackbar('Please enter a valid email address.');
+                    return false;
+                }
             }
+
         }
         // validate data - phone number
         if (noteAction.getValue() === 'P') {
@@ -498,7 +509,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         return true;
     },
     dateValidation: function () {
-        console.log('dateValidation called');
+        //console.log('dateValidation called');
         var me = this,
             noteAction = me.lookupReference('noteAction'),
             noteFollowUpDate = me.lookupReference('noteFollowUpDate');
@@ -732,11 +743,10 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         // Reset form fields
         noteType.setDisabled(false);
         noteAction.setDisabled(false);
-        //noteComplete.setDisabled(false);
-        //noteFollowUpDate.setDisabled(false);
+        noteComplete.setDisabled(false);
+        noteFollowUpDate.setDisabled(false);
         //noteDetail.setDisabled(false);
-        //noteText.setDisabled(false);;
-        //notelist.setDisabled(true);
+        noteText.setDisabled(false);;
         me.lookupReference('exitBtn').setText('Cancel');
         me.lookupReference('addNoteBtn').setHidden(true);
         me.lookupReference('saveBtn').setHidden(false);
@@ -847,7 +857,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         vm.set('theNote', {});
     },
     onBeforeSelect: function (rowModel, rec, index) {
-        console.log('onBeforeSelect called');
+        // console.log('onBeforeSelect called');
         // console.info(rowModel);
         // console.info(rec);
         // console.info(index);
@@ -872,17 +882,21 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         noteDetail.setDisabled(false);
         noteText.setDisabled(false);
         noteComplete.setDisabled(false);
+        me.lookupReference('noteDetail').setDisabled(false);
 
-        console.info(rec);
+
+        //console.info(rec);
         if (rec.hasOwnProperty('data')) {
             if (rec.data.OFFUPACT == 'E') {
                 me.lookupReference('noteDetail').setFieldLabel('Email');
                 me.lookupReference('noteDetail').setHidden(false);
                 me.lookupReference('noteFollowUpDate').setHidden(false);
                 me.lookupReference('noteComplete').setDisabled(true);
+                me.lookupReference('noteDetail').setDisabled(false);
+                noteDetail.setHideTrigger(false);
                 if (rec.data.OFFUPCMP == '1') {
                     //me.lookupReference('noteForm').setDisabled(true);
-                    console.info(me.lookupReference('noteForm'));
+                    //console.info(me.lookupReference('noteForm'));
                     noteType.setDisabled(true);
                     noteAction.setDisabled(true);
                     noteFollowUpDate.setDisabled(true);
@@ -893,6 +907,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             } else if (rec.data.OFFUPACT == 'P') {
                 me.lookupReference('noteDetail').setFieldLabel('Phone');
                 me.lookupReference('noteDetail').setHidden(false);
+                noteDetail.setHideTrigger(true);
                 me.lookupReference('noteFollowUpDate').setHidden(false);
             } else if (rec.data.OFFUPACT == 'V') {
                 me.lookupReference('noteDetail').setFieldLabel('Detail');
@@ -1025,12 +1040,15 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
 
     onSelectNoteAction: function (combo, record) {
         // Change the detail lable
+        //console.log('onSelectNoteAction called');
         var me = this,
             vm = me.getViewModel(),
             theNote = vm.get('theNote'),
             noteDetail = me.lookupReference('noteDetail'),
             noteFollowUpDate = me.lookupReference('noteFollowUpDate'),
-            noteComplete = me.lookupReference('noteComplete');
+            noteComplete = me.lookupReference('noteComplete'),
+            mainVm = Ext.getCmp('app-main').getViewModel(),
+            noteDetailOpts = mainVm.getStore('NoteDetailOptions');;
 
         //console.info(record);
         if (!Ext.isEmpty(record)) {
@@ -1038,11 +1056,19 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                 noteDetail.setFieldLabel('Phone');
                 noteFollowUpDate.setHidden(false);
                 noteDetail.setHidden(false);
+                //noteDetail.unselectable();
+                Ext.get('noteDetail').unselectable();
                 noteComplete.setDisabled(false);
+                noteDetail.setHideTrigger(true);
+
+
+
             } else if (record.data.NOTEACTC == 'E') {
+                //console.log('NOTEACTC == E')
                 noteDetail.setFieldLabel('Email');
                 noteFollowUpDate.setHidden(false);
                 noteDetail.setHidden(false);
+                noteDetail.setHideTrigger(false);
                 noteComplete.setDisabled(true);
             } else if (record.data.NOTEACTC == 'V') {
                 noteFollowUpDate.setHidden(false);
@@ -1081,8 +1107,15 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         // if (noteFollowUpDate.getValue() != null) {
         //     noteFollowUpDate.setValue(noteFollowUpDate.getValue());
         // }
+    },
+
+    onDetailSelect: function (cmp, rec) {
+        var me = this,
+            noteDetail = me.lookupReference('noteDetail');
+        // console.info(rec);
+        // console.info(rec.get('EMLCOD'));
+        if (rec.get('EMLCOD') == "*EMAIL") {
+            noteDetail.selectText();
+        }
     }
-
-
-
 });

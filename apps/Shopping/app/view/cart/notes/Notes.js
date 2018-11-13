@@ -490,34 +490,47 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         },
                         //{ xtype: 'tbfill' },
                         {
-                            //xtype: 'combo',
-                            xtype: 'textfield',
+                            xtype: 'combo',
+                            //xtype: 'textfield',
                             editable: true,
                             flex: 1,
                             padding: '5',
                             fieldLabel: 'Detail',
                             reference: 'noteDetail',
+                            id: 'noteDetail',
+                            displayField: 'EMLDSC',
+                            valueField: 'EMLCOD',
                             msgTarget: 'qtip',
+                            queryMode: 'local',
                             publishes: 'value',
                             cls: 'note-type',
                             labelWidth: 40,
                             hidden: true,
+                            editable: true,
+                            autoSelect: false,
+                            //typeAhead: true,
                             //width: 200,
                             // labelWidth: false,
                             // labelStyle: 'width: auto',
                             //labelStyle: 'text-align: right',
                             bind: {
+                                store: '{NoteDetailOptions}',
                                 disabled: '{noteAction.value == null}',
                                 //visible: '{noteAction.value == null}',
                                 value: '{theNote.OFFUPDET}',
                                 //fieldLabel: '{note}'
+                            },
+                            listConfig: {
+                                //disableSelection: true,
+                                //hidden: true,
+                                //disabled: true
                             },
                             listeners: {
                                 focusleave: 'detailValidation',
 
                                 // when change and set save button enabled
                                 change: 'onTypeSelect',
-                                //keyup: 'onTypeSelect'
+                                select: 'onDetailSelect'
                             }
                         },
                     ]

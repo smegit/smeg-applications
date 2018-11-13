@@ -121,6 +121,7 @@ Ext.define('Shopping.view.main.MainController', {
                     // load note type options
                     me.loadNoteTypeOptions(d);
                     me.loadNoteActionOptions(d);
+                    me.loadNoteDetailOptions(d);
 
                     //console.info(d);
                     deferred.resolve(d);
@@ -216,6 +217,17 @@ Ext.define('Shopping.view.main.MainController', {
             //console.info(noteActionOpts);
             store.loadRawData(content.noteActions);
             store.insert(0, [{ 'NOTEACTC': null, 'NOTEACTD': "None", 'NOTEACTS': null, 'NOTEACTV': null }]);
+        }
+        //console.info(store);
+    },
+    loadNoteDetailOptions: function (content) {
+        console.log('loadNoteDetailOptions called');
+        var noteDetailOpts = content.emailDefaults;
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('NoteDetailOptions');
+        if (!Ext.isEmpty(store) && !Ext.isEmpty(content.emailDefaults)) {
+            store.loadRawData(content.emailDefaults);
         }
         //console.info(store);
     }
