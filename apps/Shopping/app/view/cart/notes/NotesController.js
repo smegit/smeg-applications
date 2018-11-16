@@ -547,7 +547,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         // console.log('save the record or update the record');
         // console.info(noteType.getValue());
         // console.info(noteAction.getValue());
-        // console.info(noteDetail.getValue());
+        console.info(noteDetail);
         // console.info(noteFollowUpDate.getValue());
         // console.info(noteComplete.getValue());
         // console.info(noteForm);
@@ -620,6 +620,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                 OFFUPDET: noteDetail.getRawValue(),
                 OFFUPDAT: noteFollowUpDate.getValue(),
                 OFNOTE: noteText.getValue(),
+                OFFUPCOD: noteDetail.getValue()
             }), 'Saving')
                 .then(function (data) {
                     var resp = data;
@@ -668,10 +669,11 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             // Update the existing note
             if (theNote.dirty) {
                 //console.log('updating existing note');
-                //console.info(theNote.data);
+                console.info(theNote.data);
+
                 var record = theNote.data;
                 // unkown reason: theNote.data has 'OFFUPDAT' undefined
-                Ext.apply(record, { "OFFUPDAT": noteFollowUpDate.getValue() })
+                Ext.apply(record, { "OFFUPDAT": noteFollowUpDate.getValue(), OFFUPCOD: noteDetail.getValue(), OFFUPDET: noteDetail.getRawValue() })
                 //console.info(record);
                 me.processNote(record, 'updating')
                     .then(function (data) {

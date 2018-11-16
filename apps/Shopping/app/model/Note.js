@@ -1,6 +1,6 @@
 Ext.define('Shopping.model.Note', {
     extend: 'Ext.data.Model',
-    fields: ['OFNOTE', 'OFCRTUSER', 'OFCRTDATE', 'OFCRTTIME', 'OFSEQ', 'OFTYPE', 'OFFUPDET', 'OFFUPACT', 'OFCHGDATE', 'OFCHGTIME', 'OFCHGUSER', {
+    fields: ['OFNOTE', 'OFCRTUSER', 'OFCRTDATE', 'OFCRTTIME', 'OFSEQ', 'OFTYPE', 'OFFUPDET', 'OFFUPACT', 'OFFUPCOD', 'OFCHGDATE', 'OFCHGTIME', 'OFCHGUSER', {
         name: 'dateTime',
         convert: function (v, rec) {
             //console.info(rec);
