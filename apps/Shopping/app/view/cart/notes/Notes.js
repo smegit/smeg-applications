@@ -502,7 +502,11 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             valueField: 'EMLCOD',
                             msgTarget: 'qtip',
                             queryMode: 'local',
-                            publishes: 'value',
+                            publishes: [
+                                'value',
+                                'rawValue',
+                                'dirty'
+                            ],
                             cls: 'note-type',
                             labelWidth: 40,
                             hidden: true,
