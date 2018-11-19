@@ -547,7 +547,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         // console.log('save the record or update the record');
         // console.info(noteType.getValue());
         // console.info(noteAction.getValue());
-        console.info(noteDetail);
+        // console.info(noteDetail);
         // console.info(noteFollowUpDate.getValue());
         // console.info(noteComplete.getValue());
         // console.info(noteForm);
@@ -682,7 +682,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             // Update the existing note
             if (theNote.dirty) {
                 //console.log('updating existing note');
-                console.info(theNote);
+                //console.info(theNote);
 
                 var record = theNote.data;
                 if (record.OFFUPACT == 'P') {
@@ -690,10 +690,10 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                 }
                 // unkown reason: theNote.data has 'OFFUPDAT' undefined
                 Ext.apply(record, { "OFFUPDAT": noteFollowUpDate.getValue(), OFFUPDET: noteDetail.getRawValue() })
-                console.info(record);
+                //console.info(record);
                 me.processNote(record, 'updating')
                     .then(function (data) {
-                        console.info(data);
+                        //console.info(data);
                         //theNote.commit();
                         var ut = data.OFCHGTIME.replace(/\./g, ":");
                         var rec = vm.getStore('Notes').findRecord('OFSEQ', data.OFSEQ);
@@ -702,7 +702,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
                         rec.set('OFCHGUSER', data.OFCHGUSER);
                         rec.set('updatedRender', ut);
                         rec.set('OFFUPDET', data.OFFUPDET);
-                        console.info(vm.getStore('Notes'));
+                        //console.info(vm.getStore('Notes'));
                         theNote.commit();
                         me.lookupReference('noteText').focus();
                         me.lookupReference('saveBtn').setDisabled(true);
@@ -879,7 +879,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
     onBeforeSelect: function (rowModel, rec, index) {
         // console.log('onBeforeSelect called');
         // console.info(rowModel);
-        console.info(rec);
+        // console.info(rec);
         // console.info(index);
         var me = this,
             vm = me.getViewModel(),
@@ -1134,8 +1134,8 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             noteDetail = me.lookupReference('noteDetail'),
             vm = me.getViewModel(),
             theNote = vm.get('theNote');
-        console.info(rec);
-        console.log(theNote);
+        //console.info(rec);
+        //console.log(theNote);
         if (!Ext.isEmpty(theNote)) {
             if (theNote.hasOwnProperty('data')) {
                 theNote.set('OFFUPCOD', rec.get('EMLCOD'));
