@@ -86,14 +86,14 @@ Ext.define('Shopping.view.cart.Main', {
                     click: 'onClickSave'
                 }
             }, {
-                text: 'Deposit',
+                text: 'Payment',
                 ui: 'white',
                 maskMsg: 'Setting up Deposit',
                 listeners: {
                     click: 'onClickDeposit'
                 }
             }, {
-                text: 'Process',
+                text: 'Delivery',
                 reference: 'checkoutButton',
                 ui: 'blue',
                 maskMsg: 'Preparing to process order',
@@ -122,7 +122,7 @@ Ext.define('Shopping.view.cart.Main', {
                 align: 'stretch'
             },
             bind: {
-                hidden: '{hideOrdKey}'
+                //hidden: '{hideOrdKey}'
             },
             items: [{
                 xtype: 'component',

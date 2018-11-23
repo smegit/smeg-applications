@@ -227,7 +227,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * @param action
      */
     depositRelease: function (cmp, action) {
-        console.log('depositRelease called');
+        //console.log('depositRelease called');
         var me = this,
             vm = me.getViewModel(),
             deferred = Ext.create('Ext.Deferred'),
@@ -693,6 +693,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * @param cmp
      */
     onClickDeposit: function (cmp) {
+        console.log('onClickDeposit called');
         var me = this,
             valid = me.isFormValid();
 
@@ -708,7 +709,9 @@ Ext.define('Shopping.view.cart.CartController', {
     onClickNotes: function () {
         //console.log('debug onClickNotes called');
         var me = this,
-            vm = me.getViewModel();
+            vm = me.getViewModel(),
+            valid = me.isFormValid(),
+            cartInfo = me.getCartInformation();
         //noteModel = me.lookupReference('notesWin');
         //mainVm = me.getView(),
         view = me.getView();
@@ -716,32 +719,52 @@ Ext.define('Shopping.view.cart.CartController', {
         // console.info(view);
         // console.log(vm.get('activeCartNumber'));
         //vm.getStore('Notes').load();
-        Ext.ComponentQuery.query('app-main')[0].add({
-            xtype: 'notes',
-            viewModel: {
-                data: {
-                    //orderKey: vm.get('activeCartNumber')
-                }
-            },
-            listeners: {
-                delay: 200,
-                afterrender: function (cmp) {
-                },
-                show: function (cmp) {
-                    var store = cmp.getViewModel().getStore('Notes');
-                    store.load({
-                        //scope: me,
-                        callback: function (records, operation, success) {
-                            if (records.length > 0) {
-                                cmp.lookupReference('notelist').getSelectionModel().select(0);
-                            } else {
-                                cmp.lookupReference('noteType').focus();
+
+        //console.info(cartInfo);
+        if (valid) {
+            if (!Ext.isEmpty(cartInfo)) {
+                me.saveCart(cartInfo.data, cartInfo.products)
+                    .then(function (content) {
+                        vm.set('activeCartNumber', content.OAORDKEY);
+
+                        Ext.apply(cartInfo.data, {
+                            OAORDKEY: content.OAORDKEY
+                        });
+                        Ext.ComponentQuery.query('app-main')[0].add({
+                            xtype: 'notes',
+                            viewModel: {
+                                data: {
+                                    //orderKey: vm.get('activeCartNumber')
+                                }
+                            },
+                            listeners: {
+                                delay: 200,
+                                afterrender: function (cmp) {
+                                },
+                                show: function (cmp) {
+                                    var store = cmp.getViewModel().getStore('Notes');
+                                    store.load({
+                                        //scope: me,
+                                        callback: function (records, operation, success) {
+                                            if (records.length > 0) {
+                                                cmp.lookupReference('notelist').getSelectionModel().select(0);
+                                            } else {
+                                                cmp.lookupReference('noteType').focus();
+                                            }
+                                        }
+                                    });
+                                }
                             }
-                        }
+                        }).show();
+                    }, function () {
+
                     });
-                }
             }
-        }).show();
+
+        } else {
+            Valence.util.Helper.showSnackbar(me.requiredFieldMsg);
+        }
+
     },
 
     /**
