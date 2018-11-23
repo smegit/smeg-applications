@@ -720,7 +720,7 @@ Ext.define('Shopping.view.cart.CartController', {
         // console.log(vm.get('activeCartNumber'));
         //vm.getStore('Notes').load();
 
-        //console.info(cartInfo);
+        console.info(cartInfo);
         if (valid) {
             if (!Ext.isEmpty(cartInfo)) {
                 me.saveCart(cartInfo.data, cartInfo.products, 'Saving Existing Order...')

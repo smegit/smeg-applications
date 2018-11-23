@@ -93,7 +93,7 @@ Ext.define('Shopping.view.cart.Main', {
                     click: 'onClickDeposit'
                 }
             }, {
-                text: 'Delivery',
+                text: 'Deliver',
                 reference: 'checkoutButton',
                 ui: 'blue',
                 maskMsg: 'Preparing to process order',
