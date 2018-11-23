@@ -723,7 +723,7 @@ Ext.define('Shopping.view.cart.CartController', {
         //console.info(cartInfo);
         if (valid) {
             if (!Ext.isEmpty(cartInfo)) {
-                me.saveCart(cartInfo.data, cartInfo.products)
+                me.saveCart(cartInfo.data, cartInfo.products, 'Saving Existing Order...')
                     .then(function (content) {
                         vm.set('activeCartNumber', content.OAORDKEY);
 
