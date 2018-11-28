@@ -529,6 +529,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     loadExistingCart: function (cell, el, cellIndex, record) {
+        console.info('loadExistingCart called');
         var me = this,
             vm = me.getViewModel(),
             cartKey = record.get('OAORDKEY'),
@@ -555,6 +556,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             success: function (r) {
                 //console.info(r);
                 obj = Ext.decode(r.responseText);
+                //console.info(obj);
                 var continueFnc = function () {
                     var products = obj.CartDtl,
                         formPanel = Ext.ComponentQuery.query('cartform')[0],
@@ -685,6 +687,12 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     mainController = me.getView().up('app-main').getController(),
                     mainVm = me.getView().lookupViewModel(true),
                     activeAgent = mainVm.get('agent');
+
+
+                // reset form value
+                // var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
+
+                // cartForm.setValues(cartForm.getValues());
 
                 //check if the agent is different form the one we are currently working with
                 // if so update the portal and get the options

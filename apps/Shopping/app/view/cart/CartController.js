@@ -231,7 +231,7 @@ Ext.define('Shopping.view.cart.CartController', {
         var me = this,
             vm = me.getViewModel(),
             deferred = Ext.create('Ext.Deferred'),
-            cartInfo = me.getCartInformation(),
+            cartInfo = me.getCartInformation(action),
             view = me.getView(),
             orderKeyFld = view.down('[name=OAORDKEY]'),
             params = {
@@ -323,7 +323,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * getCartInformation - get the current cart information
      * @returns {*}
      */
-    getCartInformation: function () {
+    getCartInformation: function (opt) {
         var me = this,
             vm = me.getViewModel(),
             view = me.getView(),
@@ -338,20 +338,26 @@ Ext.define('Shopping.view.cart.CartController', {
             var formData = vm.get('cartValues'),
                 store = view.lookupViewModel(true).getStore('cartItems'),
                 storeCount = store.getCount(),
-                standardOrder = me.isStandardOrder(),
+                standardOrder = me.isStandardOrder(opt),
                 prodArray = [],
                 product, rec;
 
             Ext.apply(formData, form.getValues());
+            //console.info(store);
+            //console.info(form.getValues());
 
             for (var i = 0; i < storeCount; i++) {
                 rec = store.getAt(i);
                 product = rec.getData();
+                //console.info(Shopping.util.Helper.getOutstanding(rec));
+                //console.info(product.release);
                 prodArray.push({
                     OBITM: product.product_id,
                     OBQTYO: product.quantity,
                     OBUPRC: product.price,
-                    OBQTYR: (standardOrder) ? Shopping.util.Helper.getOutstanding(rec) : product.release
+                    //OBQTYR: (standardOrder) ? Shopping.util.Helper.getOutstanding(rec) : product.release
+                    OBQTYR: product.release
+
                 });
             }
 
@@ -482,7 +488,7 @@ Ext.define('Shopping.view.cart.CartController', {
      *    outstanding is greater than 0.
      * @returns {boolean}
      */
-    isStandardOrder: function () {
+    isStandardOrder: function (opt) {
         var me = this,
             view = me.getView(),
             store = view.lookupViewModel(true).getStore('cartItems'),
@@ -499,7 +505,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 }
             }), standard;
 
-        if (outstandingItems.getCount() === releaseZeroItems.getCount()) {
+        if (outstandingItems.getCount() === releaseZeroItems.getCount() && opt == 'checkout') {
             standard = true;
             releaseZeroItems.each(function (rec) {
                 rec.set('release', Shopping.util.Helper.getOutstanding(rec));
@@ -509,6 +515,9 @@ Ext.define('Shopping.view.cart.CartController', {
             standard = false;
         }
 
+        // console.info(standard);
+        // console.info(outstandingItems);
+        // console.info(releaseZeroItems);
         return standard;
     },
 
@@ -711,16 +720,31 @@ Ext.define('Shopping.view.cart.CartController', {
         var me = this,
             vm = me.getViewModel(),
             valid = me.isFormValid(),
-            cartInfo = me.getCartInformation();
+            cartInfo = me.getCartInformation('123'),
+            oldCartValues = vm.get('oldCartValues'),
+            cartValues = vm.get('cartValues');
         //noteModel = me.lookupReference('notesWin');
         //mainVm = me.getView(),
         view = me.getView();
-        // console.info(vm);
+        //cartForm.reset();
+
+
+        // reset form value
+        var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
+
+        //cartForm.setValues(cartForm.getValues());
+        // console.info(cartForm);
+
+        // console.info(cartForm.isDirty());
+        // console.info(cartForm);
+
         // console.info(view);
         // console.log(vm.get('activeCartNumber'));
         //vm.getStore('Notes').load();
 
-        console.info(cartInfo);
+        // console.info(cartValues);
+        // console.info(oldCartValues);
+        // console.info(cartInfo);
         if (valid) {
             if (!Ext.isEmpty(cartInfo)) {
                 me.saveCart(cartInfo.data, cartInfo.products, 'Saving Existing Order...')
@@ -772,6 +796,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * @param cmp
      */
     onClickRelease: function (cmp) {
+        console.log('onClickRelease called');
         var me = this,
             vm = me.getViewModel(),
             view = me.getView(),
@@ -1136,6 +1161,7 @@ Ext.define('Shopping.view.cart.CartController', {
             disableSalesPerson: false,
             activeCartNumber: null,
             cartValues: null,
+            oldCartValues: null,
             orderPayments: null,
             STKLOC: vm.get('defaultStockLocation')
         });
@@ -1496,4 +1522,16 @@ Ext.define('Shopping.view.cart.CartController', {
 
         return deferred.promise;
     },
+
+    // listener for updateData
+    onUpdateData: function () {
+        //console.log('onUpdateData called');
+    },
+
+    onOrderChange: function () {
+        //console.info('onOrderChange called');
+    },
+    oCartBeforeShow: function () {
+        //console.log('onCartBeforeShow called');
+    }
 });

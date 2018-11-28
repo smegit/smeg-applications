@@ -234,32 +234,6 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                     dirtychange: 'onFormDirtyChange'
                 },
 
-
-
-                // items: [{
-                //     xtype: 'container',
-                //     layout: {
-                //         type: 'vbox',
-                //         align: 'stretch'
-                //     },
-                //     items: [{
-                //         xtype: 'container',
-                //         layout: {
-                //             type: 'hbox',
-                //             align: 'stretch'
-                //         },
-                //         items: []
-                //     }, {
-                //         xtype: 'container',
-                //         layout: {
-                //             type: 'hbox',
-                //             align: 'stretch'
-                //         },
-                //         items: []
-
-                //     }]
-                // }],
-
                 items: [{
                     xtype: 'container',
                     layout: {
@@ -267,21 +241,6 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         align: 'stretch'
                     },
 
-                    // plugins: {
-                    //     responsive: true
-                    // },
-                    // responsiveConfig: {
-                    //     'width < 600': {
-                    //         layout: {
-                    //             type: 'box',
-                    //             vertical: true,
-                    //             align: 'stretch'
-                    //         }
-                    //     },
-                    //     'width >= 600': {
-
-                    //     }
-                    //},
                     items: [{
                         xtype: 'combo',
                         fieldLabel: 'Type',
@@ -311,19 +270,6 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             //change: 'onSelectTypeChange',
                             select: 'onTypeSelect'
                         }
-
-                        // Stop the click evt from propagation otherwise the modal will disappear
-                        // listConfig: {
-                        //     listeners: {
-                        //         el: {
-                        //             click: {
-                        //                 fn: function (ev, anchor) {
-                        //                     ev.stopPropagation()
-                        //                 }
-                        //             }
-                        //         }
-                        //     }
-                        // }
                     }, {
                         xtype: 'combo',
                         fieldLabel: 'Follow Up',
@@ -382,35 +328,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             beforeactivate: 'onExpand'
                         }
                     },
-                    // {
-                    //     //xtype: 'combo',
-                    //     xtype: 'textfield',
-                    //     editable: true,
-                    //     //flex: 1,
-                    //     padding: '5',
-                    //     fieldLabel: 'Detail',
-                    //     reference: 'noteDetail',
-                    //     msgTarget: 'qtip',
-                    //     publishes: 'value',
-                    //     cls: 'note-type',
-                    //     labelWidth: 50,
-                    //     //width: 160,
-                    //     // labelWidth: false,
-                    //     // labelStyle: 'width: auto',
-                    //     //labelStyle: 'text-align: right',
-                    //     bind: {
-                    //         disabled: '{noteAction.value == null}',
-                    //         value: '{theNote.OFFUPDET}',
-                    //         //fieldLabel: '{note}'
-                    //     },
-                    //     listeners: {
-                    //         focusleave: 'detailValidation',
 
-                    //         // when change and set save button enabled
-                    //         change: 'onTypeSelect',
-                    //         //keyup: 'onTypeSelect'
-                    //     }
-                    // },
                     {
                         xtype: 'checkboxfield',
                         name: 'noteComplete',
@@ -741,18 +659,6 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         click: 'onClickCancel'
                     }
                 }
-
-                // {
-                //     xtype: 'button',
-                //     text: 'Add',
-                //     ui: 'blue',
-                //     bind: {
-                //         disabled: '{disableAddButton}'
-                //     },
-                //     listeners: {
-                //         click: 'onClickAdd'
-                //     }
-                // }
             ]
         }
     }
