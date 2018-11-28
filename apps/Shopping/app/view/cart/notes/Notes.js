@@ -46,6 +46,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
     },
     listeners: {
         beforeshow: 'onBeforeShowWindow',
+        show: 'onShow'
     },
     // listeners: {
     //     resize: function (win, width, height, eOpts) {
@@ -260,7 +261,8 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         //labelStyle: 'text-align: right',
                         //flex: 1,
                         bind: {
-                            store: '{NoteTypeOptions}',
+                            //store: '{NoteTypeOptions}',
+                            store: '{NoteTypeOpts}',
                             value: '{theNote.OFTYPE}'
                         },
                         listeners: {

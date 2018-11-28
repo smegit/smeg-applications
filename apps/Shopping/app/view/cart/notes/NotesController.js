@@ -875,6 +875,10 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             vm = me.getViewModel();
         //console.info(vm);
         vm.set('theNote', {});
+
+
+        // Load selection options
+
     },
     onBeforeSelect: function (rowModel, rec, index) {
         // console.log('onBeforeSelect called');
@@ -1150,5 +1154,9 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         if (rec.get('EMLCOD') == "*EMAIL") {
             noteDetail.selectText();
         }
+    },
+
+    onShow: function () {
+        console.log('onShow called');
     }
 });

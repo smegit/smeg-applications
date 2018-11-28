@@ -2,37 +2,40 @@ Ext.define('Shopping.view.cart.notes.NotesModel', {
     extend: 'Ext.app.ViewModel',
     requires: [
         'Shopping.model.Note',
+        'Shopping.model.NoteTypeOption'
     ],
     alias: 'viewmodel.notes',
     stores: {
         Notes: {
             model: 'Shopping.model.Note',
             autoLoad: false,
-            proxy: {
-                type: 'ajax',
-                url: '/valence/vvcall.pgm',
-                extraParams: {
-                    pgm: 'EC1050',
-                    action: 'getNotes',
-                    OAORDKEY: '{orderKey}'
-                    //OAORDKEY: '20000503'
-                },
-                reader: {
-                    type: 'json',
-                    rootProperty: 'notes'
-                }
-            },
-            sorters: [{
-                //property: 'dateTime',
-                //property: 'OFCRTDATE',
-                property: 'OFSEQ',
-                direction: 'DESC'
-            }],
-            listeners: {
-                // load: function () {
-                //     //this.grid.getSelectionModel().selectFirstRow();
-                // }
-            }
+            // proxy: {
+            //     type: 'ajax',
+            //     url: '/valence/vvcall.pgm',
+            //     extraParams: {
+            //         pgm: 'EC1050',
+            //         action: 'getNotes',
+            //         OAORDKEY: '{orderKey}'
+            //         //OAORDKEY: '20000503'
+            //     },
+            //     reader: {
+            //         type: 'json',
+            //         rootProperty: 'notes'
+            //     }
+            // },
+            // sorters: [{
+            //     //property: 'dateTime',
+            //     //property: 'OFCRTDATE',
+            //     property: 'OFSEQ',
+            //     direction: 'DESC'
+            // }],
+            // listeners: {
+            //     load: function (store, records, successful) {
+            //         //this.grid.getSelectionModel().selectFirstRow();
+            //         console.info(store);
+            //         console.info(records)
+            //     }
+            // }
         },
         // noteTypes: {
         //     proxy: {
@@ -76,6 +79,15 @@ Ext.define('Shopping.view.cart.notes.NotesModel', {
                 { name: 'ongoing', label: 'Ongoing' },
                 { name: 'complete', label: 'Complete' }
             ]
+        },
+        noteTypeOpts: {
+            model: 'Shopping.model.NoteTypeOption',
+            autoLoad: false,
+            // data: [
+            //     { NOTETYPEC: "U", NOTETYPED: "General", NOTETYPES: "General" },
+            //     { NOTETYPEC: "S", NOTETYPED: "Service", NOTETYPES: "Service" },
+            //     { NOTETYPEC: "G", NOTETYPED: "Global", NOTETYPES: "Global" }
+            // ]
         }
     }
 });

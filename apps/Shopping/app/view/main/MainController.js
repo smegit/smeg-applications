@@ -119,7 +119,7 @@ Ext.define('Shopping.view.main.MainController', {
                     me.loadStockLocations(d);
 
                     // load note type options
-                    me.loadNoteTypeOptions(d);
+                    //me.loadNoteTypeOptions(d);
                     me.loadNoteActionOptions(d);
                     me.loadNoteDetailOptions(d);
 
