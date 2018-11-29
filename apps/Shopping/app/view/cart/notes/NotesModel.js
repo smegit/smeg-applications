@@ -2,7 +2,9 @@ Ext.define('Shopping.view.cart.notes.NotesModel', {
     extend: 'Ext.app.ViewModel',
     requires: [
         'Shopping.model.Note',
-        'Shopping.model.NoteTypeOption'
+        'Shopping.model.NoteTypeOption',
+        'Shopping.model.NoteActionOption',
+        'Shopping.model.NoteDetailOption'
     ],
     alias: 'viewmodel.notes',
     stores: {
@@ -23,12 +25,12 @@ Ext.define('Shopping.view.cart.notes.NotesModel', {
             //         rootProperty: 'notes'
             //     }
             // },
-            // sorters: [{
-            //     //property: 'dateTime',
-            //     //property: 'OFCRTDATE',
-            //     property: 'OFSEQ',
-            //     direction: 'DESC'
-            // }],
+            sorters: [{
+                //property: 'dateTime',
+                //property: 'OFCRTDATE',
+                property: 'OFSEQ',
+                direction: 'DESC'
+            }],
             // listeners: {
             //     load: function (store, records, successful) {
             //         //this.grid.getSelectionModel().selectFirstRow();
@@ -80,14 +82,21 @@ Ext.define('Shopping.view.cart.notes.NotesModel', {
                 { name: 'complete', label: 'Complete' }
             ]
         },
-        noteTypeOpts: {
+        NoteTypeOpts: {
             model: 'Shopping.model.NoteTypeOption',
+            autoLoad: false
+        },
+        NoteActionOpts: {
+            model: 'Shopping.model.NoteActionOption',
+            autoLoad: false
+        },
+        NoteDetailOpts: {
+            model: 'Shopping.model.NoteDetailOption',
             autoLoad: false,
-            // data: [
-            //     { NOTETYPEC: "U", NOTETYPED: "General", NOTETYPES: "General" },
-            //     { NOTETYPEC: "S", NOTETYPED: "Service", NOTETYPES: "Service" },
-            //     { NOTETYPEC: "G", NOTETYPED: "Global", NOTETYPES: "Global" }
-            // ]
+            sorters: [{
+                property: 'EMLSEQ',
+                direction: 'ASC'
+            }],
         }
     }
 });

@@ -289,7 +289,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         labelStyle: 'min-width: 40px',
                         //labelStyle: 'text-align: right',
                         bind: {
-                            store: '{NoteActionOptions}',
+                            store: '{NoteActionOpts}',
                             // disabled: '{noteType.value !== "follow_up"}',
                             value: '{theNote.OFFUPACT}'
                         },
@@ -438,7 +438,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             // labelStyle: 'width: auto',
                             //labelStyle: 'text-align: right',
                             bind: {
-                                store: '{NoteDetailOptions}',
+                                store: '{NoteDetailOpts}',
                                 disabled: '{noteAction.value == null}',
                                 //visible: '{noteAction.value == null}',
                                 value: '{theNote.OFFUPDET}',

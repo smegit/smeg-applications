@@ -7,7 +7,8 @@ Ext.define('Shopping.view.cart.CartController', {
         'Shopping.view.cart.Print',
         'Shopping.view.cart.notes.Notes',
 
-        //'Shopping.view.cart.NoteList'
+        //'Shopping.view.cart.NoteList',
+        'Shopping.view.cart.notes.NotesController'
     ],
     alias: 'controller.cart',
     listen: {
@@ -758,74 +759,90 @@ Ext.define('Shopping.view.cart.CartController', {
                             OAORDKEY: content.OAORDKEY
                         });
 
-                        // load notes and options 
-                        me.getNotesAndOptions(content.OAORDKEY)
-                            .then(function (content) {
-                                console.info(content);
-                                if (!Ext.isEmpty(content) && content.success) {
-                                    Ext.ComponentQuery.query('app-main')[0].add({
-                                        xtype: 'notes'
-                                    }).show();
+                        return content.OAORDKEY;
+                    })
+                    .then(function (key) {
+                        var me = this,
+                            deferred = Ext.create('Ext.Deferred'),
+                            params = {
+                                pgm: 'EC1050',
+                                action: 'getNotes',
+                                OAORDKEY: key
+                            };
+                        Ext.Ajax.request({
+                            url: '/valence/vvcall.pgm',
+                            params: params,
+                            success: function (r) {
+                                var d = Ext.decode(r.responseText);
+                                console.info(d);
+                                deferred.resolve(d);
+                            }
+                        });
+                        return deferred.promise;
+                    })
+                    .then(function (content) {
+                        console.info(content);
+                        //me.loadNotes(content);
+                        //me.loadNoteTypeOpts(content);
+                        Ext.ComponentQuery.query('app-main')[0].add({
+                            xtype: 'notes',
+                            viewModel: {
+                                data: {
+                                    //orderKey: vm.get('activeCartNumber')
                                 }
-                                // Ext.ComponentQuery.query('app-main')[0].add({
-                                //     xtype: 'notes',
-                                //     viewModel: {
-                                //         data: {
-                                //             //orderKey: vm.get('activeCartNumber')
-                                //         }
-                                //     },
-                                //     listeners: {
-                                //         delay: 200,
-                                //         afterrender: function (cmp) {
-                                //         },
-                                //         show: function (cmp) {
-                                //             var store = cmp.getViewModel().getStore('Notes');
-                                //             store.load({
-                                //                 //scope: me,
-                                //                 callback: function (records, operation, success) {
-                                //                     // if (records.length > 0) {
-                                //                     //     cmp.lookupReference('notelist').getSelectionModel().select(0);
-                                //                     // } else {
-                                //                     //     cmp.lookupReference('noteType').focus();
-                                //                     // }
-                                //                 }
-                                //             });
-                                //         }
-                                //     }
-                                // }).show();
+                            },
+                            listeners: {
+                                delay: 200,
+                                beforerender: function (cmp) {
+                                    console.log('beforerender called');
+                                    console.log('beforeshow called');
+                                    console.info(cmp);
+                                    console.info(content);
+                                    var storeNotes = cmp.getViewModel().getStore('Notes'),
+                                        storeNoteTypeOpts = cmp.getViewModel().getStore('NoteTypeOpts'),
+                                        storeNoteActionOpts = cmp.getViewModel().getStore('NoteActionOpts'),
+                                        storeNoteDetailOpts = cmp.getViewModel().getStore('NoteDetailOpts');
+                                    storeNoteTypeOpts.loadRawData(content.noteTypes);
+                                    storeNoteActionOpts.loadRawData(content.noteActions);
+                                    storeNoteActionOpts.insert(0, [{ 'NOTEACTC': null, 'NOTEACTD': "None", 'NOTEACTS': null, 'NOTEACTV': null }]);
+                                    storeNoteDetailOpts.loadRawData(content.emailDefaults);
+                                    storeNotes.loadRawData(content.notes);
+                                },
+                                beforeshow: function (cmp) {
+                                    console.log('beforeshow called');
+                                },
+                                show: function (cmp) {
+                                    var store = cmp.getViewModel().getStore('Notes');
+                                    // store.load({
+                                    //     //scope: me,
+                                    //     callback: function (records, operation, success) {
+                                    //         if (records.length > 0) {
+                                    //             cmp.lookupReference('notelist').getSelectionModel().select(0);
+                                    //         } else {
+                                    //             cmp.lookupReference('noteType').focus();
+                                    //         }
+                                    //     }
+                                    // });
+                                },
+                                afterrender: function (cmp) {
+                                    var store = cmp.getViewModel().getStore('Notes');
+                                    //     storeNoteTypeOpts = cmp.getViewModel().getStore('NoteTypeOpts'),
+                                    //     storeNoteActionOpts = cmp.getViewModel().getStore('NoteActionOpts'),
+                                    //     storeNoteDetailOpts = cmp.getViewModel().getStore('NoteDetailOpts');
+                                    // console.info(storeNoteTypeOpts);
+                                    // console.info(storeNoteActionOpts);
+                                    // console.info(storeNoteDetailOpts);
 
+                                    // console.info(store.getCount());
+                                    if (store.getCount() > 0) {
+                                        cmp.lookupReference('notelist').getSelectionModel().select(0);
+                                    } else {
+                                        cmp.lookupReference('noteType').focus();
+                                    }
 
-                            });
-
-                        // Ext.ComponentQuery.query('app-main')[0].add({
-                        //     xtype: 'notes',
-                        //     viewModel: {
-                        //         data: {
-                        //             //orderKey: vm.get('activeCartNumber')
-                        //         }
-                        //     },
-                        //     listeners: {
-                        //         delay: 200,
-                        //         afterrender: function (cmp) {
-                        //         },
-                        //         show: function (cmp) {
-                        //             var store = cmp.getViewModel().getStore('Notes');
-                        //             store.load({
-                        //                 //scope: me,
-                        //                 callback: function (records, operation, success) {
-                        //                     // if (records.length > 0) {
-                        //                     //     cmp.lookupReference('notelist').getSelectionModel().select(0);
-                        //                     // } else {
-                        //                     //     cmp.lookupReference('noteType').focus();
-                        //                     // }
-                        //                 }
-                        //             });
-                        //         }
-                        //     }
-                        // }).show();
-                        // Ext.ComponentQuery.query('app-main')[0].add({
-                        //     xtype: 'notes'
-                        // }).show();
+                                }
+                            }
+                        }).show();
                     });
             }
 
@@ -835,9 +852,6 @@ Ext.define('Shopping.view.cart.CartController', {
 
     },
 
-    showNotes: function () {
-
-    },
 
     // Get Notes And Options
     getNotesAndOptions: function (orderKey) {
@@ -852,44 +866,76 @@ Ext.define('Shopping.view.cart.CartController', {
         Ext.Ajax.request({
             url: '/valence/vvcall.pgm',
             params: params,
-            scope: me,
             success: function (r) {
-                var me = this,
-                    d = Ext.decode(r.responseText);
+                var d = Ext.decode(r.responseText);
                 console.info(d);
-                me.loadNoteTypeOpts(d);
-                me.loadNotes(d);
                 deferred.resolve(d);
             }
         });
-        //return deferred.promise;
+        return deferred.promise;
     },
 
     // Load Type Options
     loadNoteTypeOpts: function (content) {
         console.log('loadNoteTypeOptions called');
         var me = this,
-            vm = me.getViewModel();
-
-        // notesVm = me.getView(),
-        // store = notesVm.getStore('NoteTypeOpts');
-        console.info(me.getView());
+            notesVm = Ext.ComponentQuery.query('notes')[0].getViewModel(),
+            store = notesVm.getStore('NoteTypeOpts');
+        console.info(notesVm);
         if (!Ext.isEmpty(store) && !Ext.isEmpty(content.noteTypes)) {
             store.loadRawData(content.noteTypes);
         }
+        console.info(store);
+
+    },
+
+    // Load Action Options
+    loadNoteActionOptions: function (content) {
+        console.log('loadNoteActionOptions called');
+        //console.info(content);
+
+        var noteActionOpts = content.noteActions;
+
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('NoteActionOptions');
+        if (!Ext.isEmpty(store) && !Ext.isEmpty(content.noteActions)) {
+            //noteActionOpts.push({ "NOTEACTC": ' ', "NOTEACTD": ' ', "NOTEACTS": ' ', "NOTEACTV": ' ' });
+            //console.info(noteActionOpts);
+            store.loadRawData(content.noteActions);
+            store.insert(0, [{ 'NOTEACTC': null, 'NOTEACTD': "None", 'NOTEACTS': null, 'NOTEACTV': null }]);
+        }
         //console.info(store);
     },
+
+
+    // Load Detail Options
+    loadNoteDetailOptions: function (content) {
+        console.log('loadNoteDetailOptions called');
+        var noteDetailOpts = content.emailDefaults;
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('NoteDetailOptions');
+        if (!Ext.isEmpty(store) && !Ext.isEmpty(content.emailDefaults)) {
+            store.loadRawData(content.emailDefaults);
+        }
+        //console.info(store);
+    },
+
     // Load Notes
-    loadNotes: function () {
+    loadNotes: function (content) {
         console.log('loadNotes called');
         var me = this,
             vm = me.getViewModel(),
-            notesVm = Ext.getCmp('notes').getViewModel(),
+            notesVm = Ext.ComponentQuery.query('notes')[0].getViewModel(),
             store = notesVm.getStore('Notes');
         if (!Ext.isEmpty(store) && !Ext.isEmpty(content.notes)) {
             store.loadRawData(content.notes);
         }
+        console.info(this);
     },
+
+
 
     /**
      * onClickRelease - start the release of the selected products.

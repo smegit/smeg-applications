@@ -9,6 +9,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         'Shopping.view.cart.notes.NoteForm'
     ],
     alias: 'controller.notes',
+    id: 'notes',
     initViewModel: function (vm) {
         var cartVm = this.getView().up().down('shoppingstore').getViewModel();
         // console.info(cartVm);
@@ -479,7 +480,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             noteDetail = me.lookupReference('noteDetail'),
             vm = me.getViewModel(),
             mainVm = Ext.getCmp('app-main').getViewModel(),
-            noteDetailOpts = mainVm.getStore('NoteDetailOptions');
+            noteDetailOpts = me.getViewModel().getStore('NoteDetailOpts');
         //console.info(noteDetailOpts);
         // validate data - email
         if (noteAction.getValue() === 'E') {
@@ -870,16 +871,13 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
     },
 
     onBeforeShowWindow: function () {
-        //console.log('onBeforeShow called');
+        console.log('onBeforeShow called');
         var me = this,
             vm = me.getViewModel();
         //console.info(vm);
         vm.set('theNote', {});
-
-
-        // Load selection options
-
     },
+
     onBeforeSelect: function (rowModel, rec, index) {
         // console.log('onBeforeSelect called');
         // console.info(rowModel);
@@ -1072,7 +1070,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
             noteFollowUpDate = me.lookupReference('noteFollowUpDate'),
             noteComplete = me.lookupReference('noteComplete'),
             mainVm = Ext.getCmp('app-main').getViewModel(),
-            noteDetailOpts = mainVm.getStore('NoteDetailOptions');;
+            noteDetailOpts = me.getViewModel().getStore('NoteDetailOpts');;
 
         //console.info(record);
         if (!Ext.isEmpty(record)) {

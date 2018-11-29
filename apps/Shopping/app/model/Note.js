@@ -28,21 +28,22 @@ Ext.define('Shopping.model.Note', {
             name: 'OFTYPERENDER',
             convert: function (v, rec) {
                 //console.info(rec.get('OFTYPE'));
-                var mainVm = Ext.getCmp('app-main').getViewModel(),
-                    typeStore = mainVm.getStore('NoteTypeOptions'),
+                var typeVm = Ext.ComponentQuery.query('notes')[0].getViewModel(),
+                    typeStore = typeVm.getStore('NoteTypeOpts'),
                     index = typeStore.find('NOTETYPEC', rec.get('OFTYPE')),
                     record = typeStore.getAt(index);
                 if (record) {
                     return record.get('NOTETYPES');
                 }
-                // if (rec.get('OFTYPE') == 'O') {
-                //     return 'Order';
+
+                console.info(Ext.ComponentQuery.query('notes')[0].getViewModel());
+
+                // if (rec.get('OFTYPE') == 'U') {
+                //     return 'General';
                 // } else if (rec.get('OFTYPE') == 'S') {
                 //     return 'Service';
-                // } else if (rec.get('OFTYPE') == 'U') {
-                //     return 'General';
-                // } else if (rec.get('OFTYPE') == 'I') {
-                //     return 'Info';
+                // } else {
+                //     return 'Other';
                 // }
             }
         }, {
