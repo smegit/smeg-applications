@@ -16,7 +16,8 @@ Ext.define('Shopping.view.cart.Main', {
     listeners: {
         activate: 'onActivate',
         beforeactivate: 'onBeforeActivate',
-        updaterepsreadonly: 'onUpdateRepsReadOnly'
+        updaterepsreadonly: 'onUpdateRepsReadOnly',
+        //loadInitData: 'onLoadInitData'
     },
     defaults: {
         maxWidth: 1060,

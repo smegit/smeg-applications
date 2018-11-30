@@ -15,6 +15,7 @@ Ext.define('Shopping.view.cart.Form', {
         //'Shopping.view.cart.NoteList'
     ],
     xtype: 'cartform',
+    trackResetOnLoad: true,
     release: false,
     initComponent: function () {
         var me = this;

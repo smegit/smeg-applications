@@ -1,6 +1,7 @@
 Ext.define('Shopping.view.cart.CartController', {
     extend: 'Ext.app.ViewController',
     requires: [
+        'Ext.*',
         'Shopping.util.Helper',
         'Shopping.view.cart.PaymentForm',
         'Shopping.view.cart.Payments',
@@ -526,6 +527,8 @@ Ext.define('Shopping.view.cart.CartController', {
      * onActivate - setup the cart view.
      */
     onActivate: function () {
+        console.log('onActivate called');
+
         var me = this,
             vm = me.getViewModel(),
             view = me.getView(),
@@ -559,6 +562,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * @param cmp
      */
     onAfterRenderAddressSearch: function (cmp) {
+        console.log('onAfterRenderAddress called');
         var me = this,
             input = cmp.el.down('input');
 
@@ -721,36 +725,29 @@ Ext.define('Shopping.view.cart.CartController', {
         var me = this,
             vm = me.getViewModel(),
             valid = me.isFormValid(),
-            cartInfo = me.getCartInformation('123'),
-            oldCartValues = vm.get('oldCartValues'),
-            cartValues = vm.get('cartValues');
-        //noteModel = me.lookupReference('notesWin');
-        //mainVm = me.getView(),
-        view = me.getView();
-        //cartForm.reset();
-
-        console.info(vm);
+            cartInfo = me.getCartInformation();
 
 
 
         // reset form value
         var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
 
+        console.info(vm.getStore('cartItems'));
         //cartForm.setValues(cartForm.getValues());
-        // console.info(cartForm);
+        console.info(cartForm.getValues());
 
-        // console.info(cartForm.isDirty());
+        console.info(cartForm.isDirty());
         // console.info(cartForm);
 
         // console.info(view);
-        // console.log(vm.get('activeCartNumber'));
+        console.log(vm.get('cartValues'));
         //vm.getStore('Notes').load();
 
         // console.info(cartValues);
         // console.info(oldCartValues);
         // console.info(cartInfo);
         if (valid) {
-            if (!Ext.isEmpty(cartInfo)) {
+            if (!Ext.isEmpty(cartInfo) && cartForm.isDirty()) {
                 me.saveCart(cartInfo.data, cartInfo.products, 'Saving Existing Order...')
                     .then(function (content) {
                         vm.set('activeCartNumber', content.OAORDKEY);
@@ -758,7 +755,9 @@ Ext.define('Shopping.view.cart.CartController', {
                         Ext.apply(cartInfo.data, {
                             OAORDKEY: content.OAORDKEY
                         });
-
+                        vm.notify();
+                        cartForm.setValues(cartForm.getValues());
+                        //vm.notify();
                         return content.OAORDKEY;
                     })
                     .then(function (key) {
@@ -782,68 +781,56 @@ Ext.define('Shopping.view.cart.CartController', {
                     })
                     .then(function (content) {
                         console.info(content);
-                        //me.loadNotes(content);
-                        //me.loadNoteTypeOpts(content);
-                        Ext.ComponentQuery.query('app-main')[0].add({
-                            xtype: 'notes',
-                            viewModel: {
-                                data: {
-                                    //orderKey: vm.get('activeCartNumber')
-                                }
-                            },
-                            listeners: {
-                                delay: 200,
-                                beforerender: function (cmp) {
-                                    console.log('beforerender called');
-                                    console.log('beforeshow called');
-                                    console.info(cmp);
-                                    console.info(content);
-                                    var storeNotes = cmp.getViewModel().getStore('Notes'),
-                                        storeNoteTypeOpts = cmp.getViewModel().getStore('NoteTypeOpts'),
-                                        storeNoteActionOpts = cmp.getViewModel().getStore('NoteActionOpts'),
-                                        storeNoteDetailOpts = cmp.getViewModel().getStore('NoteDetailOpts');
-                                    storeNoteTypeOpts.loadRawData(content.noteTypes);
-                                    storeNoteActionOpts.loadRawData(content.noteActions);
-                                    storeNoteActionOpts.insert(0, [{ 'NOTEACTC': null, 'NOTEACTD': "None", 'NOTEACTS': null, 'NOTEACTV': null }]);
-                                    storeNoteDetailOpts.loadRawData(content.emailDefaults);
-                                    storeNotes.loadRawData(content.notes);
-                                },
-                                beforeshow: function (cmp) {
-                                    console.log('beforeshow called');
-                                },
-                                show: function (cmp) {
-                                    var store = cmp.getViewModel().getStore('Notes');
-                                    // store.load({
-                                    //     //scope: me,
-                                    //     callback: function (records, operation, success) {
-                                    //         if (records.length > 0) {
-                                    //             cmp.lookupReference('notelist').getSelectionModel().select(0);
-                                    //         } else {
-                                    //             cmp.lookupReference('noteType').focus();
-                                    //         }
-                                    //     }
-                                    // });
-                                },
-                                afterrender: function (cmp) {
-                                    var store = cmp.getViewModel().getStore('Notes');
-                                    //     storeNoteTypeOpts = cmp.getViewModel().getStore('NoteTypeOpts'),
-                                    //     storeNoteActionOpts = cmp.getViewModel().getStore('NoteActionOpts'),
-                                    //     storeNoteDetailOpts = cmp.getViewModel().getStore('NoteDetailOpts');
-                                    // console.info(storeNoteTypeOpts);
-                                    // console.info(storeNoteActionOpts);
-                                    // console.info(storeNoteDetailOpts);
+                        me.showNotes(content);
+                        //Ext.bind(me.loadNotes(content), me);
+                        // Ext.ComponentQuery.query('app-main')[0].add({
+                        //     xtype: 'notes',
+                        //     viewModel: {
+                        //         data: {
+                        //             //orderKey: vm.get('activeCartNumber')
+                        //         }
+                        //     },
+                        //     listeners: {
+                        //         delay: 200,
+                        //         beforerender: function (cmp) {
+                        //             console.log('beforerender called');
+                        //             console.info(cmp);
+                        //             console.info(content);
+                        //             var storeNotes = cmp.getViewModel().getStore('Notes'),
+                        //                 storeNoteTypeOpts = cmp.getViewModel().getStore('NoteTypeOpts'),
+                        //                 storeNoteActionOpts = cmp.getViewModel().getStore('NoteActionOpts'),
+                        //                 storeNoteDetailOpts = cmp.getViewModel().getStore('NoteDetailOpts');
+                        //             storeNoteTypeOpts.loadRawData(content.noteTypes);
+                        //             storeNoteActionOpts.loadRawData(content.noteActions);
+                        //             storeNoteActionOpts.insert(0, [{ 'NOTEACTC': null, 'NOTEACTD': "None", 'NOTEACTS': null, 'NOTEACTV': null }]);
+                        //             storeNoteDetailOpts.loadRawData(content.emailDefaults);
+                        //             storeNotes.loadRawData(content.notes);
+                        //         },
+                        //         beforeshow: function (cmp) {
+                        //             console.log('beforeshow called');
+                        //         },
+                        //         show: function (cmp) {
+                        //             var store = cmp.getViewModel().getStore('Notes');
+                        //         },
+                        //         afterrender: function (cmp) {
+                        //             var store = cmp.getViewModel().getStore('Notes');
+                        //             if (store.getCount() > 0) {
+                        //                 cmp.lookupReference('notelist').getSelectionModel().select(0);
+                        //             } else {
+                        //                 cmp.lookupReference('noteType').focus();
+                        //             }
 
-                                    // console.info(store.getCount());
-                                    if (store.getCount() > 0) {
-                                        cmp.lookupReference('notelist').getSelectionModel().select(0);
-                                    } else {
-                                        cmp.lookupReference('noteType').focus();
-                                    }
-
-                                }
-                            }
-                        }).show();
+                        //         }
+                        //     }
+                        // }).show();
                     });
+            } else {
+                var orderNumber = vm.get('activeCartNumber');
+                me.getNotes(orderNumber)
+                    .then(function (content) {
+                        console.info(content);
+                        me.showNotes(content);
+                    })
             }
 
         } else {
@@ -852,6 +839,114 @@ Ext.define('Shopping.view.cart.CartController', {
 
     },
 
+
+    // Get Notes 
+    getNotes: function (orderNumber) {
+        var me = this,
+            deferred = Ext.create('Ext.Deferred'),
+            params = {
+                pgm: 'EC1050',
+                action: 'getNotes',
+                OAORDKEY: orderNumber
+            };
+        Ext.Ajax.request({
+            url: '/valence/vvcall.pgm',
+            params: params,
+            success: function (r) {
+                var d = Ext.decode(r.responseText);
+                console.info(d);
+                deferred.resolve(d);
+            }
+        });
+        return deferred.promise;
+    },
+
+
+    // Show notes window
+    showNotes: function (content) {
+        Ext.ComponentQuery.query('app-main')[0].add({
+            xtype: 'notes',
+            viewModel: {
+                data: {
+                    //orderKey: vm.get('activeCartNumber')
+                }
+            },
+            listeners: {
+                delay: 200,
+                beforerender: function (cmp) {
+                    console.log('beforerender called');
+                    console.info(cmp);
+                    console.info(content);
+                    var storeNotes = cmp.getViewModel().getStore('Notes'),
+                        storeNoteTypeOpts = cmp.getViewModel().getStore('NoteTypeOpts'),
+                        storeNoteActionOpts = cmp.getViewModel().getStore('NoteActionOpts'),
+                        storeNoteDetailOpts = cmp.getViewModel().getStore('NoteDetailOpts');
+                    storeNoteTypeOpts.loadRawData(content.noteTypes);
+                    storeNoteActionOpts.loadRawData(content.noteActions);
+                    storeNoteActionOpts.insert(0, [{ 'NOTEACTC': null, 'NOTEACTD': "None", 'NOTEACTS': null, 'NOTEACTV': null }]);
+                    storeNoteDetailOpts.loadRawData(content.emailDefaults);
+                    storeNotes.loadRawData(content.notes);
+                },
+                beforeshow: function (cmp) {
+                    console.log('beforeshow called');
+                },
+                show: function (cmp) {
+                    var store = cmp.getViewModel().getStore('Notes');
+                },
+                afterrender: function (cmp) {
+                    var store = cmp.getViewModel().getStore('Notes');
+                    if (store.getCount() > 0) {
+                        cmp.lookupReference('notelist').getSelectionModel().select(0);
+                    } else {
+                        cmp.lookupReference('noteType').focus();
+                    }
+
+                }
+            }
+        }).show();
+    },
+
+    // After Order Page Show
+    onCartMainAfterRender: function () {
+        console.log('onCartFormShow called');
+        // reset form value
+        var me = this;
+        var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
+        var cartInfo = me.getCartInformation();
+        cartForm.setValues(cartForm.getValues());
+        console.info(cartInfo);
+
+        console.info(cartForm.isDirty());
+    },
+    onShow: function () {
+        console.log('onShow called');
+        // reset form value
+        // var me = this;
+        // var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
+        // var cartInfo = me.getCartInformation();
+        // //cartForm.setValues(cartForm.getValues());
+        // console.info(cartInfo);
+
+        // console.info(cartForm.isDirty());
+    },
+    // onLoadInitData: function () {
+    //     console.log('onLoadInitData called');
+    //     var me = this,
+    //         view = me.getView(),
+    //         vm = me.getViewModel(),
+    //         cartValues = vm.get('cartValues'),
+    //         cartItems = vm.getStore('cartItems'),
+    //         itemCount = cartItems.getCount(), rec, prodArray = [];
+    //     var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
+    //     //     cartInfo = me.getCartInformation();
+    //     // console.info(cartItems);
+    //     // console.info(cartForm.getValues());
+
+    //     //cartForm.setValues(cartForm.getValues());
+
+    //     // cartForm.setValues(cartForm.getValues());
+    //     console.info(cartForm.isDirty());
+    // },
 
     // Get Notes And Options
     getNotesAndOptions: function (orderKey) {
@@ -925,14 +1020,17 @@ Ext.define('Shopping.view.cart.CartController', {
     // Load Notes
     loadNotes: function (content) {
         console.log('loadNotes called');
-        var me = this,
-            vm = me.getViewModel(),
-            notesVm = Ext.ComponentQuery.query('notes')[0].getViewModel(),
+        console.info(content);
+        console.info(Ext.ComponentQuery.query('notes')[0].getViewModel());
+        console.info(this);
+
+        var notesVm = Ext.ComponentQuery.query('notes')[0].getViewModel(),
             store = notesVm.getStore('Notes');
+        console.info(Ext.ComponentQuery.query('notes')[0].getViewModel());
         if (!Ext.isEmpty(store) && !Ext.isEmpty(content.notes)) {
             store.loadRawData(content.notes);
         }
-        console.info(this);
+        // console.info(this);
     },
 
 
@@ -1127,6 +1225,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * @param rec
      */
     onSelectStockLocation: function (fld, rec) {
+        console.log('onSelectStockLocation');
         var me = this,
             view = me.getView();
         view.fireEvent('selectstocklocation', fld, rec);
@@ -1150,6 +1249,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * @param value
      */
     onUpdateRepsReadOnly: function (value) {
+        console.log('onUpdateResReadOnly called');
         this.lookupReference('cartrepscombo').setReadOnly(value);
     },
 
