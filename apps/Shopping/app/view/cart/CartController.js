@@ -535,7 +535,8 @@ Ext.define('Shopping.view.cart.CartController', {
             mainForm = view.down('cartform'),
             custDetail = view.down('cart-customerdetail'),
             dlvFieldSet = custDetail.down('#deliveryfieldset'),
-            dlvName = dlvFieldSet.down('[name=OADELNAM]').getValue();
+            dlvName = dlvFieldSet.down('[name=OADELNAM]').getValue(),
+            cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
 
         vm.set('hideAllocated', true);
         if (vm.get('hideOrdKey')) {
@@ -554,6 +555,9 @@ Ext.define('Shopping.view.cart.CartController', {
 
         setTimeout(function () {
             mainForm.down('#reffield').focus();
+
+            // console.info(vm.getStore('cartItems'));
+            // cartForm.setValues(cartForm.getValues());
         }, 200);
     },
 
@@ -725,29 +729,44 @@ Ext.define('Shopping.view.cart.CartController', {
         var me = this,
             vm = me.getViewModel(),
             valid = me.isFormValid(),
-            cartInfo = me.getCartInformation();
+            cartInfo = me.getCartInformation(),
+            needUpdate = vm.get('needUpdate');
 
 
 
         // reset form value
         var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
+        console.log(needUpdate);
 
-        console.info(vm.getStore('cartItems'));
+        //vm.getStore('cartItems').commitChanges();
+        var recs = vm.getStore('cartItems').getUpdatedRecords();
+        console.info(recs);
+        // for (var i = 0; i < recs.length; i++) {
+        //     var rec = recs[i];
+        //     console.info(rec);
+        //     if (rec.dirty == true) {
+        //         //Save data
+        //         console.info(rec);
+        //         console.log('dirty detected');
+        //     }
+        // }
+
+        console.info(recs);
         //cartForm.setValues(cartForm.getValues());
-        console.info(cartForm.getValues());
+        //console.info(cartForm.getValues());
 
         console.info(cartForm.isDirty());
         // console.info(cartForm);
 
         // console.info(view);
-        console.log(vm.get('cartValues'));
+        //console.log(vm.get('oldCartInfo'));
         //vm.getStore('Notes').load();
 
         // console.info(cartValues);
         // console.info(oldCartValues);
         // console.info(cartInfo);
         if (valid) {
-            if (!Ext.isEmpty(cartInfo) && cartForm.isDirty()) {
+            if (!Ext.isEmpty(cartInfo) && (cartForm.isDirty() || needUpdate)) {
                 me.saveCart(cartInfo.data, cartInfo.products, 'Saving Existing Order...')
                     .then(function (content) {
                         vm.set('activeCartNumber', content.OAORDKEY);
@@ -832,6 +851,7 @@ Ext.define('Shopping.view.cart.CartController', {
                         me.showNotes(content);
                     })
             }
+            vm.set('needUpdate', false);
 
         } else {
             Valence.util.Helper.showSnackbar(me.requiredFieldMsg);
@@ -929,24 +949,26 @@ Ext.define('Shopping.view.cart.CartController', {
 
         // console.info(cartForm.isDirty());
     },
-    // onLoadInitData: function () {
-    //     console.log('onLoadInitData called');
-    //     var me = this,
-    //         view = me.getView(),
-    //         vm = me.getViewModel(),
-    //         cartValues = vm.get('cartValues'),
-    //         cartItems = vm.getStore('cartItems'),
-    //         itemCount = cartItems.getCount(), rec, prodArray = [];
-    //     var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
-    //     //     cartInfo = me.getCartInformation();
-    //     // console.info(cartItems);
-    //     // console.info(cartForm.getValues());
+    onLoadInitData: function () {
+        console.log('onLoadInitData called');
+        var me = this,
+            view = me.getView(),
+            vm = me.getViewModel(),
+            cartValues = vm.get('cartValues'),
+            cartItems = vm.getStore('cartItems'),
+            itemCount = cartItems.getCount(), rec, prodArray = [],
+            cartInfo = me.getCartInformation();
+        var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
+        cartInfo = me.getCartInformation();
+        vm.set('oldCartInfo', { data: cartInfo });
+        console.info(vm.get('oldCartInfo'));
+        //console.info(cartInfo);
 
-    //     //cartForm.setValues(cartForm.getValues());
+        //cartForm.setValues(cartForm.getValues());
 
-    //     // cartForm.setValues(cartForm.getValues());
-    //     console.info(cartForm.isDirty());
-    // },
+        // cartForm.setValues(cartForm.getValues());
+        //console.info(cartForm.isDirty());
+    },
 
     // Get Notes And Options
     getNotesAndOptions: function (orderKey) {

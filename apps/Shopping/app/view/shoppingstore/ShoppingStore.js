@@ -1,6 +1,6 @@
 Ext.define('Shopping.view.shoppingstore.ShoppingStore', {
-    extend     : 'Ext.Container',
-    requires   : [
+    extend: 'Ext.Container',
+    requires: [
         'Ext.container.Container',
         'Ext.layout.container.Card',
         'Ext.layout.container.Fit',
@@ -9,24 +9,24 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStore', {
         'Shopping.view.shoppingstore.ShoppingStoreController',
         'Shopping.view.shoppingstore.ShoppingStoreModel'
     ],
-    xtype      : 'shoppingstore',
-    viewModel  : {
-        type : 'shoppingstore'
+    xtype: 'shoppingstore',
+    viewModel: {
+        type: 'shoppingstore'
     },
-    controller : 'shoppingstore',
-    layout     : 'fit',
-    items      : [{
-        xtype     : 'container',
-        layout    : {
-            type : 'card'
+    controller: 'shoppingstore',
+    layout: 'fit',
+    items: [{
+        xtype: 'container',
+        layout: {
+            type: 'card'
         },
-        reference : 'card',
-        items     : [{
-            reference : 'productsMain',
-            xtype     : 'productsmain',
-            listeners : {
-                selectstocklocation : 'onSelectStockLocation',
-                viewcart            : 'onViewCart'
+        reference: 'card',
+        items: [{
+            reference: 'productsMain',
+            xtype: 'productsmain',
+            listeners: {
+                selectstocklocation: 'onSelectStockLocation',
+                viewcart: 'onViewCart'
             }
         }]
     }]

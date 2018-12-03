@@ -220,9 +220,13 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     onViewCart: function (rec) {
-        //console.info(this.lookupReference('card').getLayout());
+        console.info('onViewCart called');
         this.lookupReference('card').getLayout().setActiveItem(1);
 
+    },
+
+    onActiveItemchange: function () {
+        console.log('onActiveItemchange called');
     },
 
     onAddToCart: function (e, dtlQuantity) {
@@ -736,10 +740,44 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 } else {
                     continueFnc();
                 }
+
+                setTimeout(() => {
+                    // reset form value
+                    var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
+
+                    cartForm.setValues(cartForm.getValues());
+                    vm.set('needUpdate', false);
+                    // var cartContainer = me.lookupReference('cartcontainer');
+                    // cartContainer.fireEvent('loadInitData');
+
+                }, 300);
             },
             failure: me.showError
         });
     },
+
+    // Cart Items change then mark needUpate = true
+    onGridDatachanged: function () {
+        console.log('onGridDatachanged called');
+        var me = this,
+            vm = me.getViewModel();
+        vm.set('needUpdate', true);
+    },
+    onGridUpdate: function () {
+        console.log('onGridUpdate called');
+        var me = this,
+            vm = me.getViewModel();
+        vm.set('needUpdate', true);
+    },
+
+    onGridRefresh: function () {
+        console.log('onGridRefresh called');
+
+    },
+    onGridLoad: function () {
+        console.log('onGridLoad called');
+    },
+
 
     onCellClickExistCart: function (cmp, td, cellIndex, rec) {
         // console.log('onCellClickExistCart');

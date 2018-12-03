@@ -100,7 +100,16 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         },
         cartItems: {
             model: 'Shopping.model.CartItem',
-            autoLoad: false
+            autoLoad: false,
+            listeners: {
+                datachanged: 'onGridDatachanged',
+                refresh: 'onGridRefresh',
+                update: 'onGridUpdate',
+                load: 'onGridLoad',
+                remode: function () {
+                    console.log('remove called');
+                }
+            }
         },
         // categories    : {
         //     model    : 'Shopping.model.Category',

@@ -20,7 +20,8 @@ Ext.define('Shopping.view.cart.List', {
     listeners: {
         cellclick: 'onCellClickList',
         edit: 'onCellEditList',
-        viewready: 'onViewReadyList'
+        viewready: 'onViewReadyList',
+        //storechange: 'onListStorechange'
     },
     header: {
         bind: {

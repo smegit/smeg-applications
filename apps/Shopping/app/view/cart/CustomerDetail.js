@@ -360,9 +360,11 @@ Ext.define('Shopping.view.cart.CustomerDetail', {
             listeners: {
                 scope: me,
                 afterrender: function (cmp) {
+                    console.log('afterrender customer details');
                     var cartValues = this.lookupViewModel().get('cartValues'),
                         checkbox = this.down('#deliveryChkbox');
-
+                    console.info(cartValues);
+                    console.info(checkbox);
                     if (!Ext.isEmpty(cartValues) && !Ext.isEmpty(cartValues.OADELST1)) {
                         checkbox.setValue(true);
                         cmp.setExpanded(true);
