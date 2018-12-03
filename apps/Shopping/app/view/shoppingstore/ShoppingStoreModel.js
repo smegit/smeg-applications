@@ -103,12 +103,12 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
             autoLoad: false,
             listeners: {
                 datachanged: 'onGridDatachanged',
-                refresh: 'onGridRefresh',
+                //refresh: 'onGridRefresh',
                 update: 'onGridUpdate',
-                load: 'onGridLoad',
-                remode: function () {
-                    console.log('remove called');
-                }
+                //load: 'onGridLoad',
+                // remode: function () {
+                //     console.log('remove called');
+                // }
             }
         },
         // categories    : {

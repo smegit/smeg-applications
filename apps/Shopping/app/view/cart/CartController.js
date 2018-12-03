@@ -566,7 +566,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * @param cmp
      */
     onAfterRenderAddressSearch: function (cmp) {
-        console.log('onAfterRenderAddress called');
+        //console.log('onAfterRenderAddress called');
         var me = this,
             input = cmp.el.down('input');
 
@@ -732,39 +732,11 @@ Ext.define('Shopping.view.cart.CartController', {
             cartInfo = me.getCartInformation(),
             needUpdate = vm.get('needUpdate');
 
-
-
         // reset form value
         var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
-        console.log(needUpdate);
+        //console.log(needUpdate);
 
-        //vm.getStore('cartItems').commitChanges();
-        var recs = vm.getStore('cartItems').getUpdatedRecords();
-        console.info(recs);
-        // for (var i = 0; i < recs.length; i++) {
-        //     var rec = recs[i];
-        //     console.info(rec);
-        //     if (rec.dirty == true) {
-        //         //Save data
-        //         console.info(rec);
-        //         console.log('dirty detected');
-        //     }
-        // }
-
-        console.info(recs);
-        //cartForm.setValues(cartForm.getValues());
-        //console.info(cartForm.getValues());
-
-        console.info(cartForm.isDirty());
-        // console.info(cartForm);
-
-        // console.info(view);
-        //console.log(vm.get('oldCartInfo'));
-        //vm.getStore('Notes').load();
-
-        // console.info(cartValues);
-        // console.info(oldCartValues);
-        // console.info(cartInfo);
+        //console.info(cartForm.isDirty());
         if (valid) {
             if (!Ext.isEmpty(cartInfo) && (cartForm.isDirty() || needUpdate)) {
                 me.saveCart(cartInfo.data, cartInfo.products, 'Saving Existing Order...')
@@ -792,14 +764,14 @@ Ext.define('Shopping.view.cart.CartController', {
                             params: params,
                             success: function (r) {
                                 var d = Ext.decode(r.responseText);
-                                console.info(d);
+                                //console.info(d);
                                 deferred.resolve(d);
                             }
                         });
                         return deferred.promise;
                     })
                     .then(function (content) {
-                        console.info(content);
+                        //console.info(content);
                         me.showNotes(content);
                         //Ext.bind(me.loadNotes(content), me);
                         // Ext.ComponentQuery.query('app-main')[0].add({
@@ -847,7 +819,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 var orderNumber = vm.get('activeCartNumber');
                 me.getNotes(orderNumber)
                     .then(function (content) {
-                        console.info(content);
+                        //console.info(content);
                         me.showNotes(content);
                     })
             }
@@ -874,7 +846,7 @@ Ext.define('Shopping.view.cart.CartController', {
             params: params,
             success: function (r) {
                 var d = Ext.decode(r.responseText);
-                console.info(d);
+                //console.info(d);
                 deferred.resolve(d);
             }
         });
@@ -894,9 +866,9 @@ Ext.define('Shopping.view.cart.CartController', {
             listeners: {
                 delay: 200,
                 beforerender: function (cmp) {
-                    console.log('beforerender called');
-                    console.info(cmp);
-                    console.info(content);
+                    // console.log('beforerender called');
+                    // console.info(cmp);
+                    // console.info(content);
                     var storeNotes = cmp.getViewModel().getStore('Notes'),
                         storeNoteTypeOpts = cmp.getViewModel().getStore('NoteTypeOpts'),
                         storeNoteActionOpts = cmp.getViewModel().getStore('NoteActionOpts'),
@@ -908,7 +880,7 @@ Ext.define('Shopping.view.cart.CartController', {
                     storeNotes.loadRawData(content.notes);
                 },
                 beforeshow: function (cmp) {
-                    console.log('beforeshow called');
+                    //console.log('beforeshow called');
                 },
                 show: function (cmp) {
                     var store = cmp.getViewModel().getStore('Notes');
@@ -938,59 +910,43 @@ Ext.define('Shopping.view.cart.CartController', {
 
         console.info(cartForm.isDirty());
     },
-    onShow: function () {
-        console.log('onShow called');
-        // reset form value
-        // var me = this;
-        // var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
-        // var cartInfo = me.getCartInformation();
-        // //cartForm.setValues(cartForm.getValues());
-        // console.info(cartInfo);
 
-        // console.info(cartForm.isDirty());
-    },
-    onLoadInitData: function () {
-        console.log('onLoadInitData called');
-        var me = this,
-            view = me.getView(),
-            vm = me.getViewModel(),
-            cartValues = vm.get('cartValues'),
-            cartItems = vm.getStore('cartItems'),
-            itemCount = cartItems.getCount(), rec, prodArray = [],
-            cartInfo = me.getCartInformation();
-        var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
-        cartInfo = me.getCartInformation();
-        vm.set('oldCartInfo', { data: cartInfo });
-        console.info(vm.get('oldCartInfo'));
-        //console.info(cartInfo);
-
-        //cartForm.setValues(cartForm.getValues());
-
-        // cartForm.setValues(cartForm.getValues());
-        //console.info(cartForm.isDirty());
-    },
+    // onLoadInitData: function () {
+    //     console.log('onLoadInitData called');
+    //     var me = this,
+    //         view = me.getView(),
+    //         vm = me.getViewModel(),
+    //         cartValues = vm.get('cartValues'),
+    //         cartItems = vm.getStore('cartItems'),
+    //         itemCount = cartItems.getCount(), rec, prodArray = [],
+    //         cartInfo = me.getCartInformation();
+    //     var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
+    //     cartInfo = me.getCartInformation();
+    //     vm.set('oldCartInfo', { data: cartInfo });
+    //     console.info(vm.get('oldCartInfo'));
+    // },
 
     // Get Notes And Options
-    getNotesAndOptions: function (orderKey) {
-        console.log('getNotesAndOptions called');
-        var me = this,
-            deferred = Ext.create('Ext.Deferred'),
-            params = {
-                pgm: 'EC1050',
-                action: 'getNotes',
-                OAORDKEY: orderKey
-            };
-        Ext.Ajax.request({
-            url: '/valence/vvcall.pgm',
-            params: params,
-            success: function (r) {
-                var d = Ext.decode(r.responseText);
-                console.info(d);
-                deferred.resolve(d);
-            }
-        });
-        return deferred.promise;
-    },
+    // getNotesAndOptions: function (orderKey) {
+    //     console.log('getNotesAndOptions called');
+    //     var me = this,
+    //         deferred = Ext.create('Ext.Deferred'),
+    //         params = {
+    //             pgm: 'EC1050',
+    //             action: 'getNotes',
+    //             OAORDKEY: orderKey
+    //         };
+    //     Ext.Ajax.request({
+    //         url: '/valence/vvcall.pgm',
+    //         params: params,
+    //         success: function (r) {
+    //             var d = Ext.decode(r.responseText);
+    //             console.info(d);
+    //             deferred.resolve(d);
+    //         }
+    //     });
+    //     return deferred.promise;
+    // },
 
     // Load Type Options
     loadNoteTypeOpts: function (content) {
@@ -1003,7 +959,6 @@ Ext.define('Shopping.view.cart.CartController', {
             store.loadRawData(content.noteTypes);
         }
         console.info(store);
-
     },
 
     // Load Action Options

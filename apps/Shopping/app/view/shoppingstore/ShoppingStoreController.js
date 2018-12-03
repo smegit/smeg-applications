@@ -101,7 +101,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         vm.getStore('categories').load({
             scope: me,
             callback: function () {
-                console.log('callback called');
+                //console.log('callback called');
                 //Ext.ComponentQuery.query('categories')[0].getView().expendAll();
                 vm.getStore('categories').getRoot().expand();
 
@@ -223,10 +223,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         console.info('onViewCart called');
         this.lookupReference('card').getLayout().setActiveItem(1);
 
-    },
-
-    onActiveItemchange: function () {
-        console.log('onActiveItemchange called');
     },
 
     onAddToCart: function (e, dtlQuantity) {
@@ -741,10 +737,9 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     continueFnc();
                 }
 
-                setTimeout(() => {
+                setTimeout(function () {
                     // reset form value
                     var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
-
                     cartForm.setValues(cartForm.getValues());
                     vm.set('needUpdate', false);
                     // var cartContainer = me.lookupReference('cartcontainer');
@@ -764,19 +759,19 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         vm.set('needUpdate', true);
     },
     onGridUpdate: function () {
-        console.log('onGridUpdate called');
+        //console.log('onGridUpdate called');
         var me = this,
             vm = me.getViewModel();
         vm.set('needUpdate', true);
     },
 
-    onGridRefresh: function () {
-        console.log('onGridRefresh called');
+    // onGridRefresh: function () {
+    //     console.log('onGridRefresh called');
 
-    },
-    onGridLoad: function () {
-        console.log('onGridLoad called');
-    },
+    // },
+    // onGridLoad: function () {
+    //     console.log('onGridLoad called');
+    // },
 
 
     onCellClickExistCart: function (cmp, td, cellIndex, rec) {
