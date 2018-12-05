@@ -763,7 +763,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         var me = this,
             vm = me.getViewModel();
         vm.set('needUpdate', true);
-        console.info(vm);
     },
 
     onCartRepsLoad: function () {
@@ -776,7 +775,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
         setTimeout(function () {
             if (!Ext.isEmpty(vm.get('activeCartNumber'))) {
-                console.log('old order');
+                //console.log('old order');
                 // console.info(cartForm.getFields());
                 for (i = 0; i < items.length; i++) {
                     items[i].wasDirty = false;
