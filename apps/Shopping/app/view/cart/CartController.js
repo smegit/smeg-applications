@@ -692,12 +692,14 @@ Ext.define('Shopping.view.cart.CartController', {
      * onClickBack - request to go back to the main landing section of products
      */
     onClickBack: function () {
+        //console.log('onClickBack called');
         var me = this,
             view = me.getView();
         view.fireEvent('back', view);
     },
 
     onClickClear: function () {
+        //console.log('onClickClear called');
         var me = this,
             view = me.getView();
 
@@ -711,7 +713,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * @param cmp
      */
     onClickDeposit: function (cmp) {
-        console.log('onClickDeposit called');
+        //console.log('onClickDeposit called');
         var me = this,
             valid = me.isFormValid();
 
@@ -730,15 +732,24 @@ Ext.define('Shopping.view.cart.CartController', {
             vm = me.getViewModel(),
             valid = me.isFormValid(),
             cartInfo = me.getCartInformation(),
-            needUpdate = vm.get('needUpdate');
+            needUpdate = vm.get('needUpdate'),
+            formDirty = false;
 
         // reset form value
         var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
-        //console.log(needUpdate);
 
-        //console.info(cartForm.isDirty());
+        // check if form dirty
+        items = cartForm.getFields().items;
+        for (i = 0; i < items.length; i++) {
+            if (items[i].wasDirty == true) {
+                formDirty = true;
+                break;
+            };
+        }
+        // console.log(needUpdate);
+        // console.info(formDirty);
         if (valid) {
-            if (!Ext.isEmpty(cartInfo) && (cartForm.isDirty() || needUpdate)) {
+            if (!Ext.isEmpty(cartInfo) && (needUpdate || formDirty)) {
                 me.saveCart(cartInfo.data, cartInfo.products, 'Saving Existing Order...')
                     .then(function (content) {
                         vm.set('activeCartNumber', content.OAORDKEY);
@@ -747,8 +758,11 @@ Ext.define('Shopping.view.cart.CartController', {
                             OAORDKEY: content.OAORDKEY
                         });
                         vm.notify();
-                        cartForm.setValues(cartForm.getValues());
-                        //vm.notify();
+                        // reset dirty = false
+                        for (i = 0; i < items.length; i++) {
+                            items[i].wasDirty = false;
+                        }
+
                         return content.OAORDKEY;
                     })
                     .then(function (key) {
@@ -824,6 +838,7 @@ Ext.define('Shopping.view.cart.CartController', {
                     })
             }
             vm.set('needUpdate', false);
+            formDirty = false;
 
         } else {
             Valence.util.Helper.showSnackbar(me.requiredFieldMsg);
@@ -898,117 +913,68 @@ Ext.define('Shopping.view.cart.CartController', {
         }).show();
     },
 
-    // After Order Page Show
-    onCartMainAfterRender: function () {
-        console.log('onCartFormShow called');
-        // reset form value
-        var me = this;
-        var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
-        var cartInfo = me.getCartInformation();
-        cartForm.setValues(cartForm.getValues());
-        console.info(cartInfo);
 
-        console.info(cartForm.isDirty());
-    },
-
-    // onLoadInitData: function () {
-    //     console.log('onLoadInitData called');
+    // // Load Type Options
+    // loadNoteTypeOpts: function (content) {
+    //     console.log('loadNoteTypeOptions called');
     //     var me = this,
-    //         view = me.getView(),
+    //         notesVm = Ext.ComponentQuery.query('notes')[0].getViewModel(),
+    //         store = notesVm.getStore('NoteTypeOpts');
+    //     console.info(notesVm);
+    //     if (!Ext.isEmpty(store) && !Ext.isEmpty(content.noteTypes)) {
+    //         store.loadRawData(content.noteTypes);
+    //     }
+    //     console.info(store);
+    // },
+
+    // // Load Action Options
+    // loadNoteActionOptions: function (content) {
+    //     console.log('loadNoteActionOptions called');
+    //     //console.info(content);
+
+    //     var noteActionOpts = content.noteActions;
+
+    //     var me = this,
     //         vm = me.getViewModel(),
-    //         cartValues = vm.get('cartValues'),
-    //         cartItems = vm.getStore('cartItems'),
-    //         itemCount = cartItems.getCount(), rec, prodArray = [],
-    //         cartInfo = me.getCartInformation();
-    //     var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
-    //     cartInfo = me.getCartInformation();
-    //     vm.set('oldCartInfo', { data: cartInfo });
-    //     console.info(vm.get('oldCartInfo'));
+    //         store = vm.getStore('NoteActionOptions');
+    //     if (!Ext.isEmpty(store) && !Ext.isEmpty(content.noteActions)) {
+    //         //noteActionOpts.push({ "NOTEACTC": ' ', "NOTEACTD": ' ', "NOTEACTS": ' ', "NOTEACTV": ' ' });
+    //         //console.info(noteActionOpts);
+    //         store.loadRawData(content.noteActions);
+    //         store.insert(0, [{ 'NOTEACTC': null, 'NOTEACTD': "None", 'NOTEACTS': null, 'NOTEACTV': null }]);
+    //     }
+    //     //console.info(store);
     // },
 
-    // Get Notes And Options
-    // getNotesAndOptions: function (orderKey) {
-    //     console.log('getNotesAndOptions called');
+
+    // // Load Detail Options
+    // loadNoteDetailOptions: function (content) {
+    //     console.log('loadNoteDetailOptions called');
+    //     var noteDetailOpts = content.emailDefaults;
     //     var me = this,
-    //         deferred = Ext.create('Ext.Deferred'),
-    //         params = {
-    //             pgm: 'EC1050',
-    //             action: 'getNotes',
-    //             OAORDKEY: orderKey
-    //         };
-    //     Ext.Ajax.request({
-    //         url: '/valence/vvcall.pgm',
-    //         params: params,
-    //         success: function (r) {
-    //             var d = Ext.decode(r.responseText);
-    //             console.info(d);
-    //             deferred.resolve(d);
-    //         }
-    //     });
-    //     return deferred.promise;
+    //         vm = me.getViewModel(),
+    //         store = vm.getStore('NoteDetailOptions');
+    //     if (!Ext.isEmpty(store) && !Ext.isEmpty(content.emailDefaults)) {
+    //         store.loadRawData(content.emailDefaults);
+    //     }
+    //     //console.info(store);
     // },
 
-    // Load Type Options
-    loadNoteTypeOpts: function (content) {
-        console.log('loadNoteTypeOptions called');
-        var me = this,
-            notesVm = Ext.ComponentQuery.query('notes')[0].getViewModel(),
-            store = notesVm.getStore('NoteTypeOpts');
-        console.info(notesVm);
-        if (!Ext.isEmpty(store) && !Ext.isEmpty(content.noteTypes)) {
-            store.loadRawData(content.noteTypes);
-        }
-        console.info(store);
-    },
+    // // Load Notes
+    // loadNotes: function (content) {
+    //     console.log('loadNotes called');
+    //     console.info(content);
+    //     console.info(Ext.ComponentQuery.query('notes')[0].getViewModel());
+    //     console.info(this);
 
-    // Load Action Options
-    loadNoteActionOptions: function (content) {
-        console.log('loadNoteActionOptions called');
-        //console.info(content);
-
-        var noteActionOpts = content.noteActions;
-
-        var me = this,
-            vm = me.getViewModel(),
-            store = vm.getStore('NoteActionOptions');
-        if (!Ext.isEmpty(store) && !Ext.isEmpty(content.noteActions)) {
-            //noteActionOpts.push({ "NOTEACTC": ' ', "NOTEACTD": ' ', "NOTEACTS": ' ', "NOTEACTV": ' ' });
-            //console.info(noteActionOpts);
-            store.loadRawData(content.noteActions);
-            store.insert(0, [{ 'NOTEACTC': null, 'NOTEACTD': "None", 'NOTEACTS': null, 'NOTEACTV': null }]);
-        }
-        //console.info(store);
-    },
-
-
-    // Load Detail Options
-    loadNoteDetailOptions: function (content) {
-        console.log('loadNoteDetailOptions called');
-        var noteDetailOpts = content.emailDefaults;
-        var me = this,
-            vm = me.getViewModel(),
-            store = vm.getStore('NoteDetailOptions');
-        if (!Ext.isEmpty(store) && !Ext.isEmpty(content.emailDefaults)) {
-            store.loadRawData(content.emailDefaults);
-        }
-        //console.info(store);
-    },
-
-    // Load Notes
-    loadNotes: function (content) {
-        console.log('loadNotes called');
-        console.info(content);
-        console.info(Ext.ComponentQuery.query('notes')[0].getViewModel());
-        console.info(this);
-
-        var notesVm = Ext.ComponentQuery.query('notes')[0].getViewModel(),
-            store = notesVm.getStore('Notes');
-        console.info(Ext.ComponentQuery.query('notes')[0].getViewModel());
-        if (!Ext.isEmpty(store) && !Ext.isEmpty(content.notes)) {
-            store.loadRawData(content.notes);
-        }
-        // console.info(this);
-    },
+    //     var notesVm = Ext.ComponentQuery.query('notes')[0].getViewModel(),
+    //         store = notesVm.getStore('Notes');
+    //     console.info(Ext.ComponentQuery.query('notes')[0].getViewModel());
+    //     if (!Ext.isEmpty(store) && !Ext.isEmpty(content.notes)) {
+    //         store.loadRawData(content.notes);
+    //     }
+    //     // console.info(this);
+    // },
 
 
 
@@ -1371,6 +1337,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * resetCart - reset the cart "list, form, view model"
      */
     resetCart: function () {
+        //console.log('resetCart called');
         var me = this,
             vm = me.getViewModel(),
             cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform');
@@ -1388,6 +1355,7 @@ Ext.define('Shopping.view.cart.CartController', {
             orderPayments: null,
             STKLOC: vm.get('defaultStockLocation')
         });
+        vm.set('activeCartNumber', null);
 
         vm.notify();
         cartForm.down('#deliveryChkbox').setValue(false);

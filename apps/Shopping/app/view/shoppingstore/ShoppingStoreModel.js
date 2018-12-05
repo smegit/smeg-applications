@@ -96,7 +96,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
     stores: {
         cartReps: {
             model: 'Shopping.model.CartRep',
-            autoLoad: false
+            autoLoad: false,
+            listeners: {
+                load: 'onCartRepsLoad'
+            }
         },
         cartItems: {
             model: 'Shopping.model.CartItem',
@@ -104,11 +107,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
             listeners: {
                 datachanged: 'onGridDatachanged',
                 //refresh: 'onGridRefresh',
-                update: 'onGridUpdate',
-                //load: 'onGridLoad',
-                // remode: function () {
-                //     console.log('remove called');
-                // }
+                update: 'onGridUpdate'
             }
         },
         // categories    : {

@@ -632,10 +632,18 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
                     // Check to see if Delivery Address is set and should be "expanded"
                     fieldset.down('#deliveryChkbox').setValue(false);
+                    // console.info(formValues);
+                    // console.info(Ext.isEmpty(formValues.OADELST1));
                     if (!Ext.isEmpty(formValues.OADELST1) || !Ext.isEmpty(formValues.OADELCTY) || !Ext.isEmpty(formValues.OADELSTA) || !Ext.isEmpty(formValues.OADELPST) || !Ext.isEmpty(formValues.OADELPH1)) {
                         setTimeout(function () {
+                            //console.info('chkbox mark true');
                             fieldset.down('#deliveryChkbox').setValue(true);
-                        }, 0);
+                        }, 10);
+                    } else {
+                        setTimeout(function () {
+                            //console.info('chkbox mark false');
+                            fieldset.down('#deliveryChkbox').setValue(false);
+                        }, 10);
                     }
 
                     // Reset Cart Item Store
@@ -736,16 +744,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 } else {
                     continueFnc();
                 }
-
-                setTimeout(function () {
-                    // reset form value
-                    var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
-                    cartForm.setValues(cartForm.getValues());
-                    vm.set('needUpdate', false);
-                    // var cartContainer = me.lookupReference('cartcontainer');
-                    // cartContainer.fireEvent('loadInitData');
-
-                }, 300);
             },
             failure: me.showError
         });
@@ -753,7 +751,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
     // Cart Items change then mark needUpate = true
     onGridDatachanged: function () {
-        console.log('onGridDatachanged called');
+        //console.log('onGridDatachanged called');
         var me = this,
             vm = me.getViewModel();
         vm.set('needUpdate', true);
@@ -763,16 +761,31 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         var me = this,
             vm = me.getViewModel();
         vm.set('needUpdate', true);
+        console.info(vm);
     },
 
-    // onGridRefresh: function () {
-    //     console.log('onGridRefresh called');
+    onCartRepsLoad: function () {
+        console.log('onCartRepsLoad called');
+        var me = this,
+            vm = me.getViewModel(),
+            cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm(),
+            items = cartForm.getFields().items;
+        //console.info(cartForm);
 
-    // },
-    // onGridLoad: function () {
-    //     console.log('onGridLoad called');
-    // },
+        setTimeout(function () {
+            if (!Ext.isEmpty(vm.get('activeCartNumber'))) {
+                //console.log('old order');
+                // console.info(cartForm.getFields());
+                for (i = 0; i < items.length; i++) {
+                    items[i].wasDirty = false;
+                }
+                vm.set('needUpdate', false);
+            } else {
+                //console.log('new order');
+            }
+        }, 100);
 
+    },
 
     onCellClickExistCart: function (cmp, td, cellIndex, rec) {
         // console.log('onCellClickExistCart');
