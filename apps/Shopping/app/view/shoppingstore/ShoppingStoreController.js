@@ -744,6 +744,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 } else {
                     continueFnc();
                 }
+                vm.set('needUpdate', false);
+
             },
             failure: me.showError
         });
@@ -774,12 +776,11 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
         setTimeout(function () {
             if (!Ext.isEmpty(vm.get('activeCartNumber'))) {
-                //console.log('old order');
+                console.log('old order');
                 // console.info(cartForm.getFields());
                 for (i = 0; i < items.length; i++) {
                     items[i].wasDirty = false;
                 }
-                vm.set('needUpdate', false);
             } else {
                 //console.log('new order');
             }
