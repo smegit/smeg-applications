@@ -220,10 +220,88 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     onViewCart: function (rec) {
-        console.info('onViewCart called');
+        console.log(rec);
+        console.info('onViewCart in shoppingstore controller called');
+        var me = this,
+            vm = me.getViewModel(),
+            view = me.getView(),
+            form = view.down('cartform'),
+            cartmain = Ext.ComponentQuery.query('cartmain')[0], params = {};
+
         this.lookupReference('card').getLayout().setActiveItem(1);
 
+
+        // send cart info to back end 
+
+        // caculate the price and disable the calculate the button
+        //console.info(vm);
+        //console.info(cartmain.getController().getCart());
+        //console.info(me.getCart());
+
+
+        // if new order send data to back end else just bring the existing order
+        // if (Ext.isEmpty(vm.get('activeCartNumber'))) {
+        //     var cartInfo = me.getCart();
+        //     Ext.apply(params, cartInfo.data);
+        //     Ext.apply(params, { products: Ext.encode(cartInfo.products) });
+        //     console.info(params);
+        //     Ext.Ajax.request({
+        //         url: 'https://a2cbb64f-4a1c-41a0-937e-0be30120dcf4.mock.pstmn.io/calculate_new_cart',
+        //         method: 'POST',
+        //         params: params,
+        //         success: function (r) {
+        //             console.info(r);
+        //             me.lookupReference('card').getLayout().setActiveItem(1);
+
+        //         },
+        //         failure: function (r) {
+        //             console.log('calculate cart failure');
+        //         }
+        //     });
+        // } else {
+        //     console.log('existing order');
+        //     me.lookupReference('card').getLayout().setActiveItem(1);
+        // }
+
     },
+
+    // get cart information without validating form
+    getCart: function () {
+        console.log('getCart called');
+        var me = this,
+            vm = me.getViewModel(),
+            view = me.getView(),
+            form = view.down('cartform'),
+            formData = vm.get('cartValues'),
+            store = vm.getStore('cartItems'),
+            prodArray = [], item;
+        console.info(store);
+
+        console.info(form);
+        console.info(form.getValues());
+        Ext.apply(formData, form.getValues());
+        // generate product Array
+        for (var i = 0; i < store.getCount(); i++) {
+            item = store.getAt(i).getData();
+            prodArray.push({
+                OBITM: item.product_id,
+                OBQTYO: item.quantity,
+                OBUPRC: item.price,
+                //OBQTYR: (standardOrder) ? Shopping.util.Helper.getOutstanding(rec) : product.release
+                OBQTYR: item.release
+            })
+
+        }
+
+        return {
+            data: formData,
+            products: prodArray
+        }
+    },
+
+
+
+
 
     onAddToCart: function (e, dtlQuantity) {
         // If add to cart is clicked from the Detail screen then
@@ -477,6 +555,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     onHeadingButtonClick: function (btn) {
+        console.log('onHeadingButtonClick called');
         var me = this,
             action = btn.action;
 
@@ -526,6 +605,87 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 }).show();
             }
         });
+    },
+
+
+    // Load New Cart, first update and then load
+    onUpdateCartAndShow: function () {
+        console.log('onUpdateCartAndShow in ShoppingStoreController called');
+
+        Valence.common.util.Helper.loadMask({
+            text: 'Loading Cart'
+        });
+        var me = this,
+            vm = me.getViewModel(),
+            view = me.getView(), params = {};
+
+        console.info(vm);
+
+        // if new order get the assigned order key and load the order details
+        if (Ext.isEmpty(vm.get('activeCartNumber')) || (!Ext.isEmpty(vm.get('activeCartNumber')) && vm.get('needUpdate'))) {
+            var cartInfo = me.getCart();
+            Ext.apply(params, cartInfo.data);
+            Ext.apply(params, { products: Ext.encode(cartInfo.products) });
+            console.info(params);
+            Ext.Ajax.request({
+                url: 'https://a2cbb64f-4a1c-41a0-937e-0be30120dcf4.mock.pstmn.io/calculate_new_cart',
+                method: 'POST',
+                params: params,
+                success: function (r) {
+                    Valence.common.util.Helper.destroyLoadMask();
+                    console.info(r);
+                    obj = Ext.decode(r.responseText);
+                    var cartItems = obj.CartDtl,
+                        cartItemStore = vm.getStore('cartItems'),
+                        cartItemStoreItems = [];
+                    //repStr = vm.getStore(cartReps)
+                    // Set assigned order key
+                    if (!Ext.isEmpty(obj.CartHdr[0].OAORDKEY)) {
+                        vm.set('activeCartNumber', obj.CartHdr[0].OAORDKEY);
+                    }
+
+                    // Load cart item list
+
+                    // Reset Cart Item Store
+                    cartItemStore.removeAll();
+
+                    if (!Ext.isEmpty(cartItems)) {
+                        for (var i = 0; i < cartItems.length; i++) {
+                            product = cartItems[i];
+                            //prodQuantity = product.OBQTYO;
+                            //cartItemCount = cartItemCount + prodQuantity;
+                            cartItemStoreItems.push({
+                                "product_id": product.OBITM,
+                                "quantity": product.OBQTYO,
+                                "allocated": product.OBQTYA,
+                                "price": product.OBUPRC,
+                                "prod_desc": product.I1IDSC,
+                                "delivered": product.OBQTYD,
+                                "smallpic": product.SMALLPIC
+                            });
+                        }
+                    }
+
+                    cartItemStore.add(cartItemStoreItems);
+                    me.onViewCart();
+
+                    vm.notify();
+
+
+
+                },
+                failure: function (r) {
+                    Valence.common.util.Helper.destroyLoadMask();
+                    console.log('calculate cart failure');
+                }
+            });
+        } else {
+            console.log('existing order');
+            Valence.common.util.Helper.destroyLoadMask();
+            me.onViewCart();
+
+        }
+
     },
 
     loadExistingCart: function (cell, el, cellIndex, record) {
@@ -745,7 +905,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     continueFnc();
                 }
                 vm.set('needUpdate', false);
-
+                //me.onViewCart();
             },
             failure: me.showError
         });
@@ -753,13 +913,14 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
     // Cart Items change then mark needUpate = true
     onGridDatachanged: function () {
-        //console.log('onGridDatachanged called');
+        console.log('onGridDatachanged called');
         var me = this,
             vm = me.getViewModel();
         vm.set('needUpdate', true);
+
     },
     onGridUpdate: function () {
-        //console.log('onGridUpdate called');
+        console.log('onGridUpdate called');
         var me = this,
             vm = me.getViewModel();
         vm.set('needUpdate', true);
@@ -788,7 +949,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     onCellClickExistCart: function (cmp, td, cellIndex, rec) {
-        // console.log('onCellClickExistCart');
+        console.log('onCellClickExistCart');
         var me = this,
             grid = cmp.grid,
             store = grid.getStore(),

@@ -10,7 +10,9 @@ Ext.define('Shopping.view.cart.List', {
     countInTitle: false,
     ui: 'background',
     features: [{
-        ftype: 'summary'
+        id: 'itemSummary',
+        ftype: 'summary',
+        //showSummaryRow: false,
     }],
     cls: 'cart-list',
     overCls: 'cart-list-over',
@@ -29,6 +31,26 @@ Ext.define('Shopping.view.cart.List', {
             title: '{ordKeyText}'
         }
     },
+
+    // added start
+    bbar: [
+        '->',
+        {
+            xtype: 'textfield',
+            emptyText: 'Promotion Code'
+        },
+        {
+            xtype: 'button', text: 'Calculate', ui: 'blue',
+            disabled: true,
+            listeners: {
+                click: 'onCalculateClick'
+            }
+        }
+    ],
+
+    // added end
+
+
     initComponent: function () {
         var me = this;
 
@@ -88,7 +110,11 @@ Ext.define('Shopping.view.cart.List', {
                     return v;
                 },
                 summaryType: 'sum',
-                summaryRenderer: function (value, summaryData, dataIndex) {
+                summaryRenderer: function (value, summaryData, field, dataIndex) {
+                    // console.info(value);
+                    // console.info(summaryData);
+                    // console.info(field);
+                    // console.info(dataIndex);
                     return Ext.String.format('<b>{0}</b>', value);
                 }
             }, {
@@ -100,7 +126,7 @@ Ext.define('Shopping.view.cart.List', {
                 summaryType: 'sum',
                 summaryRenderer: function (value) {
                     return Ext.String.format('<b>{0}</b>', value);
-                }
+                },
             }, {
                 text: 'Outstanding',
                 dataIndex: 'outstanding',

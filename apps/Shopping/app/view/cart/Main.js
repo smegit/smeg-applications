@@ -26,49 +26,54 @@ Ext.define('Shopping.view.cart.Main', {
             'margin-right': 'auto'
         }
     },
-    tbar: {
+    bbar: {
         xtype: 'toolbar',
-        ui: 'primary-dark',
+        // ui: 'primary-dark',
+        ui: 'light',
         height: 50,
         layout: {
-            type: 'hbox'
+            type: 'hbox',
+            align: 'center'
         },
         items: [
+            // {
+            //     xtype: 'container',
+            //     layout: {
+            //         type: 'hbox',
+            //         align: 'stretch'
+            //     },
+            //     flex: 1,
+            //     defaults: {
+            //         flex: 1
+            //     },
+            //     items: [
+            //         // {
+            //         //     xtype: 'combo',
+            //         //     cls: 'fld-in-header',
+            //         //     queryMode: 'local',
+            //         //     flex: 0,
+            //         //     width: 305,
+            //         //     height: 32,
+            //         //     labelWidth: 95,
+            //         //     editable: false,
+            //         //     valueField: 'STKCOD',
+            //         //     displayField: 'STKDSC',
+            //         //     reference: 'stocklocs',
+            //         //     fieldLabel: 'Stock Location',
+            //         //     forceSelection: true,
+            //         //     listeners: {
+            //         //         select: 'onSelectStockLocation'
+            //         //     },
+            //         //     bind: {
+            //         //         store: '{StockLocations}',
+            //         //         value: '{STKLOC}'
+            //         //     }
+            //         // }
+            //     ]
+            // },
+            //'->',
+            '->',
             {
-                xtype: 'container',
-                layout: {
-                    type: 'hbox',
-                    align: 'stretch'
-                },
-                flex: 1,
-                defaults: {
-                    flex: 1
-                },
-                items: [
-                    {
-                        xtype: 'combo',
-                        cls: 'fld-in-header',
-                        queryMode: 'local',
-                        flex: 0,
-                        width: 305,
-                        height: 32,
-                        labelWidth: 95,
-                        editable: false,
-                        valueField: 'STKCOD',
-                        displayField: 'STKDSC',
-                        reference: 'stocklocs',
-                        fieldLabel: 'Stock Location',
-                        forceSelection: true,
-                        listeners: {
-                            select: 'onSelectStockLocation'
-                        },
-                        bind: {
-                            store: '{StockLocations}',
-                            value: '{STKLOC}'
-                        }
-                    }
-                ]
-            }, '->', {
                 text: 'Continue Shopping',
                 ui: 'white',
                 handler: 'onClickBack'
@@ -80,13 +85,30 @@ Ext.define('Shopping.view.cart.Main', {
                     click: 'onClickClear'
                 }
             }, {
-                text: 'Save',
+                text: 'PDF',
                 ui: 'white',
-                maskMsg: 'Saving Order',
+                //maskMsg: 'Saving Order',
                 listeners: {
-                    click: 'onClickSave'
+                    click: 'onClickPDF'
                 }
-            }, {
+            },
+            // {
+            //     text: 'Save',
+            //     ui: 'white',
+            //     maskMsg: 'Saving Order',
+            //     listeners: {
+            //         click: 'onClickSave'
+            //     }
+            // },
+            {
+                text: 'Notes',
+                ui: 'white',
+                maskMsg: 'Loading Notes',
+                listeners: {
+                    click: 'onClickNotes'
+                }
+            },
+            {
                 text: 'Payment',
                 ui: 'white',
                 maskMsg: 'Setting up Deposit',
@@ -99,7 +121,8 @@ Ext.define('Shopping.view.cart.Main', {
                 ui: 'blue',
                 maskMsg: 'Preparing to process order',
                 handler: 'onClickRelease'
-            }]
+            },
+            '->']
     },
     initComponent: function () {
         var me = this;

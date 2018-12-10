@@ -26,7 +26,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStore', {
             xtype: 'productsmain',
             listeners: {
                 selectstocklocation: 'onSelectStockLocation',
-                viewcart: 'onViewCart'
+                viewcart: 'onViewCart',
+                updatecartandshow: 'onUpdateCartAndShow'
             }
         }]
     }]

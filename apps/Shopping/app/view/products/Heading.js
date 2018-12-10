@@ -81,7 +81,8 @@ Ext.define('Shopping.view.products.Heading', {
             },
             listeners: {
                 el: {
-                    click: 'onViewCart'
+                    //click: 'onViewCart',
+                    click: 'onUpdateCartAndShow'
                 }
             },
             tpl: me.buildTpl()
@@ -104,6 +105,8 @@ Ext.define('Shopping.view.products.Heading', {
         return Ext.create('Ext.XTemplate',
             '<div data-event="viewcart" class="vvicon-cart4 cart-size">',
             '<div data-event="viewcart" class="cart-num">{cartCount}</div>',
+            // '<div data-event="updatecartandshow" class="vvicon-cart4 cart-size">',
+            // '<div data-event="updatecartandshow" class="cart-num">{cartCount}</div>',
             '</div>'
         );
     }

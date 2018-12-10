@@ -326,6 +326,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * @returns {*}
      */
     getCartInformation: function (opt) {
+        console.info('getCartInformation called');
         var me = this,
             vm = me.getViewModel(),
             view = me.getView(),
@@ -403,6 +404,42 @@ Ext.define('Shopping.view.cart.CartController', {
             };
         }
     },
+
+
+    // get cart information without validating form
+    getCart: function () {
+        console.log('getCart called');
+        var me = this,
+            vm = me.getViewModel(),
+            view = me.getView(),
+            form = view.down('cartform'),
+            formData = vm.get('cartValues'),
+            store = vm.getStore('cartItems'),
+            prodArray = [], item;
+        console.info(store);
+
+        console.info(form);
+        console.info(form.getValues());
+        Ext.apply(formData, form.getValues());
+        // generate product Array
+        for (var i = 0; i < store.getCount(); i++) {
+            item = store.getAt(i).getData();
+            prodArray.push({
+                OBITM: item.product_id,
+                OBQTYO: item.quantity,
+                OBUPRC: item.price,
+                //OBQTYR: (standardOrder) ? Shopping.util.Helper.getOutstanding(rec) : product.release
+                OBQTYR: item.release
+            })
+
+        }
+
+        return {
+            data: formData,
+            products: prodArray
+        }
+    },
+
 
     /**
      * getPayments - get the order payments
@@ -1083,6 +1120,13 @@ Ext.define('Shopping.view.cart.CartController', {
 
 
 
+    // on Click PDF - bring the pdf 
+    onClickPDF: function () {
+        console.log('onClickPDF called');
+        var me = this;
+        me.onClickSave();
+    },
+
     /**
      * onClickSave - save the current order
      */
@@ -1107,7 +1151,7 @@ Ext.define('Shopping.view.cart.CartController', {
 
                     //clear/reset the cart and go back to the main section
                     //
-                    me.onClickClear();
+                    //me.onClickClear();
                 }, function (content) {
                     Valence.common.util.Dialog.show({
                         minWidth: 300,
@@ -1724,5 +1768,88 @@ Ext.define('Shopping.view.cart.CartController', {
     },
     oCartBeforeShow: function () {
         //console.log('onCartBeforeShow called');
-    }
+    },
+
+    calculateCart: function () {
+        // gether info and send back
+        console.log('calculateCart called');
+        var me = this;
+        console.info(me.getCartInformation());
+
+
+    },
+
+    onCalculateClick: function () {
+        console.info('onUpdateClick called');
+        var me = this,
+            vm = me.getViewModel();
+
+        // var grid = me.getView().down('cartlist');
+        // var summary = grid.getView().getFeature('itemSummary');
+        // console.info(grid.getView().getFeature('itemSummary'));
+        // grid.getView().getFeature('itemSummary').toggleSummaryRow(true);
+        //grid.getView().getFeature('summary').toggleSummary(true);
+        // if old cart
+        if (!Ext.isEmpty(vm.get('activeCartNumber'))) {
+            Ext.Ajax.request({
+                url: 'https://a2cbb64f-4a1c-41a0-937e-0be30120dcf4.mock.pstmn.io/calculate_cart',
+                method: 'GET',
+                success: function (res) {
+                    var resp = Ext.decode(res.responseText);
+                    var cartItems = resp.CartDtl,
+                        updatedItems = [];
+
+                    console.info(resp);
+                    //vm.set('activeCartNumber', null);
+                    var cartItemsStore = vm.getStore('cartItems');
+                    console.info(cartItemsStore);
+                    cartItemsStore.removeAll();
+
+                    if (!Ext.isEmpty(cartItems)) {
+                        for (var i = 0; i < cartItems.length; i++) {
+                            console.log('1');
+
+                            updatedItems.push({
+                                "product_id": cartItems[i].OBITM,
+                                "quantity": cartItems[i].OBQTYO,
+                                "allocated": cartItems[i].OBQTYA,
+                                "price": cartItems[i].OBUPRC,
+                                "prod_desc": cartItems[i].I1IDSC,
+                                "delivered": cartItems[i].OBQTYD,
+                                "smallpic": cartItems[i].SMALLPIC
+                            });
+                        }
+                    }
+
+                    cartItemsStore.add(updatedItems);
+                    console.info(updatedItems);
+                    console.info(cartItemsStore);
+
+                    //  reload cart items
+
+                    vm.notify();
+
+
+                    var grid = me.getView().down('cartlist');
+                    var summary = grid.getView().getFeature('itemSummary');
+                    console.info(grid);
+                    console.info(grid.getView().getFeature('itemSummary'));
+                    // summary.summaryRecord.setData('order', '123');
+                    grid.getView().getFeature('itemSummary').toggleSummaryRow(true);
+                },
+                failure: function (res) {
+                    console.info(res);
+                    console.log('response error');
+                }
+            });
+
+        } else {
+            // if new cart
+
+        }
+    },
+    onOrderSummaryRenderer: function () {
+        console.log('Summary Renderer called');
+        return '123';
+    },
 });

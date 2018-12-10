@@ -93,7 +93,12 @@ Ext.define('Shopping.view.products.ProductsController', {
     },
 
     onViewCart: function () {
-        //console.log('onViewCart called');
+        console.log('onViewCart in products controller called');
         this.getView().fireEvent('viewcart');
+        //this.getView().fireEvent('updatecartandshow');
+    },
+    onUpdateCartAndShow: function () {
+        console.log('onUpdateCartAndShow in products controller called');
+        this.getView().fireEvent('updatecartandshow');
     }
 });
