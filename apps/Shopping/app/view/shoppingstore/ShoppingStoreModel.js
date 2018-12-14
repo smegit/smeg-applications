@@ -10,7 +10,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         'Shopping.model.Product',
 
         // Add tree store
-        'Ext.data.TreeStore'
+        'Ext.data.TreeStore',
+
+        // Add payment history model
+        'Shopping.model.PaymentHistory'
     ],
 
     data: {
@@ -25,7 +28,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         deliveryDisabledDates: null, //Example exclude one day ['25/12/2017']
         deliveryDisabledDays: null, //Example [0, 6] would be excluding weekends
         deliveryOptions: null,
-        orderPayments: null
+        orderPayments: null,
+        totalPaid: null
     },
 
     formulas: {
@@ -148,5 +152,9 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
                 }
             ]
         },
+        paymentHistory: {
+            model: 'Shopping.model.PaymentHistory',
+            autoLoad: false
+        }
     }
 });

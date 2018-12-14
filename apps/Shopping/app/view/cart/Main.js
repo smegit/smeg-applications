@@ -7,6 +7,7 @@ Ext.define('Shopping.view.cart.Main', {
         'Shopping.view.cart.Form',
         'Shopping.view.cart.CartController',
         //'Shopping.view.cart.NoteList'
+        'Shopping.view.cart.PaymentHistory'
     ],
     controller: 'cart',
     cls: 'cart',
@@ -30,11 +31,15 @@ Ext.define('Shopping.view.cart.Main', {
         xtype: 'toolbar',
         // ui: 'primary-dark',
         ui: 'light',
-        height: 50,
-        layout: {
-            type: 'hbox',
-            align: 'center'
+        height: 40,
+        defaults: {
+            xtype: 'button',
+            margin: 5,
         },
+        // layout: {
+        //     type: 'hbox',
+        //     align: 'middle'
+        // },
         items: [
             // {
             //     xtype: 'container',
@@ -71,25 +76,37 @@ Ext.define('Shopping.view.cart.Main', {
             //         // }
             //     ]
             // },
-            //'->',
+            '->',
             '->',
             {
                 text: 'Continue Shopping',
                 ui: 'white',
-                handler: 'onClickBack'
+                //ui: 'round',
+                //ui: 'blue',
+                handler: 'onClickBack',
+                listeners: {
+                    // mouseover: 'onMouseOver',
+                    // mouseout: 'onMouseOut'
+                }
             }, {
                 text: 'Exit Order',
                 maskMsg: 'Exiting Order',
                 ui: 'white',
+                //ui: 'blue',
                 listeners: {
-                    click: 'onClickClear'
+                    click: 'onClickClear',
+                    // mouseover: 'onMouseOver',
+                    // mouseout: 'onMouseOut'
                 }
             }, {
                 text: 'PDF',
                 ui: 'white',
+                //ui: 'blue',
                 //maskMsg: 'Saving Order',
                 listeners: {
-                    click: 'onClickPDF'
+                    click: 'onClickPDF',
+                    // mouseover: 'onMouseOver',
+                    // mouseout: 'onMouseOut'
                 }
             },
             // {
@@ -103,27 +120,86 @@ Ext.define('Shopping.view.cart.Main', {
             {
                 text: 'Notes',
                 ui: 'white',
+                //ui: 'blue',
                 maskMsg: 'Loading Notes',
                 listeners: {
-                    click: 'onClickNotes'
+                    click: 'onClickNotes',
+                    // mouseover: 'onMouseOver',
+                    // mouseout: 'onMouseOut'
                 }
             },
             {
                 text: 'Payment',
-                ui: 'white',
+                //ui: 'white',
+                ui: 'blue',
                 maskMsg: 'Setting up Deposit',
                 listeners: {
-                    click: 'onClickDeposit'
+                    click: 'onClickDeposit',
+                    //mouseover: 'onMouseOver',
+                    //mouseout: 'onMouseOut'
                 }
             }, {
                 text: 'Deliver',
                 reference: 'checkoutButton',
                 ui: 'blue',
                 maskMsg: 'Preparing to process order',
-                handler: 'onClickRelease'
-            },
-            '->']
+                handler: 'onClickRelease',
+                listeners: {
+                }
+            }, '', '', '']
     },
+
+    // buttons: [
+    //     {
+    //         text: 'Continue Shopping',
+    //         ui: 'white',
+    //         handler: 'onClickBack'
+    //     }, {
+    //         text: 'Exit Order',
+    //         maskMsg: 'Exiting Order',
+    //         ui: 'white',
+    //         listeners: {
+    //             click: 'onClickClear'
+    //         }
+    //     }, {
+    //         text: 'PDF',
+    //         ui: 'white',
+    //         //maskMsg: 'Saving Order',
+    //         listeners: {
+    //             click: 'onClickPDF'
+    //         }
+    //     },
+    //     // {
+    //     //     text: 'Save',
+    //     //     ui: 'white',
+    //     //     maskMsg: 'Saving Order',
+    //     //     listeners: {
+    //     //         click: 'onClickSave'
+    //     //     }
+    //     // },
+    //     {
+    //         text: 'Notes',
+    //         ui: 'white',
+    //         maskMsg: 'Loading Notes',
+    //         listeners: {
+    //             click: 'onClickNotes'
+    //         }
+    //     },
+    //     {
+    //         text: 'Payment',
+    //         ui: 'white',
+    //         maskMsg: 'Setting up Deposit',
+    //         listeners: {
+    //             click: 'onClickDeposit'
+    //         }
+    //     }, {
+    //         text: 'Deliver',
+    //         reference: 'checkoutButton',
+    //         ui: 'blue',
+    //         maskMsg: 'Preparing to process order',
+    //         handler: 'onClickRelease'
+    //     }
+    // ],
     initComponent: function () {
         var me = this;
         Ext.apply(me, {
@@ -176,6 +252,9 @@ Ext.define('Shopping.view.cart.Main', {
         }, {
             xtype: 'cartform',
             cartOptions: opts
+        },
+        {
+            xtype: 'paymenthistory'
         }]
     }
 });

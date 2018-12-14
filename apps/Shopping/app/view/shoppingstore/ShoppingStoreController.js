@@ -230,6 +230,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
         this.lookupReference('card').getLayout().setActiveItem(1);
 
+        console.info(this.lookupReference('card'));
+
 
         // send cart info to back end 
 
@@ -617,74 +619,72 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         });
         var me = this,
             vm = me.getViewModel(),
-            view = me.getView(), params = {};
+            view = me.getView(),
+            params = {
+                pgm: 'EC1050',
+                action: 'calculate'
+            };
 
         console.info(vm);
 
         // if new order get the assigned order key and load the order details
-        if (Ext.isEmpty(vm.get('activeCartNumber')) || (!Ext.isEmpty(vm.get('activeCartNumber')) && vm.get('needUpdate'))) {
-            var cartInfo = me.getCart();
-            Ext.apply(params, cartInfo.data);
-            Ext.apply(params, { products: Ext.encode(cartInfo.products) });
-            console.info(params);
-            Ext.Ajax.request({
-                url: 'https://a2cbb64f-4a1c-41a0-937e-0be30120dcf4.mock.pstmn.io/calculate_new_cart',
-                method: 'POST',
-                params: params,
-                success: function (r) {
-                    Valence.common.util.Helper.destroyLoadMask();
-                    console.info(r);
-                    obj = Ext.decode(r.responseText);
-                    var cartItems = obj.CartDtl,
-                        cartItemStore = vm.getStore('cartItems'),
-                        cartItemStoreItems = [];
-                    //repStr = vm.getStore(cartReps)
-                    // Set assigned order key
-                    if (!Ext.isEmpty(obj.CartHdr[0].OAORDKEY)) {
-                        vm.set('activeCartNumber', obj.CartHdr[0].OAORDKEY);
-                    }
-
-                    // Load cart item list
-
-                    // Reset Cart Item Store
-                    cartItemStore.removeAll();
-
-                    if (!Ext.isEmpty(cartItems)) {
-                        for (var i = 0; i < cartItems.length; i++) {
-                            product = cartItems[i];
-                            //prodQuantity = product.OBQTYO;
-                            //cartItemCount = cartItemCount + prodQuantity;
-                            cartItemStoreItems.push({
-                                "product_id": product.OBITM,
-                                "quantity": product.OBQTYO,
-                                "allocated": product.OBQTYA,
-                                "price": product.OBUPRC,
-                                "prod_desc": product.I1IDSC,
-                                "delivered": product.OBQTYD,
-                                "smallpic": product.SMALLPIC
-                            });
-                        }
-                    }
-
-                    cartItemStore.add(cartItemStoreItems);
-                    me.onViewCart();
-
-                    vm.notify();
-
-
-
-                },
-                failure: function (r) {
-                    Valence.common.util.Helper.destroyLoadMask();
-                    console.log('calculate cart failure');
+        //if (Ext.isEmpty(vm.get('activeCartNumber')) || (!Ext.isEmpty(vm.get('activeCartNumber')) && vm.get('needUpdate'))) {
+        var cartInfo = me.getCart();
+        Ext.apply(params, cartInfo.data);
+        Ext.apply(params, { products: Ext.encode(cartInfo.products) });
+        console.info(params);
+        Ext.Ajax.request({
+            url: '/valence/vvcall.pgm',
+            params: params,
+            success: function (r) {
+                Valence.common.util.Helper.destroyLoadMask();
+                console.info(r);
+                obj = Ext.decode(r.responseText);
+                var cartItems = obj.CartDtl,
+                    cartItemStore = vm.getStore('cartItems'),
+                    cartItemStoreItems = [];
+                //repStr = vm.getStore(cartReps)
+                // Set assigned order key
+                if (!Ext.isEmpty(obj.CartHdr[0].OAORDKEY)) {
+                    vm.set('activeCartNumber', obj.CartHdr[0].OAORDKEY);
                 }
-            });
-        } else {
-            console.log('existing order');
-            Valence.common.util.Helper.destroyLoadMask();
-            me.onViewCart();
 
-        }
+                // Load cart item list
+
+                // Reset Cart Item Store
+                cartItemStore.removeAll();
+
+                if (!Ext.isEmpty(cartItems)) {
+                    for (var i = 0; i < cartItems.length; i++) {
+                        product = cartItems[i];
+                        //prodQuantity = product.OBQTYO;
+                        //cartItemCount = cartItemCount + prodQuantity;
+                        cartItemStoreItems.push({
+                            "product_id": product.OBITM,
+                            "quantity": product.OBQTYO,
+                            "allocated": product.OBQTYA,
+                            "price": product.OBUPRC,
+                            "prod_desc": product.I1IDSC,
+                            "delivered": product.OBQTYD,
+                            "smallpic": product.SMALLPIC
+                        });
+                    }
+                }
+
+                cartItemStore.add(cartItemStoreItems);
+                me.onViewCart();
+
+                vm.notify();
+
+
+
+            },
+            failure: function (r) {
+                Valence.common.util.Helper.destroyLoadMask();
+                console.log('calculate cart failure');
+            }
+        });
+        //} 
 
     },
 
@@ -716,7 +716,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             success: function (r) {
                 //console.info(r);
                 obj = Ext.decode(r.responseText);
-                //console.info(obj);
+                console.info(obj);
                 var continueFnc = function () {
                     var products = obj.CartDtl,
                         formPanel = Ext.ComponentQuery.query('cartform')[0],
@@ -729,9 +729,12 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                         repStr = vm.getStore('cartReps'),
                         formValues = {},
                         repRec, product, field, fldValue, prodQuantity,
-                        delvDate, ninetyDate, todayDate;
+                        delvDate, ninetyDate, todayDate,
+                        paymentHistoryStore = vm.getStore('paymentHistory'),
+                        paymentHistoryStoreItems = [],
+                        payments = obj.payments;
 
-                    //console.info(cartItemStore);
+                    //console.info(obj.payments);
                     if (!Ext.isEmpty(obj.CartHdr)) {
                         Ext.apply(formValues, obj.CartHdr[0]);
                     }
@@ -821,7 +824,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                                 "price": product.OBUPRC,
                                 "prod_desc": product.I1IDSC,
                                 "delivered": product.OBQTYD,
-                                "smallpic": product.SMALLPIC
+                                "smallpic": product.SMALLPIC,
+
+                                "sub_total": product.OBTOTA,
+                                "generated": product.OBGENF
                             });
                         }
                     }
@@ -833,8 +839,24 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                         activeCartNumber: cartKey
                     });
                     //console.info(me);
-                    me.onViewCart();
 
+                    // load payment history
+                    //paymentHistoryStore.loadData(obj.payments);
+                    if (!Ext.isEmpty(obj.TOTALPAID)) {
+                        vm.set('totalPaid', obj.TOTALPAID)
+                    }
+                    paymentHistoryStore.removeAll();
+                    if (!Ext.isEmpty(payments)) {
+                        for (var i = 0; i < payments.length; i++) {
+                            paymentHistoryStoreItems.push({
+                                "label": payments[i].LABEL,
+                                "note": payments[i].NOTE,
+                                "amount": payments[i].AMOUNT
+                            })
+                        }
+                    }
+                    paymentHistoryStore.add(paymentHistoryStoreItems);
+                    me.onViewCart();
                     vm.notify();
                 };
 
@@ -912,18 +934,36 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
 
     // Cart Items change then mark needUpate = true
-    onGridDatachanged: function () {
+    onGridDatachanged: function (store, eOpt) {
         console.log('onGridDatachanged called');
+        //console.info(store);
         var me = this,
-            vm = me.getViewModel();
+            vm = me.getViewModel(),
+            view = me.getView();
         vm.set('needUpdate', true);
+        //console.info(me.lookupReference('calcBtn'));
+        //Ext.ComponentQuery.query('cartmain')[0].down('cartlist').getView()
+        //console.info(Ext.ComponentQuery.query('cartlist')[0]);
+        //Ext.ComponentQuery.query('#buttonSelector')[0].setDisabled(false);
 
     },
-    onGridUpdate: function () {
+    onGridUpdate: function (store, record, operation, modifiedFieldNames, details, eOpts) {
         console.log('onGridUpdate called');
+        // console.info(store);
+        // console.info(record);
+        // console.info(operation);
+        // console.info(modifiedFieldNames);
+        // console.info(details);
+        // console.info(eOpts);
         var me = this,
-            vm = me.getViewModel();
+            vm = me.getViewModel(),
+            view = me.getView();
         vm.set('needUpdate', true);
+        Ext.ComponentQuery.query('#calcBtnSelector')[0].enable();
+        console.info(Ext.ComponentQuery.query('cartlist')[0]);
+        Ext.ComponentQuery.query('cartlist')[0].getView().getFeature('itemSummary').toggleSummaryRow(false);
+        //grid.getView().getFeature('itemSummary').toggleSummaryRow(true);
+
     },
 
     onCartRepsLoad: function () {

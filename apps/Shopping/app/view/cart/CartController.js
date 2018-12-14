@@ -573,7 +573,9 @@ Ext.define('Shopping.view.cart.CartController', {
             custDetail = view.down('cart-customerdetail'),
             dlvFieldSet = custDetail.down('#deliveryfieldset'),
             dlvName = dlvFieldSet.down('[name=OADELNAM]').getValue(),
-            cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
+            cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm(),
+            totalPaid = vm.get('totalPaid'),
+            paymentGrid = me.getView().down('paymenthistory').down('grid');;
 
         vm.set('hideAllocated', true);
         if (vm.get('hideOrdKey')) {
@@ -593,8 +595,17 @@ Ext.define('Shopping.view.cart.CartController', {
         setTimeout(function () {
             mainForm.down('#reffield').focus();
 
-            // console.info(vm.getStore('cartItems'));
-            // cartForm.setValues(cartForm.getValues());
+            // disable calculate button
+            me.lookupReference('calcBtn').disable();
+
+            // toggle payment history summary
+            Ext.apply(paymentGrid.getColumns()[2], {
+                summaryRenderer: function () {
+                    return Ext.String.format('<b>Total Paid: {0}</b>', Ext.util.Format.currency(totalPaid));
+                }
+            });
+            paymentGrid.getView().getFeature('paymentSummary').toggleSummaryRow(true);
+
         }, 200);
     },
 
@@ -646,12 +657,16 @@ Ext.define('Shopping.view.cart.CartController', {
     },
 
     onBeforeEditList: function (editor, context) {
+        console.log('onBeforeEditList called');
         var me = this,
             field = context.field,
             rec = context.record,
             outstanding = Shopping.util.Helper.getOutstanding(rec),
             checkoutButton = me.lookupReference('checkoutButton');
 
+        if (!Ext.isEmpty(rec.get('generated')) && rec.get('generated') == 'Y') {
+            return false;
+        }
         if (field === 'release' && (Ext.isEmpty(outstanding) || outstanding == 0)) {
             return false;
         }
@@ -674,6 +689,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * @param rec
      */
     onCellClickList: function (cmp, td, cellIndex, rec, tr, rowIndex, e) {
+        console.log('onCellClickList called');
         var me = this,
             view = me.getView(),
             grid = cmp.grid,
@@ -681,27 +697,33 @@ Ext.define('Shopping.view.cart.CartController', {
             column = grid.headerCt.items.getAt(cellIndex),
             viewModel = me.getViewModel(),
             cartCount = viewModel.get('cartCount');
+        console.info(rec);
+        console.info(store.query('generated', 'N').length);
+        if (rec.get('generated') == 'N') {
+            if (!Ext.isEmpty(column.action) && column.action === 'removecartitem' && store.getCount() > 1 && store.query('generated', 'N').length >= 2) {
+                if (Ext.isEmpty(rec.get('delivered')) || rec.get('delivered') == 0) {
+                    viewModel.set('cartCount', cartCount - rec.get('quantity'));
+                    store.remove(rec);
+                    grid.getView().refresh();
+                }
+            } else {
+                var target = e.getTarget(),
+                    item = (!Ext.isEmpty(target)) ? Ext.get(target) : null;
 
-        if (!Ext.isEmpty(column.action) && column.action === 'removecartitem' && store.getCount() > 1) {
-            if (Ext.isEmpty(rec.get('delivered')) || rec.get('delivered') == 0) {
-                viewModel.set('cartCount', cartCount - rec.get('quantity'));
-                store.remove(rec);
-                grid.getView().refresh();
+                if (!Ext.isEmpty(item) && (item.hasCls('cart-list-prd-detail') || item.up('.cart-list-prd-detail'))) {
+                    view.fireEvent('showdetail', view, {
+                        getData: function () {
+                            return {
+                                MODEL: rec.get('product_id')
+                            }
+                        }
+                    }, true);
+                }
             }
         } else {
-            var target = e.getTarget(),
-                item = (!Ext.isEmpty(target)) ? Ext.get(target) : null;
-
-            if (!Ext.isEmpty(item) && (item.hasCls('cart-list-prd-detail') || item.up('.cart-list-prd-detail'))) {
-                view.fireEvent('showdetail', view, {
-                    getData: function () {
-                        return {
-                            MODEL: rec.get('product_id')
-                        }
-                    }
-                }, true);
-            }
+            console.log('click on generated item');
         }
+
     },
 
     /**
@@ -729,7 +751,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * onClickBack - request to go back to the main landing section of products
      */
     onClickBack: function () {
-        //console.log('onClickBack called');
+        console.log('onClickBack called');
         var me = this,
             view = me.getView();
         view.fireEvent('back', view);
@@ -1030,6 +1052,7 @@ Ext.define('Shopping.view.cart.CartController', {
             me.depositRelease(cmp, 'checkout')
                 .then(function (content) {
                     //check if all release values are zero
+                    console.info(content);
                     var standardOrder = me.isStandardOrder(),
                         store = view.lookupViewModel(true).getStore('cartItems'),
                         count = store.getCount(),
@@ -1320,6 +1343,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * @param cmp
      */
     onViewReadyList: function (cmp) {
+        console.log('onViewReadyList called');
         if (!cmp.release) {
             var me = this,
                 store = cmp.getStore();
@@ -1699,8 +1723,8 @@ Ext.define('Shopping.view.cart.CartController', {
                                         CCNUM: '',
                                         CVS: '',
                                         OAORDKEY: orderKey,
-                                        OAORDNET: maxpay,
-                                        OAORDTAX: '',
+                                        //OAORDNET: maxpay,
+                                        //OAORDTAX: '',
                                         OAORDTOTAL: maxpay,
                                         OAPAYAMT: '',
                                         OAPAYM: ''
@@ -1779,77 +1803,116 @@ Ext.define('Shopping.view.cart.CartController', {
 
     },
 
+    // Enable calculate button when type into promotion text
+    onPromoCodeChange: function () {
+        console.log('onPromoCodeChange called');
+        var me = this,
+            calcBtn = me.lookupReference('calcBtn'),
+            promoCode = me.lookupReference('promoCodeTextField');
+        console.info(promoCode.isDirty());
+        if (promoCode.isDirty()) {
+            calcBtn.enable();
+        } else {
+            //calcBtn.disable();
+        }
+    },
+
     onCalculateClick: function () {
         console.info('onUpdateClick called');
         var me = this,
-            vm = me.getViewModel();
+            vm = me.getViewModel(),
+            params = {},
+            cartInfo = me.getCartInformation();
 
+        params = {
+            pgm: 'EC1050',
+            action: 'calculate',
+            products: (!Ext.isEmpty(cartInfo) && !Ext.isEmpty(cartInfo.products)) ? Ext.encode(cartInfo.products) : null,
+        };
         // var grid = me.getView().down('cartlist');
         // var summary = grid.getView().getFeature('itemSummary');
         // console.info(grid.getView().getFeature('itemSummary'));
         // grid.getView().getFeature('itemSummary').toggleSummaryRow(true);
         //grid.getView().getFeature('summary').toggleSummary(true);
         // if old cart
-        if (!Ext.isEmpty(vm.get('activeCartNumber'))) {
-            Ext.Ajax.request({
-                url: 'https://a2cbb64f-4a1c-41a0-937e-0be30120dcf4.mock.pstmn.io/calculate_cart',
-                method: 'GET',
-                success: function (res) {
-                    var resp = Ext.decode(res.responseText);
-                    var cartItems = resp.CartDtl,
-                        updatedItems = [];
+        Ext.Ajax.request({
+            url: '/valence/vvcall.pgm',
+            params: params,
+            success: function (res) {
+                console.info(res);
+                var resp = Ext.decode(res.responseText);
+                var cartItems = resp.CartDtl,
+                    updatedItems = [];
 
-                    console.info(resp);
-                    //vm.set('activeCartNumber', null);
-                    var cartItemsStore = vm.getStore('cartItems');
-                    console.info(cartItemsStore);
-                    cartItemsStore.removeAll();
+                console.info(resp);
+                //vm.set('activeCartNumber', null);
+                var cartItemsStore = vm.getStore('cartItems');
+                console.info(cartItemsStore);
+                cartItemsStore.removeAll();
 
-                    if (!Ext.isEmpty(cartItems)) {
-                        for (var i = 0; i < cartItems.length; i++) {
-                            console.log('1');
+                if (!Ext.isEmpty(cartItems)) {
+                    for (var i = 0; i < cartItems.length; i++) {
+                        console.log('1');
 
-                            updatedItems.push({
-                                "product_id": cartItems[i].OBITM,
-                                "quantity": cartItems[i].OBQTYO,
-                                "allocated": cartItems[i].OBQTYA,
-                                "price": cartItems[i].OBUPRC,
-                                "prod_desc": cartItems[i].I1IDSC,
-                                "delivered": cartItems[i].OBQTYD,
-                                "smallpic": cartItems[i].SMALLPIC
-                            });
-                        }
+                        updatedItems.push({
+                            "product_id": cartItems[i].OBITM,
+                            "quantity": cartItems[i].OBQTYO,
+                            "allocated": cartItems[i].OBQTYA,
+                            "price": cartItems[i].OBUPRC,
+                            "prod_desc": cartItems[i].I1IDSC,
+                            "delivered": cartItems[i].OBQTYD,
+                            "smallpic": cartItems[i].SMALLPIC,
+
+
+                            "sub_total": cartItems[i].OBTOTA,
+                            "generated": cartItems[i].OBGENF
+                        });
                     }
-
-                    cartItemsStore.add(updatedItems);
-                    console.info(updatedItems);
-                    console.info(cartItemsStore);
-
-                    //  reload cart items
-
-                    vm.notify();
-
-
-                    var grid = me.getView().down('cartlist');
-                    var summary = grid.getView().getFeature('itemSummary');
-                    console.info(grid);
-                    console.info(grid.getView().getFeature('itemSummary'));
-                    // summary.summaryRecord.setData('order', '123');
-                    grid.getView().getFeature('itemSummary').toggleSummaryRow(true);
-                },
-                failure: function (res) {
-                    console.info(res);
-                    console.log('response error');
                 }
-            });
 
-        } else {
-            // if new cart
+                cartItemsStore.add(updatedItems);
+                console.info(updatedItems);
+                console.info(cartItemsStore);
 
-        }
+                //  reload cart items
+
+                vm.notify();
+
+
+                var grid = me.getView().down('cartlist');
+                var summary = grid.getView().getFeature('itemSummary');
+                console.info(grid);
+                console.info(grid.getView().getFeature('itemSummary'));
+                // summary.summaryRecord.setData('order', '123');
+                grid.getView().getFeature('itemSummary').toggleSummaryRow(true);
+
+                me.lookupReference('calcBtn').disable();
+            },
+            failure: function (res) {
+                console.info(res);
+                console.log('response error');
+            }
+        });
+
+
     },
     onOrderSummaryRenderer: function () {
         console.log('Summary Renderer called');
         return '123';
     },
+
+    // hover effect to bottom buttons 
+    onMouseOver: function (btn) {
+        //console.info(btn);
+        btn.el.addCls(['x-btn-blue-small']);
+        btn.btnInnerEl.addCls(["x-btn-inner-blue-small"]);
+        btn.el.removeCls(['x-btn-white-small']);
+        btn.btnInnerEl.removeCls(["x-btn-inner-white-small"]);
+    },
+    onMouseOut: function (btn) {
+        btn.el.removeCls(['x-btn-blue-small']);
+        btn.btnInnerEl.removeCls(["x-btn-inner-blue-small"]);
+        btn.el.addCls(['x-btn-white-small']);
+        btn.btnInnerEl.addCls(["x-btn-inner-white-small"]);
+    }
 });

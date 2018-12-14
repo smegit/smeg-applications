@@ -37,10 +37,17 @@ Ext.define('Shopping.view.cart.List', {
         '->',
         {
             xtype: 'textfield',
-            emptyText: 'Promotion Code'
+            reference: 'promoCodeTextField',
+            emptyText: 'Promotion Code',
+            listeners: {
+                change: 'onPromoCodeChange'
+            }
         },
         {
             xtype: 'button', text: 'Calculate', ui: 'blue',
+            //id: 'calcBtnId',
+            itemId: 'calcBtnSelector',
+            reference: 'calcBtn',
             disabled: true,
             listeners: {
                 click: 'onCalculateClick'
@@ -186,11 +193,25 @@ Ext.define('Shopping.view.cart.List', {
                     return Ext.util.Format.number(value, '0,0.00');
                 }
 
-            }, {
-                text: 'Total',
-                width: 85,
+            },
+            // {
+            //     text: 'Total',
+            //     width: 85,
+            //     align: 'right',
+            //     dataIndex: 'extended_price',
+            //     sortable: false,
+            //     renderer: function (value) {
+            //         return Ext.util.Format.number(value, '0,0.00');
+            //     },
+            //     summaryType: 'sum',
+            //     summaryRenderer: function (value) {
+            //         return Ext.String.format('<b>{0}</b>', Ext.util.Format.currency(value));
+            //     }
+            // },
+            {
+                text: 'Sub Total',
                 align: 'right',
-                dataIndex: 'extended_price',
+                dataIndex: 'sub_total',
                 sortable: false,
                 renderer: function (value) {
                     return Ext.util.Format.number(value, '0,0.00');
@@ -199,16 +220,25 @@ Ext.define('Shopping.view.cart.List', {
                 summaryRenderer: function (value) {
                     return Ext.String.format('<b>{0}</b>', Ext.util.Format.currency(value));
                 }
-            }, {
+            },
+
+            {
                 text: '',
                 action: 'removecartitem',
                 width: 30,
                 align: 'center',
                 sortable: false,
                 renderer: function (value, meta, rec, rowIndex, colIndex, store) {
+                    // console.info(meta);
+                    // console.info(rec);
+
+                    if (rec.get('generated') == 'Y') {
+                        return '';
+                    }
                     if (store.getCount() > 1 && (Ext.isEmpty(rec.get('delivered')) || rec.get('delivered') == 0)) {
                         return '<span data-qtip="Remove" class="vvicon-in-cell vvicon-cross"><span>';
                     }
+
                     return '';
                 }
             }]);
@@ -233,11 +263,25 @@ Ext.define('Shopping.view.cart.List', {
                     return Ext.util.Format.number(value, '0,0.00');
                 }
 
-            }, {
-                text: 'Total',
-                flex: 1,
+            },
+            //     {
+            //     text: 'Total',
+            //     flex: 1,
+            //     align: 'right',
+            //     dataIndex: 'extended_price',
+            //     sortable: false,
+            //     renderer: function (value) {
+            //         return Ext.util.Format.number(value, '0,0.00');
+            //     },
+            //     summaryType: 'sum',
+            //     summaryRenderer: function (value) {
+            //         return Ext.String.format('<b>{0}</b>', Ext.util.Format.currency(value));
+            //     }
+            // },
+            {
+                text: 'Sub Total',
                 align: 'right',
-                dataIndex: 'extended_price',
+                dataIndex: 'sub_total',
                 sortable: false,
                 renderer: function (value) {
                     return Ext.util.Format.number(value, '0,0.00');
