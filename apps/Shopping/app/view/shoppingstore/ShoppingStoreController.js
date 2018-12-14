@@ -666,7 +666,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                             "price": product.OBUPRC,
                             "prod_desc": product.I1IDSC,
                             "delivered": product.OBQTYD,
-                            "smallpic": product.SMALLPIC
+                            "smallpic": product.SMALLPIC,
+
+                            "sub_total": product.OBTOTA,
+                            "generated": product.OBGENF
                         });
                     }
                 }

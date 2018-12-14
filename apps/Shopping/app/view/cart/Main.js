@@ -76,8 +76,9 @@ Ext.define('Shopping.view.cart.Main', {
             //         // }
             //     ]
             // },
-            '->',
-            '->',
+            //'->',
+            //'->',
+            { xtype: 'tbfill' },
             {
                 text: 'Continue Shopping',
                 ui: 'white',
@@ -146,7 +147,12 @@ Ext.define('Shopping.view.cart.Main', {
                 handler: 'onClickRelease',
                 listeners: {
                 }
-            }, '', '', '']
+            },
+            //'', '', ''
+            { xtype: 'tbspacer' },
+            { xtype: 'tbspacer' },
+            { xtype: 'tbspacer' }
+        ]
     },
 
     // buttons: [
