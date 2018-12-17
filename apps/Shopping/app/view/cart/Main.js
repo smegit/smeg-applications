@@ -124,7 +124,7 @@ Ext.define('Shopping.view.cart.Main', {
                 //ui: 'blue',
                 maskMsg: 'Loading Notes',
                 listeners: {
-                    click: 'onClickNotes',
+                    click: 'onClickNotes1',
                     // mouseover: 'onMouseOver',
                     // mouseout: 'onMouseOut'
                 }

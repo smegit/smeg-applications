@@ -936,6 +936,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         });
     },
 
+
     // Cart Items change then mark needUpate = true
     onGridDatachanged: function (store, eOpt) {
         console.log('onGridDatachanged called');
@@ -952,19 +953,29 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
     onGridUpdate: function (store, record, operation, modifiedFieldNames, details, eOpts) {
         console.log('onGridUpdate called');
-        // console.info(store);
-        // console.info(record);
-        // console.info(operation);
-        // console.info(modifiedFieldNames);
-        // console.info(details);
+        console.info(store);
+        console.info(record);
+        console.info(operation);
+        console.info(modifiedFieldNames);
+        console.info(details);
         // console.info(eOpts);
         var me = this,
             vm = me.getViewModel(),
             view = me.getView();
-        vm.set('needUpdate', true);
-        Ext.ComponentQuery.query('#calcBtnSelector')[0].enable();
-        console.info(Ext.ComponentQuery.query('cartlist')[0]);
-        Ext.ComponentQuery.query('cartlist')[0].getView().getFeature('itemSummary').toggleSummaryRow(false);
+        console.info(record.getChanges());
+        console.info(record.isModified('quantity'));
+        console.info(Ext.Object.isEmpty(record.getChanges()));
+        //console.info(Ext.getValues(record.getChanges()));
+
+
+        if (!Ext.Object.isEmpty(record.getChanges())) {
+            console.log('have changes');
+            vm.set('needUpdate', true);
+            Ext.ComponentQuery.query('#calcBtnSelector')[0].enable();
+            //console.info(Ext.ComponentQuery.query('cartlist')[0]);
+            Ext.ComponentQuery.query('cartlist')[0].getView().getFeature('itemSummary').toggleSummaryRow(false);
+        }
+
         //grid.getView().getFeature('itemSummary').toggleSummaryRow(true);
 
     },

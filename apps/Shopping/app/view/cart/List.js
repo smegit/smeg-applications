@@ -24,6 +24,8 @@ Ext.define('Shopping.view.cart.List', {
         edit: 'onCellEditList',
         viewready: 'onViewReadyList',
         //storechange: 'onListStorechange'
+        // CAN
+        itemkeydown: 'onRowBodyKeyPress'
     },
     header: {
         bind: {
