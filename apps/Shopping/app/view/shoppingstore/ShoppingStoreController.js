@@ -9,7 +9,11 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         'Shopping.view.products.detail.ImageMain',
         'Shopping.view.products.detail.Main',
         'Valence.common.util.Dialog',
-        'Valence.common.util.Snackbar'
+        'Valence.common.util.Snackbar',
+
+        // add promo pop-up window
+        'Shopping.view.cart.PromoWin'
+
     ],
 
     init: function () {
@@ -38,6 +42,12 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             },
             'existingcarts': {
                 cellclick: me.onCellClickExistCart
+            },
+
+            // add listener to cart 
+            'cartmain': {
+                loadPromoSelections: me.loadPromoSelections,
+                loadPromoHeader: me.loadPromoHeader
             }
         });
 
@@ -225,10 +235,27 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         var me = this,
             vm = me.getViewModel(),
             view = me.getView(),
+            //cartmain = view.down('cartmain').getView(),
             form = view.down('cartform'),
             cartmain = Ext.ComponentQuery.query('cartmain')[0], params = {};
 
         this.lookupReference('card').getLayout().setActiveItem(1);
+
+
+        // show pop-up promo window when need
+        console.info(vm.getStore('promoSelections').getCount());
+        if (vm.getStore('promoSelections').getCount() > 0) {
+            console.info(view);
+            console.info(cartmain);
+            setTimeout(function () {
+                cartmain.add({
+                    xtype: 'promowin',
+                }).show();
+            }, 300);
+            // cartmain.add({
+            //     xtype: 'promowin',
+            // }).show();
+        }
 
         console.info(this.lookupReference('card'));
 
@@ -298,6 +325,48 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         return {
             data: formData,
             products: prodArray
+        }
+    },
+
+    // Load Promo Selections to store
+    loadPromoSelections: function (content) {
+        console.log('loadPromoSelections called');
+        var me = this,
+            vm = me.getViewModel(),
+            prmSelectionStore = vm.getStore('promoSelections'),
+            selectionArray = [];
+        // Generate selection array
+        prmSelectionStore.removeAll();
+        if (content.length > 0) {
+            for (var i = 0; i < content.length; i++) {
+                item = content[i];
+                selectionArray.push({
+                    prm_desc: item.I1IDSC,
+                    prm_model: item.PBITM,
+                    prm_code: item.PBPRMCOD,
+                    prm_price: item.PBPRMPRC,
+                    prm_qty: item.PBSELQTY,
+                    prm_uprice: item.PBUPRC,
+                    prm_smallpic: item.SMALLPIC
+                });
+            }
+            prmSelectionStore.add(selectionArray);
+        }
+        console.info(prmSelectionStore);
+    },
+
+    loadPromoHeader: function (content) {
+        console.log('loadPromoHeader called');
+        var me = this,
+            vm = me.getViewModel();
+        if (!Ext.isEmpty(content) && !Ext.isEmpty(content[0])) {
+            item = content[0];
+            vm.set({
+                prmShowQty: item.PASHWQTY == 'N' ? false : true,
+                prmShowValue: item.PASHWVAL == 'N' ? false : true,
+                prmDesc: item.PAPRMDSC,
+                prmText: item.PATEXT
+            })
         }
     },
 
@@ -859,6 +928,15 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                         }
                     }
                     paymentHistoryStore.add(paymentHistoryStoreItems);
+                    // load promote selections
+                    if (!Ext.isEmpty(obj.promoSelection)) {
+                        me.loadPromoSelections(obj.promoSelection);
+                    }
+
+                    // load promote headers
+                    if (!Ext.isEmpty(obj.promoHeader)) {
+                        me.loadPromoHeader(obj.promoHeader);
+                    }
                     me.onViewCart();
                     vm.notify();
                 };
@@ -1051,4 +1129,11 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     //     console.log('onShowInfo called');
     //     //this.onShowDetail();
     // }
+
+    onClickCancelPromoWin: function () {
+        console.log('onClickCancelPromoWin called');
+        var me = this;
+        console.info(me.lookupReference('promowinRef'));
+        me.lookupReference('promowinRef').close();
+    }
 });

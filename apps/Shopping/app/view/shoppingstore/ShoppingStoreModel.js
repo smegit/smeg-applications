@@ -13,7 +13,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         'Ext.data.TreeStore',
 
         // Add payment history model
-        'Shopping.model.PaymentHistory'
+        'Shopping.model.PaymentHistory',
+        'Shopping.model.PromoSelection'
     ],
 
     data: {
@@ -29,7 +30,12 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         deliveryDisabledDays: null, //Example [0, 6] would be excluding weekends
         deliveryOptions: null,
         orderPayments: null,
-        totalPaid: null
+        totalPaid: null,
+        prmShowQty: false,
+        prmShowValue: false,
+        prmDesc: null,
+        prmText: null,
+        //promoItems: []
     },
 
     formulas: {
@@ -154,6 +160,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         },
         paymentHistory: {
             model: 'Shopping.model.PaymentHistory',
+            autoLoad: false
+        },
+        promoSelections: {
+            model: 'Shopping.model.PromoSelection',
             autoLoad: false
         }
     }

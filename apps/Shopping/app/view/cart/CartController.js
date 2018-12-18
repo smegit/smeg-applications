@@ -806,10 +806,14 @@ Ext.define('Shopping.view.cart.CartController', {
 
                 } else {
                     console.log('loadCart error');
+                    Valence.common.util.Helper.destroyLoadMask();
+                    me.showError(res);
                 }
 
             }, function (res) {
                 console.info(res);
+                Valence.common.util.Helper.destroyLoadMask();
+                me.showError(res);
             }).
             then(function (key) {
                 var me = this,
@@ -1866,11 +1870,12 @@ Ext.define('Shopping.view.cart.CartController', {
         console.info(promoCode.isDirty());
         if (promoCode.isDirty()) {
             calcBtn.enable();
-        } else {
-            //calcBtn.disable();
+            me.toggleCartListSummary(false);
+        } else if (!promoCode.isDirty() && !vm.get('needUpdate')) {
+            calcBtn.disable();
+            me.toggleCartListSummary(true);
         }
         console.info(vm.get('needUpdate'));
-
     },
 
     requestCalcualte: function () {
@@ -1881,15 +1886,16 @@ Ext.define('Shopping.view.cart.CartController', {
             params = {},
             cartInfo = me.getCartInformation(),
             valid = me.isFormValid();
-        console.info(cartInfo);
+        //console.info(cartInfo);
         params = {
             pgm: 'EC1050',
             action: 'calculate',
             products: (!Ext.isEmpty(cartInfo) && !Ext.isEmpty(cartInfo.products)) ? Ext.encode(cartInfo.products) : null,
         };
 
-        Ext.apply(params, cartInfo.data);
+
         if (valid) {
+            Ext.apply(params, cartInfo.data);
             console.log('valid form');
             Ext.Ajax.request({
                 url: '/valence/vvcall.pgm',
@@ -1898,6 +1904,7 @@ Ext.define('Shopping.view.cart.CartController', {
                     console.info(res);
                     var resp = Ext.decode(res.responseText);
                     deferred.resolve(resp);
+                    //deferred.reject(resp);
                 },
                 failure: function (res) {
                     console.info(res);
@@ -1985,19 +1992,88 @@ Ext.define('Shopping.view.cart.CartController', {
 
     },
 
+    toggleCartListSummary: function (show) {
+        var me = this,
+            grid = me.getView().down('cartlist');
+        grid.getView().getFeature('itemSummary').toggleSummaryRow(show);
+    },
+
     onCalculateClick: function () {
         console.info('onUpdateClick called');
-        var me = this;
+        var me = this,
+            vm = me.getViewModel(),
+            valid = me.isFormValid(),
+            view = me.getView();
+        if (valid) {
+            Valence.common.util.Helper.loadMask('Calculating Your Order ......');
+        }
+
         me.requestCalcualte()
             .then(function (res) {
                 console.info(res);
                 if (!Ext.isEmpty(res) && res.success) {
                     me.loadCart(res);
+                    view.fireEvent('loadPromoSelections', res.promoSelection);
+                    view.fireEvent('loadPromoHeader', res.promoHeader);
+
+                    // check if need to render promotion page
+                    if (!Ext.isEmpty(res.promoSelection) && res.promoSelection.length > 0) {
+                        console.info(view);
+                        if (res.promoHeader[0].PASHWQTY == 'N') {
+                            view.add({
+                                xtype: 'promowin',
+                                listeners: {
+                                    beforeshow: function (cmp) {
+                                        console.info(cmp.down('grid'));
+                                        // cmp.down('grid').addConfig({
+                                        //     selModel: {
+                                        //         type: 'checkboxmodel',
+                                        //         mode: 'SINGLE'
+                                        //     }
+                                        // });
+                                        Ext.apply(cmp.down('grid'), {
+                                            selModel: {
+                                                type: 'checkboxmodel',
+                                                mode: 'SINGLE'
+                                            }
+                                        });
+                                        //cmp.down('grid').setSelection()
+                                    }
+                                }
+                            }).show();
+                        } else if (res.promoHeader[0].PASHWQTY == 'Y') {
+                            view.add({
+                                xtype: 'promowin',
+                                listeners: {
+                                    beforeshow: function (cmp) {
+                                        console.info(cmp.down('grid'));
+                                        // cmp.down('grid').addConfig({
+                                        //     selModel: {
+                                        //         type: 'checkboxmodel',
+                                        //         mode: 'SINGLE'
+                                        //     }
+                                        // });
+                                        // Ext.apply(cmp.down('grid'), {
+                                        //     selModel: {}
+                                        // });
+                                        //cmp.down('grid').setSelection()
+                                    }
+                                }
+                            }).show();
+                        }
+
+                    }
+
+                    Valence.common.util.Helper.destroyLoadMask();
                 } else {
                     console.log('loadCart error');
+                    Valence.common.util.Helper.destroyLoadMask();
+                    me.showError(res);
                 }
             }, function (res) {
                 console.info(res);
+                Valence.common.util.Helper.destroyLoadMask();
+                me.showError(res);
             });
         // var me = this,
         //     vm = me.getViewModel(),
@@ -2108,5 +2184,18 @@ Ext.define('Shopping.view.cart.CartController', {
     onRowBodyKeyPress: function (p1) {
         console.log('onRowBodyKeyPress');
         console.info(p1);
+    },
+    onClickCancelPromoWin: function () {
+        console.log('onClickCancelPromoWin called');
+        var me = this,
+            promoWindow = me.getView().down('promowin');
+        promoWindow.close();
+        //console.info(me.getView().down('promowin'));
+    },
+    onClickSelectPromoWin: function () {
+        console.log('onClickSelectPromoWin called');
+        var me = this,
+            vm = me.getViewModel();
+        console.info(vm.get('promoItems'));
     }
 });

@@ -7,7 +7,7 @@ Ext.define('Shopping.view.cart.Main', {
         'Shopping.view.cart.Form',
         'Shopping.view.cart.CartController',
         //'Shopping.view.cart.NoteList'
-        'Shopping.view.cart.PaymentHistory'
+        'Shopping.view.cart.PaymentHistory',
     ],
     controller: 'cart',
     cls: 'cart',
