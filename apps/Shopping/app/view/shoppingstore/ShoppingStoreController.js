@@ -364,6 +364,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             vm.set({
                 prmShowQty: item.PASHWQTY == 'N' ? false : true,
                 prmShowValue: item.PASHWVAL == 'N' ? false : true,
+                prmShowPrice: item.PASHWPRC == 'N' ? false : true,
                 prmDesc: item.PAPRMDSC,
                 prmText: item.PATEXT,
                 prmTotalQty: item.PASLTQTY
@@ -1135,6 +1136,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         console.log('onClickCancelPromoWin called');
         var me = this;
         console.info(me.lookupReference('promowinRef'));
-        me.lookupReference('promowinRef').close();
+        //me.lookupReference('promowinRef').close();
     }
 });

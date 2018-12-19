@@ -9,6 +9,7 @@ Ext.define('Shopping.view.cart.PromoWin', {
     xtype: 'promowin',
     reference: 'promowinRef',
     height: 480,
+    //height: 960,
     //width: '35%',
     width: 800,
     //closable: true,
@@ -92,11 +93,23 @@ Ext.define('Shopping.view.cart.PromoWin', {
                     meta.tdCls += ' cart-list-prd-detail';
                     return v;
                 }
-            }, {
+            },
+            {
                 text: 'Value',
                 dataIndex: 'prm_price',
                 bind: {
                     hidden: '{!prmShowValue}'
+                },
+                renderer: function (v, meta) {
+                    meta.tdCls += ' cart-list-prd-detail';
+                    return v;
+                }
+            },
+            {
+                text: 'Unit Price',
+                dataIndex: 'prm_uprice',
+                bind: {
+                    hidden: '{!prmShowPrice}'
                 },
                 renderer: function (v, meta) {
                     meta.tdCls += ' cart-list-prd-detail';
@@ -108,21 +121,15 @@ Ext.define('Shopping.view.cart.PromoWin', {
                 bind: {
                     hidden: '{!prmShowQty}'
                 },
-                editor: {
-                    xtype: 'numberfield'
-                },
+                // editor: {
+                //     xtype: 'numberfield'
+                // },
                 renderer: function (v, meta) {
                     meta.tdCls += ' cart-list-prd-detail';
                     return v;
                 }
-            }, {
-                text: 'Unit Price',
-                dataIndex: 'prm_uprice',
-                renderer: function (v, meta) {
-                    meta.tdCls += ' cart-list-prd-detail';
-                    return v;
-                }
-            }]
+            }
+        ]
 
     },
     ////////////////////// Grid 2 //////////////////////
@@ -135,12 +142,14 @@ Ext.define('Shopping.view.cart.PromoWin', {
         //plugins: 'multiselection',
         plugins: {
             ptype: 'cellediting',
-            clicksToEdit: 1
+            clicksToEdit: 1,
+            listeners: {
+                edit: 'onEditPromoList',
+            }
         },
         bind: {
             // title: '{prmText}',
             store: '{promoSelections}',
-            selection: '{promoItems}',
             hidden: '{!prmShowQty}'
         },
         //selType: '{prmShowQty}' ? null : '',
@@ -191,9 +200,22 @@ Ext.define('Shopping.view.cart.PromoWin', {
                     meta.tdCls += ' cart-list-prd-detail';
                     return v;
                 }
+            },
+            {
+                text: 'Unit Price',
+                dataIndex: 'prm_uprice',
+                bind: {
+                    hidden: '{!prmShowPrice}'
+                },
+                renderer: function (v, meta) {
+                    meta.tdCls += ' cart-list-prd-detail';
+                    return v;
+                }
             }, {
                 text: 'Quantity',
                 dataIndex: 'prm_qty',
+                align: 'center',
+                sortable: false,
                 bind: {
                     hidden: '{!prmShowQty}'
                 },
@@ -201,24 +223,17 @@ Ext.define('Shopping.view.cart.PromoWin', {
                     xtype: 'numberfield'
                 },
                 renderer: function (v, meta) {
-                    meta.tdCls += ' cart-list-prd-detail';
+                    meta.tdCls += ' editable-column';
                     return v;
-                }
-            }, {
-                text: 'Unit Price',
-                dataIndex: 'prm_uprice',
-                renderer: function (v, meta) {
-                    meta.tdCls += ' cart-list-prd-detail';
-                    return v;
-                }
-            }]
+                },
+            },]
 
     }],
     // bbar: [{
 
     // }]
     buttons: [{
-        text: 'Select',
+        text: 'Save',
         handler: 'onClickSelectPromoWin'
     }, {
         text: 'Cancel',

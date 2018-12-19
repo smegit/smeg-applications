@@ -89,7 +89,9 @@ Ext.define('Shopping.view.cart.Main', {
                     // mouseover: 'onMouseOver',
                     // mouseout: 'onMouseOut'
                 }
-            }, {
+            }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+            { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+            {
                 text: 'Exit Order',
                 maskMsg: 'Exiting Order',
                 ui: 'white',
@@ -99,7 +101,8 @@ Ext.define('Shopping.view.cart.Main', {
                     // mouseover: 'onMouseOver',
                     // mouseout: 'onMouseOut'
                 }
-            }, {
+            }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+            { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, {
                 text: 'PDF',
                 ui: 'white',
                 //ui: 'blue',
@@ -109,7 +112,8 @@ Ext.define('Shopping.view.cart.Main', {
                     // mouseover: 'onMouseOver',
                     // mouseout: 'onMouseOut'
                 }
-            },
+            }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+            { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
             // {
             //     text: 'Save',
             //     ui: 'white',
@@ -128,7 +132,8 @@ Ext.define('Shopping.view.cart.Main', {
                     // mouseover: 'onMouseOver',
                     // mouseout: 'onMouseOut'
                 }
-            },
+            }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+            { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
             {
                 text: 'Payment',
                 //ui: 'white',
@@ -139,7 +144,8 @@ Ext.define('Shopping.view.cart.Main', {
                     //mouseover: 'onMouseOver',
                     //mouseout: 'onMouseOut'
                 }
-            }, {
+            }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+            { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, {
                 text: 'Deliver',
                 reference: 'checkoutButton',
                 ui: 'blue',
@@ -148,6 +154,7 @@ Ext.define('Shopping.view.cart.Main', {
                 listeners: {
                 }
             },
+            { xtype: 'tbfill' },
             //'', '', ''
             { xtype: 'tbspacer' },
             { xtype: 'tbspacer' },

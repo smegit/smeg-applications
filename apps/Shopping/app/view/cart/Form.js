@@ -33,7 +33,8 @@ Ext.define('Shopping.view.cart.Form', {
                     xtype: 'combo',
                     cls: 'sales-rep',
                     margin: '0 32 0 0',
-                    labelWidth: 90,
+                    labelWidth: 50,
+                    maxWidth: 200,
                     bind: {
                         store: '{cartReps}',
                         value: '{cartValues.OAREP}'
@@ -45,9 +46,9 @@ Ext.define('Shopping.view.cart.Form', {
                     valueField: 'REP',
                     name: 'OAREP',
                     forceSelection: true,
-                    fieldLabel: 'Sales Person',
+                    fieldLabel: 'Sales',
                     allowBlank: false,
-                    minWidth: 200,
+                    //minWidth: 200,
                     anyMatch: true
                 };
 
@@ -100,6 +101,7 @@ Ext.define('Shopping.view.cart.Form', {
                         xtype: 'textfield',
                         margin: '0 32 0 0',
                         labelWidth: 75,
+                        maxWidth: 160,
                         name: 'OACSTREF',
                         fieldLabel: 'Reference',
                         allowBlank: false,
@@ -115,10 +117,10 @@ Ext.define('Shopping.view.cart.Form', {
                         xtype: 'datefield',
                         name: 'OADELD',
                         allowBlank: false,
-                        fieldLabel: 'Preferred Delivery Date',
-                        labelWidth: 150,
-                        flex: 0,
-                        width: 280,
+                        fieldLabel: 'Request Date',
+                        //labelWidth: 150,
+                        //flex: 0,
+                        maxWidth: 220,
                         minValue: new Date(),
                         maxValue: Ext.Date.add(new Date(), Ext.Date.YEAR, 1), //1 Year from the current date
                         format: 'd/m/Y',
@@ -133,26 +135,17 @@ Ext.define('Shopping.view.cart.Form', {
                                 bindTo: '{cartValues.OADELD}'
                             }
                         }
-                    }]
-                },
-                {
-                    xtype: 'container',
-                    layout: {
-                        type: 'hbox',
-                        align: 'stretch'
                     },
-                    padding: '0 32 4 32',
-                    defaults: {
-                        labelAlign: 'left',
-                        flex: 1
-                    },
-                    items: [{
+                    {
                         xtype: 'combobox',
                         queryMode: 'local',
-                        flex: 0,
-                        width: 305,
+                        //flex: 1,
+                        //width: 305,
+                        minWidth: 220,
+                        maxWidth: 350,
                         //height: 32,
-                        labelWidth: 95,
+                        labelWidth: 140,
+                        labelAlign: 'right',
                         editable: false,
                         valueField: 'STKCOD',
                         displayField: 'STKDSC',
@@ -167,7 +160,41 @@ Ext.define('Shopping.view.cart.Form', {
                             value: '{STKLOC}'
                         }
                     }]
-                }]
+                },
+                    // {
+                    //     xtype: 'container',
+                    //     layout: {
+                    //         type: 'hbox',
+                    //         align: 'stretch'
+                    //     },
+                    //     padding: '0 32 4 32',
+                    //     defaults: {
+                    //         labelAlign: 'left',
+                    //         flex: 1
+                    //     },
+                    //     items: [{
+                    //         xtype: 'combobox',
+                    //         queryMode: 'local',
+                    //         flex: 0,
+                    //         width: 305,
+                    //         //height: 32,
+                    //         labelWidth: 95,
+                    //         editable: false,
+                    //         valueField: 'STKCOD',
+                    //         displayField: 'STKDSC',
+                    //         reference: 'stocklocs',
+                    //         fieldLabel: 'Stock Location',
+                    //         forceSelection: true,
+                    //         listeners: {
+                    //             select: 'onSelectStockLocation'
+                    //         },
+                    //         bind: {
+                    //             store: '{StockLocations}',
+                    //             value: '{STKLOC}'
+                    //         }
+                    //     }]
+                    //     }
+                ]
             }, {
                 xtype: 'cart-customerdetail',
                 release: me.release

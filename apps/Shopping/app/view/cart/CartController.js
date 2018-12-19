@@ -2018,22 +2018,10 @@ Ext.define('Shopping.view.cart.CartController', {
 
                     // check if need to render promotion page
                     if (!Ext.isEmpty(res.promoSelection) && res.promoSelection.length > 0) {
-                        if (res.promoHeader[0].PASHWQTY == 'N') {
-                            console.log('not show');
-
-                            view.add({
-                                xtype: 'promowin'
-                            }).show();
-                            console.info(view);
-                        } else if (res.promoHeader[0].PASHWQTY == 'Y') {
-                            console.log('show');
-                            view.add({
-                                xtype: 'promowin',
-                            }).show();
-                        }
-
+                        view.add({
+                            xtype: 'promowin'
+                        }).show();
                     }
-
                     Valence.common.util.Helper.destroyLoadMask();
                 } else {
                     console.log('loadCart error');
@@ -2166,22 +2154,95 @@ Ext.define('Shopping.view.cart.CartController', {
         console.log('onClickSelectPromoWin called');
         var me = this,
             vm = me.getViewModel(),
+            view = me.getView(),
             selectedCount = vm.get('selectedPromoCount'),
             prmTotalQty = vm.get('prmTotalQty');
         console.info(vm.get('promoItems'));
         // validate selections 
         if (selectedCount > prmTotalQty) {
-            me.showError({ msg: 'You selected more' });
+            me.showError({ msg: 'You have selected more than ' + prmTotalQty + ' items.' });
+            return null;
         } else if (selectedCount < prmTotalQty) {
-            me.showError({ msg: 'You selected less' });
+            me.showError({ msg: 'You have selected less than ' + prmTotalQty + ' items' });
+            return null;
         } else {
             console.log('good selection');
         }
+        Valence.common.util.Helper.loadMask('Processing Your Order ......');
 
+        me.requestAddPromo()
+            .then(function (res) {
+                console.info(res);
+                if (!Ext.isEmpty(res) && res.success) {
+                    me.loadCart(res);
+                    view.fireEvent('loadPromoSelections', res.promoSelection);
+                    view.fireEvent('loadPromoHeader', res.promoHeader);
 
+                    // check if need to render promotion page
+                    console.log('before show promo');
+                    if (!Ext.isEmpty(res.promoSelection) && res.promoSelection.length > 0) {
+                        console.log('show pop up');
+                        view.add({
+                            xtype: 'promowin'
+                        }).show();
+                    } else {
+                        // close promo pop-up
+                        console.log('should close pop up');
+                        me.onClickCancelPromoWin();
+                    }
+                    Valence.common.util.Helper.destroyLoadMask();
+                } else {
+                    console.log('loadCart error');
+                    Valence.common.util.Helper.destroyLoadMask();
+                    me.showError(res);
+                }
+            }, function (res) {
+                console.info(res);
+                Valence.common.util.Helper.destroyLoadMask();
+                me.showError(res);
+            });
     },
 
     // request add promo
+    requestAddPromo: function () {
+        console.log('requestAddPromo called');
+        var me = this,
+            deferred = Ext.create('Ext.Deferred'),
+            vm = me.getViewModel(),
+            params = {},
+            orderKey = vm.get('activeCartNumber'),
+            promoList = vm.get('selectedPromos');
+        //console.info(cartInfo);
+        params = {
+            pgm: 'EC1050',
+            action: 'addPromo',
+            OAORDKEY: orderKey,
+            selectedPromos: Ext.encode(promoList)
+        };
+        // must have an order key
+        if (!Ext.isEmpty(orderKey)) {
+            Ext.Ajax.request({
+                url: '/valence/vvcall.pgm',
+                //url: 'https://42848ff2-8ad4-43d1-859c-c0e5d1a9997e.mock.pstmn.io/calculate_cart',
+                //method: 'GET',
+                params: params,
+                success: function (res) {
+                    console.info(res);
+                    var resp = Ext.decode(res.responseText);
+                    deferred.resolve(resp);
+                    //deferred.reject(resp);
+                },
+                failure: function (res) {
+                    console.info(res);
+                    var resp = Ext.decode(res.responseText);
+                    deferred.reject(resp);
+                }
+            });
+        }
+        return deferred.promise;
+
+
+    },
     onPromoSelectionChange: function (th, rec) {
         console.log('onPromoSelectionChange called');
         console.info(th);
@@ -2205,12 +2266,35 @@ Ext.define('Shopping.view.cart.CartController', {
         console.info(vm.get('selectedPromos'));
         console.info(vm.get('selectedPromoCount'));
 
-
-
-
     },
     onPromoSelect: function (th, rec) {
         console.log('onPromoSelect called');
     },
 
+    onEditPromoList: function (editor, e) {
+        var me = this,
+            vm = me.getViewModel(),
+            prmSelectionStore = vm.getStore('promoSelections');
+        var selectedList = [],
+            item, selectedTotal = 0;
+        e.record.commit();
+        console.info(prmSelectionStore);
+
+        // constructing selection list
+        for (var i = 0; i < prmSelectionStore.getCount(); i++) {
+            item = prmSelectionStore.getAt(i).getData();
+            if (item.prm_qty > 0) {
+                selectedTotal = selectedTotal + item.prm_qty;
+                selectedList.push({
+                    prm_code: item.prm_code,
+                    prm_model: item.prm_model,
+                    prm_qty: item.prm_qty
+                });
+            }
+        }
+        vm.set('selectedPromos', selectedList);
+        vm.set('selectedPromoCount', selectedTotal);
+        console.info(vm.get('selectedPromos'));
+        console.info(vm.get('selectedPromoCount'));
+    }
 });
