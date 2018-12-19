@@ -2018,47 +2018,17 @@ Ext.define('Shopping.view.cart.CartController', {
 
                     // check if need to render promotion page
                     if (!Ext.isEmpty(res.promoSelection) && res.promoSelection.length > 0) {
-                        console.info(view);
                         if (res.promoHeader[0].PASHWQTY == 'N') {
+                            console.log('not show');
+
                             view.add({
-                                xtype: 'promowin',
-                                listeners: {
-                                    beforeshow: function (cmp) {
-                                        console.info(cmp.down('grid'));
-                                        // cmp.down('grid').addConfig({
-                                        //     selModel: {
-                                        //         type: 'checkboxmodel',
-                                        //         mode: 'SINGLE'
-                                        //     }
-                                        // });
-                                        Ext.apply(cmp.down('grid'), {
-                                            selModel: {
-                                                type: 'checkboxmodel',
-                                                mode: 'SINGLE'
-                                            }
-                                        });
-                                        //cmp.down('grid').setSelection()
-                                    }
-                                }
+                                xtype: 'promowin'
                             }).show();
+                            console.info(view);
                         } else if (res.promoHeader[0].PASHWQTY == 'Y') {
+                            console.log('show');
                             view.add({
                                 xtype: 'promowin',
-                                listeners: {
-                                    beforeshow: function (cmp) {
-                                        console.info(cmp.down('grid'));
-                                        // cmp.down('grid').addConfig({
-                                        //     selModel: {
-                                        //         type: 'checkboxmodel',
-                                        //         mode: 'SINGLE'
-                                        //     }
-                                        // });
-                                        // Ext.apply(cmp.down('grid'), {
-                                        //     selModel: {}
-                                        // });
-                                        //cmp.down('grid').setSelection()
-                                    }
-                                }
                             }).show();
                         }
 
@@ -2195,7 +2165,52 @@ Ext.define('Shopping.view.cart.CartController', {
     onClickSelectPromoWin: function () {
         console.log('onClickSelectPromoWin called');
         var me = this,
-            vm = me.getViewModel();
+            vm = me.getViewModel(),
+            selectedCount = vm.get('selectedPromoCount'),
+            prmTotalQty = vm.get('prmTotalQty');
         console.info(vm.get('promoItems'));
-    }
+        // validate selections 
+        if (selectedCount > prmTotalQty) {
+            me.showError({ msg: 'You selected more' });
+        } else if (selectedCount < prmTotalQty) {
+            me.showError({ msg: 'You selected less' });
+        } else {
+            console.log('good selection');
+        }
+
+
+    },
+
+    // request add promo
+    onPromoSelectionChange: function (th, rec) {
+        console.log('onPromoSelectionChange called');
+        console.info(th);
+        console.info(rec);
+        var selectedList = [],
+            item, selectedTotal = 0;
+        var me = this,
+            vm = me.getViewModel();
+        for (var i = 0; i < rec.length; i++) {
+            item = rec[i].getData();
+            console.info(rec[i]);
+            selectedTotal = selectedTotal + 1;
+            selectedList.push({
+                prm_code: item.prm_code,
+                prm_model: item.prm_model,
+                prm_qty: 1
+            });
+        }
+        vm.set('selectedPromos', selectedList);
+        vm.set('selectedPromoCount', selectedTotal);
+        console.info(vm.get('selectedPromos'));
+        console.info(vm.get('selectedPromoCount'));
+
+
+
+
+    },
+    onPromoSelect: function (th, rec) {
+        console.log('onPromoSelect called');
+    },
+
 });

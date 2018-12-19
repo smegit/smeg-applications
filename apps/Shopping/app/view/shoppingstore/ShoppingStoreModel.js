@@ -36,6 +36,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         prmDesc: null,
         prmText: null,
         //promoItems: []
+        selectedPromos: [],
+        selectedPromoCount: 0
     },
 
     formulas: {

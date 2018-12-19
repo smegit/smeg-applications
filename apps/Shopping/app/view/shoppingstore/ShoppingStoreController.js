@@ -365,7 +365,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 prmShowQty: item.PASHWQTY == 'N' ? false : true,
                 prmShowValue: item.PASHWVAL == 'N' ? false : true,
                 prmDesc: item.PAPRMDSC,
-                prmText: item.PATEXT
+                prmText: item.PATEXT,
+                prmTotalQty: item.PASLTQTY
             })
         }
     },

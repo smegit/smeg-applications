@@ -36,7 +36,102 @@ Ext.define('Shopping.view.cart.PromoWin', {
         flex: 0.5,
         height: 350,
         margin: '0 5 0 0',
-        reference: 'promoGrid',
+        reference: 'promoGrid1',
+        // plugins: {
+        //     ptype: 'cellediting',
+        //     clicksToEdit: 1
+        // },
+        bind: {
+            // title: '{prmText}',
+            store: '{promoSelections}',
+            selection: '{promoItems}',
+            hidden: '{prmShowQty}'
+        },
+        listeners: {
+            selectionchange: 'onPromoSelectionChange',
+            select: 'onPromoSelect'
+        },
+        //selType: '{prmShowQty}' ? null : '',
+        //columnLines: true,
+        //selType: '{prmShowQty}' ? null : '',
+        selModel: {
+            type: 'checkboxmodel',
+            mode: 'MULTI',
+        },
+        columns: [
+            {
+                text: '',
+                minWidth: 0,
+                maxWidth: 50,
+                dataIndex: 'prm_smallpic',
+                align: 'center',
+                sortable: false,
+                renderer: function (v, meta) {
+                    if (!Ext.isEmpty(v)) {
+                        meta.tdCls += ' image-column';
+                        return '<image class="cart-list-prd-detail" src="' + v + '" height="50" width="50"></image>';
+                    } else {
+                        return '';
+                    }
+                }
+            }, {
+                text: 'Item',
+                width: 100,
+                dataIndex: 'prm_model',
+                renderer: function (v, meta) {
+                    meta.tdCls += ' cart-list-prd-detail';
+                    return v;
+                }
+            }, {
+                text: 'Description',
+                //cellWrap: true,
+                dataIndex: 'prm_desc',
+                width: 200,
+                flex: 1,
+                renderer: function (v, meta) {
+                    meta.tdCls += ' cart-list-prd-detail';
+                    return v;
+                }
+            }, {
+                text: 'Value',
+                dataIndex: 'prm_price',
+                bind: {
+                    hidden: '{!prmShowValue}'
+                },
+                renderer: function (v, meta) {
+                    meta.tdCls += ' cart-list-prd-detail';
+                    return v;
+                }
+            }, {
+                text: 'Quantity',
+                dataIndex: 'prm_qty',
+                bind: {
+                    hidden: '{!prmShowQty}'
+                },
+                editor: {
+                    xtype: 'numberfield'
+                },
+                renderer: function (v, meta) {
+                    meta.tdCls += ' cart-list-prd-detail';
+                    return v;
+                }
+            }, {
+                text: 'Unit Price',
+                dataIndex: 'prm_uprice',
+                renderer: function (v, meta) {
+                    meta.tdCls += ' cart-list-prd-detail';
+                    return v;
+                }
+            }]
+
+    },
+    ////////////////////// Grid 2 //////////////////////
+    {
+        xtype: 'grid',
+        flex: 0.5,
+        height: 350,
+        margin: '0 5 0 0',
+        reference: 'promoGrid2',
         //plugins: 'multiselection',
         plugins: {
             ptype: 'cellediting',
@@ -45,78 +140,78 @@ Ext.define('Shopping.view.cart.PromoWin', {
         bind: {
             // title: '{prmText}',
             store: '{promoSelections}',
-            selection: '{promoItems}'
+            selection: '{promoItems}',
+            hidden: '{!prmShowQty}'
         },
+        //selType: '{prmShowQty}' ? null : '',
         //columnLines: true,
-        //selType: 'checkboxmodel',
-        selModel: {
-            type: 'checkboxmodel',
-            mode: 'SINGLE'
-        },
-        columns: [{
-            text: '',
-            minWidth: 0,
-            maxWidth: 50,
-            dataIndex: 'prm_smallpic',
-            align: 'center',
-            sortable: false,
-            renderer: function (v, meta) {
-                if (!Ext.isEmpty(v)) {
-                    meta.tdCls += ' image-column';
-                    return '<image class="cart-list-prd-detail" src="' + v + '" height="50" width="50"></image>';
-                } else {
-                    return '';
+        //selType: '{prmShowQty}' ? null : '',
+
+        columns: [
+            {
+                text: '',
+                minWidth: 0,
+                maxWidth: 50,
+                dataIndex: 'prm_smallpic',
+                align: 'center',
+                sortable: false,
+                renderer: function (v, meta) {
+                    if (!Ext.isEmpty(v)) {
+                        meta.tdCls += ' image-column';
+                        return '<image class="cart-list-prd-detail" src="' + v + '" height="50" width="50"></image>';
+                    } else {
+                        return '';
+                    }
                 }
-            }
-        }, {
-            text: 'Item',
-            width: 100,
-            dataIndex: 'prm_model',
-            renderer: function (v, meta) {
-                meta.tdCls += ' cart-list-prd-detail';
-                return v;
-            }
-        }, {
-            text: 'Description',
-            //cellWrap: true,
-            dataIndex: 'prm_desc',
-            width: 200,
-            flex: 1,
-            renderer: function (v, meta) {
-                meta.tdCls += ' cart-list-prd-detail';
-                return v;
-            }
-        }, {
-            text: 'Value',
-            dataIndex: 'prm_price',
-            bind: {
-                hidden: '{!prmShowValue}'
-            },
-            renderer: function (v, meta) {
-                meta.tdCls += ' cart-list-prd-detail';
-                return v;
-            }
-        }, {
-            text: 'Quantity',
-            dataIndex: 'prm_qty',
-            bind: {
-                //hidden: '{!prmShowQty}'
-            },
-            editor: {
-                xtype: 'numberfield'
-            },
-            renderer: function (v, meta) {
-                meta.tdCls += ' cart-list-prd-detail';
-                return v;
-            }
-        }, {
-            text: 'Unit Price',
-            dataIndex: 'prm_uprice',
-            renderer: function (v, meta) {
-                meta.tdCls += ' cart-list-prd-detail';
-                return v;
-            }
-        }]
+            }, {
+                text: 'Item',
+                width: 100,
+                dataIndex: 'prm_model',
+                renderer: function (v, meta) {
+                    meta.tdCls += ' cart-list-prd-detail';
+                    return v;
+                }
+            }, {
+                text: 'Description',
+                //cellWrap: true,
+                dataIndex: 'prm_desc',
+                width: 200,
+                flex: 1,
+                renderer: function (v, meta) {
+                    meta.tdCls += ' cart-list-prd-detail';
+                    return v;
+                }
+            }, {
+                text: 'Value',
+                dataIndex: 'prm_price',
+                bind: {
+                    hidden: '{!prmShowValue}'
+                },
+                renderer: function (v, meta) {
+                    meta.tdCls += ' cart-list-prd-detail';
+                    return v;
+                }
+            }, {
+                text: 'Quantity',
+                dataIndex: 'prm_qty',
+                bind: {
+                    hidden: '{!prmShowQty}'
+                },
+                editor: {
+                    xtype: 'numberfield'
+                },
+                renderer: function (v, meta) {
+                    meta.tdCls += ' cart-list-prd-detail';
+                    return v;
+                }
+            }, {
+                text: 'Unit Price',
+                dataIndex: 'prm_uprice',
+                renderer: function (v, meta) {
+                    meta.tdCls += ' cart-list-prd-detail';
+                    return v;
+                }
+            }]
 
     }],
     // bbar: [{
