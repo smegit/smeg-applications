@@ -1097,8 +1097,9 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             //console.info(Ext.ComponentQuery.query('cartlist')[0]);
             Ext.ComponentQuery.query('cartlist')[0].getView().getFeature('itemSummary').toggleSummaryRow(false);
             // Disable payBtn and chkoutBtn
-            Ext.ComponentQuery.query('#payBtnSelector')[0].enable(false);
-            Ext.ComponentQuery.query('#chkoutBtnSelector')[0].enable(false);
+            console.info(Ext.ComponentQuery.query('#payBtnSelector')[0]);
+            Ext.ComponentQuery.query('#payBtnSelector')[0].setDisabled(true);
+            Ext.ComponentQuery.query('#chkoutBtnSelector')[0].setDisabled(true);
         }
 
         //grid.getView().getFeature('itemSummary').toggleSummaryRow(true);

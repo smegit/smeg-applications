@@ -3,6 +3,7 @@ Ext.define('Shopping.view.cart.Main', {
     xtype: 'cartmain',
     reference: 'cartcontainer',
     requires: [
+        'Ext.tip.*',
         'Shopping.view.cart.List',
         'Shopping.view.cart.Form',
         'Shopping.view.cart.CartController',
@@ -102,7 +103,9 @@ Ext.define('Shopping.view.cart.Main', {
                     // mouseout: 'onMouseOut'
                 }
             }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-            { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, {
+            { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+
+            {
                 text: 'PDF',
                 ui: 'white',
                 //ui: 'blue',
@@ -112,7 +115,9 @@ Ext.define('Shopping.view.cart.Main', {
                     // mouseover: 'onMouseOver',
                     // mouseout: 'onMouseOut'
                 }
-            }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+            },
+
+            { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
             { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
             // {
             //     text: 'Save',
@@ -135,29 +140,92 @@ Ext.define('Shopping.view.cart.Main', {
             }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
             { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
             {
-                text: 'Payment',
-                //ui: 'white',
-                ui: 'blue',
-                reference: 'payBtn',
-                itemId: 'payBtnSelector',
-                maskMsg: 'Setting up Deposit',
+                xtype: 'container',
+                layout: {
+                    type: 'hbox',
+                    align: 'stretch'
+                },
                 listeners: {
-                    click: 'onClickDeposit',
-                    //mouseover: 'onMouseOver',
-                    //mouseout: 'onMouseOut'
-                }
-            }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-            { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, {
-                text: 'Deliver',
-                reference: 'checkoutButton',
-                ui: 'blue',
-                //reference: 'delBtn',
-                itemId: 'chkoutBtnSelector',
-                maskMsg: 'Preparing to process order',
-                handler: 'onClickRelease',
-                listeners: {
-                }
+                    click: {
+                        element: 'el',
+                        fn: 'onClickDisabledBtn'
+                    }
+                },
+                items: [{
+                    xtype: 'button',
+                    text: 'Payment2',
+                    //ui: 'white',
+                    disabled: false,
+                    ui: 'blue',
+                    reference: 'payBtn',
+                    itemId: 'payBtnSelector',
+                    maskMsg: 'Setting up Deposit',
+                    //tooltip: 'Calculate your order first',
+                    listeners: {
+                        click: 'onClickDeposit',
+                        //disable: 'onBtnDisable',
+                        //mouseover: 'onMouseOver',
+                        //mouseout: 'onMouseOut'
+                    }
+                }]
             },
+            // {
+            //     text: 'Payment',
+            //     //ui: 'white',
+            //     ui: 'blue',
+            //     reference: 'payBtn',
+            //     itemId: 'payBtnSelector',
+            //     maskMsg: 'Setting up Deposit',
+            //     //tooltip: 'Calculate your order first',
+            //     listeners: {
+            //         click: 'onClickDeposit',
+            //         disable: 'onBtnDisable',
+            //         mouseover: 'onMouseOver',
+            //         //mouseout: 'onMouseOut'
+            //     }
+            // },
+            { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+            { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+            // {
+            //     text: 'Deliver',
+            //     reference: 'checkoutButton',
+            //     ui: 'blue',
+            //     //reference: 'delBtn',
+            //     itemId: 'chkoutBtnSelector',
+            //     maskMsg: 'Preparing to process order',
+            //     handler: 'onClickRelease',
+            //     listeners: {
+            //     }
+            // },
+            {
+                xtype: 'container',
+                layout: {
+                    type: 'hbox',
+                    align: 'stretch'
+                },
+                listeners: {
+                    click: {
+                        element: 'el',
+                        fn: 'onClickDisabledBtn'
+                    }
+                },
+                items: [
+                    {
+                        xtype: 'button',
+                        text: 'Deliver',
+                        reference: 'checkoutButton',
+                        ui: 'blue',
+                        disabled: false,
+                        //reference: 'delBtn',
+                        itemId: 'chkoutBtnSelector',
+                        maskMsg: 'Preparing to process order',
+                        handler: 'onClickRelease',
+                        listeners: {
+                        }
+                    },
+                ]
+            },
+
             { xtype: 'tbfill' },
             //'', '', ''
             { xtype: 'tbspacer' },
@@ -232,41 +300,43 @@ Ext.define('Shopping.view.cart.Main', {
                 store: '{cartItems}'
             },
             minHeight: 80
-        }, {
-            xtype: 'container',
-            layout: {
-                type: 'hbox',
-                align: 'stretch'
-            },
-            bind: {
-                //hidden: '{hideOrdKey}'
-            },
-            items: [{
-                xtype: 'component',
-                bind: {
-                    html: '{orderNotesInfo}'
-                },
-                listeners: {
-                    el: {
-                        click: 'onClickNotes'
-                    }
-                }
-            }, {
-                xtype: 'component',
-                flex: 1
-            }, {
-                xtype: 'component',
-                bind: {
-                    hidden: '{!orderHasPayments}',
-                    html: '{orderPaymentsInfo}'
-                },
-                listeners: {
-                    el: {
-                        click: 'onClickViewPayments'
-                    }
-                }
-            }]
-        }, {
+        },
+        // {
+        //     xtype: 'container',
+        //     layout: {
+        //         type: 'hbox',
+        //         align: 'stretch'
+        //     },
+        //     bind: {
+        //         //hidden: '{hideOrdKey}'
+        //     },
+        //     items: [{
+        //         xtype: 'component',
+        //         bind: {
+        //             html: '{orderNotesInfo}'
+        //         },
+        //         listeners: {
+        //             el: {
+        //                 click: 'onClickNotes'
+        //             }
+        //         }
+        //     }, {
+        //         xtype: 'component',
+        //         flex: 1
+        //     }, {
+        //         xtype: 'component',
+        //         bind: {
+        //             hidden: '{!orderHasPayments}',
+        //             html: '{orderPaymentsInfo}'
+        //         },
+        //         listeners: {
+        //             el: {
+        //                 click: 'onClickViewPayments'
+        //             }
+        //         }
+        //     }]
+        // },
+        {
             xtype: 'cartform',
             cartOptions: opts
         },

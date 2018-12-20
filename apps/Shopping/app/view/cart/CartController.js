@@ -643,6 +643,7 @@ Ext.define('Shopping.view.cart.CartController', {
     },
 
     onBeforeActivate: function () {
+        console.log('onBeforeActivate called');
         var me = this,
             vm = me.getViewModel(),
             orderPayments = vm.get('orderPayments'),
@@ -651,13 +652,14 @@ Ext.define('Shopping.view.cart.CartController', {
         if (Ext.isEmpty(orderPayments) && !Ext.isEmpty(activeCartNumber)) {
             Valence.common.util.Helper.loadMask('Loading');
 
-            me.getPayments({
-                action: 'checkout',
-                OAORDKEY: activeCartNumber
-            })
-                .then(function () {
-                    Valence.common.util.Helper.destroyLoadMask();
-                });
+            // me.getPayments({
+            //     action: 'checkout',
+            //     OAORDKEY: activeCartNumber
+            // })
+            //     .then(function () {
+            //         Valence.common.util.Helper.destroyLoadMask();
+            //     });
+            Valence.common.util.Helper.destroyLoadMask();
         }
     },
 
@@ -676,14 +678,14 @@ Ext.define('Shopping.view.cart.CartController', {
             return false;
         }
 
-        checkoutButton.disable();
+        //checkoutButton.disable();
     },
 
     onCancelEditList: function () {
         var me = this,
             checkoutButton = me.lookupReference('checkoutButton');
 
-        checkoutButton.enable();
+        //checkoutButton.enable();
     },
 
     /**
@@ -777,7 +779,8 @@ Ext.define('Shopping.view.cart.CartController', {
      * @param cmp
      */
     onClickDeposit: function (cmp) {
-        //console.log('onClickDeposit called');
+        console.log('onClickDeposit called');
+        console.info(cmp);
         var me = this,
             valid = me.isFormValid();
 
@@ -1262,7 +1265,7 @@ Ext.define('Shopping.view.cart.CartController', {
 
         e.record.commit();
 
-        checkoutButton.enable();
+        //checkoutButton.enable();
     },
 
     /**
@@ -1860,6 +1863,9 @@ Ext.define('Shopping.view.cart.CartController', {
 
     },
 
+    onClickContainer: function () {
+        console.info('onClickContainer called');
+    },
     // Enable calculate button when type into promotion text
     onPromoCodeChange: function () {
         console.log('onPromoCodeChange called');
@@ -1878,6 +1884,7 @@ Ext.define('Shopping.view.cart.CartController', {
 
             // TODO: disable payment and deliver
             payBtn.disable();
+            payBtn.setTooltip('Please calculate first.');
             checkoutButton.disable();
         } else if (!promoCode.isDirty() && !vm.get('needUpdate')) {
             console.log('should enable pay and deliver');
@@ -2019,6 +2026,9 @@ Ext.define('Shopping.view.cart.CartController', {
         grid.getView().getFeature('itemSummary').toggleSummaryRow(true);
 
         me.lookupReference('calcBtn').disable();
+        me.lookupReference('payBtn').enable();
+        me.lookupReference('checkoutButton').enable();
+
 
     },
 
@@ -2165,7 +2175,7 @@ Ext.define('Shopping.view.cart.CartController', {
 
     // hover effect to bottom buttons 
     onMouseOver: function (btn) {
-        //console.info(btn);
+        console.info(btn);
         btn.el.addCls(['x-btn-blue-small']);
         btn.btnInnerEl.addCls(["x-btn-inner-blue-small"]);
         btn.el.removeCls(['x-btn-white-small']);
@@ -2177,6 +2187,79 @@ Ext.define('Shopping.view.cart.CartController', {
         btn.el.addCls(['x-btn-white-small']);
         btn.btnInnerEl.addCls(["x-btn-inner-white-small"]);
     },
+    onBtnDisable: function (cmp, value, oldValue) {
+        console.log('onBtnDisabledChange called');
+        console.info(cmp);
+        cmp.setTooltip('Calculate');
+    },
+
+    // click on disabled payment 
+    onClickDisabledBtn: function () {
+        console.log('onClickDisabledBtn called');
+        //this.showError({ msg: 'Calculate Your Order First.' });
+        var me = this;
+        console.info(me.lookupReference('payBtn'));
+        console.info(me.lookupReference('checkoutButton'));
+
+        if (me.lookupReference('payBtn').disabled) {
+            Valence.util.Helper.showSnackbar('Calculate your order first.');
+            me.showDialog2({ title: 'Tips', msg: 'Calculate Your Order First.' });
+        }
+        if (me.lookupReference('checkoutButton').disabled) {
+            //Valence.util.Helper.showSnackbar('Calculate your order first.');
+            // me.showDialog2({ title: 'Tips', msg: 'Calculate Your Order First.' });
+        }
+
+    },
+
+    // Show Dialog
+
+    /**
+     * showError - show error from the backend to the user
+     * @param r
+     */
+    showDialog: function (r) {
+        var d = {},
+            deferred = Ext.create('Ext.Deferred');
+
+        if (!Ext.isEmpty(r) && !Ext.isEmpty(r.responseText)) {
+            d = Ext.decode(r.responseText);
+        } else {
+            d = r;
+        }
+
+        Valence.common.util.Dialog.show({
+            title: Ext.isEmpty(d.title) ? 'Error' : d.title,
+            minWidth: 300,
+            msg: Ext.isEmpty(d.msg) ? 'Error' : d.msg,
+            buttons: [{
+                text: 'Ok'
+            }],
+            handler: function () {
+                deferred.resolve();
+            }
+        });
+
+        return deferred.promise;
+    },
+
+    showDialog2: function (r) {
+        var d = {};
+
+        if (!Ext.isEmpty(r) && !Ext.isEmpty(r.responseText)) {
+            d = Ext.decode(r.responseText);
+        } else {
+            d = r;
+        }
+
+        Valence.common.util.Dialog.show({
+            title: Ext.isEmpty(d.title) ? 'Error' : d.title,
+            minWidth: 300,
+            msg: Ext.isEmpty(d.msg) ? 'Error' : d.msg,
+            buttons: [{ text: 'Ok' }]
+        });
+    },
+
 
     onRowBodyKeyPress: function (p1) {
         console.log('onRowBodyKeyPress');
