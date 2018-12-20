@@ -90,76 +90,88 @@ Ext.define('Shopping.view.cart.Form', {
                         labelAlign: 'left',
                         flex: 1
                     },
-                    items: [{
-                        xtype: 'textfield',
-                        name: 'OAORDKEY',
-                        hidden: true,
-                        bind: {
-                            value: '{activeCartNumber}'
-                        }
-                    }, {
-                        xtype: 'textfield',
-                        margin: '0 32 0 0',
-                        labelWidth: 75,
-                        maxWidth: 160,
-                        name: 'OACSTREF',
-                        fieldLabel: 'Reference',
-                        allowBlank: false,
-                        reference: 'reffield',
-                        itemId: 'reffield',
-                        bind: {
-                            value: {
-                                single: me.release,
-                                bindTo: '{cartValues.OACSTREF}'
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            name: 'PROMOCODE',
+                            hidden: true,
+                            bind: {
+                                value: {
+                                    single: me.release,
+                                    bindTo: '{cartValues.PROMOCODE}'
+                                }
                             }
-                        }
-                    }, getRepComponent(), {
-                        xtype: 'datefield',
-                        name: 'OADELD',
-                        allowBlank: false,
-                        fieldLabel: 'Request Date',
-                        //labelWidth: 150,
-                        //flex: 0,
-                        maxWidth: 220,
-                        minValue: new Date(),
-                        maxValue: Ext.Date.add(new Date(), Ext.Date.YEAR, 1), //1 Year from the current date
-                        format: 'd/m/Y',
-                        submitFormat: 'Y-m-d',
-                        disabledDatesText: 'Delivery not available on holidays',
-                        disabledDaysText: 'Delivery not available on weekends',
-                        bind: {
-                            disabledDates: '{deliveryDisabledDates}',
-                            disabledDays: '{deliveryDisabledDays}',
-                            value: {
-                                single: me.release,
-                                bindTo: '{cartValues.OADELD}'
-                            }
-                        }
-                    },
-                    {
-                        xtype: 'combobox',
-                        queryMode: 'local',
-                        //flex: 1,
-                        //width: 305,
-                        minWidth: 220,
-                        maxWidth: 350,
-                        //height: 32,
-                        labelWidth: 140,
-                        labelAlign: 'right',
-                        editable: false,
-                        valueField: 'STKCOD',
-                        displayField: 'STKDSC',
-                        reference: 'stocklocs',
-                        fieldLabel: 'Stock Location',
-                        forceSelection: true,
-                        listeners: {
-                            select: 'onSelectStockLocation'
                         },
-                        bind: {
-                            store: '{StockLocations}',
-                            value: '{STKLOC}'
-                        }
-                    }]
+                        {
+                            xtype: 'textfield',
+                            name: 'OAORDKEY',
+                            hidden: true,
+                            bind: {
+                                value: '{activeCartNumber}'
+                            }
+                        }, {
+                            xtype: 'textfield',
+                            margin: '0 32 0 0',
+                            labelWidth: 75,
+                            maxWidth: 160,
+                            name: 'OACSTREF',
+                            fieldLabel: 'Reference',
+                            allowBlank: false,
+                            reference: 'reffield',
+                            itemId: 'reffield',
+                            bind: {
+                                value: {
+                                    single: me.release,
+                                    bindTo: '{cartValues.OACSTREF}'
+                                }
+                            }
+                        }, getRepComponent(), {
+                            xtype: 'datefield',
+                            name: 'OADELD',
+                            allowBlank: false,
+                            fieldLabel: 'Request Date',
+                            //labelWidth: 150,
+                            //flex: 0,
+                            maxWidth: 220,
+                            minValue: new Date(),
+                            maxValue: Ext.Date.add(new Date(), Ext.Date.YEAR, 1), //1 Year from the current date
+                            format: 'd/m/Y',
+                            submitFormat: 'Y-m-d',
+                            disabledDatesText: 'Delivery not available on holidays',
+                            disabledDaysText: 'Delivery not available on weekends',
+                            bind: {
+                                disabledDates: '{deliveryDisabledDates}',
+                                disabledDays: '{deliveryDisabledDays}',
+                                value: {
+                                    single: me.release,
+                                    bindTo: '{cartValues.OADELD}'
+                                }
+                            }
+                        },
+                        {
+                            xtype: 'combobox',
+                            queryMode: 'local',
+                            //flex: 1,
+                            //width: 305,
+                            minWidth: 220,
+                            maxWidth: 350,
+                            //height: 32,
+                            labelWidth: 140,
+                            labelAlign: 'right',
+                            editable: false,
+                            valueField: 'STKCOD',
+                            displayField: 'STKDSC',
+                            reference: 'stocklocs',
+                            fieldLabel: 'Stock Location',
+                            forceSelection: true,
+                            listeners: {
+                                select: 'onSelectStockLocation'
+                            },
+                            bind: {
+                                store: '{StockLocations}',
+                                value: '{STKLOC}'
+                            }
+                        }]
                 },
                     // {
                     //     xtype: 'container',

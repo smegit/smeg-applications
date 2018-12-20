@@ -138,6 +138,8 @@ Ext.define('Shopping.view.cart.Main', {
                 text: 'Payment',
                 //ui: 'white',
                 ui: 'blue',
+                reference: 'payBtn',
+                itemId: 'payBtnSelector',
                 maskMsg: 'Setting up Deposit',
                 listeners: {
                     click: 'onClickDeposit',
@@ -149,6 +151,8 @@ Ext.define('Shopping.view.cart.Main', {
                 text: 'Deliver',
                 reference: 'checkoutButton',
                 ui: 'blue',
+                //reference: 'delBtn',
+                itemId: 'chkoutBtnSelector',
                 maskMsg: 'Preparing to process order',
                 handler: 'onClickRelease',
                 listeners: {

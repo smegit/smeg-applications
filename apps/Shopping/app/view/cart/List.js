@@ -41,6 +41,9 @@ Ext.define('Shopping.view.cart.List', {
             xtype: 'textfield',
             reference: 'promoCodeTextField',
             emptyText: 'Promotion Code',
+            bind: {
+                value: '{cartValues.PROMOCODE}'
+            },
             listeners: {
                 change: 'onPromoCodeChange'
             }

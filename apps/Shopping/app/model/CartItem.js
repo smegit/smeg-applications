@@ -36,7 +36,10 @@ Ext.define('Shopping.model.CartItem', {
         {
             name: 'generated'
         },
-
+        // TODO: add another column called deletable
+        {
+            name: 'deletable'
+        },
         {
             name: 'release',
             type: 'int',

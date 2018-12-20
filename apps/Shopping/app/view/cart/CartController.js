@@ -1866,13 +1866,24 @@ Ext.define('Shopping.view.cart.CartController', {
         var me = this,
             calcBtn = me.lookupReference('calcBtn'),
             promoCode = me.lookupReference('promoCodeTextField'),
+            payBtn = me.lookupReference('payBtn'),
+            checkoutButton = me.lookupReference('checkoutButton'),
             vm = me.getViewModel();
         console.info(promoCode.isDirty());
+        console.info(me.lookupReference('payBtn'));
+        console.info(vm.get('needUpdate'));
         if (promoCode.isDirty()) {
             calcBtn.enable();
             me.toggleCartListSummary(false);
+
+            // TODO: disable payment and deliver
+            payBtn.disable();
+            checkoutButton.disable();
         } else if (!promoCode.isDirty() && !vm.get('needUpdate')) {
+            console.log('should enable pay and deliver');
             calcBtn.disable();
+            payBtn.enable();
+            checkoutButton.enable();
             me.toggleCartListSummary(true);
         }
         console.info(vm.get('needUpdate'));
@@ -1926,7 +1937,10 @@ Ext.define('Shopping.view.cart.CartController', {
             cartItems = resp.CartDtl,
             updatedItems = [],
             formValues = {},
-            cartItemCount = 0;
+            cartItemCount = 0,
+            paymentHistoryStore = vm.getStore('paymentHistory'),
+            paymentHistoryStoreItems = [],
+            payments = resp.payments;
 
         console.info(resp);
         //vm.set('activeCartNumber', null);
@@ -1951,7 +1965,9 @@ Ext.define('Shopping.view.cart.CartController', {
 
 
                     "sub_total": cartItems[i].OBTOTA,
-                    "generated": cartItems[i].OBGENF
+                    "generated": cartItems[i].OBGENF,
+
+                    // TODO: add "deletable"
                 });
             }
         }
@@ -1961,8 +1977,6 @@ Ext.define('Shopping.view.cart.CartController', {
         console.info(cartItemsStore);
 
         //  reload cart items
-
-        console.log('high');
         // load cart header
         if (!Ext.isEmpty(resp.CartHdr)) {
             Ext.apply(formValues, resp.CartHdr[0]);
@@ -1978,7 +1992,23 @@ Ext.define('Shopping.view.cart.CartController', {
             needUpdate: false
         });
 
-        //
+
+        // load payment history
+        //paymentHistoryStore.loadData(obj.payments);
+        if (!Ext.isEmpty(resp.TOTALPAID)) {
+            vm.set('totalPaid', resp.TOTALPAID)
+        }
+        paymentHistoryStore.removeAll();
+        if (!Ext.isEmpty(payments)) {
+            for (var i = 0; i < payments.length; i++) {
+                paymentHistoryStoreItems.push({
+                    "label": payments[i].LABEL,
+                    "note": payments[i].NOTE,
+                    "amount": payments[i].AMOUNT
+                })
+            }
+        }
+        paymentHistoryStore.add(paymentHistoryStoreItems);
         vm.notify();
 
         var grid = me.getView().down('cartlist');
@@ -1996,6 +2026,15 @@ Ext.define('Shopping.view.cart.CartController', {
         var me = this,
             grid = me.getView().down('cartlist');
         grid.getView().getFeature('itemSummary').toggleSummaryRow(show);
+
+        // if (show) {
+        //     Ext.ComponentQuery.query('#payBtnSelector')[0].disable();
+        //     Ext.ComponentQuery.query('#chkoutBtnSelector')[0].disable();
+        // } else {
+        //     Ext.ComponentQuery.query('#payBtnSelector')[0].enable();
+        //     Ext.ComponentQuery.query('#chkoutBtnSelector')[0].enable();
+        // }
+
     },
 
     onCalculateClick: function () {
