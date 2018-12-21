@@ -684,15 +684,25 @@ Ext.define('Shopping.view.cart.CartController', {
             checkoutButton = me.lookupReference('checkoutButton');
         console.info(editor);
         console.info(context);
-        if (!Ext.isEmpty(rec.get('generated')) && rec.get('generated') == 'Y') {
-            return false;
+
+        // if (!Ext.isEmpty(rec.get('generated')) && rec.get('generated') == 'Y') {
+        //     return false;
+        // }
+
+        if (context.field == 'quantity') {
+            if (!Ext.isEmpty(rec.get('orderQtyEditable')) && rec.get('orderQtyEditable') == 'N') {
+                return false;
+            }
         }
-        if (!Ext.isEmpty(rec.get('releaseQtyEditable')) && rec.get('releaseQtyEditable') == 'N') {
-            return false;
+        if (context.field == 'release') {
+            if (!Ext.isEmpty(rec.get('releaseQtyEditable')) && rec.get('releaseQtyEditable') == 'N') {
+                return false;
+            }
         }
-        if (!Ext.isEmpty(rec.get('orderQtyEditable')) && rec.get('orderQtyEditable') == 'N') {
-            return false;
-        }
+
+        // if (!Ext.isEmpty(rec.get('orderQtyEditable')) && rec.get('orderQtyEditable') == 'N') {
+        //     return false;
+        // }
 
         if (field === 'release' && (Ext.isEmpty(outstanding) || outstanding == 0)) {
             return false;
@@ -719,19 +729,29 @@ Ext.define('Shopping.view.cart.CartController', {
         console.log('onCellClickList called');
         var me = this,
             view = me.getView(),
+            vm = me.getViewModel(),
             grid = cmp.grid,
             store = grid.getStore(),
             column = grid.headerCt.items.getAt(cellIndex),
             viewModel = me.getViewModel(),
             cartCount = viewModel.get('cartCount');
         console.info(rec);
-        console.info(store.query('generated', 'N').length);
-        if (rec.get('generated') == 'N') {
-            if (!Ext.isEmpty(column.action) && column.action === 'removecartitem' && store.getCount() > 1 && store.query('generated', 'N').length >= 2) {
+        console.info(store);
+        console.info(column);
+        if (rec.get('deletable') == 'Y') {
+            if (!Ext.isEmpty(column.action) && column.action === 'removecartitem' && store.getCount() > 1) {
                 if (Ext.isEmpty(rec.get('delivered')) || rec.get('delivered') == 0) {
                     viewModel.set('cartCount', cartCount - rec.get('quantity'));
                     store.remove(rec);
                     grid.getView().refresh();
+
+                    // Set buttons
+                    vm.set('needUpdate', true);
+                    Ext.ComponentQuery.query('#calcBtnSelector')[0].enable();
+                    Ext.ComponentQuery.query('cartlist')[0].getView().getFeature('itemSummary').toggleSummaryRow(false);
+                    // Disable payBtn and chkoutBtn
+                    Ext.ComponentQuery.query('#payBtnSelector')[0].setDisabled(true);
+                    Ext.ComponentQuery.query('#chkoutBtnSelector')[0].setDisabled(true);
                 }
             } else {
                 var target = e.getTarget(),

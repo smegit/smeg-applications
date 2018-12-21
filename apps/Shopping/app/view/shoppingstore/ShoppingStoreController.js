@@ -1079,7 +1079,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     // Cart Items change then mark needUpate = true
     onGridDatachanged: function (store, eOpt) {
         console.log('onGridDatachanged called');
-        //console.info(store);
+        console.info(store);
         var me = this,
             vm = me.getViewModel(),
             view = me.getView();
