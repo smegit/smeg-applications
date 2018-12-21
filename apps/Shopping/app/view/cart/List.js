@@ -49,7 +49,7 @@ Ext.define('Shopping.view.cart.List', {
             }
         },
         {
-            xtype: 'button', text: 'Calculate', ui: 'blue',
+            xtype: 'button', text: 'Recalculate', ui: 'blue',
             //id: 'calcBtnId',
             itemId: 'calcBtnSelector',
             reference: 'calcBtn',

@@ -41,6 +41,19 @@ Ext.define('Shopping.model.CartItem', {
             name: 'deletable'
         },
         {
+            name: 'releaseQtyEditable'
+        },
+        {
+            name: 'orderQtyEditable'
+        },
+
+        {
+            name: 'orderLineNO'
+        },
+
+
+
+        {
             name: 'release',
             type: 'int',
             defaultValue: 0

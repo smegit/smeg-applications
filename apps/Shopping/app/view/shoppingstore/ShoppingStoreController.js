@@ -317,7 +317,13 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 OBQTYO: item.quantity,
                 OBUPRC: item.price,
                 //OBQTYR: (standardOrder) ? Shopping.util.Helper.getOutstanding(rec) : product.release
-                OBQTYR: item.release
+                OBQTYR: item.release,
+
+                OBGENF: !Ext.isEmpty(item.generated) ? item.generated : 'N',
+                ALWDEL: '',
+                ALWORDQ: '',
+                ALWRLSQ: '',
+                OBORDLNO: ''
             })
 
         }
@@ -367,7 +373,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 prmShowPrice: item.PASHWPRC == 'N' ? false : true,
                 prmDesc: item.PAPRMDSC,
                 prmText: item.PATEXT,
-                prmTotalQty: item.PASLTQTY
+                prmTotalQty: item.PASLTQTY,
+                prmOrderLineNumber: item.ORDLNO
             })
         }
     },
@@ -750,6 +757,11 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                             "sub_total": product.OBTOTA,
                             "generated": product.OBGENF,
 
+                            "deletable": product.ALWDEL,
+                            "releaseQtyEditable": product.ALWRLSQ,
+                            "orderQtyEditable": product.ALWORDQ,
+                            "orderLineNO": product.OBORDLNO
+
                             //TODO: add "deletable"
                         });
                     }
@@ -944,6 +956,11 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                                 "sub_total": product.OBTOTA,
                                 "generated": product.OBGENF,
 
+                                "deletable": product.ALWDEL,
+                                "releaseQtyEditable": product.ALWRLSQ,
+                                "orderQtyEditable": product.ALWORDQ,
+                                "orderLineNO": product.OBORDLNO
+
                                 // TODO: add "deletable"
                             });
                         }
@@ -1090,7 +1107,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         //console.info(Ext.getValues(record.getChanges()));
 
 
-        if (!Ext.Object.isEmpty(record.getChanges())) {
+        if (!Ext.Object.isEmpty(record.getChanges()) && record.isModified('quantity')) {
             console.log('have changes');
             vm.set('needUpdate', true);
             Ext.ComponentQuery.query('#calcBtnSelector')[0].enable();

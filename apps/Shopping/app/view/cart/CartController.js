@@ -359,7 +359,13 @@ Ext.define('Shopping.view.cart.CartController', {
                     OBQTYO: product.quantity,
                     OBUPRC: product.price,
                     //OBQTYR: (standardOrder) ? Shopping.util.Helper.getOutstanding(rec) : product.release
-                    OBQTYR: product.release
+                    OBQTYR: product.release,
+
+                    OBGENF: product.generated,
+                    ALWDEL: product.deletable,
+                    ALWORDQ: product.orderQtyEditable,
+                    ALWRLSQ: product.releaseQtyEditable,
+                    OBORDLNO: product.orderLineNO
 
                 });
             }
@@ -429,7 +435,13 @@ Ext.define('Shopping.view.cart.CartController', {
                 OBQTYO: item.quantity,
                 OBUPRC: item.price,
                 //OBQTYR: (standardOrder) ? Shopping.util.Helper.getOutstanding(rec) : product.release
-                OBQTYR: item.release
+                OBQTYR: item.release,
+                OBGENF: item.generated,
+
+                ALWDEL: product.deletable,
+                ALWORDQ: product.orderQtyEditable,
+                ALWRLSQ: product.releaseQtyEditable,
+                OBORDLNO: product.orderLineNO
             })
 
         }
@@ -670,10 +682,18 @@ Ext.define('Shopping.view.cart.CartController', {
             rec = context.record,
             outstanding = Shopping.util.Helper.getOutstanding(rec),
             checkoutButton = me.lookupReference('checkoutButton');
-
+        console.info(editor);
+        console.info(context);
         if (!Ext.isEmpty(rec.get('generated')) && rec.get('generated') == 'Y') {
             return false;
         }
+        if (!Ext.isEmpty(rec.get('releaseQtyEditable')) && rec.get('releaseQtyEditable') == 'N') {
+            return false;
+        }
+        if (!Ext.isEmpty(rec.get('orderQtyEditable')) && rec.get('orderQtyEditable') == 'N') {
+            return false;
+        }
+
         if (field === 'release' && (Ext.isEmpty(outstanding) || outstanding == 0)) {
             return false;
         }
@@ -1974,6 +1994,10 @@ Ext.define('Shopping.view.cart.CartController', {
                     "sub_total": cartItems[i].OBTOTA,
                     "generated": cartItems[i].OBGENF,
 
+                    "deletable": cartItems[i].ALWDEL,
+                    "releaseQtyEditable": cartItems[i].ALWRLSQ,
+                    "orderQtyEditable": cartItems[i].ALWORDQ,
+                    "orderLineNO": cartItems[i].OBORDLNO
                     // TODO: add "deletable"
                 });
             }
@@ -2201,8 +2225,8 @@ Ext.define('Shopping.view.cart.CartController', {
         console.info(me.lookupReference('payBtn'));
         console.info(me.lookupReference('checkoutButton'));
 
-        if (me.lookupReference('payBtn').disabled) {
-            Valence.util.Helper.showSnackbar('Calculate your order first.');
+        if (me.lookupReference('payBtn').disabled && !me.lookupReference('calcBtn').disabled) {
+            //Valence.util.Helper.showSnackbar('Calculate your order first.');
             me.showDialog2({ title: 'Tips', msg: 'Calculate Your Order First.' });
         }
         if (me.lookupReference('checkoutButton').disabled) {
@@ -2333,12 +2357,14 @@ Ext.define('Shopping.view.cart.CartController', {
             vm = me.getViewModel(),
             params = {},
             orderKey = vm.get('activeCartNumber'),
-            promoList = vm.get('selectedPromos');
+            promoList = vm.get('selectedPromos'),
+            promoOrderLineNumber = vm.get('prmOrderLineNumber');
         //console.info(cartInfo);
         params = {
             pgm: 'EC1050',
             action: 'addPromo',
             OAORDKEY: orderKey,
+            ORDLNO: promoOrderLineNumber,
             selectedPromos: Ext.encode(promoList)
         };
         // must have an order key
@@ -2377,10 +2403,15 @@ Ext.define('Shopping.view.cart.CartController', {
             item = rec[i].getData();
             console.info(rec[i]);
             selectedTotal = selectedTotal + 1;
+            // selectedList.push({
+            //     prm_code: item.prm_code,
+            //     prm_model: item.prm_model,
+            //     prm_qty: 1
+            // });
             selectedList.push({
-                prm_code: item.prm_code,
-                prm_model: item.prm_model,
-                prm_qty: 1
+                PBPRMCOD: item.prm_code,
+                PBITM: item.prm_model,
+                PBSELQTY: 1
             });
         }
         vm.set('selectedPromos', selectedList);
@@ -2407,10 +2438,15 @@ Ext.define('Shopping.view.cart.CartController', {
             item = prmSelectionStore.getAt(i).getData();
             if (item.prm_qty > 0) {
                 selectedTotal = selectedTotal + item.prm_qty;
+                // selectedList.push({
+                //     prm_code: item.prm_code,
+                //     prm_model: item.prm_model,
+                //     prm_qty: item.prm_qty
+                // });
                 selectedList.push({
-                    prm_code: item.prm_code,
-                    prm_model: item.prm_model,
-                    prm_qty: item.prm_qty
+                    PBPRMCOD: item.prm_code,
+                    PBITM: item.prm_model,
+                    PBSELQTY: item.prm_qty
                 });
             }
         }
