@@ -319,11 +319,12 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 //OBQTYR: (standardOrder) ? Shopping.util.Helper.getOutstanding(rec) : product.release
                 OBQTYR: item.release,
 
-                OBGENF: !Ext.isEmpty(item.generated) ? item.generated : 'N',
+                //OBGENF: !Ext.isEmpty(item.generated) ? item.generated : 'N',
                 ALWDEL: '',
                 ALWORDQ: '',
                 ALWRLSQ: '',
-                OBORDLNO: ''
+                OBORDLNO: '',
+                OBPRMCOD: ''
             })
 
         }
@@ -755,12 +756,13 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                             "smallpic": product.SMALLPIC,
 
                             "sub_total": product.OBTOTA,
-                            "generated": product.OBGENF,
+                            //"generated": product.OBGENF,
 
                             "deletable": product.ALWDEL,
                             "releaseQtyEditable": product.ALWRLSQ,
                             "orderQtyEditable": product.ALWORDQ,
-                            "orderLineNO": product.OBORDLNO
+                            "orderLineNO": product.OBORDLNO,
+                            "OBPRMCOD": product.OBPRMCOD
 
                             //TODO: add "deletable"
                         });
@@ -954,12 +956,13 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                                 "smallpic": product.SMALLPIC,
 
                                 "sub_total": product.OBTOTA,
-                                "generated": product.OBGENF,
+                                //"generated": product.OBGENF,
 
                                 "deletable": product.ALWDEL,
                                 "releaseQtyEditable": product.ALWRLSQ,
                                 "orderQtyEditable": product.ALWORDQ,
-                                "orderLineNO": product.OBORDLNO
+                                "orderLineNO": product.OBORDLNO,
+                                "OBPRMCOD": product.OBPRMCOD
 
                                 // TODO: add "deletable"
                             });

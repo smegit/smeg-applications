@@ -361,11 +361,12 @@ Ext.define('Shopping.view.cart.CartController', {
                     //OBQTYR: (standardOrder) ? Shopping.util.Helper.getOutstanding(rec) : product.release
                     OBQTYR: product.release,
 
-                    OBGENF: product.generated,
+                    //OBGENF: product.generated,
                     ALWDEL: product.deletable,
                     ALWORDQ: product.orderQtyEditable,
                     ALWRLSQ: product.releaseQtyEditable,
-                    OBORDLNO: product.orderLineNO
+                    OBORDLNO: product.orderLineNO,
+                    OBPRMCOD: product.OBPRMCOD
 
                 });
             }
@@ -436,12 +437,13 @@ Ext.define('Shopping.view.cart.CartController', {
                 OBUPRC: item.price,
                 //OBQTYR: (standardOrder) ? Shopping.util.Helper.getOutstanding(rec) : product.release
                 OBQTYR: item.release,
-                OBGENF: item.generated,
+                //OBGENF: item.generated,
 
                 ALWDEL: product.deletable,
                 ALWORDQ: product.orderQtyEditable,
                 ALWRLSQ: product.releaseQtyEditable,
-                OBORDLNO: product.orderLineNO
+                OBORDLNO: product.orderLineNO,
+                OBPRMCOD: product.OBPRMCOD
             })
 
         }
@@ -1922,6 +1924,20 @@ Ext.define('Shopping.view.cart.CartController', {
             calcBtn.enable();
             me.toggleCartListSummary(false);
 
+
+
+            // var grid = me.getView().down('cartlist');
+            //grid.getColumns()[9].setSummaryRenderer('123');
+            // Ext.apply(grid.getColumns()[9], {
+            //     summaryRenderer: function (value) {
+            //         //return '123';
+            //         return Ext.String.format('<b>Updated: {0}</b>', Ext.util.Format.currency(value));
+            //     }
+            // });
+            // console.info(grid.getColumns());
+            // console.info(grid.getColumns()[9].getCell());
+            // me.toggleCartListSummary(true);
+
             // TODO: disable payment and deliver
             payBtn.disable();
             payBtn.setTooltip('Please calculate first.');
@@ -2012,12 +2028,13 @@ Ext.define('Shopping.view.cart.CartController', {
 
 
                     "sub_total": cartItems[i].OBTOTA,
-                    "generated": cartItems[i].OBGENF,
+                    //"generated": cartItems[i].OBGENF,
 
                     "deletable": cartItems[i].ALWDEL,
                     "releaseQtyEditable": cartItems[i].ALWRLSQ,
                     "orderQtyEditable": cartItems[i].ALWORDQ,
-                    "orderLineNO": cartItems[i].OBORDLNO
+                    "orderLineNO": cartItems[i].OBORDLNO,
+                    "OBPRMCOD": cartItems[i].OBPRMCOD
                     // TODO: add "deletable"
                 });
             }
@@ -2067,8 +2084,14 @@ Ext.define('Shopping.view.cart.CartController', {
         console.info(grid);
         console.info(grid.getView().getFeature('itemSummary'));
         // summary.summaryRecord.setData('order', '123');
+        // var summaryRow = grid.getView().getFeature(0);
+        // var styleObj = {
+        //     'color': 'red'
+        // };
+        //summaryRow.setStyle(styleObj);
         grid.getView().getFeature('itemSummary').toggleSummaryRow(true);
-
+        //summaryRow.toggleSummaryRow(true);
+        //console.info(summaryRow);
         me.lookupReference('calcBtn').disable();
         me.lookupReference('payBtn').enable();
         me.lookupReference('checkoutButton').enable();

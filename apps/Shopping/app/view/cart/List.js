@@ -222,7 +222,19 @@ Ext.define('Shopping.view.cart.List', {
                     return Ext.util.Format.number(value, '0,0.00');
                 },
                 summaryType: 'sum',
-                summaryRenderer: function (value) {
+                summaryRenderer: function (value, summaryData, fields, metaData, colIndex, store, view) {
+                    // console.info(value);
+                    // console.info(summaryData);
+                    // console.info(fields);
+                    // console.info(metaData);
+                    // console.info(this);
+                    // if (value > 5000) {
+                    //     metaData.tdAttr = 'style="color: #ff0000"';
+                    // } else if (value === 5000) {
+                    //     metaData.tdAttr = 'style="color: green;"';
+                    // } else {
+                    //     metaData.tdAttr = 'style="color: yellow;"';
+                    // }
                     return Ext.String.format('<b>{0}</b>', Ext.util.Format.currency(value));
                 }
             },

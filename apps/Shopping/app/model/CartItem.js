@@ -50,7 +50,9 @@ Ext.define('Shopping.model.CartItem', {
         {
             name: 'orderLineNO'
         },
-
+        {
+            name: 'OBPRMCOD'
+        },
 
 
         {
