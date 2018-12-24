@@ -352,6 +352,7 @@ Ext.define('Shopping.view.cart.Main', {
                 type: 'hbox',
                 align: 'stretch'
             },
+            padding: '10 0 10 0',
             defaults: {
                 xtype: 'button'
             },

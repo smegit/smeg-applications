@@ -1927,15 +1927,15 @@ Ext.define('Shopping.view.cart.CartController', {
 
 
             // var grid = me.getView().down('cartlist');
-            //grid.getColumns()[9].setSummaryRenderer('123');
-            // Ext.apply(grid.getColumns()[9], {
-            //     summaryRenderer: function (value) {
-            //         //return '123';
-            //         return Ext.String.format('<b>Updated: {0}</b>', Ext.util.Format.currency(value));
-            //     }
-            // });
-            // console.info(grid.getColumns());
-            // console.info(grid.getColumns()[9].getCell());
+            // grid.getColumns()[9].setSummaryRenderer('123');
+            // // Ext.apply(grid.getColumns()[9], {
+            // //     summaryRenderer: function (value) {
+            // //         //return '123';
+            // //         return Ext.String.format('<b>Updated: {0}</b>', Ext.util.Format.currency(value));
+            // //     }
+            // // });
+            // // console.info(grid.getColumns());
+            // console.info(grid.getView().getCell(1, 2));
             // me.toggleCartListSummary(true);
 
             // TODO: disable payment and deliver
@@ -2067,7 +2067,9 @@ Ext.define('Shopping.view.cart.CartController', {
             vm.set('totalPaid', resp.TOTALPAID)
         }
         paymentHistoryStore.removeAll();
+        vm.set('hidePaymentHistory', true);
         if (!Ext.isEmpty(payments)) {
+            vm.set('hidePaymentHistory', false);
             for (var i = 0; i < payments.length; i++) {
                 paymentHistoryStoreItems.push({
                     "label": payments[i].LABEL,

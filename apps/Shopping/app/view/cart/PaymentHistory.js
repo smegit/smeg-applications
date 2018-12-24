@@ -5,14 +5,19 @@ Ext.define('Shopping.view.cart.PaymentHistory', {
         'Ext.grid.feature.Summary',
     ],
     title: 'Payments',
-    //padding: '0 20',
+    padding: '0 20',
+
+    bind: {
+        hidden: '{hidePaymentHistory}',
+    },
 
     items: [{
         xtype: 'grid',
         //border: true,
+        padding: '0 0 10 0',
         reference: 'paymentHistoryGrid',
         bind: {
-            store: '{paymentHistory}'
+            store: '{paymentHistory}',
         },
         features: [{
             id: 'paymentSummary',

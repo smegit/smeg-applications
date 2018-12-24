@@ -144,7 +144,8 @@ Ext.define('Shopping.view.cart.Form', {
                                 disabledDays: '{deliveryDisabledDays}',
                                 value: {
                                     single: me.release,
-                                    bindTo: '{cartValues.OADELD}'
+                                    //bindTo: '{cartValues.OADELD}'
+                                    bindTo: '{requestDate}'
                                 }
                             }
                         },

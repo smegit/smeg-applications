@@ -780,7 +780,9 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     vm.set('totalPaid', obj.TOTALPAID)
                 }
                 paymentHistoryStore.removeAll();
+                vm.set('hidePaymentHistory', true);
                 if (!Ext.isEmpty(payments)) {
+                    vm.set('hidePaymentHistory', false);
                     for (var i = 0; i < payments.length; i++) {
                         paymentHistoryStoreItems.push({
                             "label": payments[i].LABEL,
@@ -802,6 +804,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 me.onViewCart();
 
                 vm.notify();
+                Ext.ComponentQuery.query('#payBtnSelector')[0].setDisabled(false);
+                Ext.ComponentQuery.query('#chkoutBtnSelector')[0].setDisabled(false);
 
 
 
@@ -984,7 +988,9 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                         vm.set('totalPaid', obj.TOTALPAID)
                     }
                     paymentHistoryStore.removeAll();
+                    vm.set('hidePaymentHistory', true);
                     if (!Ext.isEmpty(payments)) {
+                        vm.set('hidePaymentHistory', false);
                         for (var i = 0; i < payments.length; i++) {
                             paymentHistoryStoreItems.push({
                                 "label": payments[i].LABEL,

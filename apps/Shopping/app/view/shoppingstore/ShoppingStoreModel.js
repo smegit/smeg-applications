@@ -38,7 +38,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         prmOrderLineNumber: null,
         //promoItems: []
         selectedPromos: [],
-        selectedPromoCount: 0
+        selectedPromoCount: 0,
+        hidePaymentHistory: true
     },
 
     formulas: {
@@ -103,6 +104,15 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
                 }
             }
             return paymentFound;
+        },
+        requestDate: function (get) {
+            if (!Ext.isEmpty(get('cartValues'))) {
+                if (get('cartValues').OADELD == '0001-01-01') {
+                    return ''
+                } else {
+                    return get('cartValues').OADELD;
+                }
+            }
         }
     },
 

@@ -229,7 +229,7 @@ Ext.define('Shopping.view.cart.List', {
                     // console.info(metaData);
                     // console.info(this);
                     // if (value > 5000) {
-                    //     metaData.tdAttr = 'style="color: #ff0000"';
+                    //     metaData.tdAttr = 'style="color: #ff0000;text-decoration: line-through;"; ';
                     // } else if (value === 5000) {
                     //     metaData.tdAttr = 'style="color: green;"';
                     // } else {
