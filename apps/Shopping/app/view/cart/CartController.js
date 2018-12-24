@@ -423,10 +423,10 @@ Ext.define('Shopping.view.cart.CartController', {
             formData = vm.get('cartValues'),
             store = vm.getStore('cartItems'),
             prodArray = [], item;
-        console.info(store);
+        //console.info(store);
 
-        console.info(form);
-        console.info(form.getValues());
+        //console.info(form);
+        //console.info(form.getValues());
         Ext.apply(formData, form.getValues());
         // generate product Array
         for (var i = 0; i < store.getCount(); i++) {
@@ -684,8 +684,8 @@ Ext.define('Shopping.view.cart.CartController', {
             rec = context.record,
             outstanding = Shopping.util.Helper.getOutstanding(rec),
             checkoutButton = me.lookupReference('checkoutButton');
-        console.info(editor);
-        console.info(context);
+        //console.info(editor);
+        //console.info(context);
 
         // if (!Ext.isEmpty(rec.get('generated')) && rec.get('generated') == 'Y') {
         //     return false;
@@ -737,9 +737,9 @@ Ext.define('Shopping.view.cart.CartController', {
             column = grid.headerCt.items.getAt(cellIndex),
             viewModel = me.getViewModel(),
             cartCount = viewModel.get('cartCount');
-        console.info(rec);
-        console.info(store);
-        console.info(column);
+        // console.info(rec);
+        // console.info(store);
+        // console.info(column);
         if (rec.get('deletable') == 'Y') {
             if (!Ext.isEmpty(column.action) && column.action === 'removecartitem' && store.getCount() > 1) {
                 if (Ext.isEmpty(rec.get('delivered')) || rec.get('delivered') == 0) {
@@ -822,7 +822,7 @@ Ext.define('Shopping.view.cart.CartController', {
      */
     onClickDeposit: function (cmp) {
         console.log('onClickDeposit called');
-        console.info(cmp);
+        //console.info(cmp);
         var me = this,
             valid = me.isFormValid();
 
@@ -856,7 +856,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 }
 
             }, function (res) {
-                console.info(res);
+                //console.info(res);
                 Valence.common.util.Helper.destroyLoadMask();
                 me.showError(res);
             }).
@@ -1154,7 +1154,7 @@ Ext.define('Shopping.view.cart.CartController', {
             me.depositRelease(cmp, 'checkout')
                 .then(function (content) {
                     //check if all release values are zero
-                    console.info(content);
+                    //console.info(content);
                     var standardOrder = me.isStandardOrder(),
                         store = view.lookupViewModel(true).getStore('cartItems'),
                         count = store.getCount(),
@@ -1900,7 +1900,7 @@ Ext.define('Shopping.view.cart.CartController', {
         // gether info and send back
         console.log('calculateCart called');
         var me = this;
-        console.info(me.getCartInformation());
+        //console.info(me.getCartInformation());
 
 
     },
@@ -1917,9 +1917,9 @@ Ext.define('Shopping.view.cart.CartController', {
             payBtn = me.lookupReference('payBtn'),
             checkoutButton = me.lookupReference('checkoutButton'),
             vm = me.getViewModel();
-        console.info(promoCode.isDirty());
-        console.info(me.lookupReference('payBtn'));
-        console.info(vm.get('needUpdate'));
+        //console.info(promoCode.isDirty());
+        //console.info(me.lookupReference('payBtn'));
+        //console.info(vm.get('needUpdate'));
         if (promoCode.isDirty()) {
             calcBtn.enable();
             me.toggleCartListSummary(false);
@@ -1928,12 +1928,12 @@ Ext.define('Shopping.view.cart.CartController', {
 
             // var grid = me.getView().down('cartlist');
             // grid.getColumns()[9].setSummaryRenderer('123');
-            // // Ext.apply(grid.getColumns()[9], {
-            // //     summaryRenderer: function (value) {
-            // //         //return '123';
-            // //         return Ext.String.format('<b>Updated: {0}</b>', Ext.util.Format.currency(value));
-            // //     }
-            // // });
+            // Ext.apply(grid.getColumns()[9], {
+            //     summaryRenderer: function (value) {
+            //         //return '123';
+            //         return Ext.String.format('<b>Updated: {0}</b>', Ext.util.Format.currency(value));
+            //     }
+            // });
             // // console.info(grid.getColumns());
             // console.info(grid.getView().getCell(1, 2));
             // me.toggleCartListSummary(true);
@@ -1949,7 +1949,7 @@ Ext.define('Shopping.view.cart.CartController', {
             checkoutButton.enable();
             me.toggleCartListSummary(true);
         }
-        console.info(vm.get('needUpdate'));
+        //console.info(vm.get('needUpdate'));
     },
 
     requestCalcualte: function () {
@@ -1975,19 +1975,19 @@ Ext.define('Shopping.view.cart.CartController', {
                 url: '/valence/vvcall.pgm',
                 params: params,
                 success: function (res) {
-                    console.info(res);
+                    //console.info(res);
                     var resp = Ext.decode(res.responseText);
                     deferred.resolve(resp);
                     //deferred.reject(resp);
                 },
                 failure: function (res) {
-                    console.info(res);
+                    //console.info(res);
                     var resp = Ext.decode(res.responseText);
                     deferred.reject(resp);
                 }
             })
         } else {
-            console.log('invalid form');
+            //console.log('invalid form');
         }
         return deferred.promise;
 
@@ -2005,17 +2005,17 @@ Ext.define('Shopping.view.cart.CartController', {
             paymentHistoryStoreItems = [],
             payments = resp.payments;
 
-        console.info(resp);
+        //console.info(resp);
         //vm.set('activeCartNumber', null);
 
         // Load Cart Items
         var cartItemsStore = vm.getStore('cartItems');
-        console.info(cartItemsStore);
+        //console.info(cartItemsStore);
         cartItemsStore.removeAll();
 
         if (!Ext.isEmpty(cartItems)) {
             for (var i = 0; i < cartItems.length; i++) {
-                console.log('1');
+                //console.log('1');
                 cartItemCount = cartItemCount + cartItems[i].OBQTYO;
                 updatedItems.push({
                     "product_id": cartItems[i].OBITM,
@@ -2041,8 +2041,8 @@ Ext.define('Shopping.view.cart.CartController', {
         }
 
         cartItemsStore.add(updatedItems);
-        console.info(updatedItems);
-        console.info(cartItemsStore);
+        //console.info(updatedItems);
+        //console.info(cartItemsStore);
 
         //  reload cart items
         // load cart header
@@ -2083,8 +2083,8 @@ Ext.define('Shopping.view.cart.CartController', {
 
         var grid = me.getView().down('cartlist');
         var summary = grid.getView().getFeature('itemSummary');
-        console.info(grid);
-        console.info(grid.getView().getFeature('itemSummary'));
+        //console.info(grid);
+        //console.info(grid.getView().getFeature('itemSummary'));
         // summary.summaryRecord.setData('order', '123');
         // var summaryRow = grid.getView().getFeature(0);
         // var styleObj = {
@@ -2128,7 +2128,7 @@ Ext.define('Shopping.view.cart.CartController', {
 
         me.requestCalcualte()
             .then(function (res) {
-                console.info(res);
+                //console.info(res);
                 if (!Ext.isEmpty(res) && res.success) {
                     me.loadCart(res);
                     view.fireEvent('loadPromoSelections', res.promoSelection);
@@ -2147,7 +2147,7 @@ Ext.define('Shopping.view.cart.CartController', {
                     me.showError(res);
                 }
             }, function (res) {
-                console.info(res);
+                //console.info(res);
                 Valence.common.util.Helper.destroyLoadMask();
                 me.showError(res);
             });
@@ -2258,7 +2258,7 @@ Ext.define('Shopping.view.cart.CartController', {
     },
     onBtnDisable: function (cmp, value, oldValue) {
         console.log('onBtnDisabledChange called');
-        console.info(cmp);
+        //console.info(cmp);
         cmp.setTooltip('Calculate');
     },
 
@@ -2267,8 +2267,8 @@ Ext.define('Shopping.view.cart.CartController', {
         console.log('onClickDisabledBtn called');
         //this.showError({ msg: 'Calculate Your Order First.' });
         var me = this;
-        console.info(me.lookupReference('payBtn'));
-        console.info(me.lookupReference('checkoutButton'));
+        //console.info(me.lookupReference('payBtn'));
+        //console.info(me.lookupReference('checkoutButton'));
 
         if (me.lookupReference('payBtn').disabled && !me.lookupReference('calcBtn').disabled) {
             //Valence.util.Helper.showSnackbar('Calculate your order first.');
@@ -2332,7 +2332,7 @@ Ext.define('Shopping.view.cart.CartController', {
 
     onRowBodyKeyPress: function (p1) {
         console.log('onRowBodyKeyPress');
-        console.info(p1);
+        //console.info(p1);
     },
     onClickCancelPromoWin: function () {
         console.log('onClickCancelPromoWin called');
@@ -2348,7 +2348,7 @@ Ext.define('Shopping.view.cart.CartController', {
             view = me.getView(),
             selectedCount = vm.get('selectedPromoCount'),
             prmTotalQty = vm.get('prmTotalQty');
-        console.info(vm.get('promoItems'));
+        //console.info(vm.get('promoItems'));
         // validate selections 
         if (selectedCount > prmTotalQty) {
             me.showError({ msg: 'You have selected more than ' + prmTotalQty + ' items.' });
@@ -2363,16 +2363,16 @@ Ext.define('Shopping.view.cart.CartController', {
 
         me.requestAddPromo()
             .then(function (res) {
-                console.info(res);
+                //console.info(res);
                 if (!Ext.isEmpty(res) && res.success) {
                     me.loadCart(res);
                     view.fireEvent('loadPromoSelections', res.promoSelection);
                     view.fireEvent('loadPromoHeader', res.promoHeader);
 
                     // check if need to render promotion page
-                    console.log('before show promo');
+                    //console.log('before show promo');
                     if (!Ext.isEmpty(res.promoSelection) && res.promoSelection.length > 0) {
-                        console.log('show pop up');
+                        //console.log('show pop up');
                         view.add({
                             xtype: 'promowin'
                         }).show();
@@ -2388,7 +2388,7 @@ Ext.define('Shopping.view.cart.CartController', {
                     me.showError(res);
                 }
             }, function (res) {
-                console.info(res);
+                //console.info(res);
                 Valence.common.util.Helper.destroyLoadMask();
                 me.showError(res);
             });
@@ -2420,13 +2420,13 @@ Ext.define('Shopping.view.cart.CartController', {
                 //method: 'GET',
                 params: params,
                 success: function (res) {
-                    console.info(res);
+                    //console.info(res);
                     var resp = Ext.decode(res.responseText);
                     deferred.resolve(resp);
                     //deferred.reject(resp);
                 },
                 failure: function (res) {
-                    console.info(res);
+                    //console.info(res);
                     var resp = Ext.decode(res.responseText);
                     deferred.reject(resp);
                 }
@@ -2438,15 +2438,15 @@ Ext.define('Shopping.view.cart.CartController', {
     },
     onPromoSelectionChange: function (th, rec) {
         console.log('onPromoSelectionChange called');
-        console.info(th);
-        console.info(rec);
+        //console.info(th);
+        //console.info(rec);
         var selectedList = [],
             item, selectedTotal = 0;
         var me = this,
             vm = me.getViewModel();
         for (var i = 0; i < rec.length; i++) {
             item = rec[i].getData();
-            console.info(rec[i]);
+            //console.info(rec[i]);
             selectedTotal = selectedTotal + 1;
             // selectedList.push({
             //     prm_code: item.prm_code,
@@ -2461,8 +2461,8 @@ Ext.define('Shopping.view.cart.CartController', {
         }
         vm.set('selectedPromos', selectedList);
         vm.set('selectedPromoCount', selectedTotal);
-        console.info(vm.get('selectedPromos'));
-        console.info(vm.get('selectedPromoCount'));
+        //console.info(vm.get('selectedPromos'));
+        //console.info(vm.get('selectedPromoCount'));
 
     },
     onPromoSelect: function (th, rec) {
@@ -2476,7 +2476,7 @@ Ext.define('Shopping.view.cart.CartController', {
         var selectedList = [],
             item, selectedTotal = 0;
         e.record.commit();
-        console.info(prmSelectionStore);
+        //console.info(prmSelectionStore);
 
         // constructing selection list
         for (var i = 0; i < prmSelectionStore.getCount(); i++) {
@@ -2497,7 +2497,7 @@ Ext.define('Shopping.view.cart.CartController', {
         }
         vm.set('selectedPromos', selectedList);
         vm.set('selectedPromoCount', selectedTotal);
-        console.info(vm.get('selectedPromos'));
-        console.info(vm.get('selectedPromoCount'));
+        //console.info(vm.get('selectedPromos'));
+        //console.info(vm.get('selectedPromoCount'));
     }
 });
