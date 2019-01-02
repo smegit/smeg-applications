@@ -152,6 +152,7 @@ Ext.define('Shopping.view.cart.Form', {
                         {
                             xtype: 'combobox',
                             queryMode: 'local',
+                            name: 'OASTKLOC',
                             //flex: 1,
                             //width: 305,
                             minWidth: 220,
@@ -170,7 +171,8 @@ Ext.define('Shopping.view.cart.Form', {
                             },
                             bind: {
                                 store: '{StockLocations}',
-                                value: '{STKLOC}'
+                                //value: '{STKLOC}'
+                                value: '{currentStockLoc}'
                             }
                         }]
                 },

@@ -139,7 +139,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             val = rec.get('STKCOD');
 
         vm.set('STKLOC', val);
-        //console.info(vm);
+        console.info(extraParams);
+        console.info(vm);
         Ext.apply(extraParams, {
             stkloc: val
         });
@@ -158,7 +159,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     onClickGoBack: function () {
         console.log('onClickGoBack called');
         var me = this;
+        var vm = me.getViewModel()
         //me.getViewModel().getStore('products').load();
+        //vm.set('STKLOC', '123');
+
         me.lookupReference('card').getLayout().setActiveItem(0);
     },
 
@@ -301,14 +305,20 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             vm = me.getViewModel(),
             view = me.getView(),
             form = view.down('cartform'),
-            formData = vm.get('cartValues'),
+            formData = {},
             store = vm.getStore('cartItems'),
             prodArray = [], item;
         //console.info(store);
+        //vm.get('cartValues') == null ? form.getValues() : vm.get();
 
-        //console.info(form);
-        //console.info(form.getValues());
+        console.info(vm);
+        console.info(form);
+        console.info(form.getValues());
+        console.info(vm.get('cartValues'));
         Ext.apply(formData, form.getValues());
+        Ext.apply(formData, vm.get('cartValues'));
+        //Ext.apply(formData, { OASTKLOC: vm.get('currentStockLoc') });
+
         // generate product Array
         for (var i = 0; i < store.getCount(); i++) {
             item = store.getAt(i).getData();
@@ -329,6 +339,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
         }
 
+        console.info(formData);
         return {
             data: formData,
             products: prodArray
@@ -388,6 +399,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         // If add to cart is clicked from the Detail screen then
         // we need to get the product from the ViewModel and quantity from the spinner
         //console.log('onAddToCart called');
+        console.info(e);
         var me = this,
             viewModel = me.getViewModel(),
             product = (dtlQuantity ? viewModel.get('product').Product[0] : e.data),
@@ -396,13 +408,26 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             cartItem = {
                 product_id: product.MODEL,
                 prod_desc: product.PRODDESC,
+                //allocated: product.OBQTYA,
                 quantity: quantity,
                 price: product.PRICE,
-                smallpic: product.SMALLPIC
+                smallpic: product.SMALLPIC,
+                //delivered: product.OBQTYD,
+
+                // sub_total: product.OBTOTA,
+                // //"generated": product.OBGENF,
+
+                // deletable: product.ALWDEL,
+                // releaseQtyEditable: product.ALWRLSQ,
+                // orderQtyEditable: product.ALWORDQ,
+                // orderLineNO: product.OBORDLNO,
+                // OBPRMCOD: product.OBPRMCOD
             },
             existingRec = cartItemStore.findRecord('product_id', product.MODEL, 0, false, true, true),
+            //existingRec,
             snackbarEl = Ext.getBody().query('.w-snackbar-outer')[0],
             snackbarCmp = (!Ext.isEmpty(snackbarEl)) ? Ext.getCmp(snackbarEl.id) : null,
+            //existingRecIdx,
             notify = function () {
                 Valence.common.util.Snackbar.show({
                     text: quantity + ' item(s) have been added to cart',
@@ -410,6 +435,26 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 });
             };
 
+        // existingRecIdx = cartItemStore.findBy(function (rec, id) {
+        //     if (rec.get('product_id') == product.MODEL && rec.get('OBPRMCOD') == "" && rec.get('price') > 0) {
+        //         return true;
+        //     }
+        //     return false;
+        // });
+        // console.info(cartItemStore);
+        // //console.info(existingRecIdx);
+        // console.info(cartItem);
+        // // var newRec = cartItem.copy();
+        // cartItemStore.add(cartItem);
+
+
+        //cartItemStore.filter('product_id', 'DWAFI6D15T');
+        // console.info(cartItemStore.filter([
+        //     {
+        //         property: 'product_id',
+        //         value: product.MODEL
+        //     }
+        // ]));
         if (!Ext.isEmpty(existingRec)) {
             existingRec.set({
                 quantity: existingRec.get('quantity') + quantity
@@ -418,6 +463,20 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         } else {
             cartItemStore.add(cartItem);
         }
+        // if (existingRecIdx >= 0) {
+        //     existingRec = cartItemStore.getAt(existingRecIdx);
+        //     console.info(existingRec);
+
+        //     existingRec.set({
+        //         quantity: existingRec.get('quantity') + quantity
+        //     });
+        //     existingRec.commit();
+        // } else {
+        //     console.info('add new item');
+        //     console.info(cartItem);
+        //     cartItemStore.add(cartItem);
+        // }
+
 
         viewModel.set('cartCount', viewModel.get('cartCount') + quantity);
         //check if the snackbar is already visible and if so don't show it again
@@ -427,6 +486,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         } else if (Ext.isEmpty(snackbarCmp)) {
             notify();
         }
+        //console.info(cartItemStore);
     },
 
     onAddToCartFromDetail: function (cmp, e) {
@@ -712,9 +772,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         // if new order get the assigned order key and load the order details
         //if (Ext.isEmpty(vm.get('activeCartNumber')) || (!Ext.isEmpty(vm.get('activeCartNumber')) && vm.get('needUpdate'))) {
         var cartInfo = me.getCart();
+        console.info(cartInfo);
         Ext.apply(params, cartInfo.data);
         Ext.apply(params, { products: Ext.encode(cartInfo.products) });
-        //console.info(params);
+        console.info(params);
         Ext.Ajax.request({
             url: '/valence/vvcall.pgm',
             params: params,
@@ -800,6 +861,12 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 // load promote headers
                 me.loadPromoHeader(obj.promoHeader);
 
+
+                vm.set({
+                    STKLOC: obj.OASTKLOC,
+                    //cartValues: formValues,
+                    //disableSalesPerson: (!Ext.isEmpty(resp.lockSalesPerson) && resp.lockSalesPerson === 'true' && !Ext.isEmpty(formValues.OAREP)) ? true : false
+                });
 
                 me.onViewCart();
 

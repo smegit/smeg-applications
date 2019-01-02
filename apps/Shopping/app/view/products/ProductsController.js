@@ -38,9 +38,11 @@ Ext.define('Shopping.view.products.ProductsController', {
     onChangeStockLocation: function (cmp, value) {
         console.log('onChangeStockLocation called ' + value);
         var me = this,
+            vm = me.getViewModel(),
             store = me.getView().lookupViewModel(true).getStore('products');
 
         // console.info(store);
+        //vm.set('STKLOC', value);
         if (!Ext.isEmpty(value)) {
             Ext.apply(store.getProxy().extraParams, {
                 stkloc: value

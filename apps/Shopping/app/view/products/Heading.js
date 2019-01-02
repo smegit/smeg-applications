@@ -38,6 +38,7 @@ Ext.define('Shopping.view.products.Heading', {
             bind: {
                 store: '{StockLocations}',
                 value: '{currentStockLoc}'
+                //value: '{STKLOC}'
             }
         }, {
             xtype: 'tbfill'

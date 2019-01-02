@@ -385,8 +385,10 @@ Ext.define('Shopping.view.cart.Main', {
 
                 {
                     text: 'PDF',
+                    //iconCls: 'button-home-small',
                     ui: 'white',
                     //ui: 'blue',
+                    icon: 'resources/images/file-pdf-regular.svg',
                     //maskMsg: 'Saving Order',
                     listeners: {
                         click: 'onClickPDF',

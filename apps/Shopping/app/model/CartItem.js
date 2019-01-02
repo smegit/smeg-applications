@@ -4,7 +4,7 @@ Ext.define('Shopping.model.CartItem', {
     fields: [
         {
             name: 'product_id',
-            reference: 'Product'
+            //reference: 'Product'
         },
         {
             name: 'prod_desc'

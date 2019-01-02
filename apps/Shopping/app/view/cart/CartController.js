@@ -1249,7 +1249,55 @@ Ext.define('Shopping.view.cart.CartController', {
     onClickPDF: function () {
         console.log('onClickPDF called');
         var me = this;
-        me.onClickSave();
+        //me.onClickSave();
+        me.requestPDF()
+            .then(function (content) {
+                console.info(content);
+                if (content.success) {
+                    var win = window.open('', '_blank');
+                    win.location = content.url;
+                    win.focus();
+                } else {
+                    me.showError({ msg: 'Failed to download PDF' });
+                }
+
+            }, function () {
+                me.showError({ msg: 'Failed to download PDF' });
+            });
+    },
+
+    requestPDF: function () {
+        console.log('requestPDF called');
+        var me = this,
+            deferred = Ext.create('Ext.Deferred'),
+            vm = me.getViewModel(),
+            params = {},
+            cartInfo = me.getCartInformation(),
+            valid = me.isFormValid();
+        //console.info(cartInfo);
+        params = {
+            pgm: 'EC1050',
+            action: 'getPDF',
+            OAORDKEY: vm.get('activeCartNumber')
+        };
+        Ext.Ajax.request({
+            url: '/valence/vvcall.pgm',
+            //method: 'GET',
+            params: params,
+            success: function (res) {
+                //console.info(res);
+                var resp = Ext.decode(res.responseText);
+                deferred.resolve(resp);
+                //deferred.reject(resp);
+            },
+            failure: function (res) {
+                //console.info(res);
+                var resp = Ext.decode(res.responseText);
+                deferred.reject(resp);
+            }
+        });
+        return deferred.promise;
+
     },
 
     /**
@@ -1507,7 +1555,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * resetCart - reset the cart "list, form, view model"
      */
     resetCart: function () {
-        //console.log('resetCart called');
+        console.log('resetCart called');
         var me = this,
             vm = me.getViewModel(),
             cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform');
@@ -1515,6 +1563,12 @@ Ext.define('Shopping.view.cart.CartController', {
         me.releaseCart();
 
         vm.getStore('cartItems').removeAll();
+        console.info(vm.get('defaultStockLocation'));
+
+        // reset form 
+        cartForm.down('#deliveryChkbox').setValue(false);
+        cartForm.down('#deliveryfieldset').setExpanded(false);
+        cartForm.reset();
 
         vm.set({
             cartCount: 0,
@@ -1523,14 +1577,19 @@ Ext.define('Shopping.view.cart.CartController', {
             cartValues: null,
             oldCartValues: null,
             orderPayments: null,
-            STKLOC: vm.get('defaultStockLocation')
+            STKLOC: vm.get('defaultStockLocation'),
+            //STKLOC: '339213    00002',
+            currentStockLoc: vm.get('defaultStockLocation'),
+            newfield: '123'
         });
         vm.set('activeCartNumber', null);
 
         vm.notify();
-        cartForm.down('#deliveryChkbox').setValue(false);
-        cartForm.down('#deliveryfieldset').setExpanded(false);
-        cartForm.reset();
+        console.info(vm);
+        // cartForm.down('#deliveryChkbox').setValue(false);
+        // cartForm.down('#deliveryfieldset').setExpanded(false);
+        // cartForm.reset();
+
     },
 
     /**
@@ -1995,6 +2054,7 @@ Ext.define('Shopping.view.cart.CartController', {
 
     loadCart: function (resp) {
         console.log('loadCart called');
+        console.info(resp);
         var me = this,
             vm = me.getViewModel(),
             cartItems = resp.CartDtl,
@@ -2042,7 +2102,7 @@ Ext.define('Shopping.view.cart.CartController', {
 
         cartItemsStore.add(updatedItems);
         //console.info(updatedItems);
-        //console.info(cartItemsStore);
+        console.info(cartItemsStore);
 
         //  reload cart items
         // load cart header

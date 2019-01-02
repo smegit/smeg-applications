@@ -51,12 +51,12 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         },
         currentStockLoc: {
             get: function (get) {
-                // console.log('get => ' + get('STKLOC'));
+                console.log('get => ' + get('STKLOC'));
                 return get('STKLOC');
             },
 
             set: function (value) {
-                // console.log('set => ' + value);
+                console.log('set => ' + value);
                 this.set({
                     STKLOC: value
                 });
