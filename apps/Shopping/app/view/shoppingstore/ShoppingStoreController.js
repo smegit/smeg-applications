@@ -12,7 +12,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         'Valence.common.util.Snackbar',
 
         // add promo pop-up window
-        'Shopping.view.cart.PromoWin'
+        'Shopping.view.cart.PromoWin',
+        'Shopping.model.CartItem'
 
     ],
 
@@ -399,7 +400,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     onAddToCart: function (e, dtlQuantity) {
         // If add to cart is clicked from the Detail screen then
         // we need to get the product from the ViewModel and quantity from the spinner
-        //console.log('onAddToCart called');
+        console.log('onAddToCart called');
         console.info(e);
         var me = this,
             viewModel = me.getViewModel(),
@@ -418,17 +419,17 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 // sub_total: product.OBTOTA,
                 // //"generated": product.OBGENF,
 
-                // deletable: product.ALWDEL,
-                // releaseQtyEditable: product.ALWRLSQ,
-                // orderQtyEditable: product.ALWORDQ,
-                // orderLineNO: product.OBORDLNO,
-                // OBPRMCOD: product.OBPRMCOD
+                deletable: Ext.isEmpty(product.ALWDEL) ? '' : product.ALWDEL,
+                releaseQtyEditable: Ext.isEmpty(product.ALWRLSQ) ? '' : product.ALWRLSQ,
+                orderQtyEditable: Ext.isEmpty(product.ALWORDQ) ? '' : product.ALWORDQ,
+                orderLineNO: Ext.isEmpty(product.OBORDLNO) ? '' : product.OBORDLNO,
+                OBPRMCOD: Ext.isEmpty(product.OBPRMCOD) ? '' : product.OBPRMCOD
             },
-            existingRec = cartItemStore.findRecord('product_id', product.MODEL, 0, false, true, true),
-            //existingRec,
+            //existingRec = cartItemStore.findRecord('product_id', product.MODEL, 0, false, true, true),
+            existingRec,
             snackbarEl = Ext.getBody().query('.w-snackbar-outer')[0],
             snackbarCmp = (!Ext.isEmpty(snackbarEl)) ? Ext.getCmp(snackbarEl.id) : null,
-            //existingRecIdx,
+            existingRecIdx,
             notify = function () {
                 Valence.common.util.Snackbar.show({
                     text: quantity + ' item(s) have been added to cart',
@@ -436,15 +437,18 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 });
             };
 
-        // existingRecIdx = cartItemStore.findBy(function (rec, id) {
-        //     if (rec.get('product_id') == product.MODEL && rec.get('OBPRMCOD') == "" && rec.get('price') > 0) {
-        //         return true;
-        //     }
-        //     return false;
-        // });
+        existingRecIdx = cartItemStore.findBy(function (rec, id) {
+            console.info(rec);
+            console.info(rec.get('OBPRMCOD'));
+            if (rec.get('product_id') == product.MODEL && rec.get('OBPRMCOD') == "" && rec.get('price') > 0) {
+                return true;
+            }
+            return false;
+        });
+        existingRec = cartItemStore.getAt(existingRecIdx);
         // console.info(cartItemStore);
-        // //console.info(existingRecIdx);
-        // console.info(cartItem);
+        console.info(existingRecIdx);
+        console.info(existingRec);
         // // var newRec = cartItem.copy();
         // cartItemStore.add(cartItem);
 
@@ -456,6 +460,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         //         value: product.MODEL
         //     }
         // ]));
+
         if (!Ext.isEmpty(existingRec)) {
             existingRec.set({
                 quantity: existingRec.get('quantity') + quantity
@@ -464,6 +469,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         } else {
             cartItemStore.add(cartItem);
         }
+
+        //cartItemStore.add(cartItem);
+
+        //cartItemStore.add(cartItem);
         // if (existingRecIdx >= 0) {
         //     existingRec = cartItemStore.getAt(existingRecIdx);
         //     console.info(existingRec);
@@ -487,7 +496,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         } else if (Ext.isEmpty(snackbarCmp)) {
             notify();
         }
-        //console.info(cartItemStore);
+        console.info(cartItemStore);
     },
 
     onAddToCartFromDetail: function (cmp, e) {
@@ -1017,9 +1026,11 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
                     if (!Ext.isEmpty(products)) {
                         for (var ii = 0; ii < products.length; ii++) {
+
                             product = products[ii];
                             prodQuantity = product.OBQTYO;
                             cartItemCount = cartItemCount + prodQuantity;
+                            //console.info(product);
                             cartItemStoreItems.push({
                                 "product_id": product.OBITM,
                                 "quantity": prodQuantity,
@@ -1045,7 +1056,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     }
 
                     cartItemStore.add(cartItemStoreItems);
-
+                    console.info(cartItemStore);
                     vm.set({
                         cartCount: cartItemCount,
                         activeCartNumber: cartKey,

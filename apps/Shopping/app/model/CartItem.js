@@ -1,6 +1,6 @@
 Ext.define('Shopping.model.CartItem', {
     extend: 'Ext.data.Model',
-    idProperty: 'product_id',
+    //idProperty: 'product_id',
     fields: [
         {
             name: 'product_id',
