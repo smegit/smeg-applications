@@ -36,6 +36,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         prmDesc: null,
         prmText: null,
         prmOrderLineNumber: null,
+        prmMaxSel: null,
         //promoItems: []
         selectedPromos: [],
         selectedPromoCount: 0,
@@ -105,14 +106,32 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
             }
             return paymentFound;
         },
-        requestDate: function (get) {
-            if (!Ext.isEmpty(get('cartValues'))) {
-                if (get('cartValues').OADELD == '0001-01-01') {
-                    return ''
-                } else {
-                    return get('cartValues').OADELD;
+        // requestDate: function (get) {
+        //     if (!Ext.isEmpty(get('cartValues'))) {
+        //         console.info(get('cartValues'));
+        //         if (get('cartValues').OADELD == '0001-01-01') {
+        //             return ''
+        //         } else {
+        //             return get('cartValues').OADELD;
+        //         }
+        //     }
+        // }
+        requestDate: {
+            get: function (get) {
+                if (!Ext.isEmpty(get('cartValues'))) {
+                    if (get('cartValues').OADELD == '0001-01-01') {
+                        return ''
+                    } else {
+                        return get('cartValues').OADELD;
+                    }
                 }
-            }
+            },
+            // set: function (value) {
+            //     // this.set({
+
+            //     // });
+            //     console.info(value);
+            // }
         }
     },
 

@@ -81,7 +81,9 @@ Ext.define('Shopping.view.cart.List', {
                 dataIndex: 'smallpic',
                 align: 'center',
                 sortable: false,
-                renderer: function (v, meta) {
+                renderer: function (v, meta, record) {
+                    // console.info(meta);
+                    // console.info(record);
                     if (!Ext.isEmpty(v)) {
                         meta.tdCls += ' image-column';
                         return '<image class="cart-list-prd-detail" src="' + v + '" height="50" width="50"></image>';
@@ -101,9 +103,12 @@ Ext.define('Shopping.view.cart.List', {
                 cellWrap: true,
                 dataIndex: 'prod_desc',
                 flex: 2,
-                renderer: function (v, meta) {
+                renderer: function (v, meta, record) {
+                    // console.info(v);
+                    // console.info(record);
+                    // console.info(record.getData().plain_txt);
                     meta.tdCls += ' cart-list-prd-detail';
-                    return v;
+                    return v + '<p style="color:red;margin:auto">' + record.getData().plain_txt + '</p>';
                 }
             }];
 

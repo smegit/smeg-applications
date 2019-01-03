@@ -386,7 +386,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 prmDesc: item.PAPRMDSC,
                 prmText: item.PATEXT,
                 prmTotalQty: item.PASLTQTY,
-                prmOrderLineNumber: item.ORDLNO
+                prmOrderLineNumber: item.ORDLNO,
+                prmMaxSel: item.MAXSEL
             })
         }
     },
@@ -823,7 +824,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                             "releaseQtyEditable": product.ALWRLSQ,
                             "orderQtyEditable": product.ALWORDQ,
                             "orderLineNO": product.OBORDLNO,
-                            "OBPRMCOD": product.OBPRMCOD
+                            "OBPRMCOD": product.OBPRMCOD,
+                            "plain_txt": product.PALINTXT
 
                             //TODO: add "deletable"
                         });
@@ -977,7 +979,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     todayDate = todayDate.getTime();
                     ninetyDate = ninetyDate.getTime();
 
-                    if (delvDate < todayDate || delvDate > ninetyDate) {
+                    if (delvDate < todayDate || delvDate > ninetyDate || formValues.OADELD === '0001-01-01') {
+                        console.info('change OADELD value to null');
                         formValues.OADELD = null;
                     }
 
@@ -1033,7 +1036,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                                 "releaseQtyEditable": product.ALWRLSQ,
                                 "orderQtyEditable": product.ALWORDQ,
                                 "orderLineNO": product.OBORDLNO,
-                                "OBPRMCOD": product.OBPRMCOD
+                                "OBPRMCOD": product.OBPRMCOD,
+                                "plain_txt": product.PALINTXT
 
                                 // TODO: add "deletable"
                             });

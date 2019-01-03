@@ -816,6 +816,7 @@ Ext.define('Shopping.view.cart.CartController', {
         me.onClickBack();
     },
 
+
     /**
      * onClickDeposit - request start depositing on this order, get the payments and show the payment entery window
      * @param cmp
@@ -1248,22 +1249,27 @@ Ext.define('Shopping.view.cart.CartController', {
     // on Click PDF - bring the pdf 
     onClickPDF: function () {
         console.log('onClickPDF called');
-        var me = this;
+        var me = this,
+            cartInfo = me.getCartInformation();
         //me.onClickSave();
-        me.requestPDF()
-            .then(function (content) {
-                console.info(content);
-                if (content.success) {
-                    var win = window.open('', '_blank');
-                    win.location = content.url;
-                    win.focus();
-                } else {
-                    me.showError({ msg: 'Failed to download PDF' });
-                }
+        if (!Ext.isEmpty(cartInfo)) {
 
-            }, function () {
-                me.showError({ msg: 'Failed to download PDF' });
-            });
+            me.requestPDF()
+                .then(function (content) {
+                    console.info(content);
+                    if (content.success) {
+                        var win = window.open('', '_blank');
+                        win.location = content.printURL;
+                        win.focus();
+                    } else {
+                        me.showError({ msg: 'Failed to download PDF' });
+                    }
+
+                }, function () {
+                    me.showError({ msg: 'Failed to download PDF' });
+                });
+        }
+
     },
 
     requestPDF: function () {
@@ -2094,7 +2100,8 @@ Ext.define('Shopping.view.cart.CartController', {
                     "releaseQtyEditable": cartItems[i].ALWRLSQ,
                     "orderQtyEditable": cartItems[i].ALWORDQ,
                     "orderLineNO": cartItems[i].OBORDLNO,
-                    "OBPRMCOD": cartItems[i].OBPRMCOD
+                    "OBPRMCOD": cartItems[i].OBPRMCOD,
+                    "plain_txt": cartItems[i].PALINTXT
                     // TODO: add "deletable"
                 });
             }
@@ -2108,6 +2115,10 @@ Ext.define('Shopping.view.cart.CartController', {
         // load cart header
         if (!Ext.isEmpty(resp.CartHdr)) {
             Ext.apply(formValues, resp.CartHdr[0]);
+        }
+        if (formValues.OADELD === '0001-01-01') {
+            console.info('change OADELD value to null');
+            formValues.OADELD = null;
         }
         vm.set({
             STKLOC: resp.OASTKLOC,
@@ -2398,6 +2409,7 @@ Ext.define('Shopping.view.cart.CartController', {
         console.log('onClickCancelPromoWin called');
         var me = this,
             promoWindow = me.getView().down('promowin');
+        console.info(promoWindow);
         promoWindow.close();
         //console.info(me.getView().down('promowin'));
     },
@@ -2407,14 +2419,12 @@ Ext.define('Shopping.view.cart.CartController', {
             vm = me.getViewModel(),
             view = me.getView(),
             selectedCount = vm.get('selectedPromoCount'),
-            prmTotalQty = vm.get('prmTotalQty');
+            prmTotalQty = vm.get('prmTotalQty'),
+            prmMaxSel = vm.get('prmMaxSel');
         //console.info(vm.get('promoItems'));
         // validate selections 
-        if (selectedCount > prmTotalQty) {
-            me.showError({ msg: 'You have selected more than ' + prmTotalQty + ' items.' });
-            return null;
-        } else if (selectedCount < prmTotalQty) {
-            me.showError({ msg: 'You have selected less than ' + prmTotalQty + ' items' });
+        if (selectedCount > prmMaxSel) {
+            me.showError({ msg: 'Maximum number of items you can select is ' + prmMaxSel });
             return null;
         } else {
             console.log('good selection');
@@ -2429,6 +2439,7 @@ Ext.define('Shopping.view.cart.CartController', {
                     view.fireEvent('loadPromoSelections', res.promoSelection);
                     view.fireEvent('loadPromoHeader', res.promoHeader);
 
+                    me.onClickCancelPromoWin();
                     // check if need to render promotion page
                     //console.log('before show promo');
                     if (!Ext.isEmpty(res.promoSelection) && res.promoSelection.length > 0) {

@@ -10,6 +10,9 @@ Ext.define('Shopping.model.CartItem', {
             name: 'prod_desc'
         },
         {
+            name: 'plain_txt'
+        },
+        {
             name: 'quantity',
             type: 'int'
         },

@@ -360,9 +360,9 @@ Ext.define('Shopping.view.cart.Main', {
                 { xtype: 'tbfill' },
                 {
                     text: 'Continue Shopping',
-                    ui: 'white',
+                    //ui: 'white',
                     //ui: 'round',
-                    //ui: 'blue',
+                    ui: 'blue',
                     handler: 'onClickBack',
                     listeners: {
                         // mouseover: 'onMouseOver',
@@ -371,14 +371,12 @@ Ext.define('Shopping.view.cart.Main', {
                 }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
                 { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
                 {
-                    text: 'Exit Order',
+                    text: 'Exit',
                     maskMsg: 'Exiting Order',
-                    ui: 'white',
-                    //ui: 'blue',
+                    //ui: 'white',
+                    ui: 'blue',
                     listeners: {
                         click: 'onClickClear',
-                        // mouseover: 'onMouseOver',
-                        // mouseout: 'onMouseOut'
                     }
                 }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
                 { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
@@ -386,8 +384,8 @@ Ext.define('Shopping.view.cart.Main', {
                 {
                     text: 'PDF',
                     //iconCls: 'button-home-small',
-                    ui: 'white',
-                    //ui: 'blue',
+                    //ui: 'white',
+                    ui: 'blue',
                     icon: 'resources/images/file-pdf-regular.svg',
                     //maskMsg: 'Saving Order',
                     listeners: {
@@ -409,8 +407,8 @@ Ext.define('Shopping.view.cart.Main', {
                 // },
                 {
                     text: 'Notes',
-                    ui: 'white',
-                    //ui: 'blue',
+                    //ui: 'white',
+                    ui: 'blue',
                     maskMsg: 'Loading Notes',
                     listeners: {
                         click: 'onClickNotes1',
