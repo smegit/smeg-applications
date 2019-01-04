@@ -35,20 +35,20 @@ Ext.define('Shopping.view.products.ProductsController', {
         this.getView().fireEvent('selectstocklocation', fld, rec);
     },
 
-    onChangeStockLocation: function (cmp, value) {
-        console.log('onChangeStockLocation called ' + value);
-        var me = this,
-            vm = me.getViewModel(),
-            store = me.getView().lookupViewModel(true).getStore('products');
+    // onChangeStockLocation: function (cmp, value) {
+    //     console.log('onChangeStockLocation called ' + value);
+    //     var me = this,
+    //         vm = me.getViewModel(),
+    //         store = me.getView().lookupViewModel(true).getStore('products');
 
-        // console.info(store);
-        //vm.set('STKLOC', value);
-        if (!Ext.isEmpty(value)) {
-            Ext.apply(store.getProxy().extraParams, {
-                stkloc: value
-            });
-        }
-    },
+    //     // console.info(store);
+    //     //vm.set('STKLOC', value);
+    //     if (!Ext.isEmpty(value)) {
+    //         Ext.apply(store.getProxy().extraParams, {
+    //             stkloc: value
+    //         });
+    //     }
+    // },
 
     onClearSearch: function (fld) {
         var me = this,

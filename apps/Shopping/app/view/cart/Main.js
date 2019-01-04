@@ -381,6 +381,15 @@ Ext.define('Shopping.view.cart.Main', {
                     }
                 }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
                 { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                {
+                    text: 'Cancel',
+                    ui: 'blue',
+                    listeners: {
+                        //click: 'onClickClear',
+                        click: 'onClickClear'
+                    }
+                }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
 
                 {
                     text: 'PDF',

@@ -184,7 +184,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 pgm: 'EC1050',
                 action: 'confirm',
                 products: (!Ext.isEmpty(cartInfo) && !Ext.isEmpty(cartInfo.products)) ? Ext.encode(cartInfo.products) : null,
-                stkloc: vm.get('STKLOC')
+                //stkloc: vm.get('STKLOC')
             };
 
         Valence.common.util.Helper.loadMask('Processing');
@@ -229,7 +229,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * @param action
      */
     depositRelease: function (cmp, action) {
-        //console.log('depositRelease called');
+        console.log('depositRelease called');
         var me = this,
             vm = me.getViewModel(),
             deferred = Ext.create('Ext.Deferred'),
@@ -240,7 +240,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 pgm: 'EC1050',
                 action: action,
                 products: (!Ext.isEmpty(cartInfo) && !Ext.isEmpty(cartInfo.products)) ? Ext.encode(cartInfo.products) : null,
-                stkloc: vm.get('STKLOC')
+                //stkloc: vm.get('STKLOC')
             }, rep;
 
         if (!Ext.isEmpty(cartInfo)) {

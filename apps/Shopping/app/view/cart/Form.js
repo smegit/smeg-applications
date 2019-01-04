@@ -167,7 +167,7 @@ Ext.define('Shopping.view.cart.Form', {
                             fieldLabel: 'Stock Location',
                             forceSelection: true,
                             listeners: {
-                                select: 'onSelectStockLocation'
+                                //select: 'onSelectStockLocation'
                             },
                             bind: {
                                 store: '{StockLocations}',

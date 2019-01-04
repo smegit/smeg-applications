@@ -82,12 +82,12 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
         // console.log('stockDefault => ' + stockDefault);
 
-        if (!Ext.isEmpty(stockDefault)) {
-            var productsStore = vm.getStore('products');
-            Ext.apply(productsStore.getProxy().extraParams, {
-                stkloc: stockDefault
-            });
-        }
+        // if (!Ext.isEmpty(stockDefault)) {
+        //     var productsStore = vm.getStore('products');
+        //     Ext.apply(productsStore.getProxy().extraParams, {
+        //         stkloc: stockDefault
+        //     });
+        // }
 
         if (Ext.isEmpty(mainCart)) {
             console.log('mainCart is empty');
@@ -97,7 +97,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     scope: me,
                     back: 'onClickGoBack',
                     resetcart: 'onResetCart',
-                    selectstocklocation: 'onSelectStockLocation',
+                    //selectstocklocation: 'onSelectStockLocation',
                     showdetail: 'onShowDetail'
                 }
             });
@@ -131,31 +131,31 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         }, 100);
     },
 
-    onSelectStockLocation: function (fld, rec) {
-        console.log('onSelectStockLocation called');
-        var me = this,
-            vm = me.getViewModel(),
-            str = vm.getStore('products'),
-            extraParams = str.getProxy().extraParams,
-            val = rec.get('STKCOD');
+    // onSelectStockLocation: function (fld, rec) {
+    //     console.log('onSelectStockLocation called');
+    //     var me = this,
+    //         vm = me.getViewModel(),
+    //         str = vm.getStore('products'),
+    //         extraParams = str.getProxy().extraParams,
+    //         val = rec.get('STKCOD');
 
-        vm.set('STKLOC', val);
-        console.info(extraParams);
-        console.info(vm);
-        Ext.apply(extraParams, {
-            stkloc: val
-        });
+    //     vm.set('STKLOC', val);
+    //     console.info(extraParams);
+    //     console.info(vm);
+    //     Ext.apply(extraParams, {
+    //         stkloc: val
+    //     });
 
-        if (vm.get('loadProducts')) {
-            str.load(
-                function () {
-                    setTimeout(function () {
-                        me.lookupReference('productsMain').fireEvent('unmaskproductsview');
-                    }, 200);
-                }
-            );
-        }
-    },
+    //     if (vm.get('loadProducts')) {
+    //         str.load(
+    //             function () {
+    //                 setTimeout(function () {
+    //                     me.lookupReference('productsMain').fireEvent('unmaskproductsview');
+    //                 }, 200);
+    //             }
+    //         );
+    //     }
+    // },
 
     onClickGoBack: function () {
         console.log('onClickGoBack called');
@@ -1144,12 +1144,12 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                             // Added to reload the categories and products
                             Shopping.getApplication().fireEvent('agentselected', content);
 
-                            if (!Ext.isEmpty(stockDefault)) {
-                                var productsStore = vm.getStore('products');
-                                Ext.apply(productsStore.getProxy().extraParams, {
-                                    stkloc: stockDefault
-                                });
-                            }
+                            // if (!Ext.isEmpty(stockDefault)) {
+                            //     var productsStore = vm.getStore('products');
+                            //     Ext.apply(productsStore.getProxy().extraParams, {
+                            //         stkloc: stockDefault
+                            //     });
+                            // }
                             continueFnc();
                         }, function (content) {
                             Valence.common.util.Helper.destroyLoadMask();
