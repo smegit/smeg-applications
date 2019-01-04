@@ -80,6 +80,15 @@ Ext.define('Shopping.model.CartItem', {
         {
             name: 'viewReleaseQty',
             type: 'int'
+        },
+        {
+            name: 'combinedKey',
+            convert: function (v, rec) {
+                var prodModel = rec.get('product_id'),
+                    prmCode = rec.get('OBPRMCOD'),
+                    price = rec.get('price');
+                return prodModel + prmCode + price;
+            }
         }
     ],
     proxy: {

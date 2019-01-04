@@ -82,24 +82,24 @@ Ext.define('Shopping.view.main.MainController', {
                         activeAgent = parent.smegGetCurrentAgent();
                     }
 
-                    if (!Ext.isEmpty(d.StockDft)) {
-                        stockDefault = d.StockDft[0].STKDFT;
+                    // if (!Ext.isEmpty(d.StockDft)) {
+                    //     stockDefault = d.StockDft[0].STKDFT;
 
 
 
-                        // Added
-                        //stockDefault = d.StockLoc.filter(loc => loc.STKCOD == d.StockDft[0].STKDFT)[0].STKDSC;
-                    }
+                    //     // Added
+                    //     //stockDefault = d.StockLoc.filter(loc => loc.STKCOD == d.StockDft[0].STKDFT)[0].STKDSC;
+                    // }
 
                     //use the base "single" agent
                     //
                     vmObj = {
                         'agentName': d.AgentName[0].Name,
                         'cartOptions': d.DelOpts,
-                        // 'STKDFT'      : stockDefault,
-                        'STKLOC': stockDefault,
-                        'defaultStockLocation': stockDefault,
+                        //'STKLOC': stockDefault,
+                        //'defaultStockLocation': stockDefault,
 
+                        // 'STKDFT'      : stockDefault,
                         //'STKLOCDES': d.StockLoc.filter(loc => loc.STKCOD == d.StockDft[0].STKDFT)[0].STKDSC
                     };
 

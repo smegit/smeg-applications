@@ -171,8 +171,8 @@ Ext.define('Shopping.view.cart.Form', {
                             },
                             bind: {
                                 store: '{StockLocations}',
-                                //value: '{STKLOC}'
-                                value: '{currentStockLoc}'
+                                value: '{STKLOC}'
+                                //value: '{currentStockLoc}'
                             }
                         }]
                 },

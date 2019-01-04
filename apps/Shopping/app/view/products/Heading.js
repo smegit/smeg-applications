@@ -18,87 +18,89 @@ Ext.define('Shopping.view.products.Heading', {
 
     buildItems: function () {
         var me = this;
-        return [{
-            xtype: 'combo',
-            cls: 'fld-in-header',
-            queryMode: 'local',
-            width: 305,
-            labelWidth: 95,
-            height: 32,
-            editable: false,
-            valueField: 'STKCOD',
-            displayField: 'STKDSC',
-            reference: 'stocklocs',
-            fieldLabel: 'Stock Location',
-            forceSelection: true,
-            listeners: {
-                select: 'onSelectStockLocation',
-                change: 'onChangeStockLocation'
-            },
-            bind: {
-                store: '{StockLocations}',
-                value: '{currentStockLoc}'
-                //value: '{STKLOC}'
-            }
-        }, {
-            xtype: 'tbfill'
-        }, {
-            xtype: 'textfield',
-            cls: 'fld-in-header',
-            itemId: 'search',
-            width: 200,
-            height: 32,
-            emptyText: 'Filter Products',
-            margin: '0 8 0 0',
-            enableKeyEvents: true,
-            plugins: [{
-                ptype: 'formfieldclearvalue'
-            }],
-            listeners: {
-                clear: 'onClearSearch',
-                keyup: {
-                    buffer: 250,
-                    fn: 'onKeyupSearch'
-                }
-            }
-        }, {
-            xtype: 'button',
-            action: 'existingcarts',
-            text: 'Saved Orders',
-            bind: {
-                hidden: '{!hideClearCart}'
-            }
-        }, {
-            xtype: 'component',
-            height: '100%',
-            itemId: 'cart',
-            width: 50,
-            margin: '8 0 0 0',
-            bind: {
-                data: {
-                    cartCount: '{cartCount}'
-                },
-                hidden: '{hideClearCart}'
-            },
-            listeners: {
-                el: {
-                    //click: 'onViewCart',
-                    click: 'onUpdateCartAndShow'
-                }
-            },
-            tpl: me.buildTpl()
-            //commenting out the reset cart since its available inside the cart but can easily be added back
-            // if users request it
-            // }, {
-            //     xtype  : 'button',
-            //     text   : 'Clear',
-            //     action : 'resetcart',
-            //     itemId : 'newOrderBtn',
-            //     hidden : true,
-            //     bind   : {
-            //         hidden : '{hideClearCart}'
+        return [
+            // {
+            //     xtype: 'combo',
+            //     cls: 'fld-in-header',
+            //     queryMode: 'local',
+            //     width: 305,
+            //     labelWidth: 95,
+            //     height: 32,
+            //     editable: false,
+            //     valueField: 'STKCOD',
+            //     displayField: 'STKDSC',
+            //     reference: 'stocklocs',
+            //     fieldLabel: 'Stock Location',
+            //     forceSelection: true,
+            //     listeners: {
+            //         select: 'onSelectStockLocation',
+            //         change: 'onChangeStockLocation'
+            //     },
+            //     bind: {
+            //         store: '{StockLocations}',
+            //         value: '{currentStockLoc}'
+            //         //value: '{STKLOC}'
             //     }
-        }];
+            // },
+            {
+                xtype: 'tbfill'
+            }, {
+                xtype: 'textfield',
+                cls: 'fld-in-header',
+                itemId: 'search',
+                width: 200,
+                height: 32,
+                emptyText: 'Filter Products',
+                margin: '0 8 0 0',
+                enableKeyEvents: true,
+                plugins: [{
+                    ptype: 'formfieldclearvalue'
+                }],
+                listeners: {
+                    clear: 'onClearSearch',
+                    keyup: {
+                        buffer: 250,
+                        fn: 'onKeyupSearch'
+                    }
+                }
+            }, {
+                xtype: 'button',
+                action: 'existingcarts',
+                text: 'Saved Orders',
+                bind: {
+                    hidden: '{!hideClearCart}'
+                }
+            }, {
+                xtype: 'component',
+                height: '100%',
+                itemId: 'cart',
+                width: 50,
+                margin: '8 0 0 0',
+                bind: {
+                    data: {
+                        cartCount: '{cartCount}'
+                    },
+                    hidden: '{hideClearCart}'
+                },
+                listeners: {
+                    el: {
+                        //click: 'onViewCart',
+                        click: 'onUpdateCartAndShow'
+                    }
+                },
+                tpl: me.buildTpl()
+                //commenting out the reset cart since its available inside the cart but can easily be added back
+                // if users request it
+                // }, {
+                //     xtype  : 'button',
+                //     text   : 'Clear',
+                //     action : 'resetcart',
+                //     itemId : 'newOrderBtn',
+                //     hidden : true,
+                //     bind   : {
+                //         hidden : '{hideClearCart}'
+                //     }
+            }];
     },
 
     buildTpl: function () {

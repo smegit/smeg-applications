@@ -1310,14 +1310,16 @@ Ext.define('Shopping.view.cart.CartController', {
      * onClickSave - save the current order
      */
     onClickSave: function () {
-        // console.log('onClickSave');
+        console.log('onClickSave called');
         // console.info(this);
         var me = this,
             cartInfo = me.getCartInformation();
 
+        console.info(cartInfo);
         if (!Ext.isEmpty(cartInfo)) {
             me.saveCart(cartInfo.data, cartInfo.products)
                 .then(function (content) {
+                    console.info(content);
                     Valence.common.util.Snackbar.show('Your order has been saved.');
 
                     //print the order
@@ -1326,11 +1328,11 @@ Ext.define('Shopping.view.cart.CartController', {
                         OAORDKEY: content.OAORDKEY
                     });
 
-                    me.printCart(content.OAORDKEY, cartInfo.data, content.printURL);
+                    //me.printCart(content.OAORDKEY, cartInfo.data, content.printURL);
 
                     //clear/reset the cart and go back to the main section
                     //
-                    //me.onClickClear();
+                    me.onClickClear();
                 }, function (content) {
                     Valence.common.util.Dialog.show({
                         minWidth: 300,
@@ -1583,10 +1585,9 @@ Ext.define('Shopping.view.cart.CartController', {
             cartValues: null,
             oldCartValues: null,
             orderPayments: null,
-            STKLOC: vm.get('defaultStockLocation'),
-            //STKLOC: '339213    00002',
-            currentStockLoc: vm.get('defaultStockLocation'),
-            newfield: '123'
+            STKLOC: null,
+            //STKLOC: vm.get('defaultStockLocation'),
+            //currentStockLoc: vm.get('defaultStockLocation'),
         });
         vm.set('activeCartNumber', null);
 
@@ -1618,7 +1619,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 pgm: 'EC1050',
                 action: 'saveCart',
                 products: Ext.encode(products),
-                stkloc: vm.get('STKLOC')
+                //stkloc: vm.get('STKLOC')
             }, rep;
 
         Valence.common.util.Helper.loadMask(maskText);

@@ -439,8 +439,14 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
         existingRecIdx = cartItemStore.findBy(function (rec, id) {
             console.info(rec);
-            console.info(rec.get('OBPRMCOD'));
-            if (rec.get('product_id') == product.MODEL && rec.get('OBPRMCOD') == "" && rec.get('price') > 0) {
+            console.info(rec.get('combinedKey'));
+            // if (rec.get('product_id') == product.MODEL && rec.get('OBPRMCOD') == "" && rec.get('price') > 0) {
+            //     return true;
+            // }
+            // return false;
+            var combinedKey = product.MODEL + (Ext.isEmpty(product.OBPRMCOD) ? '' : product.OBPRMCOD) + product.PRICE;
+            console.info(combinedKey);
+            if (rec.get('combinedKey') == combinedKey) {
                 return true;
             }
             return false;
@@ -583,7 +589,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 pgm: 'EC1010',
                 action: 'getProdDtl',
                 prod: rec.getData().MODEL,
-                stkloc: vm.get('STKLOC')
+                //stkloc: vm.get('STKLOC')
             },
             success: function (response, opts) {
                 Valence.common.util.Helper.destroyLoadMask(cmp.el);
