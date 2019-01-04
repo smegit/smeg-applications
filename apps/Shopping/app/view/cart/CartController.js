@@ -1253,19 +1253,22 @@ Ext.define('Shopping.view.cart.CartController', {
             cartInfo = me.getCartInformation();
         //me.onClickSave();
         if (!Ext.isEmpty(cartInfo)) {
-
+            Valence.common.util.Helper.loadMask('Generating PDF......');
             me.requestPDF()
                 .then(function (content) {
+                    Valence.common.util.Helper.destroyLoadMask();
                     console.info(content);
                     if (content.success) {
-                        var win = window.open('', '_blank');
-                        win.location = content.printURL;
-                        win.focus();
+                        // var win = window.open('', '_blank');
+                        // win.location = content.printURL;
+                        // win.focus();
+                        me.printCart(content.OAORDKEY, cartInfo.data, content.printURL);
                     } else {
                         me.showError({ msg: 'Failed to download PDF' });
                     }
 
                 }, function () {
+                    Valence.common.util.Helper.destroyLoadMask();
                     me.showError({ msg: 'Failed to download PDF' });
                 });
         }
@@ -1284,24 +1287,32 @@ Ext.define('Shopping.view.cart.CartController', {
         params = {
             pgm: 'EC1050',
             action: 'getPDF',
-            OAORDKEY: vm.get('activeCartNumber')
+            //OAORDKEY: vm.get('activeCartNumber'),
+            products: (!Ext.isEmpty(cartInfo) && !Ext.isEmpty(cartInfo.products)) ? Ext.encode(cartInfo.products) : null,
+
         };
-        Ext.Ajax.request({
-            url: '/valence/vvcall.pgm',
-            //method: 'GET',
-            params: params,
-            success: function (res) {
-                //console.info(res);
-                var resp = Ext.decode(res.responseText);
-                deferred.resolve(resp);
-                //deferred.reject(resp);
-            },
-            failure: function (res) {
-                //console.info(res);
-                var resp = Ext.decode(res.responseText);
-                deferred.reject(resp);
-            }
-        });
+        if (valid) {
+            Ext.apply(params, cartInfo.data);
+            console.log('valid form');
+            Ext.Ajax.request({
+                url: '/valence/vvcall.pgm',
+                //method: 'GET',
+                params: params,
+                success: function (res) {
+                    //console.info(res);
+                    var resp = Ext.decode(res.responseText);
+                    deferred.resolve(resp);
+                    //deferred.reject(resp);
+                },
+                failure: function (res) {
+                    //console.info(res);
+                    var resp = Ext.decode(res.responseText);
+                    deferred.reject(resp);
+                }
+            });
+
+        }
+
         return deferred.promise;
 
     },

@@ -370,26 +370,6 @@ Ext.define('Shopping.view.cart.Main', {
                     }
                 }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
                 { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-                {
-                    text: 'Save',
-                    maskMsg: 'Saving Order',
-                    //ui: 'white',
-                    ui: 'blue',
-                    listeners: {
-                        //click: 'onClickClear',
-                        click: 'onClickSave'
-                    }
-                }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-                {
-                    text: 'Cancel',
-                    ui: 'blue',
-                    listeners: {
-                        //click: 'onClickClear',
-                        click: 'onClickClear'
-                    }
-                }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
 
                 {
                     text: 'PDF',
@@ -512,6 +492,27 @@ Ext.define('Shopping.view.cart.Main', {
                             }
                         },
                     ]
+                },
+                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                {
+                    text: 'Save',
+                    maskMsg: 'Saving Order',
+                    //ui: 'white',
+                    ui: 'blue',
+                    listeners: {
+                        //click: 'onClickClear',
+                        click: 'onClickSave'
+                    }
+                }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                {
+                    text: 'Cancel',
+                    ui: 'blue',
+                    listeners: {
+                        //click: 'onClickClear',
+                        click: 'onClickClear'
+                    }
                 },
 
                 { xtype: 'tbfill' },
