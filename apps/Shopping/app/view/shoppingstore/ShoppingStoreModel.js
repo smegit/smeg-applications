@@ -50,6 +50,9 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         ordKeyText: function (get) {
             return 'Order - ' + get('activeCartNumber');
         },
+        orderDate: function (get) {
+            return get('cartValues').OADATE;
+        },
         currentStockLoc: {
             get: function (get) {
                 console.log('get => ' + get('STKLOC'));
