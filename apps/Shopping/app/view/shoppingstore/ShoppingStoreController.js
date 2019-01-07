@@ -803,6 +803,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     cartItemStore = vm.getStore('cartItems'),
                     cartItemCount = 0,
                     prodQuantity,
+                    delvDate, ninetyDate, todayDate,
+                    formValues = {},
                     cartItemStoreItems = [],
                     paymentHistoryStore = vm.getStore('paymentHistory'),
                     paymentHistoryStoreItems = [],
@@ -813,6 +815,26 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     vm.set('activeCartNumber', obj.CartHdr[0].OAORDKEY);
                 }
 
+                if (!Ext.isEmpty(obj.CartHdr)) {
+                    Ext.apply(formValues, obj.CartHdr[0]);
+                }
+
+                // validate date to be sure it is within the timeframe of today and 90 days from now
+                //
+                delvDate = Ext.Date.parse(formValues.OADELD, 'Y-m-d');
+                todayDate = Ext.Date.parse(Ext.util.Format.date(new Date(), 'Y-m-d'), 'Y-m-d');
+                ninetyDate = new Date();
+                ninetyDate.setDate(ninetyDate.getDate() + 200);
+
+                // convert to time since epoch
+                delvDate = delvDate.getTime();
+                todayDate = todayDate.getTime();
+                ninetyDate = ninetyDate.getTime();
+
+                if (delvDate < todayDate || delvDate > ninetyDate || formValues.OADELD === '0001-01-01') {
+                    console.info('change OADELD value to null');
+                    formValues.OADELD = null;
+                }
                 // Load cart item list
 
                 // Reset Cart Item Store
@@ -857,6 +879,12 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 if (!Ext.isEmpty(obj.TOTALPAID)) {
                     vm.set('totalPaid', obj.TOTALPAID)
                 }
+
+                //console.info(cartItemStore.sum('sub_total'));
+                // set order total
+                vm.set({
+                    orderTotal: cartItemStore.sum('sub_total')
+                });
                 paymentHistoryStore.removeAll();
                 vm.set('hidePaymentHistory', true);
                 if (!Ext.isEmpty(payments)) {
@@ -881,7 +909,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
                 vm.set({
                     STKLOC: obj.OASTKLOC,
-                    //cartValues: formValues,
+                    cartValues: formValues,
                     //disableSalesPerson: (!Ext.isEmpty(resp.lockSalesPerson) && resp.lockSalesPerson === 'true' && !Ext.isEmpty(formValues.OAREP)) ? true : false
                 });
 
@@ -890,6 +918,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 vm.notify();
                 Ext.ComponentQuery.query('#payBtnSelector')[0].setDisabled(false);
                 Ext.ComponentQuery.query('#chkoutBtnSelector')[0].setDisabled(false);
+                Ext.ComponentQuery.query('#listFooterSumId')[0].setHidden(false);
 
 
 
@@ -1062,11 +1091,14 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     }
 
                     cartItemStore.add(cartItemStoreItems);
-                    console.info(cartItemStore);
+
                     vm.set({
                         cartCount: cartItemCount,
                         activeCartNumber: cartKey,
-                        needUpdate: false
+                        needUpdate: false,
+                    });
+                    vm.set({
+                        orderTotal: cartItemStore.sum('sub_total')
                     });
                     //console.info(me);
 
@@ -1214,6 +1246,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             //console.info(Ext.ComponentQuery.query('#payBtnSelector')[0]);
             Ext.ComponentQuery.query('#payBtnSelector')[0].setDisabled(true);
             Ext.ComponentQuery.query('#chkoutBtnSelector')[0].setDisabled(true);
+            Ext.ComponentQuery.query('#listFooterSumId')[0].setHidden(true);
         }
 
         //grid.getView().getFeature('itemSummary').toggleSummaryRow(true);

@@ -620,7 +620,8 @@ Ext.define('Shopping.view.cart.CartController', {
             // toggle payment history summary
             Ext.apply(paymentGrid.getColumns()[2], {
                 summaryRenderer: function () {
-                    return Ext.String.format('<b>Total Paid: {0}</b>', Ext.util.Format.currency(totalPaid));
+                    var total = Ext.util.Format.number(totalPaid, '0,0.00');
+                    return Ext.String.format('<b>Total Paid: {0}</b>', total);
                 }
             });
             paymentGrid.getView().getFeature('paymentSummary').toggleSummaryRow(true);
@@ -751,6 +752,7 @@ Ext.define('Shopping.view.cart.CartController', {
                     vm.set('needUpdate', true);
                     Ext.ComponentQuery.query('#calcBtnSelector')[0].enable();
                     Ext.ComponentQuery.query('cartlist')[0].getView().getFeature('itemSummary').toggleSummaryRow(false);
+                    Ext.ComponentQuery.query('#listFooterSumId')[0].setHidden(true);
                     // Disable payBtn and chkoutBtn
                     Ext.ComponentQuery.query('#payBtnSelector')[0].setDisabled(true);
                     Ext.ComponentQuery.query('#chkoutBtnSelector')[0].setDisabled(true);
@@ -1993,6 +1995,7 @@ Ext.define('Shopping.view.cart.CartController', {
             promoCode = me.lookupReference('promoCodeTextField'),
             payBtn = me.lookupReference('payBtn'),
             checkoutButton = me.lookupReference('checkoutButton'),
+            listFooterSum = me.lookupReference('listFooterSum'),
             vm = me.getViewModel();
         //console.info(promoCode.isDirty());
         //console.info(me.lookupReference('payBtn'));
@@ -2019,12 +2022,14 @@ Ext.define('Shopping.view.cart.CartController', {
             payBtn.disable();
             payBtn.setTooltip('Please calculate first.');
             checkoutButton.disable();
+            listFooterSum.setHidden(true);
         } else if (!promoCode.isDirty() && !vm.get('needUpdate')) {
             console.log('should enable pay and deliver');
             calcBtn.disable();
             payBtn.enable();
             checkoutButton.enable();
             me.toggleCartListSummary(true);
+            listFooterSum.setHidden(false);
         }
         //console.info(vm.get('needUpdate'));
     },
@@ -2087,9 +2092,9 @@ Ext.define('Shopping.view.cart.CartController', {
         //vm.set('activeCartNumber', null);
 
         // Load Cart Items
-        var cartItemsStore = vm.getStore('cartItems');
+        var cartItemStore = vm.getStore('cartItems');
         //console.info(cartItemsStore);
-        cartItemsStore.removeAll();
+        cartItemStore.removeAll();
 
         if (!Ext.isEmpty(cartItems)) {
             for (var i = 0; i < cartItems.length; i++) {
@@ -2119,10 +2124,14 @@ Ext.define('Shopping.view.cart.CartController', {
             }
         }
 
-        cartItemsStore.add(updatedItems);
+        cartItemStore.add(updatedItems);
         //console.info(updatedItems);
-        console.info(cartItemsStore);
+        console.info(cartItemStore);
+        //console.info(cartItemStore.sum('sub_total'));
 
+        vm.set({
+            orderTotal: cartItemStore.sum('sub_total')
+        });
         //  reload cart items
         // load cart header
         if (!Ext.isEmpty(resp.CartHdr)) {
@@ -2180,6 +2189,7 @@ Ext.define('Shopping.view.cart.CartController', {
         me.lookupReference('calcBtn').disable();
         me.lookupReference('payBtn').enable();
         me.lookupReference('checkoutButton').enable();
+        me.lookupReference('listFooterSum').setHidden(false);
 
 
     },

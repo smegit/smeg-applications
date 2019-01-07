@@ -40,7 +40,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         //promoItems: []
         selectedPromos: [],
         selectedPromoCount: 0,
-        hidePaymentHistory: true
+        hidePaymentHistory: true,
+        orderTotal: null
     },
 
     formulas: {
@@ -51,7 +52,15 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
             return 'Order - ' + get('activeCartNumber');
         },
         orderDate: function (get) {
-            return get('cartValues').OADATE;
+            if (!Ext.isEmpty(get('cartValues')) && !Ext.isEmpty(get('cartValues').OADATE)) {
+                return get('cartValues').OADATE;
+            }
+        },
+        listFooterText: function (get) {
+            var ordTot = get('orderTotal'),
+                totalPaid = get('totalPaid');
+            var balance = ordTot - totalPaid;
+            return '<b>TOTAL PAID: ' + Ext.util.Format.number(get('totalPaid'), '0,0.00') + '  BALANCE: ' + Ext.util.Format.number(balance, '0,0.00') + '</b>';
         },
         currentStockLoc: {
             get: function (get) {

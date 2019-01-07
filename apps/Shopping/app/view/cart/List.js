@@ -36,11 +36,12 @@ Ext.define('Shopping.view.cart.List', {
 
     // added start
     bbar: [
-        '->',
+        //'->',
         {
             xtype: 'textfield',
             reference: 'promoCodeTextField',
             emptyText: 'Promotion Code',
+            maxWidth: '120',
             bind: {
                 value: '{cartValues.PROMOCODE}'
             },
@@ -48,6 +49,7 @@ Ext.define('Shopping.view.cart.List', {
                 change: 'onPromoCodeChange'
             }
         },
+        '->',
         {
             xtype: 'button', text: 'Recalculate', ui: 'blue',
             //id: 'calcBtnId',
@@ -57,6 +59,16 @@ Ext.define('Shopping.view.cart.List', {
             listeners: {
                 click: 'onCalculateClick'
             }
+        },
+        '->',
+        {
+            xtype: 'component',
+            reference: 'listFooterSum',
+            itemId: 'listFooterSumId',
+            bind: {
+                html: '{listFooterText}'
+            },
+
         }
     ],
 
@@ -240,7 +252,7 @@ Ext.define('Shopping.view.cart.List', {
                     // } else {
                     //     metaData.tdAttr = 'style="color: yellow;"';
                     // }
-                    return Ext.String.format('<b>{0}</b>', Ext.util.Format.currency(value));
+                    return Ext.String.format('<b>{0}</b>', Ext.util.Format.number(value, '0,0.00'));
                 }
             },
 
@@ -310,7 +322,8 @@ Ext.define('Shopping.view.cart.List', {
                 },
                 summaryType: 'sum',
                 summaryRenderer: function (value) {
-                    return Ext.String.format('<b>{0}</b>', Ext.util.Format.currency(value));
+                    return Ext.String.format('<b>{0}</b>', Ext.util.Format.number(value, '0,0.00'));
+                    //return Ext.String.format('<b>{0}</b>', Ext.util.Format.currency(value));
                 }
             }]);
         }
