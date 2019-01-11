@@ -49,11 +49,11 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
             return Ext.isEmpty(get('activeCartNumber'));
         },
         ordKeyText: function (get) {
-            return 'Order - ' + get('activeCartNumber');
+            return 'Order: ' + get('activeCartNumber');
         },
         orderDate: function (get) {
             if (!Ext.isEmpty(get('cartValues')) && !Ext.isEmpty(get('cartValues').OADATE)) {
-                return get('cartValues').OADATE;
+                return 'Date: ' + Ext.util.Format.date(get('cartValues').OADATE, 'd/m/Y');
             }
         },
         listFooterText: function (get) {

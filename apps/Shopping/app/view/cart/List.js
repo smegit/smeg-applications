@@ -30,47 +30,95 @@ Ext.define('Shopping.view.cart.List', {
     header: {
         bind: {
             hidden: '{hideOrdKey}',
-            title: '{ordKeyText}' + '  -  {orderDate}'
+            title: '{ordKeyText}' + ' ' + '{orderDate}'
         }
     },
 
     // added start
-    bbar: [
-        //'->',
-        {
-            xtype: 'textfield',
-            reference: 'promoCodeTextField',
-            emptyText: 'Promotion Code',
-            maxWidth: '120',
-            bind: {
-                value: '{cartValues.PROMOCODE}'
-            },
-            listeners: {
-                change: 'onPromoCodeChange'
-            }
-        },
-        '->',
-        {
-            xtype: 'button', text: 'Recalculate', ui: 'blue',
-            //id: 'calcBtnId',
-            itemId: 'calcBtnSelector',
-            reference: 'calcBtn',
-            disabled: true,
-            listeners: {
-                click: 'onCalculateClick'
-            }
-        },
-        '->',
-        {
-            xtype: 'component',
-            reference: 'listFooterSum',
-            itemId: 'listFooterSumId',
-            bind: {
-                html: '{listFooterText}'
+
+
+    dockedItems: [{
+        xtype: 'toolbar',
+        dock: 'bottom',
+        buttonAlign: 'right',
+
+        items: [
+            {
+                xtype: 'textfield',
+                reference: 'promoCodeTextField',
+                emptyText: 'Promotion Code',
+                maxWidth: '120',
+                bind: {
+                    value: '{cartValues.PROMOCODE}'
+                },
+                listeners: {
+                    change: 'onPromoCodeChange'
+                }
             },
 
-        }
-    ],
+            {
+                xtype: 'button', text: 'Recalculate', ui: 'blue',
+                //id: 'calcBtnId',
+                itemId: 'calcBtnSelector',
+                reference: 'calcBtn',
+                disabled: true,
+                listeners: {
+                    click: 'onCalculateClick'
+                }
+            },
+            '->',
+            {
+                xtype: 'component',
+                width: '300',
+                reference: 'listFooterSum',
+                itemId: 'listFooterSumId',
+                bind: {
+                    html: '{listFooterText}'
+                },
+
+            }
+        ]
+    }],
+
+    // bbar: [
+    //     //'->',
+    //     {
+    //         xtype: 'textfield',
+    //         reference: 'promoCodeTextField',
+    //         emptyText: 'Promotion Code',
+    //         maxWidth: '120',
+    //         bind: {
+    //             value: '{cartValues.PROMOCODE}'
+    //         },
+    //         listeners: {
+    //             change: 'onPromoCodeChange'
+    //         }
+    //     },
+
+
+    //     {
+    //         xtype: 'button', text: 'Recalculate', ui: 'blue',
+
+    //         //id: 'calcBtnId',
+    //         itemId: 'calcBtnSelector',
+    //         reference: 'calcBtn',
+    //         disabled: true,
+    //         listeners: {
+    //             click: 'onCalculateClick'
+    //         }
+    //     },
+
+    //     {
+    //         xtype: 'component',
+    //         right: '300',
+    //         reference: 'listFooterSum',
+    //         itemId: 'listFooterSumId',
+    //         bind: {
+    //             html: '{listFooterText}'
+    //         },
+
+    //     }
+    // ],
 
     // added end
 
