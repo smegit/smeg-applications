@@ -1241,7 +1241,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             vm.set('needUpdate', true);
             Ext.ComponentQuery.query('#calcBtnSelector')[0].enable();
             //console.info(Ext.ComponentQuery.query('cartlist')[0]);
-            Ext.ComponentQuery.query('cartlist')[0].getView().getFeature('itemSummary').toggleSummaryRow(false);
+            //Ext.ComponentQuery.query('cartlist')[0].getView().getFeature('itemSummary').toggleSummaryRow(false);
             // Disable payBtn and chkoutBtn
             //console.info(Ext.ComponentQuery.query('#payBtnSelector')[0]);
             Ext.ComponentQuery.query('#payBtnSelector')[0].setDisabled(true);

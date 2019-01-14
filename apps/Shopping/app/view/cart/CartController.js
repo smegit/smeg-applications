@@ -2002,7 +2002,7 @@ Ext.define('Shopping.view.cart.CartController', {
         //console.info(vm.get('needUpdate'));
         if (promoCode.isDirty()) {
             calcBtn.enable();
-            me.toggleCartListSummary(false);
+            //me.toggleCartListSummary(false);
 
 
 
