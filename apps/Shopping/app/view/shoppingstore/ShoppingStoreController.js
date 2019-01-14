@@ -920,6 +920,13 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 Ext.ComponentQuery.query('#chkoutBtnSelector')[0].setDisabled(false);
                 Ext.ComponentQuery.query('#listFooterSumId')[0].setHidden(false);
 
+                Ext.ComponentQuery.query('#pdfBtnSelector')[0].setDisabled(false);
+                Ext.ComponentQuery.query('#notesBtnSelector')[0].setDisabled(false);
+                Ext.ComponentQuery.query('#saveBtnSelector')[0].setDisabled(false);
+
+
+
+
 
 
             },
@@ -1244,6 +1251,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             //Ext.ComponentQuery.query('cartlist')[0].getView().getFeature('itemSummary').toggleSummaryRow(false);
             // Disable payBtn and chkoutBtn
             //console.info(Ext.ComponentQuery.query('#payBtnSelector')[0]);
+            Ext.ComponentQuery.query('#pdfBtnSelector')[0].setDisabled(true);
+            Ext.ComponentQuery.query('#notesBtnSelector')[0].setDisabled(true);
+            Ext.ComponentQuery.query('#saveBtnSelector')[0].setDisabled(true);
+
             Ext.ComponentQuery.query('#payBtnSelector')[0].setDisabled(true);
             Ext.ComponentQuery.query('#chkoutBtnSelector')[0].setDisabled(true);
             Ext.ComponentQuery.query('#listFooterSumId')[0].setHidden(true);

@@ -368,22 +368,89 @@ Ext.define('Shopping.view.cart.Main', {
                         // mouseover: 'onMouseOver',
                         // mouseout: 'onMouseOut'
                     }
-                }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                },
+
+                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
                 { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
 
                 {
-                    text: 'PDF',
-                    //iconCls: 'button-home-small',
-                    //ui: 'white',
-                    ui: 'blue',
-                    icon: 'resources/images/file-pdf-regular.svg',
-                    //maskMsg: 'Saving Order',
+                    xtype: 'container',
+                    layout: {
+                        type: 'hbox',
+                        align: 'stretch'
+                    },
                     listeners: {
-                        click: 'onClickPDF',
-                        // mouseover: 'onMouseOver',
-                        // mouseout: 'onMouseOut'
-                    }
+                        click: {
+                            element: 'el',
+                            fn: 'onClickDisabledBtn'
+                        }
+                    },
+                    items: [
+                        {
+                            xtype: 'button',
+                            text: 'PDF',
+                            //iconCls: 'button-home-small',
+                            //ui: 'white',
+                            itemId: 'pdfBtnSelector',
+                            reference: 'pdfBtn',
+                            ui: 'blue',
+                            icon: 'resources/images/file-pdf-regular.svg',
+                            //maskMsg: 'Saving Order',
+                            listeners: {
+                                click: 'onClickPDF',
+                                // mouseover: 'onMouseOver',
+                                // mouseout: 'onMouseOut'
+                            }
+                        },
+                    ]
                 },
+
+                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+
+                {
+                    xtype: 'container',
+                    layout: {
+                        type: 'hbox',
+                        align: 'stretch'
+                    },
+                    listeners: {
+                        click: {
+                            element: 'el',
+                            fn: 'onClickDisabledBtn'
+                        }
+                    },
+                    items: [
+                        {
+                            xtype: 'button',
+                            text: 'Notes',
+                            //ui: 'white',
+                            ui: 'blue',
+                            maskMsg: 'Loading Notes',
+                            itemId: 'notesBtnSelector',
+                            reference: 'notesBtn',
+                            listeners: {
+                                click: 'onClickNotes1',
+                                // mouseover: 'onMouseOver',
+                                // mouseout: 'onMouseOut'
+                            }
+                        },
+                    ]
+                },
+                // {
+                //     text: 'PDF',
+                //     //iconCls: 'button-home-small',
+                //     //ui: 'white',
+                //     itemId: 'pdfBtnSelector',
+                //     ui: 'blue',
+                //     icon: 'resources/images/file-pdf-regular.svg',
+                //     //maskMsg: 'Saving Order',
+                //     listeners: {
+                //         click: 'onClickPDF',
+                //         // mouseover: 'onMouseOver',
+                //         // mouseout: 'onMouseOut'
+                //     }
+                // },
 
                 { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
                 { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
@@ -395,18 +462,22 @@ Ext.define('Shopping.view.cart.Main', {
                 //         click: 'onClickSave'
                 //     }
                 // },
-                {
-                    text: 'Notes',
-                    //ui: 'white',
-                    ui: 'blue',
-                    maskMsg: 'Loading Notes',
-                    listeners: {
-                        click: 'onClickNotes1',
-                        // mouseover: 'onMouseOver',
-                        // mouseout: 'onMouseOut'
-                    }
-                }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+
+
+
+                // {
+                //     text: 'Notes',
+                //     //ui: 'white',
+                //     ui: 'blue',
+                //     maskMsg: 'Loading Notes',
+                //     itemId: 'notesBtnSelector',
+                //     listeners: {
+                //         click: 'onClickNotes1',
+                //         // mouseover: 'onMouseOver',
+                //         // mouseout: 'onMouseOut'
+                //     }
+                // },
+
                 {
                     xtype: 'container',
                     layout: {
@@ -495,16 +566,49 @@ Ext.define('Shopping.view.cart.Main', {
                 },
                 { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
                 { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+
+
                 {
-                    text: 'Save',
-                    maskMsg: 'Saving Order',
-                    //ui: 'white',
-                    ui: 'blue',
+                    xtype: 'container',
+                    layout: {
+                        type: 'hbox',
+                        align: 'stretch'
+                    },
                     listeners: {
-                        //click: 'onClickClear',
-                        click: 'onClickSave'
-                    }
-                }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                        click: {
+                            element: 'el',
+                            fn: 'onClickDisabledBtn'
+                        }
+                    },
+                    items: [
+                        {
+                            xtype: 'button',
+                            text: 'Save',
+                            maskMsg: 'Saving Order',
+                            //ui: 'white',
+                            ui: 'blue',
+                            itemId: 'saveBtnSelector',
+                            reference: 'saveBtn',
+                            listeners: {
+                                //click: 'onClickClear',
+                                click: 'onClickSave'
+                            }
+                        }
+                    ]
+                },
+                // {
+                //     text: 'Save',
+                //     maskMsg: 'Saving Order',
+                //     //ui: 'white',
+                //     ui: 'blue',
+                //     itemId: 'saveBtnSelector',
+                //     listeners: {
+                //         //click: 'onClickClear',
+                //         click: 'onClickSave'
+                //     }
+                // },
+
+                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
                 { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
                 {
                     text: 'Cancel',

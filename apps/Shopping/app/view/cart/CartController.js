@@ -753,9 +753,16 @@ Ext.define('Shopping.view.cart.CartController', {
                     Ext.ComponentQuery.query('#calcBtnSelector')[0].enable();
                     //Ext.ComponentQuery.query('cartlist')[0].getView().getFeature('itemSummary').toggleSummaryRow(false);
                     Ext.ComponentQuery.query('#listFooterSumId')[0].setHidden(true);
-                    // Disable payBtn and chkoutBtn
+                    // Disable payBtn and chkoutBtn, pdf, notes , save
                     Ext.ComponentQuery.query('#payBtnSelector')[0].setDisabled(true);
                     Ext.ComponentQuery.query('#chkoutBtnSelector')[0].setDisabled(true);
+
+                    Ext.ComponentQuery.query('#pdfBtnSelector')[0].setDisabled(true);
+                    Ext.ComponentQuery.query('#notesBtnSelector')[0].setDisabled(true);
+                    Ext.ComponentQuery.query('#saveBtnSelector')[0].setDisabled(true);
+
+
+
                 }
             } else {
                 var target = e.getTarget(),
@@ -841,53 +848,93 @@ Ext.define('Shopping.view.cart.CartController', {
     onClickNotes1: function () {
         console.log('onClickNotes1 called');
         var me = this,
-            cartInfo = me.getCartInformation();
+            cartInfo = me.getCartInformation(),
+            vm = me.getViewModel(),
+            orderNumber = vm.get('activeCartNumber');
         if (!Ext.isEmpty(cartInfo)) {
             Valence.common.util.Helper.loadMask('Loading');
         }
-        me.requestCalcualte()
-            .then(function (res) {
 
-                if (!Ext.isEmpty(res) && res.success) {
-                    me.loadCart(res);
-                    return res.CartHdr[0].OAORDKEY
 
-                } else {
-                    console.log('loadCart error');
-                    Valence.common.util.Helper.destroyLoadMask();
-                    me.showError(res);
-                }
-
-            }, function (res) {
-                //console.info(res);
-                Valence.common.util.Helper.destroyLoadMask();
-                me.showError(res);
-            }).
-            then(function (key) {
-                var me = this,
-                    deferred = Ext.create('Ext.Deferred'),
-                    params = {
-                        pgm: 'EC1050',
-                        action: 'getNotes',
-                        OAORDKEY: key
-                    };
-                Ext.Ajax.request({
-                    url: '/valence/vvcall.pgm',
-                    params: params,
-                    success: function (r) {
-                        var d = Ext.decode(r.responseText);
-                        //console.info(d);
-                        deferred.resolve(d);
-                    }
-                });
-                return deferred.promise;
-            })
+        me.requestNotes(orderNumber)
             .then(function (content) {
+                if (!Ext.isEmpty(content) && content.success) {
+                    Valence.common.util.Helper.destroyLoadMask();
+                    me.showNotes(content);
+                } else {
+                    Valence.common.util.Helper.destroyLoadMask();
+                    me.showError({ msg: 'Failed to get notes' });
+                }
+            }, function (content) {
                 Valence.common.util.Helper.destroyLoadMask();
-                me.showNotes(content);
+                me.showError({ msg: 'Failed to get notes' });
             });
+        // me.requestCalcualte()
+        //     .then(function (res) {
+
+        //         if (!Ext.isEmpty(res) && res.success) {
+        //             me.loadCart(res);
+        //             return res.CartHdr[0].OAORDKEY
+
+        //         } else {
+        //             console.log('loadCart error');
+        //             Valence.common.util.Helper.destroyLoadMask();
+        //             me.showError(res);
+        //         }
+
+        //     }, function (res) {
+        //         //console.info(res);
+        //         Valence.common.util.Helper.destroyLoadMask();
+        //         me.showError(res);
+        //     }).
+        //     then(function (key) {
+        //         var me = this,
+        //             deferred = Ext.create('Ext.Deferred'),
+        //             params = {
+        //                 pgm: 'EC1050',
+        //                 action: 'getNotes',
+        //                 OAORDKEY: key
+        //             };
+        //         Ext.Ajax.request({
+        //             url: '/valence/vvcall.pgm',
+        //             params: params,
+        //             success: function (r) {
+        //                 var d = Ext.decode(r.responseText);
+        //                 //console.info(d);
+        //                 deferred.resolve(d);
+        //             }
+        //         });
+        //         return deferred.promise;
+        //     })
+        //     .then(function (content) {
+        //         Valence.common.util.Helper.destroyLoadMask();
+        //         me.showNotes(content);
+        //     });
     },
 
+
+    requestNotes: function (key) {
+        var me = this,
+            cartInfo = me.getCartInformation(),
+            deferred = Ext.create('Ext.Deferred'),
+            params = {
+                pgm: 'EC1050',
+                action: 'getNotes',
+                OAORDKEY: key,
+                products: (!Ext.isEmpty(cartInfo) && !Ext.isEmpty(cartInfo.products)) ? Ext.encode(cartInfo.products) : null,
+            };
+        Ext.apply(params, cartInfo.data);
+        Ext.Ajax.request({
+            url: '/valence/vvcall.pgm',
+            params: params,
+            success: function (r) {
+                var d = Ext.decode(r.responseText);
+                //console.info(d);
+                deferred.resolve(d);
+            }
+        });
+        return deferred.promise;
+    },
 
 
     onClickNotes: function () {
@@ -2023,6 +2070,12 @@ Ext.define('Shopping.view.cart.CartController', {
             payBtn.setTooltip('Please calculate first.');
             checkoutButton.disable();
             listFooterSum.setHidden(true);
+
+            Ext.ComponentQuery.query('#pdfBtnSelector')[0].setDisabled(true);
+            Ext.ComponentQuery.query('#notesBtnSelector')[0].setDisabled(true);
+            Ext.ComponentQuery.query('#saveBtnSelector')[0].setDisabled(true);
+
+
         } else if (!promoCode.isDirty() && !vm.get('needUpdate')) {
             console.log('should enable pay and deliver');
             calcBtn.disable();
@@ -2030,6 +2083,11 @@ Ext.define('Shopping.view.cart.CartController', {
             checkoutButton.enable();
             me.toggleCartListSummary(true);
             listFooterSum.setHidden(false);
+
+            Ext.ComponentQuery.query('#pdfBtnSelector')[0].setDisabled(false);
+            Ext.ComponentQuery.query('#notesBtnSelector')[0].setDisabled(false);
+            Ext.ComponentQuery.query('#saveBtnSelector')[0].setDisabled(false);
+
         }
         //console.info(vm.get('needUpdate'));
     },
@@ -2077,7 +2135,7 @@ Ext.define('Shopping.view.cart.CartController', {
 
     loadCart: function (resp) {
         console.log('loadCart called');
-        console.info(resp);
+        //console.info(resp);
         var me = this,
             vm = me.getViewModel(),
             cartItems = resp.CartDtl,
@@ -2126,7 +2184,7 @@ Ext.define('Shopping.view.cart.CartController', {
 
         cartItemStore.add(updatedItems);
         //console.info(updatedItems);
-        console.info(cartItemStore);
+        //console.info(cartItemStore);
         //console.info(cartItemStore.sum('sub_total'));
 
         vm.set({
@@ -2191,6 +2249,9 @@ Ext.define('Shopping.view.cart.CartController', {
         me.lookupReference('checkoutButton').enable();
         me.lookupReference('listFooterSum').setHidden(false);
 
+        me.lookupReference('pdfBtn').enable();
+        me.lookupReference('notesBtn').enable();
+        me.lookupReference('saveBtn').enable();
 
     },
 
