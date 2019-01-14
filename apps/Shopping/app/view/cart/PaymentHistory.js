@@ -43,6 +43,8 @@ Ext.define('Shopping.view.cart.PaymentHistory', {
                 dataIndex: 'amount',
                 flex: 1,
                 sortable: false,
+                menuDisabled: true,
+                cls: 'gridTitle',
                 renderer: function (value) {
                     return Ext.util.Format.number(value, '0,0.00');
                 },
