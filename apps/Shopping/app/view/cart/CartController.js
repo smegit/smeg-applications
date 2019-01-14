@@ -621,7 +621,7 @@ Ext.define('Shopping.view.cart.CartController', {
             Ext.apply(paymentGrid.getColumns()[2], {
                 summaryRenderer: function () {
                     var total = Ext.util.Format.number(totalPaid, '0,0.00');
-                    return Ext.String.format('<b>Total Paid: {0}</b>', total);
+                    return Ext.String.format('<b>PAID: {0}</b>', total);
                 }
             });
             paymentGrid.getView().getFeature('paymentSummary').toggleSummaryRow(true);
@@ -751,7 +751,7 @@ Ext.define('Shopping.view.cart.CartController', {
                     // Set buttons
                     vm.set('needUpdate', true);
                     Ext.ComponentQuery.query('#calcBtnSelector')[0].enable();
-                    Ext.ComponentQuery.query('cartlist')[0].getView().getFeature('itemSummary').toggleSummaryRow(false);
+                    //Ext.ComponentQuery.query('cartlist')[0].getView().getFeature('itemSummary').toggleSummaryRow(false);
                     Ext.ComponentQuery.query('#listFooterSumId')[0].setHidden(true);
                     // Disable payBtn and chkoutBtn
                     Ext.ComponentQuery.query('#payBtnSelector')[0].setDisabled(true);

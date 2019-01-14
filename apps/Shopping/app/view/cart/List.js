@@ -30,7 +30,7 @@ Ext.define('Shopping.view.cart.List', {
     header: {
         bind: {
             hidden: '{hideOrdKey}',
-            title: '{ordKeyText}' + ' ' + '{orderDate}'
+            title: '{ordKeyText}' + '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' + '{orderDate}'
         }
     },
 
