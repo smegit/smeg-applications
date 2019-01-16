@@ -60,7 +60,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
             var ordTot = get('orderTotal'),
                 totalPaid = get('totalPaid');
             var balance = ordTot - totalPaid;
-            return '<b>PAID: ' + Ext.util.Format.number(get('totalPaid'), '0,0.00') + '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' + 'BALANCE: ' + Ext.util.Format.number(balance, '0,0.00') + '</b>';
+            return '<b>BALANCE: ' + Ext.util.Format.number(balance, '0,0.00') + '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' + 'PAID: ' + Ext.util.Format.number(get('totalPaid'), '0,0.00') + '</b>';
         },
         currentStockLoc: {
             get: function (get) {

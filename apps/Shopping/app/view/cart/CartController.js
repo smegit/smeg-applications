@@ -589,7 +589,7 @@ Ext.define('Shopping.view.cart.CartController', {
             dlvName = dlvFieldSet.down('[name=OADELNAM]').getValue(),
             cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm(),
             totalPaid = vm.get('totalPaid'),
-            paymentGrid = me.getView().down('paymenthistory').down('grid'),
+            paymentGrid = me.getView().down('paymenthistory'),
             cartItemGrid = me.getView().down('cartlist');
 
         vm.set('hideAllocated', true);
@@ -618,10 +618,11 @@ Ext.define('Shopping.view.cart.CartController', {
             // toggle item list summary 
             cartItemGrid.getView().getFeature('itemSummary').toggleSummaryRow(true);
             // toggle payment history summary
-            Ext.apply(paymentGrid.getColumns()[2], {
+            Ext.apply(paymentGrid.getColumns()[1], {
                 summaryRenderer: function () {
-                    var total = Ext.util.Format.number(totalPaid, '0,0.00');
-                    return Ext.String.format('<b>PAID: {0}</b>', total);
+                    //var total = Ext.util.Format.number(totalPaid, '0,0.00');
+                    //return Ext.String.format('<b>PAID: {0}</b>', total);
+                    return vm.get('listFooterText');
                 }
             });
             paymentGrid.getView().getFeature('paymentSummary').toggleSummaryRow(true);
@@ -752,7 +753,7 @@ Ext.define('Shopping.view.cart.CartController', {
                     vm.set('needUpdate', true);
                     Ext.ComponentQuery.query('#calcBtnSelector')[0].enable();
                     //Ext.ComponentQuery.query('cartlist')[0].getView().getFeature('itemSummary').toggleSummaryRow(false);
-                    Ext.ComponentQuery.query('#listFooterSumId')[0].setHidden(true);
+                    //Ext.ComponentQuery.query('#listFooterSumId')[0].setHidden(true);
                     // Disable payBtn and chkoutBtn, pdf, notes , save
                     Ext.ComponentQuery.query('#payBtnSelector')[0].setDisabled(true);
                     Ext.ComponentQuery.query('#chkoutBtnSelector')[0].setDisabled(true);
@@ -1652,7 +1653,7 @@ Ext.define('Shopping.view.cart.CartController', {
         vm.set('activeCartNumber', null);
 
         vm.notify();
-        console.info(vm);
+        //console.info(vm);
         // cartForm.down('#deliveryChkbox').setValue(false);
         // cartForm.down('#deliveryfieldset').setExpanded(false);
         // cartForm.reset();
@@ -2035,62 +2036,62 @@ Ext.define('Shopping.view.cart.CartController', {
         console.info('onClickContainer called');
     },
     // Enable calculate button when type into promotion text
-    onPromoCodeChange: function () {
-        console.log('onPromoCodeChange called');
-        var me = this,
-            calcBtn = me.lookupReference('calcBtn'),
-            promoCode = me.lookupReference('promoCodeTextField'),
-            payBtn = me.lookupReference('payBtn'),
-            checkoutButton = me.lookupReference('checkoutButton'),
-            listFooterSum = me.lookupReference('listFooterSum'),
-            vm = me.getViewModel();
-        //console.info(promoCode.isDirty());
-        //console.info(me.lookupReference('payBtn'));
-        //console.info(vm.get('needUpdate'));
-        if (promoCode.isDirty()) {
-            calcBtn.enable();
-            //me.toggleCartListSummary(false);
+    // onPromoCodeChange: function () {
+    //     console.log('onPromoCodeChange called');
+    //     var me = this,
+    //         calcBtn = me.lookupReference('calcBtn'),
+    //         promoCode = me.lookupReference('promoCodeTextField'),
+    //         payBtn = me.lookupReference('payBtn'),
+    //         checkoutButton = me.lookupReference('checkoutButton'),
+    //         //listFooterSum = me.lookupReference('listFooterSum'),
+    //         vm = me.getViewModel();
+    //     //console.info(promoCode.isDirty());
+    //     //console.info(me.lookupReference('payBtn'));
+    //     //console.info(vm.get('needUpdate'));
+    //     if (promoCode.isDirty()) {
+    //         calcBtn.enable();
+    //         //me.toggleCartListSummary(false);
 
 
 
-            // var grid = me.getView().down('cartlist');
-            // grid.getColumns()[9].setSummaryRenderer('123');
-            // Ext.apply(grid.getColumns()[9], {
-            //     summaryRenderer: function (value) {
-            //         //return '123';
-            //         return Ext.String.format('<b>Updated: {0}</b>', Ext.util.Format.currency(value));
-            //     }
-            // });
-            // // console.info(grid.getColumns());
-            // console.info(grid.getView().getCell(1, 2));
-            // me.toggleCartListSummary(true);
+    //         // var grid = me.getView().down('cartlist');
+    //         // grid.getColumns()[9].setSummaryRenderer('123');
+    //         // Ext.apply(grid.getColumns()[9], {
+    //         //     summaryRenderer: function (value) {
+    //         //         //return '123';
+    //         //         return Ext.String.format('<b>Updated: {0}</b>', Ext.util.Format.currency(value));
+    //         //     }
+    //         // });
+    //         // // console.info(grid.getColumns());
+    //         // console.info(grid.getView().getCell(1, 2));
+    //         // me.toggleCartListSummary(true);
 
-            // TODO: disable payment and deliver
-            payBtn.disable();
-            payBtn.setTooltip('Please calculate first.');
-            checkoutButton.disable();
-            listFooterSum.setHidden(true);
+    //         // TODO: disable payment and deliver
+    //         payBtn.disable();
+    //         payBtn.setTooltip('Please calculate first.');
+    //         checkoutButton.disable();
+    //         //listFooterSum.setHidden(true);
 
-            Ext.ComponentQuery.query('#pdfBtnSelector')[0].setDisabled(true);
-            Ext.ComponentQuery.query('#notesBtnSelector')[0].setDisabled(true);
-            Ext.ComponentQuery.query('#saveBtnSelector')[0].setDisabled(true);
+    //         Ext.ComponentQuery.query('#pdfBtnSelector')[0].setDisabled(true);
+    //         Ext.ComponentQuery.query('#notesBtnSelector')[0].setDisabled(true);
+    //         Ext.ComponentQuery.query('#saveBtnSelector')[0].setDisabled(true);
 
 
-        } else if (!promoCode.isDirty() && !vm.get('needUpdate')) {
-            console.log('should enable pay and deliver');
-            calcBtn.disable();
-            payBtn.enable();
-            checkoutButton.enable();
-            me.toggleCartListSummary(true);
-            listFooterSum.setHidden(false);
+    //     } else if (!promoCode.isDirty() && !vm.get('needUpdate')) {
+    //         console.log('should enable pay and deliver');
+    //         calcBtn.disable();
+    //         payBtn.enable();
+    //         checkoutButton.enable();
+    //         me.toggleCartListSummary(true);
+    //         //listFooterSum.setHidden(false);
 
-            Ext.ComponentQuery.query('#pdfBtnSelector')[0].setDisabled(false);
-            Ext.ComponentQuery.query('#notesBtnSelector')[0].setDisabled(false);
-            Ext.ComponentQuery.query('#saveBtnSelector')[0].setDisabled(false);
+    //         Ext.ComponentQuery.query('#pdfBtnSelector')[0].setDisabled(false);
+    //         Ext.ComponentQuery.query('#notesBtnSelector')[0].setDisabled(false);
+    //         Ext.ComponentQuery.query('#saveBtnSelector')[0].setDisabled(false);
 
-        }
-        //console.info(vm.get('needUpdate'));
-    },
+    //     }
+    //     //console.info(vm.get('needUpdate'));
+    // },
 
     requestCalcualte: function () {
         console.log('request calculate called');
@@ -2247,7 +2248,7 @@ Ext.define('Shopping.view.cart.CartController', {
         me.lookupReference('calcBtn').disable();
         me.lookupReference('payBtn').enable();
         me.lookupReference('checkoutButton').enable();
-        me.lookupReference('listFooterSum').setHidden(false);
+        //me.lookupReference('listFooterSum').setHidden(false);
 
         me.lookupReference('pdfBtn').enable();
         me.lookupReference('notesBtn').enable();
@@ -2275,7 +2276,8 @@ Ext.define('Shopping.view.cart.CartController', {
         var me = this,
             vm = me.getViewModel(),
             valid = me.isFormValid(),
-            view = me.getView();
+            view = me.getView(),
+            paymentGrid = me.getView().down('paymenthistory');
         if (valid) {
             Valence.common.util.Helper.loadMask('Calculating Your Order ......');
         }
@@ -2295,6 +2297,8 @@ Ext.define('Shopping.view.cart.CartController', {
                         }).show();
                     }
                     Valence.common.util.Helper.destroyLoadMask();
+                    // need to reload payment history summary
+                    paymentGrid.getView().getFeature('paymentSummary').toggleSummaryRow(true);
                 } else {
                     console.log('loadCart error');
                     Valence.common.util.Helper.destroyLoadMask();
@@ -2492,7 +2496,7 @@ Ext.define('Shopping.view.cart.CartController', {
         console.log('onClickCancelPromoWin called');
         var me = this,
             promoWindow = me.getView().down('promowin');
-        console.info(promoWindow);
+        //console.info(promoWindow);
         promoWindow.close();
         //console.info(me.getView().down('promowin'));
     },

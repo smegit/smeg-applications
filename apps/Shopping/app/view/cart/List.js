@@ -37,48 +37,48 @@ Ext.define('Shopping.view.cart.List', {
     // added start
 
 
-    dockedItems: [{
-        xtype: 'toolbar',
-        dock: 'bottom',
-        buttonAlign: 'right',
+    // dockedItems: [{
+    //     xtype: 'toolbar',
+    //     dock: 'bottom',
+    //     buttonAlign: 'right',
 
-        items: [
-            {
-                xtype: 'textfield',
-                reference: 'promoCodeTextField',
-                emptyText: 'Promotion Code',
-                maxWidth: '120',
-                bind: {
-                    value: '{cartValues.PROMOCODE}'
-                },
-                listeners: {
-                    change: 'onPromoCodeChange'
-                }
-            },
+    //     items: [
+    //         {
+    //             xtype: 'textfield',
+    //             reference: 'promoCodeTextField',
+    //             emptyText: 'Promotion Code',
+    //             maxWidth: '120',
+    //             bind: {
+    //                 value: '{cartValues.PROMOCODE}'
+    //             },
+    //             listeners: {
+    //                 change: 'onPromoCodeChange'
+    //             }
+    //         },
 
-            {
-                xtype: 'button', text: 'Recalculate', ui: 'blue',
-                //id: 'calcBtnId',
-                itemId: 'calcBtnSelector',
-                reference: 'calcBtn',
-                disabled: true,
-                listeners: {
-                    click: 'onCalculateClick'
-                }
-            },
-            '->',
-            {
-                xtype: 'component',
-                width: '300',
-                reference: 'listFooterSum',
-                itemId: 'listFooterSumId',
-                bind: {
-                    html: '{listFooterText}'
-                },
+    //         {
+    //             xtype: 'button', text: 'Recalculate', ui: 'blue',
+    //             //id: 'calcBtnId',
+    //             itemId: 'calcBtnSelector',
+    //             reference: 'calcBtn',
+    //             disabled: true,
+    //             listeners: {
+    //                 click: 'onCalculateClick'
+    //             }
+    //         },
+    //         // '->',
+    //         // {
+    //         //     xtype: 'component',
+    //         //     width: '300',
+    //         //     reference: 'listFooterSum',
+    //         //     itemId: 'listFooterSumId',
+    //         //     bind: {
+    //         //         html: '{listFooterText}'
+    //         //     },
 
-            }
-        ]
-    }],
+    //         // }
+    //     ]
+    // }],
 
     // bbar: [
     //     //'->',

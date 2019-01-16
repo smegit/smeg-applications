@@ -174,6 +174,19 @@ Ext.define('Shopping.view.cart.Form', {
                                 value: '{STKLOC}'
                                 //value: '{currentStockLoc}'
                             }
+                        },
+                        {
+                            xtype: 'textfield',
+                            reference: 'promoCodeTextField',
+                            emptyText: 'Promotion Code',
+                            maxWidth: '120',
+                            hidden: true,
+                            bind: {
+                                value: '{cartValues.PROMOCODE}'
+                            },
+                            listeners: {
+                                //change: 'onPromoCodeChange'
+                            }
                         }]
                 },
                     // {

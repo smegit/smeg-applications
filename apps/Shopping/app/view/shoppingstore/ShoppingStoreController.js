@@ -312,10 +312,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         //console.info(store);
         //vm.get('cartValues') == null ? form.getValues() : vm.get();
 
-        console.info(vm);
-        console.info(form);
-        console.info(form.getValues());
-        console.info(vm.get('cartValues'));
+        // console.info(vm);
+        // console.info(form);
+        // console.info(form.getValues());
+        // console.info(vm.get('cartValues'));
         Ext.apply(formData, form.getValues());
         Ext.apply(formData, vm.get('cartValues'));
         //Ext.apply(formData, { OASTKLOC: vm.get('currentStockLoc') });
@@ -340,7 +340,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
         }
 
-        console.info(formData);
+        //console.info(formData);
         return {
             data: formData,
             products: prodArray
@@ -788,10 +788,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         // if new order get the assigned order key and load the order details
         //if (Ext.isEmpty(vm.get('activeCartNumber')) || (!Ext.isEmpty(vm.get('activeCartNumber')) && vm.get('needUpdate'))) {
         var cartInfo = me.getCart();
-        console.info(cartInfo);
+        //console.info(cartInfo);
         Ext.apply(params, cartInfo.data);
         Ext.apply(params, { products: Ext.encode(cartInfo.products) });
-        console.info(params);
+        //console.info(params);
         Ext.Ajax.request({
             url: '/valence/vvcall.pgm',
             params: params,
@@ -918,7 +918,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 vm.notify();
                 Ext.ComponentQuery.query('#payBtnSelector')[0].setDisabled(false);
                 Ext.ComponentQuery.query('#chkoutBtnSelector')[0].setDisabled(false);
-                Ext.ComponentQuery.query('#listFooterSumId')[0].setHidden(false);
+                //Ext.ComponentQuery.query('#listFooterSumId')[0].setHidden(false);
 
                 Ext.ComponentQuery.query('#pdfBtnSelector')[0].setDisabled(false);
                 Ext.ComponentQuery.query('#notesBtnSelector')[0].setDisabled(false);
@@ -1135,6 +1135,12 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     me.loadPromoHeader(obj.promoHeader);
 
                     me.onViewCart();
+                    // enable pdf, notes, payment, deliver, save buttons
+                    Ext.ComponentQuery.query('#payBtnSelector')[0].setDisabled(false);
+                    Ext.ComponentQuery.query('#chkoutBtnSelector')[0].setDisabled(false);
+                    Ext.ComponentQuery.query('#pdfBtnSelector')[0].setDisabled(false);
+                    Ext.ComponentQuery.query('#notesBtnSelector')[0].setDisabled(false);
+                    Ext.ComponentQuery.query('#saveBtnSelector')[0].setDisabled(false);
                     vm.notify();
                 };
 
@@ -1257,7 +1263,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
             Ext.ComponentQuery.query('#payBtnSelector')[0].setDisabled(true);
             Ext.ComponentQuery.query('#chkoutBtnSelector')[0].setDisabled(true);
-            Ext.ComponentQuery.query('#listFooterSumId')[0].setHidden(true);
+            //Ext.ComponentQuery.query('#listFooterSumId')[0].setHidden(true);
         }
 
         //grid.getView().getFeature('itemSummary').toggleSummaryRow(true);

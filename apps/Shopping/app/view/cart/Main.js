@@ -25,7 +25,8 @@ Ext.define('Shopping.view.cart.Main', {
         maxWidth: 1060,
         style: {
             'margin-left': 'auto',
-            'margin-right': 'auto'
+            'margin-right': 'auto',
+            'margin-top': '10px'
         }
     },
     // bbar: {
@@ -336,13 +337,15 @@ Ext.define('Shopping.view.cart.Main', {
         //         }
         //     }]
         // },
+
+        {
+            xtype: 'paymenthistory'
+        },
         {
             xtype: 'cartform',
             cartOptions: opts
         },
-        {
-            xtype: 'paymenthistory'
-        },
+
 
 
 
@@ -607,6 +610,19 @@ Ext.define('Shopping.view.cart.Main', {
                 //         click: 'onClickSave'
                 //     }
                 // },
+                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+
+                {
+                    xtype: 'button', text: 'Recalculate', ui: 'green',
+                    //id: 'calcBtnId',
+                    itemId: 'calcBtnSelector',
+                    reference: 'calcBtn',
+                    disabled: true,
+                    listeners: {
+                        click: 'onCalculateClick'
+                    }
+                },
 
                 { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
                 { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
