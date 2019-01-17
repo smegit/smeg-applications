@@ -188,42 +188,9 @@ Ext.define('Shopping.view.cart.Form', {
                                 //change: 'onPromoCodeChange'
                             }
                         }]
-                },
-                    // {
-                    //     xtype: 'container',
-                    //     layout: {
-                    //         type: 'hbox',
-                    //         align: 'stretch'
-                    //     },
-                    //     padding: '0 32 4 32',
-                    //     defaults: {
-                    //         labelAlign: 'left',
-                    //         flex: 1
-                    //     },
-                    //     items: [{
-                    //         xtype: 'combobox',
-                    //         queryMode: 'local',
-                    //         flex: 0,
-                    //         width: 305,
-                    //         //height: 32,
-                    //         labelWidth: 95,
-                    //         editable: false,
-                    //         valueField: 'STKCOD',
-                    //         displayField: 'STKDSC',
-                    //         reference: 'stocklocs',
-                    //         fieldLabel: 'Stock Location',
-                    //         forceSelection: true,
-                    //         listeners: {
-                    //             select: 'onSelectStockLocation'
-                    //         },
-                    //         bind: {
-                    //             store: '{StockLocations}',
-                    //             value: '{STKLOC}'
-                    //         }
-                    //     }]
-                    //     }
-                ]
-            }, {
+                },]
+            },
+            {
                 xtype: 'cart-customerdetail',
                 release: me.release
             }];

@@ -36,7 +36,7 @@ Ext.define('Shopping.view.cart.PaymentHistory', {
         // },
         {
             text: 'Payment Detail',
-            flex: 2,
+            flex: 1,
             dataIndex: 'note',
             sortable: false,
             menuDisabled: true,
