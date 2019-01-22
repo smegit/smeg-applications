@@ -180,8 +180,11 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
                 text: 'Products',
                 expanded: false
             },
-            folderSort: true
+            folderSort: true,
             //lazyFill: true
+            listeners: {
+                load: 'onCategoryLoad'
+            }
         },
         existingCarts: {
             model: 'Shopping.model.ExistingCart',

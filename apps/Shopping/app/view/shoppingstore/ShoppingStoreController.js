@@ -1347,5 +1347,16 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         var me = this;
         //console.info(me.lookupReference('promowinRef'));
         //me.lookupReference('promowinRef').close();
+    },
+
+    onCategoryLoad: function (store, records) {
+        var me = this,
+            vm = me.getViewModel(),
+            prodStore = vm.getStore('products');
+
+        if (records.length == 0) {
+            prodStore.removeAll();
+            vm.notify();
+        }
     }
 });

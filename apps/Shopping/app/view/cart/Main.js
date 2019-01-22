@@ -339,24 +339,24 @@ Ext.define('Shopping.view.cart.Main', {
         // },
 
 
-        {
-            xtype: 'container',
-            layout: {
-                type: 'hbox',
-                align: 'stretch'
-            },
-            items: [
-                { xtype: 'tbfill' },
-                {
-                    xtype: 'paymenthistory',
-                    width: '50%'
-                },
-            ]
-        },
-
         // {
-        //     xtype: 'paymenthistory'
+        //     xtype: 'container',
+        //     layout: {
+        //         type: 'hbox',
+        //         align: 'stretch'
+        //     },
+        //     items: [
+        //         { xtype: 'tbfill' },
+        //         {
+        //             xtype: 'paymenthistory',
+        //             width: '50%'
+        //         },
+        //     ]
         // },
+
+        {
+            xtype: 'paymenthistory'
+        },
         {
             xtype: 'cartform',
             cartOptions: opts
