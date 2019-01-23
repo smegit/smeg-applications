@@ -68,9 +68,10 @@ Ext.define('Shopping.view.cart.Form', {
                 xtype: 'fieldset',
                 title: 'Order Info',
                 defaultType: 'textfield',
-                cls: 'cart-fieldset',
+                //cls: 'cart-fieldset',
                 itemId: 'orderInfoFieldSet',
                 margin: 0,
+                padding: '2 20 16 20',
                 layout: {
                     //type: 'hbox',
                     type: 'vbox',
@@ -85,7 +86,7 @@ Ext.define('Shopping.view.cart.Form', {
                         type: 'hbox',
                         align: 'stretch'
                     },
-                    padding: '0 32 4 32',
+                    //padding: '0 32 4 32',
                     defaults: {
                         labelAlign: 'left',
                         flex: 1
