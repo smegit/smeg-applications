@@ -36,4 +36,33 @@ Ext.define('Shopping.view.products.Categories', {
     itemSelector: 'div.cat-wrap',
     overItemCls: 'cat-wrap-over',
     selectedItemCls: 'cat-wrap-sel',
+
+    columns: [
+        {
+            xtype: 'treecolumn',
+            //text: 'Name',
+            dataIndex: 'CATDESC',
+            flex: 1,
+            sortable: true,
+            // renderer: function (v, metaData, record) {
+            //     metaData.glyph = record.glyph;
+            //     return v;
+            // }
+        },
+        {
+            xtype: 'actioncolumn',
+            glyph: 'xf002@FontAwesome',
+            width: 35,
+            getTip: function (value, meta, rec, rowIdx, colIdx, store, view) {
+                // Go up from the view to the owning TreePanel
+                // console.info(value);
+                // console.info(meta);
+                // console.info(rec);
+                var desc = rec.getData().CATDESC;
+                console.info(desc);
+                var panel = view.up('');
+                return 'Advanced Search In ' + desc;
+            },
+            handler: 'onSearchClick'
+        }]
 });

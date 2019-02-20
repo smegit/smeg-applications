@@ -41,7 +41,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         selectedPromos: [],
         selectedPromoCount: 0,
         hidePaymentHistory: true,
-        orderTotal: null
+        orderTotal: null,
+        searchFormTitle: 'TestTitle',
+        catId: null,
+        catDesc: null
     },
 
     formulas: {

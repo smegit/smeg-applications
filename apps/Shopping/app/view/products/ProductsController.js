@@ -102,5 +102,99 @@ Ext.define('Shopping.view.products.ProductsController', {
     onUpdateCartAndShow: function () {
         console.log('onUpdateCartAndShow in products controller called');
         this.getView().fireEvent('updatecartandshow');
+    },
+
+    onSearchClick: function (view, rowIndex, colIndex, row, event, rec) {
+        console.log('onSearchClick called');
+        var me = this,
+            vm = me.getViewModel();
+        var dynamicFields = ['field1', 'field2', 'field3', 'field4', 'field5', 'field6'];
+        var productsMainView = Ext.ComponentQuery.query('productsmain')[0];
+
+        // Bind the form title dynamically
+        vm.set('catDesc', rec.getData().CATDESC);
+        vm.set('catId', rec.getData().CATID);
+
+        console.info(Ext.ComponentQuery.query('productsmain')[0]);
+
+        // Show the search form,'advancedsearch' must be added into DOM 
+        // before get the reference of the search form
+
+        productsMainView.add({
+            xtype: 'advancedsearch'
+        }).show();
+
+
+        var formPanel = Ext.ComponentQuery.query('advancedsearch')[0].down('form');
+        console.info(formPanel);
+
+        // Generate the content of search form dynamically
+        dynamicFields.forEach(function (e) {
+            formPanel.add({
+                xtype: 'textfield',
+                name: e,
+                fieldLabel: e
+            })
+        });
+        // Generate the search form
+    },
+
+    onSearchFormBeforeShow: function () {
+        // console.log('onSearchFormBeforeShow called');
+    },
+
+    requestSearch: function () {
+        console.log('requestSearch called');
+        var me = this,
+            deferred = Ext.create('Ext.Deferred'),
+            params = {},
+            searchForm = me.getView().down('form'),
+            queryDetail = searchForm.getValues();
+        console.info(queryDetail);
+
+        params = {
+            pgm: 'EC1050',
+            action: 'search',
+        };
+        Ext.apply(params, queryDetail);
+        console.info(params);
+        Ext.Ajax.request({
+            //url: '/valence/vvcall.pgm',
+            url: 'https://3c865ddd-691b-430f-9a04-d817b32ffe51.mock.pstmn.io/search',
+            method: 'GET',
+            params: params,
+            success: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.resolve(response);
+            },
+            failure: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.reject(response);
+            }
+        });
+        return deferred.promise;
+    },
+
+    onSearchRequestClick: function () {
+        console.log('onSearchRequestClick called');
+        var me = this,
+            searchWin = me.getView().down('advancedsearch');
+        console.info(searchWin);
+        searchWin.close();
+
+        Valence.common.util.Helper.loadMask('Searching Products...');
+        me.requestSearch()
+            .then(function (res) {
+                console.info(res);
+
+                Valence.common.util.Helper.destroyLoadMask();
+
+            }, function (res) {
+                console.log('failure result');
+                console.info(res);
+                Valence.common.util.Helper.destroyLoadMask();
+
+            });
+
     }
 });

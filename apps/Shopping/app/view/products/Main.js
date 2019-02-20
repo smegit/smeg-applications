@@ -6,7 +6,9 @@ Ext.define('Shopping.view.products.Main', {
         'Shopping.view.products.Categories',
         'Shopping.view.products.Heading',
         'Ext.layout.container.Border',
-        'Shopping.view.products.ProductsController'
+        'Shopping.view.products.ProductsController',
+
+        'Shopping.view.products.AdvancedSearch'
     ],
     layout: {
         type: 'border'
