@@ -178,15 +178,31 @@ Ext.define('Shopping.view.products.ProductsController', {
     onSearchRequestClick: function () {
         console.log('onSearchRequestClick called');
         var me = this,
-            searchWin = me.getView().down('advancedsearch');
+            vm = me.getViewModel(),
+            view = me.getView(),
+            searchWin = me.getView().down('advancedsearch'),
+            prodStore = vm.getStore('products'),
+            searchForm = me.getView().down('form'),
+            queryDetail = searchForm.getValues(),
+            cateTree = view.down('categories');
         console.info(searchWin);
+        console.info(prodStore);
+        console.info(queryDetail);
+        console.info(cateTree);
+        console.info(cateTree.getSelection());
         searchWin.close();
 
+
+        // Deselect category
+        cateTree.getSelectionModel().deselect(cateTree.getSelection());
         Valence.common.util.Helper.loadMask('Searching Products...');
         me.requestSearch()
             .then(function (res) {
                 console.info(res);
-
+                if (res.success) {
+                    prodStore.loadData(res.prods, false);
+                }
+                vm.set('bannerText', 'Search result with ' + JSON.stringify(queryDetail).replace(/['"]+/g, '').replace(/[{()}]/g, ''));
                 Valence.common.util.Helper.destroyLoadMask();
 
             }, function (res) {
@@ -195,6 +211,9 @@ Ext.define('Shopping.view.products.ProductsController', {
                 Valence.common.util.Helper.destroyLoadMask();
 
             });
+
+        console.info(prodStore);
+
 
     }
 });
