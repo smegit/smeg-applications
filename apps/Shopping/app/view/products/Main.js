@@ -8,7 +8,9 @@ Ext.define('Shopping.view.products.Main', {
         'Ext.layout.container.Border',
         'Shopping.view.products.ProductsController',
 
-        'Shopping.view.products.AdvancedSearch'
+        'Shopping.view.products.AdvancedSearch',
+        'Shopping.view.products.Search',
+        'Ext.fx.Animation'
     ],
     layout: {
         type: 'border'
@@ -25,8 +27,16 @@ Ext.define('Shopping.view.products.Main', {
     }, {
         xtype: 'categories',
         width: 280,
-        region: 'west'
-    }, {
+        region: 'west',
+        //hidden: true
+    },
+    {
+        xtype: 'search',
+        width: 280,
+        region: 'west',
+        hidden: true
+    },
+    {
         xtype: 'products',
         region: 'center'
     }]

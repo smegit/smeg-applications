@@ -2,7 +2,8 @@ Ext.define('Shopping.view.products.View', {
     extend: 'Ext.container.Container',
     requires: [
         'Ext.layout.container.Fit',
-        'Ext.view.View'
+        'Ext.view.View',
+        'Ext.LoadMask'
     ],
     xtype: 'products',
     cls: 'products',

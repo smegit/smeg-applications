@@ -30,6 +30,13 @@ app.all('/desktop/ShoppingCart/*', valenceProxy);
 app.all('/desktop/autocodeApps/*', valenceProxy);
 app.all('/resources/*', valenceProxy);
 app.all('/packages/local/*', valenceProxy);
+
+app.all('/build/production/ShowroomApp/*', express.static(__dirname));
+app.all('/build/development/ShowroomApp/*', express.static(__dirname));
+app.all('/apps/ShowroomApp/*', express.static(__dirname));
+
+
+
 app.all('/build/testing/Shopping/*', express.static(__dirname));
 app.all('/build/production/Shopping/*', express.static(__dirname));
 app.all('/build/testing/ShoppingCart/*', express.static(__dirname));

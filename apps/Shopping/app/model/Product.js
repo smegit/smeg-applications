@@ -11,17 +11,17 @@ Ext.define('Shopping.model.Product', {
             return Ext.Date.parse(v, 'Y-m-d');
         }
     }],
-    proxy: {
-        type: 'ajax',
-        url: '/valence/vvcall.pgm',
-        extraParams: {
-            pgm: 'EC1010',
-            action: 'getProds',
-            //cat : 'LAUNDRY PRODUCTS'
-        },
-        reader: {
-            type: 'json',
-            rootProperty: 'prods'
-        }
-    }
+    // proxy: {
+    //     type: 'ajax',
+    //     url: '/valence/vvcall.pgm',
+    //     extraParams: {
+    //         pgm: 'EC1010',
+    //         action: 'getProds',
+    //         //cat : 'LAUNDRY PRODUCTS'
+    //     },
+    //     reader: {
+    //         type: 'json',
+    //         rootProperty: 'prods'
+    //     }
+    // }
 });

@@ -6,7 +6,10 @@
         "apps/Wrapper",
         "apps/ShoppingCart",
         "apps/Shopping",
-        "apps/Welcome"
+        "apps/Welcome",
+        "apps/new-app",
+        "apps/Showroom",
+        "apps/ShowroomApp"
     ],
 
     /**

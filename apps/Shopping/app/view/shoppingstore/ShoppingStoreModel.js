@@ -44,7 +44,9 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         orderTotal: null,
         searchFormTitle: 'TestTitle',
         catId: null,
-        catDesc: null
+        catDesc: null,
+        attributes: [],
+
     },
 
     formulas: {
@@ -187,7 +189,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
             //lazyFill: true
             listeners: {
                 load: 'onCategoryLoad'
-            }
+            },
+            filterer: 'bottomup',
         },
         existingCarts: {
             model: 'Shopping.model.ExistingCart',

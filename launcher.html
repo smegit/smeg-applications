@@ -1,4 +1,5 @@
 <html>
+
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta name="Copyright" content="Copyright 2008-2016 CNX Corporation, All Rights Reserved">
@@ -6,92 +7,99 @@
     <link rel="stylesheet" type="text/css" href="/resources/loader/loader.css" />
     <script type="text/javascript" src="/resources/loader/loader.js"></script>
 </head>
+
 <body>
-<script type="text/javascript">
-    Ext.onReady(function(){
+    <script type="text/javascript">
+        Ext.onReady(function () {
 
-        var Apps = Ext.create('Ext.data.Store', {
-            fields  : ['mane', 'nonbuilt', 'testing', 'production'],
-            storeId : 'Apps',
-            data    : [{
-                name       : 'Wrapper',
-                nonbuilt   : 'http://localhost:8889/apps/Wrapper/index.html?app=1001&autoLogout=false',
-                testing    : 'http://localhost:8889/build/testing/Wrapper/?app=1001&autoLogout=false',
-                production : 'http://localhost:8889/build/production/Wrapper/?app=1001&autoLogout=false'
-            },{
-                name       : 'Shopping',
-                nonbuilt   : 'http://localhost:8889/apps/Shopping/index.html?app=1001&autoLogout=false',
-                testing    : 'http://localhost:8889/build/testing/Shopping/?app=1001&autoLogout=false',
-                production : 'http://localhost:8889/build/production/Shopping/?app=1001&autoLogout=false'
-            },{
-                name       : 'Welcome',
-                nonbuilt   : 'http://localhost:8889/apps/Welcome/index.html?app=1020&autoLogout=false',
-                testing    : 'http://localhost:8889/build/testing/Welcome/?app=1020&autoLogout=false',
-                production : 'http://localhost:8889/build/production/Welcome/?app=1020&autoLogout=false'
-            },{
-                name       : 'Portal',
-                nonbuilt   : 'http://localhost:8889/portal/?autoLogout=false',
-                testing    : 'http://localhost:8889/portal/?autoLogout=false',
-                production : 'http://localhost:8889/portal/?autoLogout=true'
-            }]
-        });
-        Ext.create('Ext.Panel', {
-            width    : '100%',
-            height   : '100%',
-            bodyPadding : '16 48',
-            scrollable : 'y',
-            tbar     : [{
-                xtype        : 'combo',
-                id           : 'themecombo',
-                fieldLabel   : 'Theme',
-                labelAlign   : 'right',
-                store        : Ext.create('Ext.data.Store', {
-                    fields : ['theme'],
-                    data   : [{
-                        theme : 'default'
-                    }, {
-                        theme : 'dracula'
-                    }, {
-                        theme : 'metal'
-                    }]
-                }),
-                displayField : 'theme',
-                valueField   : 'theme',
-                value        : 'default',
-                queryMode    : 'local'
-            }],
-            layout   : 'fit',
-            items    : [{
-                xtype        : 'dataview',
-                store        : 'Apps',
-                tpl          : [
-                    '<tpl for=".">',
+            var Apps = Ext.create('Ext.data.Store', {
+                fields: ['mane', 'nonbuilt', 'testing', 'production'],
+                storeId: 'Apps',
+                data: [{
+                    name: 'Wrapper',
+                    nonbuilt: 'http://localhost:8889/apps/Wrapper/index.html?app=1001&autoLogout=false',
+                    testing: 'http://localhost:8889/build/testing/Wrapper/?app=1001&autoLogout=false',
+                    production: 'http://localhost:8889/build/production/Wrapper/?app=1001&autoLogout=false'
+                }, {
+                    name: 'Shopping',
+                    nonbuilt: 'http://localhost:8889/apps/Shopping/index.html?app=1001&autoLogout=false',
+                    testing: 'http://localhost:8889/build/testing/Shopping/?app=1001&autoLogout=false',
+                    production: 'http://localhost:8889/build/production/Shopping/?app=1001&autoLogout=false'
+                }, {
+                    name: 'Welcome',
+                    nonbuilt: 'http://localhost:8889/apps/Welcome/index.html?app=1020&autoLogout=false',
+                    testing: 'http://localhost:8889/build/testing/Welcome/?app=1020&autoLogout=false',
+                    production: 'http://localhost:8889/build/production/Welcome/?app=1020&autoLogout=false'
+                }, {
+                    name: 'Portal',
+                    nonbuilt: 'http://localhost:8889/portal/?autoLogout=false',
+                    testing: 'http://localhost:8889/portal/?autoLogout=false',
+                    production: 'http://localhost:8889/portal/?autoLogout=true'
+                }, {
+                    name: 'ShowroomApp',
+                    nonbuilt: 'http://localhost:8889/apps/ShowroomApp/index.html?app=1020&autoLogout=false',
+                    testing: 'http://localhost:8889/build/testing/ShowroomApp/?app=1020&autoLogout=false',
+                    production: 'http://localhost:8889/build/production/ShowroomApp/?app=1020&autoLogout=false'
+                }]
+            });
+            Ext.create('Ext.Panel', {
+                width: '100%',
+                height: '100%',
+                bodyPadding: '16 48',
+                scrollable: 'y',
+                tbar: [{
+                    xtype: 'combo',
+                    id: 'themecombo',
+                    fieldLabel: 'Theme',
+                    labelAlign: 'right',
+                    store: Ext.create('Ext.data.Store', {
+                        fields: ['theme'],
+                        data: [{
+                            theme: 'default'
+                        }, {
+                            theme: 'dracula'
+                        }, {
+                            theme: 'metal'
+                        }]
+                    }),
+                    displayField: 'theme',
+                    valueField: 'theme',
+                    value: 'default',
+                    queryMode: 'local'
+                }],
+                layout: 'fit',
+                items: [{
+                    xtype: 'dataview',
+                    store: 'Apps',
+                    tpl: [
+                        '<tpl for=".">',
                         '<div class="app">',
-                            '<h3 style="width:225px;display:inline-block;">{name}</h3>',
-                            '<span style="width:100px;padding:16px;color:#0085cf;cursor:pointer;" data-event="nonbuilt">Non-Built</span>',
-                            '<span style="width:100px;padding:16px;color:#0085cf;cursor:pointer;" data-event="testing">Testing</span>',
-                            '<span style="width:100px;padding:16px;color:#0085cf;cursor:pointer;" data-event="production">Production</span>',
+                        '<h3 style="width:225px;display:inline-block;">{name}</h3>',
+                        '<span style="width:100px;padding:16px;color:#0085cf;cursor:pointer;" data-event="nonbuilt">Non-Built</span>',
+                        '<span style="width:100px;padding:16px;color:#0085cf;cursor:pointer;" data-event="testing">Testing</span>',
+                        '<span style="width:100px;padding:16px;color:#0085cf;cursor:pointer;" data-event="production">Production</span>',
                         '</div>',
-                    '</tpl>'
-                ],
-                itemSelector : 'div.app',
-                listeners : {
-                    itemclick : function(view,rec,el,index,e){
-                        var me     = this,
-                            target = Ext.get(e.getTarget()),
-                            event  = target.getAttribute('data-event'),
-                            theme  = Ext.getCmp('themecombo').getValue(),
-                            url    = '{0}&theme={1}';
+                        '</tpl>'
+                    ],
+                    itemSelector: 'div.app',
+                    listeners: {
+                        itemclick: function (view, rec, el, index, e) {
+                            var me = this,
+                                target = Ext.get(e.getTarget()),
+                                event = target.getAttribute('data-event'),
+                                theme = Ext.getCmp('themecombo').getValue(),
+                                url = '{0}&theme={1}';
 
-                        if (event){
-                            window.open(Ext.String.format(url,rec.get(event),theme),'_blank');
+                            if (event) {
+                                window.open(Ext.String.format(url, rec.get(event), theme), '_blank');
+                            }
                         }
                     }
-                }
-            }],
-            renderTo : Ext.getBody()
-        })
-    });
-</script>
+                }],
+                renderTo: Ext.getBody()
+            })
+        });
+    </script>
 </body>
+
 </html>

@@ -537,36 +537,171 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         }
     },
 
-    onSelectionChangeEntities: function (sm, recs) {
+
+    requestProds: function (catId) {
+        console.log('requestProds called');
+        var me = this,
+            deferred = Ext.create('Ext.Deferred'),
+            params = {};
+        params = {
+            pgm: 'EC1010',
+            action: 'getProds',
+            cat: catId
+        };
+        Ext.Ajax.request({
+            url: '/valence/vvcall.pgm',
+            method: 'GET',
+            params: params,
+            success: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.resolve(response);
+            },
+            failure: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.reject(response);
+            }
+        });
+        return deferred.promise;
+    },
+
+    onSelectionChangeEntities: function (sm, recs, eOpts) {
         console.log('onSelectionChangeEntities called');
         var me = this,
             rec = recs[0],
             vm = me.getViewModel(),
-            str = vm.getStore('products'),
-            xp = str.getProxy().extraParams;
+            view = me.getView(),
+            //str = vm.getStore('products'),
+            //xp = str.getProxy().extraParams,
+            prodStore = vm.getStore('products'),
+            productsdv = me.getView().down('products'),
+            searchView = view.down('search'),
+            cateTree = view.down('categories'),
+            cateTreeStore = vm.getStore('categories'),
+            filters = cateTreeStore.getFilters(),
+            searchFormPanel = view.down('form');
 
-        // console.info(str);
-        // console.info(rec);
         if (rec) {
-            console.log('rec is not null');
-            Ext.apply(xp, {
-                cat: rec.get('CATID')
-            });
-            if (vm.get('loadProducts')) {
-                str.load(
-                    function () {
-                        setTimeout(function () {
-                            me.lookupReference('productsMain').fireEvent('unmaskproductsview');
-                        }, 200);
+            productsdv.mask('Loading');
+            me.requestProds(rec.get('CATID'))
+                .then(function (res) {
+                    if (res.success) {
+                        prodStore.loadData(res.prods, false);
+                        //attributes.loadData(res.attributes);
+                        var trimedAttr = res.attributes.map(function (x) { return x.replace(/ *\([^)]*\) */g, "") });
+                        vm.set('attributes', trimedAttr);
+                        vm.set({
+                            bannerText: rec.get('BANTEXT'),
+                            hideBannerText: Ext.isEmpty(rec.get('BANTEXT'))
+                        });
+
+                        // Entering search page
+                        if (sm.hasOwnProperty('deselectingDuringSelect') && sm.hasOwnProperty('suspendChange')) {
+                            console.info('has selectionStartId');
+
+                            searchView.setHidden(false);
+                            cateTree.setHidden(true);
+
+                            // console.info(cateTreeStore);
+                            // console.info(searchFormPanel);
+
+                            // clear the form panel
+                            searchFormPanel.removeAll();
+                            // Config the search form
+                            vm.get('attributes').forEach(function (e) {
+                                searchFormPanel.add({
+                                    xtype: 'textfield',
+                                    name: e,
+                                    fieldLabel: e
+                                })
+                            });
+
+                            searchFormPanel.scrollTo('top', '100', true);
+                            // config filter function
+                            function searchCat(item) {
+                                return item.data.CATID == rec.getData().CATID;
+                            }
+                            filters.add(searchCat);
+
+                        } else {
+                            console.log('not has selectionStartIdx');
+                        }
+
                     }
-                );
-            }
-            vm.set({
-                bannerText: rec.get('BANTEXT'),
-                hideBannerText: Ext.isEmpty(rec.get('BANTEXT'))
-            });
+                    console.info(vm.get('attributes'));
+
+                    productsdv.unmask();
+                }, function (res) {
+                    console.log('Failed to load products');
+                    productsdv.unmask();
+                });
+        } else {
+            productsdv.unmask();
         }
+
+        console.info(prodStore);
     },
+
+    // filterCateTreeStore: function (value) {
+    //     var me = this,
+    //         searchString = value,
+    //         vm = me.getViewModel(),
+    //         store = vm.getStore('categories'),
+    //         filterFn = function (node) {
+    //             var children = node.childNodes,
+    //                 len = children && children.length,
+    //                 visible = v.test(node.get('CATID')),
+    //                 //visible = (v == node.get('text')),
+    //                 i;
+
+    //             console.info(node);
+    //             console.info(children);
+    //             console.info(len);
+    //             console.info(node.get('CATID'));
+    //             console.info(visible);
+    //             //console.info(v.test(node.get('text')));
+
+    //             // If the current node does NOT match the search condition
+    //             // specified by the user...
+    //             if (!visible) {
+
+    //                 // Check to see if any of the child nodes of this node
+    //                 // match the search condition.  If they do then we will
+    //                 // mark the current node as visible as well.
+    //                 for (i = 0; i < len; i++) {
+    //                     if (children[i].isLeaf()) {
+    //                         visible = children[i].get('visible');
+    //                     } else {
+    //                         visible = filterFn(children[i]);
+    //                     }
+    //                     if (visible) {
+    //                         break;
+    //                     }
+    //                 }
+
+    //             } else { // Current node matches the search condition...
+
+    //                 // Force all of its child nodes to be visible as well so
+    //                 // that the user is able to select an example to display.
+    //                 for (i = 0; i < len; i++) {
+    //                     children[i].set('visible', true);
+    //                 }
+
+    //             }
+
+    //             return visible;
+    //         },
+    //         v;
+
+    //     if (searchString.length < 1) {
+    //         store.clearFilter();
+    //     } else {
+    //         v = new RegExp(searchString, 'i');
+    //         store.getFilters().replaceAll({
+    //             filterFn: filterFn
+    //         });
+    //     }
+    // },
+
 
     onShowDetail: function (cmp, rec, viewOnly) {
         var me = this,
