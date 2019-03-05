@@ -38,7 +38,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
         type: 'hbox',
         align: 'stretch'
     },
-    defaultFocus: 'textarea',
+    //defaultFocus: 'textarea',
     maximizable: true,
     //maximized: true,
     bind: {
@@ -308,6 +308,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         format: "d/m/Y",
                         formatText: '',
                         hidden: true,
+                        //disabled: true,
                         //width: 160,
                         //labelWidth: false,
                         //labelStyle: 'width: auto',
@@ -318,7 +319,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         maxValue: Ext.Date.add(new Date(), Ext.Date.YEAR, 1), //1 Year from the current date
                         // flex: 1,
                         bind: {
-                            disabled: '{noteAction.value == null}',
+                            //disabled: '{noteAction.value == null}',
                             //visible: '{noteAction.value == null}',
                             value: '{theNote.OFFUPDAT}'
                         },
@@ -439,7 +440,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                             //labelStyle: 'text-align: right',
                             bind: {
                                 store: '{NoteDetailOpts}',
-                                disabled: '{noteAction.value == null}',
+                                //disabled: '{noteAction.value == null}',
                                 //visible: '{noteAction.value == null}',
                                 value: '{theNote.OFFUPDET}',
                                 //fieldLabel: '{note}'

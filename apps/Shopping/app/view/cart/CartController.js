@@ -1116,6 +1116,7 @@ Ext.define('Shopping.view.cart.CartController', {
                     var store = cmp.getViewModel().getStore('Notes');
                     if (store.getCount() > 0) {
                         cmp.lookupReference('notelist').getSelectionModel().select(0);
+                        cmp.lookupReference('notelist').getView().focusRow(0);
                     } else {
                         cmp.lookupReference('noteType').focus();
                     }

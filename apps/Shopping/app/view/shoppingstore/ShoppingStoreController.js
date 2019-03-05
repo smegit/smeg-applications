@@ -581,19 +581,25 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             searchFormPanel = view.down('form');
 
         if (rec) {
-            productsdv.mask('Loading');
+            productsdv.mask('Loadin');
             me.requestProds(rec.get('CATID'))
                 .then(function (res) {
                     if (res.success) {
                         prodStore.loadData(res.prods, false);
                         //attributes.loadData(res.attributes);
-                        var trimedAttr = res.attributes.map(function (x) { return x.replace(/ *\([^)]*\) */g, "") });
+                        var trimedAttr = res.attributes.map(function (x) {
+                            return {
+                                "Attrib": x.Attrib.replace(/ *\([^)]*\) */g, ""),
+                                "Values": x.Values
+                            }
+                        });
+                        console.info(trimedAttr);
                         vm.set('attributes', trimedAttr);
                         vm.set({
                             bannerText: rec.get('BANTEXT'),
                             hideBannerText: Ext.isEmpty(rec.get('BANTEXT'))
                         });
-
+                        console.info(vm.get('attributes'));
                         // Entering search page
                         if (sm.hasOwnProperty('deselectingDuringSelect') && sm.hasOwnProperty('suspendChange')) {
                             console.info('has selectionStartId');
@@ -608,10 +614,39 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                             searchFormPanel.removeAll();
                             // Config the search form
                             vm.get('attributes').forEach(function (e) {
+                                console.info(e);
+                                var selections = Ext.create('Ext.data.Store', {
+                                    //fields: ['abbr', 'name'],
+                                    data: e.Values.map(function (x) {
+                                        return {
+                                            "name": x
+                                        }
+                                    })
+                                });
                                 searchFormPanel.add({
-                                    xtype: 'textfield',
-                                    name: e,
-                                    fieldLabel: e
+                                    xtype: 'combo',
+                                    name: e.Attrib,
+                                    fieldLabel: e.Attrib,
+                                    store: selections,
+                                    queryMode: 'local',
+                                    displayField: 'name',
+                                    valueField: 'name',
+                                    matchFieldWidth: false,
+                                    //hideTrigger: true,
+                                    plugins: [{
+                                        ptype: 'formfieldclearvalue'
+                                    }],
+                                    // listeners: {
+                                    //     focus: function (cmp, event) {
+                                    //         console.info(cmp);
+                                    //         cmp.expand();
+                                    //         console.info(event);
+                                    //     },
+                                    //     select: function (combo, rec) {
+                                    //         console.info(combo.getTrigger(0));
+                                    //         console.info(combo);
+                                    //     }
+                                    // }
                                 })
                             });
 
@@ -641,6 +676,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         console.info(prodStore);
     },
 
+
+    onSearchComboFocus: function () {
+        console.info('onSearchComboFocus called');
+    },
     // filterCateTreeStore: function (value) {
     //     var me = this,
     //         searchString = value,
@@ -959,14 +998,17 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 delvDate = Ext.Date.parse(formValues.OADELD, 'Y-m-d');
                 todayDate = Ext.Date.parse(Ext.util.Format.date(new Date(), 'Y-m-d'), 'Y-m-d');
                 ninetyDate = new Date();
-                ninetyDate.setDate(ninetyDate.getDate() + 200);
+                ninetyDate.setDate(ninetyDate.getDate() + 400);
 
                 // convert to time since epoch
                 delvDate = delvDate.getTime();
                 todayDate = todayDate.getTime();
                 ninetyDate = ninetyDate.getTime();
 
-                if (delvDate < todayDate || delvDate > ninetyDate || formValues.OADELD === '0001-01-01') {
+                console.info(delvDate);
+                console.info(todayDate);
+
+                if (delvDate < todayDate || formValues.OADELD === '0001-01-01') {
                     console.info('change OADELD value to null');
                     formValues.OADELD = null;
                 }
@@ -1158,7 +1200,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     delvDate = Ext.Date.parse(formValues.OADELD, 'Y-m-d');
                     todayDate = Ext.Date.parse(Ext.util.Format.date(new Date(), 'Y-m-d'), 'Y-m-d');
                     ninetyDate = new Date();
-                    ninetyDate.setDate(ninetyDate.getDate() + 200);
+                    ninetyDate.setDate(ninetyDate.getDate() + 400);
 
                     // convert to time since epoch
                     delvDate = delvDate.getTime();

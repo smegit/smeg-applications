@@ -1,0 +1,32 @@
+.dataview-catalogue-outer {
+    display: flex;
+    flex-wrap: wrap;
+    float: left;
+    margin: 10px;
+    justify-content: space-around;
+}
+
+.dataview-catalogue-inner {
+    position: relative;
+    text-align: center;
+    color: white;
+    width: 370px;
+    align-self: center;
+    img{
+        width: 300px;
+    }
+    .centered {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 20px;
+      }
+    
+}
+
+.segBtn {
+    margin-top: 10px;
+    margin-right: auto;
+    margin-left: auto;
+}

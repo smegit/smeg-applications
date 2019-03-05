@@ -38,7 +38,7 @@ Ext.define('Shopping.view.products.Search', {
             xtype: 'form',
             reference: 'searchForm',
             bodyPadding: 10,
-            maxWidth: 280,
+            //maxWidth: 280,
             //maxHeight: '500',
             flex: 1,
             scrollable: 'y',
