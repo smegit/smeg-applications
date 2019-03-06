@@ -51,7 +51,15 @@ Ext.define('Shopping.view.products.Search', {
                 listeners: {
                     change: 'onSearchFormChange'
                 },
-                enableKeyEvents: true
+                enableKeyEvents: true,
+                triggers: {
+                    clear: {
+                        cls: 'x-form-clear-trigger',
+                        handler: 'onSearchFormClearTriggerClick',
+                        hidden: true,
+                        scope: 'controller'
+                    },
+                },
             },
             items: [
                 // {

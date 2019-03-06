@@ -239,9 +239,19 @@ Ext.define('Shopping.view.products.ProductsController', {
 
     },
 
-    onSearchFormChange: function () {
+    onSearchFormClearTriggerClick: function (combo, trigger) {
+        combo.setValue();
+    },
+    onSearchFormChange: function (field, value) {
         console.log('onSearchFormChange called');
         var me = this;
+        if (value) {
+            field.getTrigger('clear').show();
+            field.getTrigger('picker').hide();
+        } else {
+            field.getTrigger('clear').hide();
+            field.getTrigger('picker').show();
+        }
         me.onSearchRequestClick();
     },
 

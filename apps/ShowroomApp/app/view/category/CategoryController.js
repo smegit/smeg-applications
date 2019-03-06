@@ -11,6 +11,12 @@ Ext.define('ShowroomApp.view.category.CategoryController', {
     initViewModel: function (viewModel) {
         console.log('initViewModel called');
         console.info(viewModel);
+
+
+    },
+
+    requestCat: function () {
+
     },
 
     onToggleKpi: function (button) {
@@ -70,6 +76,9 @@ Ext.define('ShowroomApp.view.category.CategoryController', {
         if (pressed) {
             console.info('toggle called');
             console.info(button);
+
+            // reload category
+
 
         }
     }

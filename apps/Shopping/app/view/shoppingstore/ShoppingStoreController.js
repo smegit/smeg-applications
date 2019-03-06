@@ -593,13 +593,13 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                                 "Values": x.Values
                             }
                         });
-                        console.info(trimedAttr);
+                        //console.info(trimedAttr);
                         vm.set('attributes', trimedAttr);
                         vm.set({
                             bannerText: rec.get('BANTEXT'),
                             hideBannerText: Ext.isEmpty(rec.get('BANTEXT'))
                         });
-                        console.info(vm.get('attributes'));
+                        //console.info(vm.get('attributes'));
                         // Entering search page
                         if (sm.hasOwnProperty('deselectingDuringSelect') && sm.hasOwnProperty('suspendChange')) {
                             console.info('has selectionStartId');
@@ -614,7 +614,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                             searchFormPanel.removeAll();
                             // Config the search form
                             vm.get('attributes').forEach(function (e) {
-                                console.info(e);
+                                //console.info(e);
                                 var selections = Ext.create('Ext.data.Store', {
                                     //fields: ['abbr', 'name'],
                                     data: e.Values.map(function (x) {
@@ -622,6 +622,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                                             "name": x
                                         }
                                     })
+                                    //data: e.Values
                                 });
                                 searchFormPanel.add({
                                     xtype: 'combo',
@@ -632,21 +633,6 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                                     displayField: 'name',
                                     valueField: 'name',
                                     matchFieldWidth: false,
-                                    //hideTrigger: true,
-                                    plugins: [{
-                                        ptype: 'formfieldclearvalue'
-                                    }],
-                                    // listeners: {
-                                    //     focus: function (cmp, event) {
-                                    //         console.info(cmp);
-                                    //         cmp.expand();
-                                    //         console.info(event);
-                                    //     },
-                                    //     select: function (combo, rec) {
-                                    //         console.info(combo.getTrigger(0));
-                                    //         console.info(combo);
-                                    //     }
-                                    // }
                                 })
                             });
 
@@ -662,7 +648,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                         }
 
                     }
-                    console.info(vm.get('attributes'));
+                    //console.info(vm.get('attributes'));
 
                     productsdv.unmask();
                 }, function (res) {
@@ -673,12 +659,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             productsdv.unmask();
         }
 
-        console.info(prodStore);
-    },
-
-
-    onSearchComboFocus: function () {
-        console.info('onSearchComboFocus called');
+        //console.info(prodStore);
     },
     // filterCateTreeStore: function (value) {
     //     var me = this,
