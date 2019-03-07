@@ -12,6 +12,10 @@ Ext.define('Shopping.view.products.Search', {
     },
     //scrollable: 'y',
 
+    listeners: {
+        backToCate: 'onBackToCate'
+    },
+
     items: [
         {
             xtype: 'treepanel',
@@ -31,7 +35,7 @@ Ext.define('Shopping.view.products.Search', {
                 type: 'close',
                 //glyph: 'xf0d5@FontAwesome',
                 tooltip: 'Go back to main catalogue',
-                handler: 'onBackToCata'
+                handler: 'onBackToCate'
             }],
         },
         {
@@ -74,7 +78,7 @@ Ext.define('Shopping.view.products.Search', {
             buttons: [
                 // {
                 //     text: 'Back',
-                //     handler: 'onBackToCata'
+                //     handler: 'onBackToCate'
                 // },
                 // '->',
                 // {

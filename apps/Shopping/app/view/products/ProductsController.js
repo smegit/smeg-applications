@@ -223,8 +223,17 @@ Ext.define('Shopping.view.products.ProductsController', {
 
                 //console.info(rec.data.ATTRIBS[k]);
                 if (found) {
-                    var regex = RegExp(queryDetail[k], 'gi');
-                    if (!regex.test(found[k])) {
+                    var queryString = queryDetail[k].replace(/[|&;$%@"<>()+,]/g, "");
+                    var foundString = found[k].replace(/[|&;$%@"<>()+,]/g, "");
+                    //var regex = RegExp(queryDetail[k], 'gi');
+                    var regex = RegExp(queryString, 'gi');
+                    console.info(queryString);
+                    console.info(foundString);
+                    // if (!regex.test(found[k])) {
+                    //     return false;
+                    // }
+
+                    if (!regex.test(foundString)) {
                         return false;
                     }
                 } else {
@@ -261,8 +270,8 @@ Ext.define('Shopping.view.products.ProductsController', {
         me.onSearchClick();
     },
 
-    onBackToCata: function () {
-        console.log('onBackToCata called');
+    onBackToCate: function () {
+        console.log('onBackToCate called');
         var me = this,
             vm = me.getViewModel(),
             view = me.getView(),

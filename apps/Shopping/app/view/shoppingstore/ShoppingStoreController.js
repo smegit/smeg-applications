@@ -24,7 +24,9 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
         me.control({
             'categories': {
-                selectionchange: me.onSelectionChangeEntities
+                selectionchange: me.onSelectionChangeEntities,
+                itemclick: me.onCateItemClick,
+                select: me.onCateItemSelect
             },
             'products dataview': {
                 itemclick: me.onItemClickProduct,
@@ -160,11 +162,16 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     onClickGoBack: function () {
         console.log('onClickGoBack called');
         var me = this;
-        var vm = me.getViewModel()
+        vm = me.getViewModel(),
+            view = me.getView(),
+            searchView = view.down('search');
         //me.getViewModel().getStore('products').load();
         //vm.set('STKLOC', '123');
 
         me.lookupReference('card').getLayout().setActiveItem(0);
+
+        // hide search tree
+        searchView.fireEvent('backToCate');
     },
 
     onClearSearchSavedOrders: function (cmp) {
@@ -564,6 +571,43 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         return deferred.promise;
     },
 
+    onCateItemClick: function (one, rec) {
+        console.info('onCateItemClick called');
+        console.info(one);
+        console.info(rec);
+        var me = this,
+            view = me.getView(),
+            vm = me.getViewModel(),
+            searchView = view.down('search'),
+            cateTree = view.down('categories'),
+            cateTreeStore = vm.getStore('categories'),
+            filters = cateTreeStore.getFilters(),
+            searchFormPanel = view.down('form');
+
+
+        // config filter function
+        // function searchCat(item) {
+        //     return item.data.CATID == rec.getData().CATID;
+        // }
+        // filters.add(searchCat);
+
+        setTimeout(function () {
+            function searchCat(item) {
+                return item.data.CATID == rec.getData().CATID;
+            }
+            filters.add(searchCat);
+            searchView.show();
+            cateTree.setHidden(true);
+        }, 300);
+        //searchView.show();
+        //cateTree.setHidden(true);
+    },
+
+
+    onCateItemSelect: function () {
+        console.info('onCateItemSelect called');
+    },
+
     onSelectionChangeEntities: function (sm, recs, eOpts) {
         console.log('onSelectionChangeEntities called');
         var me = this,
@@ -581,7 +625,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             searchFormPanel = view.down('form');
 
         if (rec) {
-            productsdv.mask('Loadin');
+            productsdv.mask('Loading');
             me.requestProds(rec.get('CATID'))
                 .then(function (res) {
                     if (res.success) {
@@ -599,53 +643,50 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                             bannerText: rec.get('BANTEXT'),
                             hideBannerText: Ext.isEmpty(rec.get('BANTEXT'))
                         });
-                        //console.info(vm.get('attributes'));
-                        // Entering search page
-                        if (sm.hasOwnProperty('deselectingDuringSelect') && sm.hasOwnProperty('suspendChange')) {
-                            console.info('has selectionStartId');
+                        console.info(sm);
+                        // Config search page
+                        //if (sm.hasOwnProperty('deselectingDuringSelect') && sm.hasOwnProperty('suspendChange')) {
 
-                            searchView.setHidden(false);
-                            cateTree.setHidden(true);
+                        // console.info(cateTreeStore);
+                        // console.info(searchFormPanel);
 
-                            // console.info(cateTreeStore);
-                            // console.info(searchFormPanel);
-
-                            // clear the form panel
-                            searchFormPanel.removeAll();
-                            // Config the search form
-                            vm.get('attributes').forEach(function (e) {
-                                //console.info(e);
-                                var selections = Ext.create('Ext.data.Store', {
-                                    //fields: ['abbr', 'name'],
-                                    data: e.Values.map(function (x) {
-                                        return {
-                                            "name": x
-                                        }
-                                    })
-                                    //data: e.Values
-                                });
-                                searchFormPanel.add({
-                                    xtype: 'combo',
-                                    name: e.Attrib,
-                                    fieldLabel: e.Attrib,
-                                    store: selections,
-                                    queryMode: 'local',
-                                    displayField: 'name',
-                                    valueField: 'name',
-                                    matchFieldWidth: false,
+                        // clear the form panel
+                        searchFormPanel.removeAll();
+                        // Config the search form
+                        vm.get('attributes').forEach(function (e) {
+                            //console.info(e);
+                            var selections = Ext.create('Ext.data.Store', {
+                                //fields: ['abbr', 'name'],
+                                data: e.Values.map(function (x) {
+                                    return {
+                                        "name": x
+                                    }
                                 })
+                                //data: e.Values
                             });
+                            searchFormPanel.add({
+                                xtype: 'combo',
+                                name: e.Attrib,
+                                fieldLabel: e.Attrib,
+                                store: selections,
+                                queryMode: 'local',
+                                displayField: 'name',
+                                valueField: 'name',
+                                matchFieldWidth: false,
+                            })
+                        });
 
-                            searchFormPanel.scrollTo('top', '100', true);
-                            // config filter function
-                            function searchCat(item) {
-                                return item.data.CATID == rec.getData().CATID;
-                            }
-                            filters.add(searchCat);
+                        //searchView.setHidden(true);
+                        //searchFormPanel.scrollTo('top', '100', true);
+                        // config filter function
+                        // function searchCat(item) {
+                        //     return item.data.CATID == rec.getData().CATID;
+                        // }
+                        // filters.add(searchCat);
 
-                        } else {
-                            console.log('not has selectionStartIdx');
-                        }
+                        // } else {
+                        //     console.log('not has selectionStartIdx');
+                        // }
 
                     }
                     //console.info(vm.get('attributes'));
@@ -989,7 +1030,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 console.info(delvDate);
                 console.info(todayDate);
 
-                if (delvDate < todayDate || formValues.OADELD === '0001-01-01') {
+                if (delvDate < todayDate || delvDate > ninetyDate || formValues.OADELD === '0001-01-01') {
                     console.info('change OADELD value to null');
                     formValues.OADELD = null;
                 }
