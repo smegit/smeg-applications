@@ -11,12 +11,62 @@ Ext.define('ShowroomApp.view.category.CategoryController', {
     initViewModel: function (viewModel) {
         console.log('initViewModel called');
         console.info(viewModel);
+        var me = this;
+        //     catStore = viewModel.getStore('categories');
+        // me.requestCat().then(function (res) {
+        //     console.info(res);
+        //     catStore.loadData(res.cats);
+        // }, function (res) {
+        //     console.info(res);
+        // });
+
+        me.loadCat();
 
 
     },
 
-    requestCat: function () {
+    loadCat: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            catStore = vm.getStore('categories');
+        me.requestCat().then(function (res) {
+            console.info(res);
+            if (res.success) {
+                catStore.loadData(res.cats);
+            } else {
+                Ext.Msg.alert('Error', JSON.stringify(res), Ext.emptyFn);
+            }
+        }, function (res) {
+            Ext.Msg.alert('Error', JSON.stringify(res), Ext.emptyFn);
+        });
+    },
 
+    requestCat: function () {
+        console.info('requestCat called');
+        var me = this,
+            deferred = Ext.create('Ext.Deferred'),
+            params = {};
+        params = {
+            pgm: 'EC1010',
+            action: 'getCats',
+            //sid: localStorage.getItem('sid'),
+            //app: 1014,
+            //cat: 'catId'
+        };
+        Ext.Ajax.request({
+            url: '/valence/vvcall.pgm',
+            method: 'GET',
+            params: params,
+            success: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.resolve(response);
+            },
+            failure: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.reject(response);
+            }
+        });
+        return deferred.promise;
     },
 
     onToggleKpi: function (button) {
@@ -39,11 +89,12 @@ Ext.define('ShowroomApp.view.category.CategoryController', {
     },
 
     onItemTap: function (dv, index, target, rec, e) {
+        console.info('onItemTap called');
         var me = this,
             vm = me.getViewModel(),
             cateStore = vm.getStore('categories'),
             view = me.getView();
-        console.log('onItemTap called');
+        //console.log('onItemTap called');
         console.info(dv);
         console.info(index);
         console.info(target);
@@ -55,17 +106,22 @@ Ext.define('ShowroomApp.view.category.CategoryController', {
         if (rec.get('cats')) {
             console.info('has cats');
             cateStore.loadData(rec.get('cats'), false);
-            view.getLayout().setAnimation({
-                type: 'slide',
-                direction: 'right'
-            });
+            // view.getLayout().setAnimation({
+            //     type: 'slide',
+            //     direction: 'right'
+            // });
             console.info(view);
-
-
         } else {
-            console.log('has no cats')
+            console.log('has no cats');
+
+            // if has not sub cats than load the products
+
+
+
         }
     },
+
+
 
     onSegBtnToggle: function (container, button, pressed) {
         //alert("User toggled the '" + button.getText() + "' button: " + (pressed ? 'on' : 'off'));
@@ -73,11 +129,18 @@ Ext.define('ShowroomApp.view.category.CategoryController', {
         // console.info(container);
         // console.info(button);
         // console.info(pressed);
+        var me = this;
         if (pressed) {
             console.info('toggle called');
             console.info(button);
 
             // reload category
+            if (button.id == 'byCat') {
+                me.loadCat();
+
+            } else if (button.id = 'byDesign') {
+                me.loadCat();
+            }
 
 
         }

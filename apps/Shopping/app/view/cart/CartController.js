@@ -1754,6 +1754,7 @@ Ext.define('Shopping.view.cart.CartController', {
             layout: 'fit',
             reference: 'smegwindow',
             defaultFocus: '[name=OAPAYM]',
+            onEsc: Ext.emptyFn,
             items: [{
                 xtype: 'cartpayment',
                 scrollable: 'y',
@@ -1811,6 +1812,8 @@ Ext.define('Shopping.view.cart.CartController', {
             wdw, resp, params, payAmtCnt, keepGoing, maxpay;
 
         invalidForm = !form.isValid();
+        //formPanel.up('window').disable();
+        //formPanel.disable();
 
         if (!invalidForm) {
             if (Ext.isEmpty(formValues.OAPAYM)) {
@@ -1830,7 +1833,8 @@ Ext.define('Shopping.view.cart.CartController', {
             }
             // add validation for credit card
             //
-            if (formValues.OAPAYM == 'CC') {
+            //if (formValues.OAPAYM == 'CC') {
+            if (formValues.OAPAYM == 'INT') {
                 if (Ext.isEmpty(formValues.CCNAME)) {
                     formPanel.down('[name=CCNAME]').markInvalid(blankStr);
                     // cnx update
@@ -1879,10 +1883,12 @@ Ext.define('Shopping.view.cart.CartController', {
                 }
                 return;
             }
-            Valence.common.util.Helper.loadMask({
-                renderTo: paymentWin.el,
-                text: 'Confirming Payment'
-            });
+            // formPanel.up('window').disable();
+            formPanel.up('window').mask('Confirming Payment(this could take 2 minutes)');
+            // Valence.common.util.Helper.loadMask({
+            //     renderTo: paymentWin.el,
+            //     text: 'Confirming Payment'
+            // });
 
             params = {
                 pgm: 'EC1050',
@@ -1896,6 +1902,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 timeout: 120000,
                 params: params,
                 success: function (response) {
+                    formPanel.up('window').enable();
                     resp = Ext.decode(response.responseText);
                     if (resp.success) {
                         wdw = formPanel.up('window');
@@ -1965,18 +1972,21 @@ Ext.define('Shopping.view.cart.CartController', {
                                     setTimeout(function () {
                                         me.lookupReference('tacchbx').setValue('on');
                                     }, 200);
-                                    Valence.common.util.Helper.destroyLoadMask(paymentWin.el);
+                                    formPanel.up('window').unmask();
+                                    //Valence.common.util.Helper.destroyLoadMask(paymentWin.el);
                                 },
                                 failure: me.showError
                             });
                         }
                     } else {
                         me.showError(resp);
-                        Valence.common.util.Helper.destroyLoadMask(paymentWin.el);
+                        formPanel.up('window').unmask();
+                        //Valence.common.util.Helper.destroyLoadMask(paymentWin.el);
                     }
                 },
                 failure: function (response) {
-                    Valence.common.util.Helper.destroyLoadMask(paymentWin.el);
+                    //Valence.common.util.Helper.destroyLoadMask(paymentWin.el);
+                    formPanel.up('window').unmask();
                     me.showError(response);
                 }
             });

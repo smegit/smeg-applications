@@ -106,7 +106,8 @@ Ext.define('Shopping.view.cart.PaymentForm', {
                                 approvalNumber.reset();
                             }
 
-                            if (value === 'CC') {
+                            //if (value === 'CC') {
+                            if (value === 'INT') {
                                 if (!ccInfo.isVisible()) {
                                     me.fireEvent('showCreditInfo', me);
                                     ccInfo.show();

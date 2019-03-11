@@ -15,9 +15,10 @@ Ext.define('ShowroomApp.view.category.CategoryModel', {
             listeners: {
                 // load: 'onMetaDataLoad'
             },
-            // data: [{
-            //     CATID: '1', CATDESC: '111'
-            // }, { CATID: '2', CATDESC: '222' }]
+        },
+        products: {
+            model: 'ShowroomApp.model.Product',
+            autoLoad: false
         }
     }
 });

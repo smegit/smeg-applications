@@ -44,12 +44,11 @@ Ext.define('Shopping.view.products.Categories', {
     },
 
     // Add Global Search Button to the title
-    tools: [{
-        type: 'search',
-        //glyph: 'xf002@FontAwesome',
-        tooltip: 'Search all products',
-        handler: 'onSearchAll'
-    }],
+    // tools: [{
+    //     type: 'search',
+    //     tooltip: 'Search all products',
+    //     handler: 'onSearchAll'
+    // }],
     columns: [
         {
             xtype: 'treecolumn',
@@ -65,19 +64,7 @@ Ext.define('Shopping.view.products.Categories', {
         // {
         //     xtype: 'actioncolumn',
         //     glyph: 'xf002@FontAwesome',
-        //     //type: 'search',
         //     width: 35,
-        //     getTip: function (value, meta, rec, rowIdx, colIdx, store, view) {
-        //         // Go up from the view to the owning TreePanel
-        //         // console.info(value);
-        //         // console.info(meta);
-        //         // console.info(rec);
-        //         var desc = rec.getData().CATDESC;
-        //         console.info(desc);
-        //         var panel = view.up('');
-        //         return 'Advanced Search In ' + desc;
-        //     },
-        //     handler: 'onSearchClick'
         // }
     ]
 });

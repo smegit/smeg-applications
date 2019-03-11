@@ -10,7 +10,9 @@ Ext.define('ShowroomApp.view.category.Category', {
         'ShowroomApp.view.category.CategoryController',
         'ShowroomApp.view.category.CategoryModel',
         //'ShowroomApp.view.category.List',
-        'Ext.SegmentedButton'
+        'Ext.SegmentedButton',
+        'Ext.fx.Animation',
+        //'Ext.ux.DataView.Animated '
 
     ],
     scrollable: 'y',
@@ -70,7 +72,12 @@ Ext.define('ShowroomApp.view.category.Category', {
             ui: 'default',
             cls: 'dataview-catalogue-outer',
             reference: 'dataview',
-            //showAnimation: 'fade',
+            // showAnimation: {
+            //     type: 'flip',
+            // },
+            plugin: [
+                'ux-animated-dataview'
+            ],
             //flex: 1,
             itemTpl: '<div class="dataview-catalogue-inner">' +
                 '<img draggable="false" src="./resources/images/DSN.jpg" />' +
@@ -97,5 +104,17 @@ Ext.define('ShowroomApp.view.category.Category', {
         //         text: 'CatDesc', dataIndex: 'CATDESC', width: 200
         //     }]
         // }
+        {
+            xtype: 'dataview',
+            inline: true,
+            ui: 'default',
+            cls: 'dataview-products-outer',
+            reference: 'proddataview',
+            itemTpl: '',
+            bind: {
+                store: '{products}'
+            },
+
+        }
     ]
 });
