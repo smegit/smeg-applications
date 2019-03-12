@@ -1884,7 +1884,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 return;
             }
             // formPanel.up('window').disable();
-            formPanel.up('window').mask('Confirming Payment(this could take 2 minutes)');
+            formPanel.up('window').mask('Confirming Payment - this could take 2 minutes.');
             // Valence.common.util.Helper.loadMask({
             //     renderTo: paymentWin.el,
             //     text: 'Confirming Payment'

@@ -54,7 +54,8 @@ Ext.define('ShowroomApp.view.category.Category', {
                 // },
                 items: [{
                     text: 'By Category',
-                    id: 'byCat'
+                    id: 'byCat',
+                    pressed: true
                 }, {
                     text: 'By Design',
                     id: 'byDesgin'
@@ -71,13 +72,10 @@ Ext.define('ShowroomApp.view.category.Category', {
             inline: true,
             ui: 'default',
             cls: 'dataview-catalogue-outer',
-            reference: 'dataview',
-            // showAnimation: {
-            //     type: 'flip',
-            // },
-            plugin: [
-                'ux-animated-dataview'
-            ],
+            reference: 'cateDataview',
+            showAnimation: {
+                type: 'fade',
+            },
             //flex: 1,
             itemTpl: '<div class="dataview-catalogue-inner">' +
                 '<img draggable="false" src="./resources/images/DSN.jpg" />' +
@@ -103,14 +101,37 @@ Ext.define('ShowroomApp.view.category.Category', {
         //     {
         //         text: 'CatDesc', dataIndex: 'CATDESC', width: 200
         //     }]
-        // }
+        // },
+        {
+            xtype: 'dataview',
+            inline: true,
+            ui: 'default',
+            cls: 'dataview-catalogue-outer',
+            reference: 'designDataview',
+            showAnimation: {
+                type: 'fade',
+            },
+            itemTpl: '<div class="dataview-catalogue-inner">' +
+                '<img draggable="false" src="./resources/images/portofino.jpg" />' +
+                '<div class="centered">{name}</div>' +
+                '</div>',
+            hidden: true,
+            bind: {
+                store: '{designs}'
+            },
+
+        },
         {
             xtype: 'dataview',
             inline: true,
             ui: 'default',
             cls: 'dataview-products-outer',
-            reference: 'proddataview',
-            itemTpl: '',
+            reference: 'prodDataview',
+            itemTpl: '<div class="dataview-catalogue-inner">' +
+                '<img draggable="false" src={SMALLPIC} />' +
+                '<div class="centered">{MODEL}</div>' +
+                '</div>',
+            hidden: true,
             bind: {
                 store: '{products}'
             },
