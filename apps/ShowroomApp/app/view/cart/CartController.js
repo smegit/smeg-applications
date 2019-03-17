@@ -1,6 +1,6 @@
-Ext.define('ShowroomApp.view.product.ProductController', {
+Ext.define('ShowroomApp.view.cart.CartController', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.product',
+    alias: 'controller.cart',
 
     init: function (view) {
         // We provide the updater for the activeState config of our View.

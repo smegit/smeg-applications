@@ -5,6 +5,12 @@ Ext.define('ShowroomApp.model.Product', {
 
     fields: [
         'MODEL',
+        {
+            name: 'PRICE',
+            convert: function (v) {
+                return Ext.util.Format.usMoney(v);
+            }
+        }
     ],
     reader: {
         type: 'json'

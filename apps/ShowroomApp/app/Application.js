@@ -35,7 +35,7 @@ Ext.define('ShowroomApp.Application', {
             .then(function (res) {
                 console.info(res);
                 if (res.success) {
-                    Ext.Msg.alert('Success', JSON.stringify(res), Ext.emptyFn);
+                    //Ext.Msg.alert('Success', JSON.stringify(res), Ext.emptyFn);
 
                 } else {
                     Ext.Msg.alert('Error1', JSON.stringify(res), Ext.emptyFn);

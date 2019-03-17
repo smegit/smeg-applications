@@ -7,8 +7,13 @@ Ext.define('ShowroomApp.view.category.CategoryModel', {
         // 'ExecDashboard.model.FullProfitloss'
         'ShowroomApp.model.Design',
         'ShowroomApp.model.Product',
-        'ShowroomApp.model.Category'
+        'ShowroomApp.model.Category',
     ],
+    data: {
+        currentCat: {},
+        currentCatParent: {},
+        prodDetail: null
+    },
 
     stores: {
         categories: {

@@ -16,10 +16,10 @@ Ext.define('ShowroomApp.view.main.Main', {
         'ShowroomApp.view.main.MainController',
         'ShowroomApp.view.main.MainModel',
         'ShowroomApp.view.main.List',
-        'ShowroomApp.view.product.Product',
-        'ShowroomApp.view.product.ProductController',
-        'ShowroomApp.view.product.ProductModel',
-        'ShowroomApp.view.category.Category'
+        'ShowroomApp.view.cart.Cart',
+        'ShowroomApp.view.cart.CartController',
+        'ShowroomApp.view.cart.CartModel',
+        'ShowroomApp.view.category.Category',
     ],
 
     controller: 'main',
@@ -48,13 +48,13 @@ Ext.define('ShowroomApp.view.main.Main', {
                 xtype: 'category'
             }]
         }, {
-            title: 'Products',
+            title: 'Cart',
             iconCls: 'x-fa fa-user',
             // bind: {
             //     html: '{loremIpsum}'
             // }
             items: [{
-                xtype: 'product'
+                xtype: 'cart'
             }]
         }, {
             title: 'Groups',

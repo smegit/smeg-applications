@@ -1,4 +1,4 @@
-Ext.define('ShowroomApp.model.Category', {
+Ext.define('ShowroomApp.model.SelectedProd', {
     extend: 'Ext.data.Model',
     //fields : ['VVRRN','BECATID','BECDSC','VVCATSEQ','BANTEXT'],
     //fields: [{ name: 'text', type: 'string', mapping: 'CATDESC' }, 'CATID', 'CATDSC', 'BANTEXT', 'showProds', { name: 'expanded', type: 'boolean', defaultValue: true, persist: false }],
