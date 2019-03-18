@@ -73,9 +73,11 @@ Ext.define('ShowroomApp.view.cart.CartController', {
                     var findRecord = selectedProdsStore.findRecord('MODEL', record.getData().MODEL);
                     selectedProdsStore.remove(findRecord);
 
+                    var prodDv = Ext.ComponentQuery.query('#prodDv');
 
                     // Change product dataview which has been deleted
-                    console.info(Ext.ComponentQuery.query('#prodDv'));
+                    console.info(prodDv);
+                    //prodDv.getViewItems();
 
                 }
             }
@@ -87,6 +89,22 @@ Ext.define('ShowroomApp.view.cart.CartController', {
 
 
     },
+
+    onSave: function (one, two, three) {
+        console.info('onSave called');
+        console.info(one);
+        console.info(two);
+        console.info(three);
+        var me = this,
+            vm = me.getViewModel(),
+            custInfoForm = me.lookupReference('custInfoFormRef'),
+            custInfoValues = custInfoForm.getValues(),
+            selectedProdsStore = vm.getStore('selectedProds');
+
+
+        console.info(custInfoForm.getValues());
+        //console.info(selectedProdsStore.)
+    }
 
     // onToggleKpi: function (button) {
     //     if (button.pressed) {

@@ -12,7 +12,8 @@ Ext.define('ShowroomApp.view.category.CategoryModel', {
     data: {
         currentCat: {},
         currentCatParent: {},
-        prodDetail: null
+        prodDetail: null,
+        selections: []
     },
 
     stores: {

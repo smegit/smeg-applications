@@ -21,6 +21,8 @@ Ext.define('ShowroomApp.view.cart.Cart', {
         'Ext.field.Radio',
         'Ext.field.*',
         'Ext.form.Panel',
+        //'Ext.grid.plugin.CellEditing',
+        'Ext.grid.plugin.Editable',
 
     ],
 
@@ -40,6 +42,9 @@ Ext.define('ShowroomApp.view.cart.Cart', {
         {
             xtype: 'grid',
             title: "You've selected",
+            plugins: [{
+                type: 'grideditable'
+            }],
             bind: {
                 store: '{selectedProds}',
             },
@@ -60,7 +65,11 @@ Ext.define('ShowroomApp.view.cart.Cart', {
             {
                 text: 'Quanty',
                 width: 75,
-                dataIndex: 'QUANTY'
+                dataIndex: 'QUANTY',
+                editable: true,
+                editor: {
+                    xtype: 'numberfield'
+                },
             }, {
                 width: 70,
 
@@ -81,7 +90,7 @@ Ext.define('ShowroomApp.view.cart.Cart', {
             //title: 'Customer Info',
             id: 'custInfoForm',
             shadow: true,
-
+            reference: 'custInfoFormRef',
             items: [
                 {
                     xtype: 'fieldset',
@@ -96,7 +105,16 @@ Ext.define('ShowroomApp.view.cart.Cart', {
                         name: 'referringAgent',
                         label: 'Referring Agent',
                         placeHolder: 'Harvey Norman',
-                        clearIcon: true
+                        clearIcon: true,
+                        listeners: {
+                            focus: function (comp, e, eopts) {
+                                var ost = comp.element.dom.offsetTop;
+                                console.info(ost);
+                                this.getParent().getParent().getScrollable().scrollTo(0, ost)
+                                //console.info();
+                                //this.getParent().getParent().getScrollable().getScroller().scrollTo(0, ost);
+                            }
+                        }
                     },
                     {
                         xtype: 'textfield',
@@ -139,23 +157,7 @@ Ext.define('ShowroomApp.view.cart.Cart', {
                         {
                             text: 'Save',
                             ui: 'action',
-                            scope: this,
-                            // handler: function (btn) {
-                            //     var fieldset1 = Ext.getCmp('fieldset1'),
-                            //         fieldset2 = Ext.getCmp('fieldset2');
-
-                            //     if (btn.hasDisabled) {
-                            //         fieldset1.enable();
-                            //         fieldset2.enable();
-                            //         btn.hasDisabled = false;
-                            //         btn.setText('Disable fields');
-                            //     } else {
-                            //         fieldset1.disable();
-                            //         fieldset2.disable();
-                            //         btn.hasDisabled = true;
-                            //         btn.setText('Enable fields');
-                            //     }
-                            // }
+                            handler: 'onSave'
                         },
                         {
                             text: 'Reset',

@@ -164,8 +164,9 @@ Ext.define('ShowroomApp.view.category.Category', {
             ui: 'default',
             cls: 'dataview-products-outer',
             reference: 'prodDataview',
+
             itemId: 'prodDv',
-            itemSelector: 'div.dv-prod-image',
+            itemSelector: 'div.dv-prod-card',
             itemTpl: '<div class="dv-prod-card">' +
                 '<div class="dv-prod-image">' +
                 '<img draggable="true"  src={SMALLPIC} />' +
@@ -177,12 +178,21 @@ Ext.define('ShowroomApp.view.category.Category', {
                 '</div>',
 
             //hidden: true,
+            selectionModel: {
+                mode: 'MULTI'
+            },
             listeners: {
                 itemtap: 'onProdItemTap',
+                selectionchange: function (dv, nodes) {
+                    console.info('selectionchange called');
+                }
             },
             bind: {
-                store: '{products}'
+                store: '{products}',
+                //selection: '{selections}'
             },
+            //selection: '{selections}'
+
 
         }, {
             id: 'card-2',
