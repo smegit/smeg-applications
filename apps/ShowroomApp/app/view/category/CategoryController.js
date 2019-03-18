@@ -28,6 +28,7 @@ Ext.define('ShowroomApp.view.category.CategoryController', {
         //     console.info(res);
         // });
 
+        //me.loadCat('CAT');
         me.loadCat();
 
 
@@ -40,15 +41,31 @@ Ext.define('ShowroomApp.view.category.CategoryController', {
         console.info(rec);
         console.info(e);
         var me = this,
-            prodModel = rec.get('MODEL');
+            prodModel = rec.get('MODEL'),
+            vm = me.getViewModel(),
+            selectedProdsStore = vm.getStore('selectedProds');
         console.info(prodModel);
         if (e.target.localName === 'button') {
             if (e.target.innerText == 'Add to Cart') {
                 e.target.innerText = 'Added'
                 e.target.className = 'dv-prod-btn-selected';
+
+                // Add product to the selection store
+                console.info(selectedProdsStore);
+                console.info(vm);
+
+                // fire event 
+                console.info(Ext.ComponentQuery.query('cart')[0].fireEvent('addToCart', rec));
+
+
             } else {
                 e.target.innerText = 'Add to Cart';
                 e.target.className = 'dv-prod-btn-deSelected';
+
+                // Remove product from the selection store
+                console.info(rec);
+                console.info(Ext.ComponentQuery.query('cart')[0].fireEvent('removeFromCart', rec))
+
             }
             //Ext.Msg.alert("You clicked a button");
         } else {
@@ -173,7 +190,7 @@ Ext.define('ShowroomApp.view.category.CategoryController', {
             action: 'getCats',
             //sid: localStorage.getItem('sid'),
             //app: 1014,
-            //CATID: 'CAT'
+            CATID: catId
         };
         Ext.Ajax.request({
             url: '/valence/vvcall.pgm',

@@ -4,6 +4,7 @@
 Ext.define('ShowroomApp.view.cart.Cart', {
     extend: 'Ext.panel.Panel',
     xtype: 'cart',
+    reference: 'cartRef',
 
     requires: [
         //'ShowroomApp.store.Personnel'
@@ -29,6 +30,11 @@ Ext.define('ShowroomApp.view.cart.Cart', {
 
     scrollable: 'y',
 
+    listeners: {
+        addToCart: 'onAddToCart',
+        removeFromCart: 'onRemoveFromCart'
+    },
+
     //height: '200',
     items: [
         {
@@ -37,6 +43,7 @@ Ext.define('ShowroomApp.view.cart.Cart', {
             bind: {
                 store: '{selectedProds}',
             },
+            emptyText: 'No products being selected yet',
             //flex: 1,
             height: 300,
             columns: [{
@@ -47,7 +54,7 @@ Ext.define('ShowroomApp.view.cart.Cart', {
             },
             {
                 text: 'Unit Price',
-                width: 75,
+                width: 120,
                 dataIndex: 'PRICE'
             },
             {
@@ -58,16 +65,13 @@ Ext.define('ShowroomApp.view.cart.Cart', {
                 width: 70,
 
                 cell: {
-                    tools: {
-                        approve: {
-                            iconCls: 'x-fa fa-check green',
-                            handler: 'onApprove'
-                        },
-                        decline: {
-                            iconCls: 'x-fa fa-ban red',
-                            handler: 'onDecline',
-                            weight: 1
-                        }
+                    xtype: 'widgetcell',
+                    widget: {
+                        xtype: 'button',
+                        iconCls: 'x-fa fa-ban',
+                        ui: 'round',
+                        bind: '{record}',
+                        handler: 'onDeleteRecord'
                     }
                 }
             }]
@@ -82,7 +86,7 @@ Ext.define('ShowroomApp.view.cart.Cart', {
                 {
                     xtype: 'fieldset',
                     id: 'fieldset1',
-                    title: 'Personal Info',
+                    title: 'Customer Info',
                     instructions: 'Please enter the information above.',
                     defaults: {
                         labelWidth: '35%'
