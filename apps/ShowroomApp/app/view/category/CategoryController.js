@@ -28,8 +28,8 @@ Ext.define('ShowroomApp.view.category.CategoryController', {
         //     console.info(res);
         // });
 
-        //me.loadCat('CAT');
-        me.loadCat();
+        //me.loadCat('***');
+        me.loadCat('CAT');
 
 
     },
@@ -38,29 +38,41 @@ Ext.define('ShowroomApp.view.category.CategoryController', {
         console.info(dv);
         console.info(index);
         console.info(target);
-        console.info(rec);
+        console.info(rec.getData().MODEL);
         console.info(e);
         var me = this,
             prodModel = rec.get('MODEL'),
             vm = me.getViewModel(),
-            selectedProdsStore = vm.getStore('selectedProds');
+            cartVm = Ext.ComponentQuery.query('cart')[0].getViewModel(),
+            selectedProdsStore = cartVm.getStore('selectedProds'),
+            prodStore = vm.getStore('products'),
+            findRecordInProds = prodStore.findRecord('MODEL', prodModel, 0, false, false, true);
         console.info(prodModel);
         if (e.target.localName === 'button') {
             if (e.target.innerText == 'Add to Cart') {
-                e.target.innerText = 'Added'
-                e.target.className = 'dv-prod-btn-selected';
+                // e.target.innerText = 'Added'
+                // e.target.className = 'dv-prod-btn-selected';
+
+                console.info(cartVm);
+                if (findRecordInProds) {
+                    findRecordInProds.set('addBtnClass', 'dv-prod-btn-selected');
+                    findRecordInProds.set('addBtnText', 'Added');
+                }
+                // console.info(prodStore);
+                console.info(findRecordInProds);
 
                 // Add product to the selection store
-                console.info(selectedProdsStore);
-                console.info(vm);
-
                 // fire event 
-                console.info(Ext.ComponentQuery.query('cart')[0].fireEvent('addToCart', rec));
-
+                Ext.ComponentQuery.query('cart')[0].fireEvent('addToCart', rec)
+                vm.notify();
 
             } else {
-                e.target.innerText = 'Add to Cart';
-                e.target.className = 'dv-prod-btn-deSelected';
+                // e.target.innerText = 'Add to Cart';
+                // e.target.className = 'dv-prod-btn-deSelected';
+                if (findRecordInProds) {
+                    findRecordInProds.set('addBtnClass', 'dv-prod-btn-deSelected');
+                    findRecordInProds.set('addBtnText', 'Add to Cart');
+                }
 
                 // Remove product from the selection store
                 console.info(rec);
@@ -116,18 +128,50 @@ Ext.define('ShowroomApp.view.category.CategoryController', {
     },
 
 
+    onBeforeShow: function () {
+        console.info('onBeforeShow');
+    },
+
     onAddToCart: function () {
         console.info('onAddToCart called');
+
     },
 
     loadProds: function (id) {
+        console.info('loadProds called');
         var me = this,
             vm = me.getViewModel(),
-            prodStore = vm.getStore('products');
+            prodStore = vm.getStore('products'),
+            prodArray = [],
+            cartVm = Ext.ComponentQuery.query('cart')[0].getViewModel(),
+            selectedProdsStore = cartVm.getStore('selectedProds');
+        console.info(cartVm);
+        console.info(selectedProdsStore);
         me.requestProdByCatId(id).then(function (res) {
             console.info(res);
             if (res.success) {
-                prodStore.loadData(res.prods);
+                //load AddBtn text / class
+                res.prods.forEach(function (e) {
+                    if (selectedProdsStore.findRecord('MODEL', e.MODEL, 0, false, false, true)) {
+                        console.info(e);
+                        console.info(selectedProdsStore.findRecord('MODEL', e.MODEL, 0, false, false, true));
+                        Ext.apply(e, {
+                            addBtnClass: 'dv-prod-btn-selected',
+                            addBtnText: 'Added'
+                        });
+                    } else {
+                        Ext.apply(e, {
+                            addBtnClass: 'dv-prod-btn-deSelected',
+                            addBtnText: 'Add to Cart'
+                        });
+                    }
+
+                    console.info(e);
+                    prodArray.push(e);
+                });
+                // prodStore.loadData(res.prods);
+                prodStore.loadData(prodArray);
+                console.info(prodStore);
             } else {
                 Ext.Msg.alert('Failed to load products', JSON.stringify(res), Ext.emptyFn);
             }
@@ -298,12 +342,12 @@ Ext.define('ShowroomApp.view.category.CategoryController', {
             //catDataview.hide();
             //designDataview.hide();
             //prodDataview.show();
-            console.info(view.getActiveItem().id);
+            //console.info(view.getActiveItem().id);
             //view.setActiveItem(1);
             //console.info(view.getActiveItem());
 
             me.doCardNavigation(1);
-            console.info(view.getActiveItem().id);
+            //console.info(view.getActiveItem().id);
 
 
 
@@ -337,19 +381,23 @@ Ext.define('ShowroomApp.view.category.CategoryController', {
     },
 
     doCardNavigation: function (incr) {
+        console.info('doCardNavigation called');
         var me = this,
             view = me.getView(),
             currentIdx = view.getActiveItem().id.split('card-')[1],
             next = parseInt(currentIdx, 10) + incr;
-        //console.info(view.getActiveItem());
+        console.info(view.getActiveItem());
         console.info(currentIdx);
         console.info(next);
         console.info(view);
         view.setActiveItem(next);
-        console.info(view.getActiveItem().id);
+        //console.info(view.getActiveItem().id);
 
         //layout.setActiveItem(1);
     },
+
+
+    // Mark selected products
 
 
     onSegBtnToggle: function (container, button, pressed) {

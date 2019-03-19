@@ -2,7 +2,7 @@
  * This view is an example list of people.
  */
 Ext.define('ShowroomApp.view.cart.Cart', {
-    extend: 'Ext.panel.Panel',
+    extend: 'Ext.Container',
     xtype: 'cart',
     reference: 'cartRef',
 
@@ -27,10 +27,12 @@ Ext.define('ShowroomApp.view.cart.Cart', {
     ],
 
     //title: 'Cart',
+    //scrollable: true,
     controller: 'cart',
     viewModel: 'cart',
+    //height: 900,
+    //autoScroll: true,
 
-    scrollable: 'y',
 
     listeners: {
         addToCart: 'onAddToCart',
@@ -91,6 +93,8 @@ Ext.define('ShowroomApp.view.cart.Cart', {
             id: 'custInfoForm',
             shadow: true,
             reference: 'custInfoFormRef',
+            //height: 300,
+            //layout: 'fit',
             items: [
                 {
                     xtype: 'fieldset',
@@ -108,9 +112,10 @@ Ext.define('ShowroomApp.view.cart.Cart', {
                         clearIcon: true,
                         listeners: {
                             focus: function (comp, e, eopts) {
+                                console.info('focus called');
                                 var ost = comp.element.dom.offsetTop;
                                 console.info(ost);
-                                this.getParent().getParent().getScrollable().scrollTo(0, ost)
+                                this.getParent().getParent().getScrollable().scrollTo(0, 0)
                                 //console.info();
                                 //this.getParent().getParent().getScrollable().getScroller().scrollTo(0, ost);
                             }
@@ -170,7 +175,7 @@ Ext.define('ShowroomApp.view.cart.Cart', {
                 }]
 
 
-        }
+        },
     ]
 
 

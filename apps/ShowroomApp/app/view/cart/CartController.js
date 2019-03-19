@@ -33,6 +33,7 @@ Ext.define('ShowroomApp.view.cart.CartController', {
 
 
 
+
     },
 
     onRemoveFromCart: function (content) {
@@ -41,7 +42,7 @@ Ext.define('ShowroomApp.view.cart.CartController', {
             vm = me.getViewModel(),
             selectedProdsStore = vm.getStore('selectedProds'),
             rec = content.getData(),
-            findRecord = selectedProdsStore.findRecord('MODEL', rec.MODEL);
+            findRecord = selectedProdsStore.findRecord('MODEL', rec.MODEL, 0, false, false, true);
 
         // looking up rec in store
         var idx = selectedProdsStore.find('MODEL', rec.MODEL);
@@ -70,13 +71,25 @@ Ext.define('ShowroomApp.view.cart.CartController', {
             console.info(res);
             if (res == 'yes') {
                 if (record) {
-                    var findRecord = selectedProdsStore.findRecord('MODEL', record.getData().MODEL);
+                    var findRecord = selectedProdsStore.findRecord('MODEL', record.getData().MODEL, 0, false, false, true);
                     selectedProdsStore.remove(findRecord);
 
                     var prodDv = Ext.ComponentQuery.query('#prodDv');
 
                     // Change product dataview which has been deleted
                     console.info(prodDv);
+
+                    var catView = Ext.ComponentQuery.query('category')[0],
+                        catVm = catView.getViewModel(),
+                        prodStore = catVm.getStore('products'),
+                        findRecordInProds = prodStore.findRecord('MODEL', record.getData().MODEL, 0, false, false, true);
+                    if (findRecordInProds) {
+                        findRecordInProds.set('addBtnClass', 'dv-prod-btn-deSelected');
+                        findRecordInProds.set('addBtnText', 'Add to Cart');
+                    }
+                    console.info(catView);
+                    console.info(catVm);
+                    console.info(prodStore);
                     //prodDv.getViewItems();
 
                 }
@@ -89,6 +102,11 @@ Ext.define('ShowroomApp.view.cart.CartController', {
 
 
     },
+
+    // Mark selected products
+
+
+
 
     onSave: function (one, two, three) {
         console.info('onSave called');

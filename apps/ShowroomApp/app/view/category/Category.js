@@ -43,7 +43,8 @@ Ext.define('ShowroomApp.view.category.Category', {
         handler: 'onGoBack',
         //hidden: true,
     }],
-    scrollable: 'y',
+    // scrollable: 'y',
+    // autoScroll: true,
     controller: 'category',
 
     config: {
@@ -66,80 +67,100 @@ Ext.define('ShowroomApp.view.category.Category', {
 
     //layout: 'center',
 
+
+
+    // {
+
+    //     xtype: 'dataview',
+    //     inline: true,
+    //     ui: 'default',
+    //     //cls: 'dataview-catalogue-outer',
+    //     autoScroll: true,
+    //     reference: 'catDataview',
+    //     showAnimation: {
+    //         type: 'fade',
+    //     },
+    //     //flex: 1,
+    //     itemTpl: '<div class="dataview-catalogue-inner">' +
+    //         '<img draggable="false" src={CATICON} />' +
+    //         '<div class="centered">{CATDESC}</div>' +
+    //         '</div>',
+    //     bind: {
+    //         store: '{categories}'
+    //     },
+    //     listeners: {
+    //         itemtap: 'onItemTap'
+    //     }
+    // },
     items: [
         {
             id: 'card-0',
-            xtype: 'container',
-            //height: 100,
-            //centered: true,
-            //border: true,
-            cls: 'segBtn',
-            //height: 50,
-            //margin: '10',
-            layout: {
-                type: 'vbox',
-                align: 'center'
+
+
+            xtype: 'dataview',
+            inline: true,
+            ui: 'default',
+            cls: 'dataview-catalogue-outer',
+            autoScroll: true,
+            reference: 'catDataview',
+            showAnimation: {
+                type: 'fade',
             },
-            items: [
-                //     {
-                //     xtype: 'segmentedbutton',
-                //     // listeners: {
-                //     //     click: 'onSegBtnClick',
-                //     // },
-                //     items: [{
-                //         text: 'By Category',
-                //         id: 'byCat',
-                //         pressed: true
-                //     }, {
-                //         text: 'By Design',
-                //         id: 'byDesgin'
-                //     }],
-                //     listeners: {
-                //         toggle: 'onSegBtnToggle'
-                //     }
-                // },
-                {
+            //flex: 1,
+            itemTpl: '<div class="dataview-catalogue-inner">' +
+                '<img draggable="false" src={CATICON} />' +
+                '<div class="centered">{CATDESC}</div>' +
+                '</div>',
+            bind: {
+                store: '{categories}'
+            },
+            listeners: {
+                itemtap: 'onItemTap'
+            }
 
-                    xtype: 'dataview',
-                    inline: true,
-                    ui: 'default',
-                    cls: 'dataview-catalogue-outer',
-                    reference: 'catDataview',
-                    showAnimation: {
-                        type: 'fade',
-                    },
-                    //flex: 1,
-                    itemTpl: '<div class="dataview-catalogue-inner">' +
-                        '<img draggable="false" src="./resources/images/DSN.jpg" />' +
-                        '<div class="centered">{CATDESC}</div>' +
-                        '</div>',
-                    bind: {
-                        store: '{categories}'
-                    },
-                    listeners: {
-                        itemtap: 'onItemTap'
-                    }
-                },
-                {
-                    xtype: 'dataview',
-                    inline: true,
-                    ui: 'default',
-                    cls: 'dataview-catalogue-outer',
-                    reference: 'designDataview',
-                    showAnimation: {
-                        type: 'fade',
-                    },
-                    itemTpl: '<div class="dataview-catalogue-inner">' +
-                        '<img draggable="false" src="./resources/images/portofino.jpg" />' +
-                        '<div class="centered">{name}</div>' +
-                        '</div>',
-                    hidden: true,
-                    bind: {
-                        store: '{designs}'
-                    },
 
-                },]
         },
+
+        //items: [
+        //     {
+        //     xtype: 'segmentedbutton',
+        //     // listeners: {
+        //     //     click: 'onSegBtnClick',
+        //     // },
+        //     items: [{
+        //         text: 'By Category',
+        //         id: 'byCat',
+        //         pressed: true
+        //     }, {
+        //         text: 'By Design',
+        //         id: 'byDesgin'
+        //     }],
+        //     listeners: {
+        //         toggle: 'onSegBtnToggle'
+        //     }
+        // },
+
+        // {
+        //     xtype: 'dataview',
+        //     inline: true,
+        //     ui: 'default',
+        //     cls: 'dataview-catalogue-outer',
+        //     reference: 'designDataview',
+        //     showAnimation: {
+        //         type: 'fade',
+        //     },
+        //     itemTpl: '<div class="dataview-catalogue-inner">' +
+        //         '<img draggable="false" src="./resources/images/portofino.jpg" />' +
+        //         '<div class="centered">{name}</div>' +
+        //         '</div>',
+        //     hidden: true,
+        //     bind: {
+        //         store: '{designs}'
+        //     },
+
+        // },
+
+
 
 
         // {
@@ -174,9 +195,9 @@ Ext.define('ShowroomApp.view.category.Category', {
                 '<h1">{MODEL}</h1>' +
                 '<p class="dv-prod-price">{PRICE}</p>' +
                 '<p class="dv-prod-desc">{PRODDESC}</p>' +
-                '<p><button class="dv-prod-btn">Add to Cart</button></p>' +
+                //'<p><button class="dv-prod-btn">Add to Cart</button></p>' +
+                '<p><button class="{addBtnClass}">{addBtnText}</button></p>' +
                 '</div>',
-
             //hidden: true,
             selectionModel: {
                 mode: 'MULTI'
@@ -185,7 +206,9 @@ Ext.define('ShowroomApp.view.category.Category', {
                 itemtap: 'onProdItemTap',
                 selectionchange: function (dv, nodes) {
                     console.info('selectionchange called');
-                }
+                },
+                beforeshow: 'onBeforeShow'
+
             },
             bind: {
                 store: '{products}',
@@ -253,7 +276,8 @@ Ext.define('ShowroomApp.view.category.Category', {
                         style: 'background-color: #759E60'
                     },
                     {
-                        html: 'Item 3'
+                        html: 'Item 3',
+                        style: 'background-color: #759E60'
                     }
                 ]
             }, {

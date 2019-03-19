@@ -50,11 +50,13 @@ Ext.define('ShowroomApp.view.main.Main', {
         }, {
             title: 'Cart',
             iconCls: 'x-fa fa-user',
+
+
             // bind: {
             //     html: '{loremIpsum}'
             // }
             items: [{
-                xtype: 'cart'
+                xtype: 'cart',
             }]
         }, {
             title: 'Groups',
