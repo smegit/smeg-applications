@@ -1,4 +1,4 @@
-Ext.define('ShowroomApp.view.category.Category', {
+Ext.define('Showroom.view.category.Category', {
     extend: 'Ext.Panel',
     xtype: 'category',
     itemId: 'category',
@@ -10,9 +10,9 @@ Ext.define('ShowroomApp.view.category.Category', {
     requires: [
         //'Ext.view.View',
         'Ext.grid.*',
-        'ShowroomApp.view.category.CategoryController',
-        'ShowroomApp.view.category.CategoryModel',
-        //'ShowroomApp.view.category.List',
+        'Showroom.view.category.CategoryController',
+        'Showroom.view.category.CategoryModel',
+        //'Showroom.view.category.List',
         'Ext.SegmentedButton',
         'Ext.fx.Animation',
         //'Ext.ux.DataView.Animated '
@@ -37,12 +37,12 @@ Ext.define('ShowroomApp.view.category.Category', {
     //     },
     //     style: 'background:#5fa2dd'
     // },
-    // tools: [{
-    //     //itemId: 'goBack',
-    //     type: 'prev',
-    //     handler: 'onGoBack',
-    //     //hidden: true,
-    // }],
+    tools: [{
+        //itemId: 'goBack',
+        type: 'prev',
+        handler: 'onGoBack',
+        //hidden: true,
+    }],
     // scrollable: 'y',
     // autoScroll: true,
     controller: 'category',
@@ -93,52 +93,52 @@ Ext.define('ShowroomApp.view.category.Category', {
     //     }
     // },
     items: [
-        {
-            xtype: 'toolbar',
-            docked: 'top',
-            scrollable: {
-                y: false
-            },
-            style: 'background:#5fa2dd',
-            items: [
-                {
-                    text: 'Back',
-                    handler: 'onGoBack'
-                },
-                {
-                    xtype: 'spacer'
-                },
-                {
-                    xtype: 'panel',
-                    //html: 'Product',
-                    title: 'Title',
-                    cls: 'panel-title'
-                },
-                {
-                    xtype: 'spacer'
-                },
-                // {
-                //     xtype: 'segmentedbutton',
-                //     allowDepress: true,
-                //     items: [
-                //         {
-                //             text: 'Option 1',
-                //             pressed: true
-                //         },
-                //         {
-                //             text: 'Option 2'
-                //         }
-                //     ]
-                // },
-                // {
-                //     xtype: 'spacer'
-                // },
-                // {
-                //     text: 'Action',
-                //     ui: 'action'
-                // }
-            ]
-        },
+        // {
+        //     xtype: 'toolbar',
+        //     docked: 'top',
+        //     scrollable: {
+        //         y: false
+        //     },
+        //     style: 'background:#5fa2dd',
+        //     items: [
+        //         {
+        //             text: 'Back',
+        //             handler: 'onGoBack'
+        //         },
+        //         {
+        //             xtype: 'spacer'
+        //         },
+        //         {
+        //             xtype: 'panel',
+        //             //html: 'Product',
+        //             title: 'Product',
+        //             cls: 'panel-title'
+        //         },
+        //         {
+        //             xtype: 'spacer'
+        //         },
+        //         // {
+        //         //     xtype: 'segmentedbutton',
+        //         //     allowDepress: true,
+        //         //     items: [
+        //         //         {
+        //         //             text: 'Option 1',
+        //         //             pressed: true
+        //         //         },
+        //         //         {
+        //         //             text: 'Option 2'
+        //         //         }
+        //         //     ]
+        //         // },
+        //         // {
+        //         //     xtype: 'spacer'
+        //         // },
+        //         // {
+        //         //     text: 'Action',
+        //         //     ui: 'action'
+        //         // }
+        //     ]
+        // },
         {
             id: 'card-0',
 
@@ -266,73 +266,111 @@ Ext.define('ShowroomApp.view.category.Category', {
         }, {
             id: 'card-2',
             xtype: 'container',
-            // defaults: {
-            //     xtype: 'panel',
-            //     frame: true,
-            //     margin: 5,
-            //     html: 'Body Text'
-            // },
-            // layout: {
-            //     type: 'box',
-            //     align: 'stretch',
-            //     vertical: false
-            // },
-            // listeners: {
-            //     beforewidthchange: 'beforeWidthChange'
-            // },
+            style: 'background-color: #fff',
+
             listeners: {
                 //resize: 'onSizeChange'
             },
-            plugins: 'responsive',
-            responsiveConfig: {
-                wide: {
-                    layout: {
-                        type: 'box',
-                        vertical: false
-                    }
-                },
-                tall: {
-                    layout: {
-                        type: 'box',
-                        vertical: true,
-                        align: 'stretch'
-                    }
-                },
+            // plugins: 'responsive',
+            // responsiveConfig: {
+            //     wide: {
+            //         layout: {
+            //             type: 'box',
+            //             vertical: false
+            //         }
+            //     },
+            //     tall: {
+            //         layout: {
+            //             type: 'box',
+            //             vertical: true,
+            //             align: 'stretch'
+            //         }
+            //     },
+            // },
+
+            // items: [{
+            //     xtype: '',
+            // },
+            // {
+            //     xtype: 'carousel',
+            //     id: 'prod-dtl-image',
+            //     title: 'Center',
+            //     // height: 100,
+            //     //fullscreen: true,
+            //     defaults: {
+            //         styleHtmlContent: true
+            //     },
+            //     flex: 1,
+            //     border: '1px solid blue',
+            //     // html: 'Body Text',
+            //     items: [
+            //         {
+            //             html: 'Item 1',
+            //             style: 'background-color: #5E99CC;'
+            //         },
+            //         {
+            //             html: 'Item 2',
+            //             style: 'background-color: #759E60'
+            //         },
+            //         {
+            //             html: 'Item 3',
+            //             style: 'background-color: #759E60'
+            //         }
+            //     ]
+            // }, {
+            //     xtype: 'panel',
+            //     id: 'prod-dtl-text',
+            //     title: 'Side/Bottom Content',
+            //     minWidth: 500
+            // }]
+
+            bind: {
+                data: '{product}'
             },
+            tpl: [
+                '<div class="prd-dtl-wrap">',
+                //'<div class="prd-dtl-desc">',
+                '<div class="prd-dtl-desc-left">',
+                '<h1>{[values.Product[0].PRODDESC]}</h1>',
+                '<h1>MODEL: {[values.Product[0].MODEL]}</h1>',
+                '<h1>EAN: {[values.Product[0].EAN]}</h1>',
+                '<div class="prd-img-wrap">',
+                '<img data-event="showlargerimage" src="{[values.Product[0].SMALLPIC]}">',
+                '</div>',
+                '<h3>Features</h3>',
+                '<ul>',
+                '<tpl for="values.Features">',
+                '<li>{FEATURE}</li>',
+                '</tpl>',
+                '</ul>',
 
-            items: [{
-                xtype: 'carousel',
-                id: 'prod-dtl-image',
-                title: 'Center',
-                // height: 100,
-                //fullscreen: true,
-                defaults: {
-                    styleHtmlContent: true
-                },
-                flex: 1,
-                border: '1px solid blue',
-                html: 'Body Text',
-                items: [
-                    {
-                        html: 'Item 1',
-                        style: 'background-color: #5E99CC;'
-                    },
-                    {
-                        html: 'Item 2',
-                        style: 'background-color: #759E60'
-                    },
-                    {
-                        html: 'Item 3',
-                        style: 'background-color: #759E60'
-                    }
-                ]
-            }, {
-                xtype: 'panel',
-                id: 'prod-dtl-text',
-                title: 'Side/Bottom Content',
-                minWidth: 400
-            }]
+                '</div>',
 
+
+
+                '<div class=prd-dtl-desc-right>',
+                '<h1>${[values.Product[0].PRICE]}</h1>',
+                '<button type="button" >Add to Cart!</button>',
+
+                '<h3>Downloads</h3>',
+                '<div class="prd-files-list">',
+                '<ul>',
+                '<tpl for="values.Downloads">',
+                '<li>',
+                '<span class="{ICONCLASS}" style="color: {ICONCOL}">&nbsp</span>',
+                '<a href="{URL}" target="_blank">{DOWNLDSC}</a>' +
+                '</li>',
+                '</tpl>',
+                '</ul>',
+                '</div>',
+                '</div>',
+
+
+
+                //'</div>',
+
+                '</div>'
+            ]
         }
     ]
 });

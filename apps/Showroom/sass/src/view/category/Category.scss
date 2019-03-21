@@ -1,0 +1,98 @@
+.dataview-catalogue-outer {
+    display: flex;
+    flex-wrap: wrap;
+    float: left;
+    margin: 10px;
+    justify-content: space-around;
+}
+
+.dataview-catalogue-inner {
+    position: relative;
+    text-align: center;
+    color: white;
+    width: 370px;
+    align-self: center;
+    img{
+        width: 300px;
+    }
+    .centered {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 20px;
+      }
+    
+}
+
+.segBtn {
+    margin-top: 10px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.dv-prod-card{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    width: 250px;
+    margin: 20px;
+    text-align: center;
+    font-family: arial;
+}
+.dv-prod-price{
+    color: grey;
+  font-size: 22px;
+}
+
+.dv-prod-card button {
+    border: none;
+    outline: 0;
+    padding: 12px;
+    color: white;
+    background-color: rgb(95, 162, 221);
+    text-align: center;
+    cursor: pointer;
+    width: 100%;
+    font-size: 18px;
+  }
+
+  .dv-prod-card button:hover {
+    //opacity: 0.7;
+  }
+  .dv-prod-btn-selected{
+    opacity: 0.7;
+  }
+
+  .dv-prod-btn-deSelected{
+    opacity: 1;
+  }
+
+  .dv-prod-image {
+      //width: 250px;
+      img {
+          max-width: 250px;
+      }
+  }
+  .dv-prod-desc {
+      margin: 3px;
+  }
+
+.prd-dtl-wrap{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    border: 1px black solid;
+    margin: 0 auto;
+    .prd-dtl-desc-left{
+        width: 50%;
+        //height: 200px;
+        border: 1px black solid;
+        //background: #369;
+    }
+    .prd-dtl-desc-right{
+        width: 50%;
+        //height: 200px;
+        border: 1px black solid;
+        //background: #369;
+    }
+}

@@ -1,14 +1,14 @@
 /**
  * This view is an example list of people.
  */
-Ext.define('ShowroomApp.view.cart.Cart', {
+Ext.define('Showroom.view.cart.Cart', {
     extend: 'Ext.Container',
     xtype: 'cart',
     reference: 'cartRef',
 
     requires: [
-        //'ShowroomApp.store.Personnel'
-        //'ShowroomApp.view.product.ProductController'
+        //'Showroom.store.Personnel'
+        //'Showroom.view.product.ProductController'
         'Ext.form.FieldSet',
         'Ext.field.Number',
         'Ext.field.Spinner',
@@ -170,12 +170,22 @@ Ext.define('ShowroomApp.view.cart.Cart', {
                             handler: 'onSave'
                         },
                         {
-                            text: 'Reset',
+                            text: 'Email',
                             ui: 'action',
                             handler: function () {
-                                Ext.getCmp('basicform').reset();
+                                //Ext.getCmp('basicform').reset();
                             }
-                        }
+                        },
+                        {
+                            text: 'Print',
+                            ui: 'action',
+                            //handler: 'onSave'
+                        },
+                        {
+                            text: 'Cancel',
+                            ui: 'action',
+                            //handler: 'onSave'
+                        },
                     ]
                 }]
 

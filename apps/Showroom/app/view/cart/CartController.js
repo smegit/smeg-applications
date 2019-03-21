@@ -1,4 +1,4 @@
-Ext.define('ShowroomApp.view.cart.CartController', {
+Ext.define('Showroom.view.cart.CartController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.cart',
 
