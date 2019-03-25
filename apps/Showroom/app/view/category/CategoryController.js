@@ -1,6 +1,11 @@
 Ext.define('Showroom.view.category.CategoryController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.category',
+    requires: [
+        //'Ext.Button'
+        //'Ext.ux.IFrame',
+        //'Showroom.view.category.Download'
+    ],
 
     init: function (view) {
         // We provide the updater for the activeState config of our View.
@@ -9,12 +14,14 @@ Ext.define('Showroom.view.category.CategoryController', {
         view.updateActiveState = this.updateActiveState.bind(this);
         var me = this;
 
-        // me.control({
-        //     'category dataview': {
-        //         addtocart: me.onAddToCart,
-        //         //itemTap: me.onAddToCart
-        //     }
-        // });
+        me.control({
+            'category container': {
+                addtocart: me.onAddToCart,
+                showdownload: me.onShowDownload
+                //itemTap: me.onAddToCart
+            }
+        });
+
     },
     initViewModel: function (viewModel) {
         console.log('initViewModel called');
@@ -55,7 +62,9 @@ Ext.define('Showroom.view.category.CategoryController', {
             cartVm = Ext.ComponentQuery.query('cart')[0].getViewModel(),
             selectedProdsStore = cartVm.getStore('selectedProds'),
             prodStore = vm.getStore('products'), product,
-            findRecordInProds = prodStore.findRecord('MODEL', prodModel, 0, false, false, true);
+            findRecordInProds = prodStore.findRecord('MODEL', prodModel, 0, false, false, true),
+            isSelected = selectedProdsStore.findRecord('MODEL', prodModel, 0, false, false, true) ? true : false;
+        console.info(selectedProdsStore);
         console.info(prodModel);
         if (e.target.localName === 'button') {
             if (e.target.innerText == 'Add to Cart') {
@@ -96,7 +105,25 @@ Ext.define('Showroom.view.category.CategoryController', {
             me.requestProdDtl(prodModel)
                 .then(function (res) {
                     if (res.success) {
+
+                        console.info(findRecordInProds);
+                        if (isSelected) {
+
+                            Ext.apply(res, {
+                                'addBtnClass': 'prd-dtl-add-btn-pressed',
+                                'addBtnText': 'Added'
+                            });
+
+                        } else {
+                            Ext.apply(res, {
+                                'addBtnClass': 'prd-dtl-add-btn',
+                                'addBtnText': 'Add to Cart'
+                            });
+                        }
+
+
                         vm.set('product', res);
+                        console.info(vm.get('product'));
 
 
                         me.doCardNavigation(1);
@@ -143,11 +170,60 @@ Ext.define('Showroom.view.category.CategoryController', {
 
 
     onBeforeShow: function () {
-        console.info('onBeforeShow');
+        console.info('onBeforeShow called');
+        var me = this,
+            vm = me.getViewModel();
+        console.info(vm.getStore('products'));
     },
 
-    onAddToCart: function () {
+    onAddToCart: function (target) {
         console.info('onAddToCart called');
+        console.info(target);
+        var me = this,
+            vm = me.getViewModel(),
+            cartVm = Ext.ComponentQuery.query('cart')[0].getViewModel(),
+            selectedProdsStore = cartVm.getStore('selectedProds'),
+            product = vm.get('product'),
+            products = vm.getStore('products'),
+            findRecordInProds = products.findRecord('MODEL', product.Product[0].MODEL, 0, false, false, true),
+            isSelected = selectedProdsStore.findRecord('MODEL', product.Product[0].MODEL, 0, false, false, true) ? true : false;
+
+
+        if (target.target.innerText == 'Added') {
+            // product.addBtnClass = 'prd-dtl-add-btn';
+            // product.addBtnText = 'Add to Cart';
+            target.target.innerText = 'Add to Cart';
+            target.target.className = 'prd-dtl-add-btn';
+            Ext.ComponentQuery.query('cart')[0].fireEvent('removeFromCart', findRecordInProds);
+            findRecordInProds.set('addBtnClass', 'dv-prod-btn-deSelected');
+            findRecordInProds.set('addBtnText', 'Add to Cart');
+
+        } else {
+            // product.addBtnClass = 'prd-dtl-add-btn-pressed';
+            // product.addBtnText = 'Added';
+            target.target.innerText = 'Added';
+            target.target.className = 'prd-dtl-add-btn-pressed';
+            Ext.ComponentQuery.query('cart')[0].fireEvent('addToCart', findRecordInProds);
+            findRecordInProds.set('addBtnClass', 'dv-prod-btn-selected');
+            findRecordInProds.set('addBtnText', 'Added');
+
+        }
+        console.info(product);
+        console.info(target);
+        vm.notify();
+
+
+
+        // if (target.target.innerText == "Add to Cart") {
+        //     target.target.innerText = "Added";
+        //     target.target.className = 'prd-dtl-add-btn-pressed';
+        //     Ext.ComponentQuery.query('cart')[0].fireEvent('addToCart', findRecord);
+
+        // } else {
+        //     target.target.innerText = "Add to Cart";
+        //     target.target.className = 'prd-dtl-add-btn';
+        //     Ext.ComponentQuery.query('cart')[0].fireEvent('removeFromCart', findRecord);
+        // }
 
     },
 
@@ -361,6 +437,8 @@ Ext.define('Showroom.view.category.CategoryController', {
             console.log('has no cats');
 
 
+            // Load BanText
+            vm.set('BanText', rec.get('BANTEXT'));
             // if has not sub cats than load the products
             me.loadProds(rec.get('CATID'));
             //catDataview.hide();
@@ -409,7 +487,8 @@ Ext.define('Showroom.view.category.CategoryController', {
         var me = this,
             view = me.getView(),
             currentIdx = view.getActiveItem().id.split('card-')[1],
-            next = parseInt(currentIdx, 10) + incr;
+            next = parseInt(currentIdx, 10) + incr,
+            vm = me.getViewModel();
         console.info(view.getActiveItem());
         console.info(currentIdx);
         console.info(next);
@@ -419,11 +498,71 @@ Ext.define('Showroom.view.category.CategoryController', {
 
         //layout.setActiveItem(1);
         console.info(view.getActiveItem().id);
+        vm.notify();
     },
 
 
+    onShowDownload: function () {
+        console.info('onShowDownload called');
+        var me = this,
+            view = me.getView(),
+            vm = me.getViewModel(),
+            cartVm = Ext.ComponentQuery.query('cart')[0].getViewModel(),
+            product = vm.get('product'),
+            url = product.Downloads[0].URL;
+
+        console.info();
+
+
+        // var win = Ext.create('Ext.Window', {
+        //     title: 'PDF Content',
+        //     width: 400,
+        //     height: 600,
+        //     modal: true,
+        //     closeAction: 'hide',
+        //     items: [{
+        //         xtype: 'component',
+        //         html: '<iframe src="/Product/Techspecs/KPFA9_Portofino.pdf" width="100%" height="100%"></iframe>',
+        //     }]
+        // });
+        // win.show();
+
+    },
+
     // Mark selected products
 
+    // Search products
+    onSearchProds: function () {
+        console.info('onSearchProds called');
+    },
+
+
+    requestSearch: function (queryString) {
+        console.info('requestSearch called');
+
+        var me = this,
+            deferred = Ext.create('Ext.Deferred'),
+            params = {};
+        params = {
+            pgm: 'EC1010',
+            action: 'getSearch',
+            query: queryString
+        };
+        Ext.Ajax.request({
+            url: '/valence/vvcall.pgm',
+            method: 'POST',
+            params: params,
+            success: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.resolve(response);
+            },
+            failure: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.reject(response);
+            }
+        });
+        return deferred.promise;
+    },
 
     onSegBtnToggle: function (container, button, pressed) {
         //alert("User toggled the '" + button.getText() + "' button: " + (pressed ? 'on' : 'off'));

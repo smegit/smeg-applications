@@ -2,11 +2,14 @@ Ext.define('Showroom.view.category.Category', {
     extend: 'Ext.Panel',
     xtype: 'category',
     itemId: 'category',
-    //title: 'Category',
+    // title: {
+    //     text: 'Category',
+    //     //centered: true
+    //     style: 'background:red'
+    // },
     //header: 'header',
     //ui: 'blue',
     //fullscreen: true,
-
     requires: [
         //'Ext.view.View',
         'Ext.grid.*',
@@ -21,28 +24,71 @@ Ext.define('Showroom.view.category.Category', {
         'Ext.form.*',
         //'Ext.field.ComboBox',
         'Ext.plugin.Responsive',
-        'Ext.mixin.Responsive'
+        'Ext.mixin.Responsive',
+        //'Ext.Button'
+        'Ext.field.Search'
+
     ],
     listeners: {
         //resize: 'onSizeChange'
+        beforeshow: function () {
+            console.info('after111');
+            // new Ext.Button({
+            //     text: 'Button',
+            //     ui: 'action',
+            //     renderTo: 'renderbutton'
+            // });
+        }
     },
-    // header: {
-    //     //cls: 'header-cls',
-    //     height: 50,
-    //     title: {
-    //         //cls: 'header-title-cls',
-    //         text: 'Products',
-    //         centered: true
-    //         //left: '50%'
+    header: {
+        //cls: 'header-cls',
+        //height: 50,
+        // title: {
+        //     //cls: 'header-title-cls',
+        //     text: 'Products',
+        //     centered: true
+        //     //left: '50%'
+        // },
+        //style: 'background:#5fa2dd'
+        titleAlign: 'center',
+        titlePosition: 0,
+        bind: {
+            title: '{BanText}'
+        },
+        items: [
+            {
+                xtype: 'paneltool',
+                //itemId: 'goBack',
+                type: 'close',
+                handler: 'onGoBack',
+                //hidden: true,
+
+            },
+            // {
+            //     xtype: 'paneltitle',
+            //     //cls: 'header-title-cls',
+            //     text: 'Products',
+            //     //centered: true
+            //     //left: '50%'
+            // },
+            // {
+            //     xtype: 'button',
+            //     text: 'test',
+            //     cls: 'lefty'
+            // }
+        ]
+    },
+
+    // tools: [
+    //     {
+    //         //itemId: 'goBack',
+    //         type: 'prev',
+    //         handler: 'onGoBack',
+    //         style: 'left:0'
+    //         //hidden: true,
     //     },
-    //     style: 'background:#5fa2dd'
-    // },
-    tools: [{
-        //itemId: 'goBack',
-        type: 'prev',
-        handler: 'onGoBack',
-        //hidden: true,
-    }],
+
+    // ],
     // scrollable: 'y',
     // autoScroll: true,
     controller: 'category',
@@ -142,27 +188,102 @@ Ext.define('Showroom.view.category.Category', {
         {
             id: 'card-0',
 
+            xtype: 'container',
+            //autoScroll: true,
+            scrollable: 'y',
+            margin: 20,
+            items: [
+                {
+                    xtype: 'container',
+                    //inline: true,
+                    layout: 'hbox',
+                    cls: 'category-search-box',
+                    width: '50%',
+                    items: [{
+                        xtype: 'searchfield',
+                        ui: 'solo',
 
-            xtype: 'dataview',
-            inline: true,
-            ui: 'default',
-            cls: 'dataview-catalogue-outer',
-            autoScroll: true,
-            reference: 'catDataview',
-            showAnimation: {
-                type: 'fade',
-            },
-            //flex: 1,
-            itemTpl: '<div class="dataview-catalogue-inner">' +
-                '<img draggable="false" src={CATICON} />' +
-                '<div class="centered">{CATDESC}</div>' +
-                '</div>',
-            bind: {
-                store: '{categories}'
-            },
-            listeners: {
-                itemtap: 'onItemTap'
-            }
+                        margin: 'auto',
+                        flex: 1,
+
+                        placeholder: 'Search the Sencha Forums',
+                        listeners: {
+                            buffer: 500,
+                            //change: 'doSearch'
+                            action: function (field) {
+                                console.info('start searching');
+                            }
+                        }
+                    },
+                    {
+                        xtype: 'button',
+                        text: 'Search',
+                        handler: 'onSearchProds'
+                    }]
+                },
+
+                // {
+                //     xtype: 'searchfield',
+                //     ui: 'solo',
+                //     width: '30%',
+                //     margin: 'auto',
+
+                //     placeholder: 'Search the Sencha Forums',
+                //     listeners: {
+                //         buffer: 500,
+                //         //change: 'doSearch'
+                //         action: function (field) {
+                //             console.info('start searching');
+                //         }
+                //     }
+                // },
+
+
+                {
+                    xtype: 'dataview',
+                    inline: true,
+                    ui: 'default',
+                    cls: 'dataview-catalogue-outer',
+                    //autoScroll: true,
+                    reference: 'catDataview',
+                    showAnimation: {
+                        type: 'fade',
+                    },
+                    //flex: 1,
+                    itemTpl: '<div class="dataview-catalogue-inner">' +
+                        '<img draggable="false" src={CATICON} />' +
+                        '<div class="centered">{CATDESC}</div>' +
+                        '</div>',
+                    bind: {
+                        store: '{categories}'
+                    },
+                    listeners: {
+                        itemtap: 'onItemTap'
+                    }
+                }
+
+            ]
+
+            // xtype: 'dataview',
+            // inline: true,
+            // ui: 'default',
+            // cls: 'dataview-catalogue-outer',
+            // autoScroll: true,
+            // reference: 'catDataview',
+            // showAnimation: {
+            //     type: 'fade',
+            // },
+            // //flex: 1,
+            // itemTpl: '<div class="dataview-catalogue-inner">' +
+            //     '<img draggable="false" src={CATICON} />' +
+            //     '<div class="centered">{CATDESC}</div>' +
+            //     '</div>',
+            // bind: {
+            //     store: '{categories}'
+            // },
+            // listeners: {
+            //     itemtap: 'onItemTap'
+            // }
 
 
         },
@@ -253,7 +374,10 @@ Ext.define('Showroom.view.category.Category', {
                 selectionchange: function (dv, nodes) {
                     console.info('selectionchange called');
                 },
-                beforeshow: 'onBeforeShow'
+                beforeshow: 'onBeforeShow',
+                show: function () {
+                    console.info('show card-1 called');
+                }
 
             },
             bind: {
@@ -267,9 +391,25 @@ Ext.define('Showroom.view.category.Category', {
             id: 'card-2',
             xtype: 'container',
             style: 'background-color: #fff',
+            itemSelector: 'div.prd-dtl-wrap',
 
             listeners: {
-                //resize: 'onSizeChange'
+                initialize: function (cmp) {
+                    console.info('render called');
+                    cmp.el.on('click', function (e, target) {
+                        //e.stopEvent();
+                        console.info('click called');
+                        console.info(target);
+                        var me = this,
+                            attr = target.getAttribute('data-event');
+
+                        console.info(attr);
+                        if (attr) {
+                            cmp.fireEvent(attr, { target: target });
+                        }
+                    });
+                }
+
             },
             // plugins: 'responsive',
             // responsiveConfig: {
@@ -327,18 +467,19 @@ Ext.define('Showroom.view.category.Category', {
             bind: {
                 data: '{product}'
             },
+
             tpl: [
                 '<div class="prd-dtl-wrap">',
                 //'<div class="prd-dtl-desc">',
                 '<div class="prd-dtl-desc-left">',
-                '<h1>{[values.Product[0].PRODDESC]}</h1>',
-                '<h1>MODEL: {[values.Product[0].MODEL]}</h1>',
-                '<h1>EAN: {[values.Product[0].EAN]}</h1>',
+                '<h1 class="prd-dtl-desc-text">{[values.Product[0].PRODDESC]}</h1>',
+                '<h1 class="prd-dtl-model">MODEL: {[values.Product[0].MODEL]}</h1>',
+                '<h1 class="prd-dtl-ean">EAN: {[values.Product[0].EAN]}</h1>',
                 '<div class="prd-img-wrap">',
                 '<img data-event="showlargerimage" src="{[values.Product[0].SMALLPIC]}">',
                 '</div>',
-                '<h3>Features</h3>',
-                '<ul>',
+                '<h3 class="prd-dtl-feature">Features</h3>',
+                '<ul class="prd-dtl-feature-list">',
                 '<tpl for="values.Features">',
                 '<li>{FEATURE}</li>',
                 '</tpl>',
@@ -349,19 +490,29 @@ Ext.define('Showroom.view.category.Category', {
 
 
                 '<div class=prd-dtl-desc-right>',
+                '<div class=prd-dtl-price>',
                 '<h1>${[values.Product[0].PRICE]}</h1>',
-                '<button type="button" >Add to Cart!</button>',
+                '</div>',
+                '<div class=prd-dtl-btn>',
+                //'<button type="button" class="addBtn" >Add to Cart</button>',
+                //'<div class="testbutton" id="renderbutton"></div>',
+                '<p><button data-event="addtocart" class="{addBtnClass}">{addBtnText}</button></p>' +
+                '</div>',
 
-                '<h3>Downloads</h3>',
+
+                '<div class="prd-dtl-downloads">',
+                '<h1>Downloads</h1>',
                 '<div class="prd-files-list">',
                 '<ul>',
                 '<tpl for="values.Downloads">',
                 '<li>',
                 '<span class="{ICONCLASS}" style="color: {ICONCOL}">&nbsp</span>',
-                '<a href="{URL}" target="_blank">{DOWNLDSC}</a>' +
+                //'<a href="{URL}" data-event="showpdf" target="_blank">{DOWNLDSC}</a>' +
+                '<a data-event="showdownload" target="_blank" style="text-decoration: underline;">{DOWNLDSC}</a>' +
                 '</li>',
                 '</tpl>',
                 '</ul>',
+                '</div>',
                 '</div>',
                 '</div>',
 
@@ -371,6 +522,10 @@ Ext.define('Showroom.view.category.Category', {
 
                 '</div>'
             ]
+        }, {
+            id: 'card-3',
+            xtype: 'container',
+
         }
     ]
 });

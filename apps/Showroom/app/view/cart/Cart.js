@@ -143,7 +143,8 @@ Ext.define('Showroom.view.cart.Cart', {
                         xtype: 'textfield',
                         name: 'Email',
                         label: 'Email',
-                        clearIcon: true
+                        clearIcon: true,
+                        //handler: 'onEmail'
                     },
                     {
                         xtype: 'textfield',
@@ -172,9 +173,7 @@ Ext.define('Showroom.view.cart.Cart', {
                         {
                             text: 'Email',
                             ui: 'action',
-                            handler: function () {
-                                //Ext.getCmp('basicform').reset();
-                            }
+                            handler: 'onEmail'
                         },
                         {
                             text: 'Print',
@@ -184,7 +183,7 @@ Ext.define('Showroom.view.cart.Cart', {
                         {
                             text: 'Cancel',
                             ui: 'action',
-                            //handler: 'onSave'
+                            handler: 'onCancel'
                         },
                     ]
                 }]

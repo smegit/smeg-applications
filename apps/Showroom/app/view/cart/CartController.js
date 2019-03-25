@@ -206,6 +206,30 @@ Ext.define('Showroom.view.cart.CartController', {
             }
         });
         return deferred.promise;
+    },
+    onEmail: function () {
+        console.info('onEmail called');
+        setTimeout(function () {
+            Ext.Msg.alert('Sent', 'The quote has been sent do you successfully.', Ext.emptyFn);
+        }, 500);
+
+        // Should go to first page
+
+    },
+
+    onCancel: function () {
+        console.info('onCancel called');
+        Ext.Msg.confirm('Confirmation', 'Are you sure you want to leave this page ?', function (res) {
+            if (res == 'yes') {
+                //Ext.getCmp('app-main').setActiveTab(0);
+                console.info(Ext.ComponentQuery.query('app-main')[0].setActiveTab(0));
+
+
+            } else {
+
+            }
+        });
+
     }
 
 
