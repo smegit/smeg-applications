@@ -227,7 +227,7 @@ Ext.define('Showroom.view.category.CategoryController', {
 
     },
 
-    loadProds: function (id) {
+    loadProds: function (obj) {
         console.info('loadProds called');
         var me = this,
             vm = me.getViewModel(),
@@ -237,7 +237,7 @@ Ext.define('Showroom.view.category.CategoryController', {
             selectedProdsStore = cartVm.getStore('selectedProds');
         console.info(cartVm);
         console.info(selectedProdsStore);
-        me.requestProdByCatId(id).then(function (res) {
+        me.requestProdByCatId(obj).then(function (res) {
             console.info(res);
             if (res.success) {
                 //load AddBtn text / class
@@ -303,6 +303,7 @@ Ext.define('Showroom.view.category.CategoryController', {
         Ext.Ajax.request({
             url: '/valence/vvcall.pgm',
             method: 'POST',
+            method: 'GET',
             params: params,
             success: function (res) {
                 var response = Ext.decode(res.responseText);
@@ -349,7 +350,7 @@ Ext.define('Showroom.view.category.CategoryController', {
         return deferred.promise;
     },
 
-    requestProdByCatId: function (catId) {
+    requestProdByCatId: function (obj) {
         console.info('requestProd called');
         var me = this,
             deferred = Ext.create('Ext.Deferred'),
@@ -360,10 +361,12 @@ Ext.define('Showroom.view.category.CategoryController', {
             action: 'getProds',
             //sid: queryString.substring(queryString.indexOf("&sid=") + 5, queryString.indexOf("&env=")),
             //app: window.location.search.substring(5, 9),
-            cat: catId
+            //cat: catId
         };
+        Ext.apply(params, obj);
         Ext.Ajax.request({
             url: '/valence/vvcall.pgm',
+            //url: "https://bae007bc-0ff1-418c-b4ce-693fc9ccd76c.mock.pstmn.io/getProds",
             method: 'GET',
             params: params,
             success: function (res) {
@@ -438,9 +441,14 @@ Ext.define('Showroom.view.category.CategoryController', {
 
 
             // Load BanText
-            vm.set('BanText', rec.get('BANTEXT'));
+            vm.set('banText', rec.get('BANTEXT'));
+
+
             // if has not sub cats than load the products
-            me.loadProds(rec.get('CATID'));
+            //me.loadProds(rec.get('CATID'));
+
+            me.loadProds({ cat: rec.get('CATID') });
+
             //catDataview.hide();
             //designDataview.hide();
             //prodDataview.show();
@@ -477,8 +485,12 @@ Ext.define('Showroom.view.category.CategoryController', {
             catDataview.hide();
             catDataview.show();
         } else {
+            if (currentCard == 'card-1') {
+                vm.set('banText', 'Products');
+            }
             me.doCardNavigation(-1);
         }
+        vm.notify();
 
     },
 
@@ -489,6 +501,12 @@ Ext.define('Showroom.view.category.CategoryController', {
             currentIdx = view.getActiveItem().id.split('card-')[1],
             next = parseInt(currentIdx, 10) + incr,
             vm = me.getViewModel();
+
+        if (next == 0) {
+            vm.set('hideCloseBtn', true);
+        } else {
+            vm.set('hideCloseBtn', false);
+        }
         console.info(view.getActiveItem());
         console.info(currentIdx);
         console.info(next);
@@ -534,6 +552,54 @@ Ext.define('Showroom.view.category.CategoryController', {
     // Search products
     onSearchProds: function () {
         console.info('onSearchProds called');
+        var me = this,
+            vm = me.getViewModel(),
+            prodStore = vm.getStore('products'),
+            prodArray = [],
+            cartVm = Ext.ComponentQuery.query('cart')[0].getViewModel(),
+            selectedProdsStore = cartVm.getStore('selectedProds'),
+            searchField = me.lookupReference('searchField'),
+            searchString = searchField.getValue(),
+            obj = { cat: 'CAT' };
+        console.info(searchField.getValue());
+        Ext.apply(obj, {
+            searchText: searchString
+        });
+
+        me.loadProds(obj);
+
+        // me.requestSearch(searchString).then(function (res) {
+        //     if (res.success) {
+        //         // load products
+        //         //load AddBtn text / class
+        //         res.prods.forEach(function (e) {
+        //             if (selectedProdsStore.findRecord('MODEL', e.MODEL, 0, false, false, true)) {
+        //                 console.info(e);
+        //                 console.info(selectedProdsStore.findRecord('MODEL', e.MODEL, 0, false, false, true));
+        //                 Ext.apply(e, {
+        //                     addBtnClass: 'dv-prod-btn-selected',
+        //                     addBtnText: 'Added'
+        //                 });
+        //             } else {
+        //                 Ext.apply(e, {
+        //                     addBtnClass: 'dv-prod-btn-deSelected',
+        //                     addBtnText: 'Add to Cart'
+        //                 });
+        //             }
+        //             console.info(e);
+        //             prodArray.push(e);
+        //         });
+        //         // prodStore.loadData(res.prods);
+        //         prodStore.loadData(prodArray);
+        //         console.info(prodStore);
+
+        //     } else {
+        //         Ext.Msg.alert('Failed to search products', JSON.stringify(res), Ext.emptyFn);
+        //     }
+
+        // }, function (res) {
+        //     Ext.Msg.alert('Server Error', JSON.stringify(res), Ext.emptyFn);
+        // });
     },
 
 

@@ -15,7 +15,8 @@ Ext.define('Showroom.view.category.CategoryModel', {
         prodDetail: null,
         selections: [],
         product: {},
-        banText: null
+        banText: 'Products',
+        hideCloseBtn: true
     },
 
     stores: {

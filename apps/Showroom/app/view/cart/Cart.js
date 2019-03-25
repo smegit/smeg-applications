@@ -53,39 +53,63 @@ Ext.define('Showroom.view.cart.Cart', {
             emptyText: 'No products being selected yet',
             //flex: 1,
             height: 300,
-            columns: [{
-                text: 'Model',
-                flex: 1,
-                //width: 400,
-                dataIndex: 'MODEL'
-            },
-            {
-                text: 'Unit Price',
-                width: 120,
-                dataIndex: 'PRICE'
-            },
-            {
-                text: 'Quanty',
-                width: 75,
-                dataIndex: 'QUANTY',
-                editable: true,
-                editor: {
-                    xtype: 'numberfield'
-                },
-            }, {
-                width: 70,
-
-                cell: {
-                    xtype: 'widgetcell',
-                    widget: {
-                        xtype: 'button',
-                        iconCls: 'x-fa fa-ban',
-                        ui: 'round',
-                        bind: '{record}',
-                        handler: 'onDeleteRecord'
+            columns: [
+                {
+                    text: '',
+                    header: 'Photo',
+                    // minWidth: 0,
+                    // maxWidth: 50,
+                    width: 100,
+                    dataIndex: 'SMALLPIC',
+                    align: 'center',
+                    sortable: false,
+                    renderer: function (v, meta, record) {
+                        // console.info(meta);
+                        // console.info(record);
+                        // if (!Ext.isEmpty(v)) {
+                        //     //meta.tdCls += ' image-column';
+                        //     return '<img src="' + v + '" />';
+                        // }
+                        // return '';
+                        return '\<img src="' + v + '"\>';
                     }
-                }
-            }]
+                }, {
+                    text: 'Model',
+                    //flex: 1,
+                    width: 150,
+                    dataIndex: 'MODEL'
+                }, {
+                    text: 'Description',
+                    flex: 1,
+                    dataIndex: 'PRODDESC'
+                },
+                {
+                    text: 'Unit Price',
+                    width: 120,
+                    dataIndex: 'PRICE'
+                },
+                {
+                    text: 'Quanty',
+                    width: 75,
+                    dataIndex: 'QUANTY',
+                    editable: true,
+                    editor: {
+                        xtype: 'numberfield'
+                    },
+                }, {
+                    width: 70,
+
+                    cell: {
+                        xtype: 'widgetcell',
+                        widget: {
+                            xtype: 'button',
+                            iconCls: 'x-fa fa-ban',
+                            ui: 'round',
+                            bind: '{record}',
+                            handler: 'onDeleteRecord'
+                        }
+                    }
+                }]
 
         }, {
             xtype: 'formpanel',

@@ -53,7 +53,7 @@ Ext.define('Showroom.view.category.Category', {
         titleAlign: 'center',
         titlePosition: 0,
         bind: {
-            title: '{BanText}'
+            title: '{banText}'
         },
         items: [
             {
@@ -61,8 +61,9 @@ Ext.define('Showroom.view.category.Category', {
                 //itemId: 'goBack',
                 type: 'close',
                 handler: 'onGoBack',
-                //hidden: true,
-
+                bind: {
+                    hidden: '{hideCloseBtn}'
+                }
             },
             // {
             //     xtype: 'paneltitle',
@@ -202,7 +203,7 @@ Ext.define('Showroom.view.category.Category', {
                     items: [{
                         xtype: 'searchfield',
                         ui: 'solo',
-
+                        reference: 'searchField',
                         margin: 'auto',
                         flex: 1,
 
@@ -357,7 +358,8 @@ Ext.define('Showroom.view.category.Category', {
             itemSelector: 'div.dv-prod-card',
             itemTpl: '<div class="dv-prod-card">' +
                 '<div class="dv-prod-image">' +
-                '<img draggable="true"  src={SMALLPIC} />' +
+                //'<img draggable="true" onerror="this.src={SMALLPICALT}" src={SMALLPIC} />' +
+                "<img draggable='true' onerror='this.src=\"/Product/Images/FAB10HLR_200x200.jpg\"' src={SMALLPIC} />" +
                 '</div>' +
                 '<h1">{MODEL}</h1>' +
                 '<p class="dv-prod-price">{PRICE}</p>' +
@@ -365,6 +367,14 @@ Ext.define('Showroom.view.category.Category', {
                 //'<p><button class="dv-prod-btn">Add to Cart</button></p>' +
                 '<p><button class="{addBtnClass}">{addBtnText}</button></p>' +
                 '</div>',
+            // {
+            //     showAtl: function (name) {
+            //         console.info('showshow')
+            //         //return Ext.String.ellipsis(name,4,false);
+            //     }
+            // }
+
+
             //hidden: true,
             selectionModel: {
                 mode: 'MULTI'
