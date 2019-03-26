@@ -328,6 +328,7 @@ Ext.define('Showroom.view.category.Category', {
                     cls: 'dataview-products-outer',
                     reference: 'prodDataview',
                     emptyText: 'No products found',
+                    deferEmptyText: false,
                     itemId: 'prodDv',
                     itemSelector: 'div.dv-prod-card',
                     itemTpl: '<div class="dv-prod-card">' +
@@ -545,9 +546,10 @@ Ext.define('Showroom.view.category.Category', {
                 '<ul>',
                 '<tpl for="values.Downloads">',
                 '<li>',
+                //'<span class="{ICONCLASS}" style="color: {ICONCOL}"></span>',
                 '<span class="{ICONCLASS}" style="color: {ICONCOL}">&nbsp</span>',
-                //'<a href="{URL}" data-event="showpdf" target="_blank">{DOWNLDSC}</a>' +
-                '<a data-event="showdownload" target="_blank" style="text-decoration: underline;">{DOWNLDSC}</a>' +
+                '<a href="{URL}" data-event="showpdf" target="_blank">{DOWNLDSC}</a>' +
+                //'<a data-event="showdownload" target="_blank" style="text-decoration: underline;">{DOWNLDSC}</a>' +
                 '</li>',
                 '</tpl>',
                 '</ul>',

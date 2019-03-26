@@ -234,7 +234,14 @@ Ext.define('Showroom.view.category.CategoryController', {
             prodStore = vm.getStore('products'),
             prodArray = [],
             cartVm = Ext.ComponentQuery.query('cart')[0].getViewModel(),
-            selectedProdsStore = cartVm.getStore('selectedProds');
+            selectedProdsStore = cartVm.getStore('selectedProds'),
+            prodDv = me.getView(),
+            deferred = Ext.create('Ext.Deferred');
+        prodDv.setMasked({
+            xtype: 'loadmask',
+            message: 'Loading'
+        });
+        console.info(prodDv);
         console.info(cartVm);
         console.info(selectedProdsStore);
         // Clear the prodStore
@@ -258,7 +265,7 @@ Ext.define('Showroom.view.category.CategoryController', {
                         });
                     }
 
-                    console.info(e);
+                    //console.info(e);
                     prodArray.push(e);
                 });
                 // prodStore.loadData(res.prods);
@@ -267,9 +274,15 @@ Ext.define('Showroom.view.category.CategoryController', {
             } else {
                 Ext.Msg.alert('Failed to load products', JSON.stringify(res), Ext.emptyFn);
             }
+            prodDv.unmask();
+            deferred.resolve();
         }, function (res) {
             Ext.Msg.alert('Server Error', JSON.stringify(res), Ext.emptyFn);
+            prodDv.unmask();
+            deferred.reject();
         });
+        return deferred.promise;
+
     },
 
     loadDesign: function () {
@@ -453,7 +466,12 @@ Ext.define('Showroom.view.category.CategoryController', {
             vm.set('currentCatId', rec.get('CATID'));
             vm.set('currentCatDesc', rec.get('CATDESC'));
             searchField2.reset();
-            me.loadProds({ cat: rec.get('CATID') });
+            me.loadProds({ cat: rec.get('CATID') }).then(function () {
+                console.info('load products success');
+                me.doCardNavigation(1);
+            }, function () {
+                console.info('load products error');
+            });
 
 
             //catDataview.hide();
@@ -464,7 +482,7 @@ Ext.define('Showroom.view.category.CategoryController', {
             //console.info(view.getActiveItem());
 
 
-            me.doCardNavigation(1);
+            //me.doCardNavigation(1);
             //console.info(view.getActiveItem().id);
 
 
@@ -569,6 +587,7 @@ Ext.define('Showroom.view.category.CategoryController', {
             cartVm = Ext.ComponentQuery.query('cart')[0].getViewModel(),
             selectedProdsStore = cartVm.getStore('selectedProds'),
             searchField = me.lookupReference('searchField'),
+            searchField2 = me.lookupReference('searchField2'),
             searchString = searchField.getValue(),
             currentCatDesc = vm.get('currentCatDesc'),
             obj = {},
@@ -583,10 +602,22 @@ Ext.define('Showroom.view.category.CategoryController', {
         });
 
 
-        me.loadProds(obj);
-        if (currentIdx == 'card-0') {
-            me.doCardNavigation(1);
-        }
+        me.loadProds(obj).then(function () {
+            console.info(prodStore);
+            if (currentIdx == 'card-0' && prodStore.getCount() > 0) {
+                searchField2.reset();
+                me.doCardNavigation(1);
+            }
+            if (prodStore.getCount() == 0) {
+                Ext.Msg.alert('Note', 'No products found', Ext.emptyFn);
+            }
+
+        }, function () {
+            console.info('load product error');
+        });
+
+
+
         //vm.set('banText', 'Search : ' + searchString + ' on ' + currentCatDesc);
 
 
@@ -609,7 +640,11 @@ Ext.define('Showroom.view.category.CategoryController', {
             searchText: searchString,
             cat: currentCatId
         });
-        me.loadProds(obj);
+        me.loadProds(obj).then(function () {
+
+        }, function () {
+            console.info('load products error');
+        });
         //vm.set('banText', 'Search : ' + searchString + ' on ' + currentCatDesc);
         vm.notify();
     },

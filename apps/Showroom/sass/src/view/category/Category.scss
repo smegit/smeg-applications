@@ -169,8 +169,15 @@
             }
             ul{
                 font-size: 14px;
+                margin: 10px;
+                li{
+                    height: 30px;
+                }
             }
 
         }
     }
+}
+
+.vvicon-file-pdf:before {
 }
