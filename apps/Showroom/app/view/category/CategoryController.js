@@ -237,6 +237,8 @@ Ext.define('Showroom.view.category.CategoryController', {
             selectedProdsStore = cartVm.getStore('selectedProds');
         console.info(cartVm);
         console.info(selectedProdsStore);
+        // Clear the prodStore
+        prodStore.removeAll();
         me.requestProdByCatId(obj).then(function (res) {
             console.info(res);
             if (res.success) {
@@ -408,7 +410,8 @@ Ext.define('Showroom.view.category.CategoryController', {
             prodDataview = me.lookupReference('prodDataview'),
             designDataview = me.lookupReference('designDataview'),
             catStore = vm.getStore('categories'),
-            view = me.getView();
+            view = me.getView(),
+            searchField2 = me.lookupReference('searchField2');
         //console.log('onItemTap called');
         console.info(dv);
         console.info(index);
@@ -447,7 +450,11 @@ Ext.define('Showroom.view.category.CategoryController', {
             // if has not sub cats than load the products
             //me.loadProds(rec.get('CATID'));
 
+            vm.set('currentCatId', rec.get('CATID'));
+            vm.set('currentCatDesc', rec.get('CATDESC'));
+            searchField2.reset();
             me.loadProds({ cat: rec.get('CATID') });
+
 
             //catDataview.hide();
             //designDataview.hide();
@@ -455,6 +462,7 @@ Ext.define('Showroom.view.category.CategoryController', {
             //console.info(view.getActiveItem().id);
             //view.setActiveItem(1);
             //console.info(view.getActiveItem());
+
 
             me.doCardNavigation(1);
             //console.info(view.getActiveItem().id);
@@ -504,6 +512,7 @@ Ext.define('Showroom.view.category.CategoryController', {
 
         if (next == 0) {
             vm.set('hideCloseBtn', true);
+            vm.set('currentCatId', 'CAT');
         } else {
             vm.set('hideCloseBtn', false);
         }
@@ -554,54 +563,56 @@ Ext.define('Showroom.view.category.CategoryController', {
         console.info('onSearchProds called');
         var me = this,
             vm = me.getViewModel(),
+            view = me.getView(),
             prodStore = vm.getStore('products'),
             prodArray = [],
             cartVm = Ext.ComponentQuery.query('cart')[0].getViewModel(),
             selectedProdsStore = cartVm.getStore('selectedProds'),
             searchField = me.lookupReference('searchField'),
             searchString = searchField.getValue(),
-            obj = { cat: 'CAT' };
+            currentCatDesc = vm.get('currentCatDesc'),
+            obj = {},
+            currentCatId = vm.get('currentCatId'),
+            currentIdx = view.getActiveItem().id;
         console.info(searchField.getValue());
+
+
         Ext.apply(obj, {
-            searchText: searchString
+            searchText: searchString,
+            cat: 'CAT'
         });
 
+
         me.loadProds(obj);
+        if (currentIdx == 'card-0') {
+            me.doCardNavigation(1);
+        }
+        //vm.set('banText', 'Search : ' + searchString + ' on ' + currentCatDesc);
 
-        // me.requestSearch(searchString).then(function (res) {
-        //     if (res.success) {
-        //         // load products
-        //         //load AddBtn text / class
-        //         res.prods.forEach(function (e) {
-        //             if (selectedProdsStore.findRecord('MODEL', e.MODEL, 0, false, false, true)) {
-        //                 console.info(e);
-        //                 console.info(selectedProdsStore.findRecord('MODEL', e.MODEL, 0, false, false, true));
-        //                 Ext.apply(e, {
-        //                     addBtnClass: 'dv-prod-btn-selected',
-        //                     addBtnText: 'Added'
-        //                 });
-        //             } else {
-        //                 Ext.apply(e, {
-        //                     addBtnClass: 'dv-prod-btn-deSelected',
-        //                     addBtnText: 'Add to Cart'
-        //                 });
-        //             }
-        //             console.info(e);
-        //             prodArray.push(e);
-        //         });
-        //         // prodStore.loadData(res.prods);
-        //         prodStore.loadData(prodArray);
-        //         console.info(prodStore);
 
-        //     } else {
-        //         Ext.Msg.alert('Failed to search products', JSON.stringify(res), Ext.emptyFn);
-        //     }
 
-        // }, function (res) {
-        //     Ext.Msg.alert('Server Error', JSON.stringify(res), Ext.emptyFn);
-        // });
+        vm.notify();
+        console.info(currentIdx);
+        //view.getActiveItem().id
     },
 
+    onSearchProds2: function () {
+        console.info('onSearchProds2 called');
+        var me = this,
+            vm = me.getViewModel(),
+            view = me.getView(),
+            searchField = me.lookupReference('searchField2'),
+            searchString = searchField.getValue(),
+            currentCatId = vm.get('currentCatId'),
+            obj = {};
+        Ext.apply(obj, {
+            searchText: searchString,
+            cat: currentCatId
+        });
+        me.loadProds(obj);
+        //vm.set('banText', 'Search : ' + searchString + ' on ' + currentCatDesc);
+        vm.notify();
+    },
 
     requestSearch: function (queryString) {
         console.info('requestSearch called');

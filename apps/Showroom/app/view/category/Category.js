@@ -211,9 +211,7 @@ Ext.define('Showroom.view.category.Category', {
                         listeners: {
                             buffer: 500,
                             //change: 'doSearch'
-                            action: function (field) {
-                                console.info('start searching');
-                            }
+                            action: 'onSearchProds'
                         }
                     },
                     {
@@ -289,112 +287,143 @@ Ext.define('Showroom.view.category.Category', {
 
         },
 
-        //items: [
-        //     {
-        //     xtype: 'segmentedbutton',
-        //     // listeners: {
-        //     //     click: 'onSegBtnClick',
-        //     // },
-        //     items: [{
-        //         text: 'By Category',
-        //         id: 'byCat',
-        //         pressed: true
-        //     }, {
-        //         text: 'By Design',
-        //         id: 'byDesgin'
-        //     }],
-        //     listeners: {
-        //         toggle: 'onSegBtnToggle'
-        //     }
-        // },
-
-        // {
-        //     xtype: 'dataview',
-        //     inline: true,
-        //     ui: 'default',
-        //     cls: 'dataview-catalogue-outer',
-        //     reference: 'designDataview',
-        //     showAnimation: {
-        //         type: 'fade',
-        //     },
-        //     itemTpl: '<div class="dataview-catalogue-inner">' +
-        //         '<img draggable="false" src="./resources/images/portofino.jpg" />' +
-        //         '<div class="centered">{name}</div>' +
-        //         '</div>',
-        //     hidden: true,
-        //     bind: {
-        //         store: '{designs}'
-        //     },
-
-        // },
-
-
-
-
-        // {
-        //     xtype: 'grid',
-        //     title: 'This is title',
-        //     height: '400',
-        //     bind: {
-        //         store: '{categories}',
-        //     },
-        //     columns: [{
-        //         text: 'CatId', dataIndex: 'CATID', width: 200
-        //     },
-        //     {
-        //         text: 'CatDesc', dataIndex: 'CATDESC', width: 200
-        //     }]
-        // },
-
         {
             id: 'card-1',
-            xtype: 'dataview',
-            inline: true,
-            ui: 'default',
-            cls: 'dataview-products-outer',
-            reference: 'prodDataview',
 
-            itemId: 'prodDv',
-            itemSelector: 'div.dv-prod-card',
-            itemTpl: '<div class="dv-prod-card">' +
-                '<div class="dv-prod-image">' +
-                //'<img draggable="true" onerror="this.src={SMALLPICALT}" src={SMALLPIC} />' +
-                "<img draggable='true' onerror='this.src=\"/Product/Images/FAB10HLR_200x200.jpg\"' src={SMALLPIC} />" +
-                '</div>' +
-                '<h1">{MODEL}</h1>' +
-                '<p class="dv-prod-price">{PRICE}</p>' +
-                '<p class="dv-prod-desc">{PRODDESC}</p>' +
-                //'<p><button class="dv-prod-btn">Add to Cart</button></p>' +
-                '<p><button class="{addBtnClass}">{addBtnText}</button></p>' +
-                '</div>',
-            // {
-            //     showAtl: function (name) {
-            //         console.info('showshow')
-            //         //return Ext.String.ellipsis(name,4,false);
-            //     }
-            // }
+            xtype: 'container',
+            //autoScroll: true,
+            scrollable: 'y',
+            margin: 20,
+            items: [
+                {
+                    xtype: 'container',
+                    //inline: true,
+                    layout: 'hbox',
+                    cls: 'category-search-box',
+                    width: '50%',
+                    items: [{
+                        xtype: 'searchfield',
+                        ui: 'solo',
+                        reference: 'searchField2',
+                        margin: 'auto',
+                        flex: 1,
 
-
-            //hidden: true,
-            selectionModel: {
-                mode: 'MULTI'
-            },
-            listeners: {
-                itemtap: 'onProdItemTap',
-                selectionchange: function (dv, nodes) {
-                    console.info('selectionchange called');
+                        placeholder: 'Search the Sencha Forums',
+                        listeners: {
+                            buffer: 500,
+                            //change: 'doSearch'
+                            action: 'onSearchProds2'
+                        }
+                    },
+                    {
+                        xtype: 'button',
+                        text: 'Search',
+                        handler: 'onSearchProds2'
+                    }]
                 },
-                beforeshow: 'onBeforeShow',
-                show: function () {
-                    console.info('show card-1 called');
+                {
+                    xtype: 'dataview',
+                    inline: true,
+                    ui: 'default',
+                    cls: 'dataview-products-outer',
+                    reference: 'prodDataview',
+                    emptyText: 'No products found',
+                    itemId: 'prodDv',
+                    itemSelector: 'div.dv-prod-card',
+                    itemTpl: '<div class="dv-prod-card">' +
+                        '<div class="dv-prod-image">' +
+                        //'<img draggable="true" onerror="this.src={SMALLPICALT}" src={SMALLPIC} />' +
+                        "<img draggable='true' onerror='this.src=\"/Product/Images/FAB10HLR_200x200.jpg\"' src={SMALLPIC} />" +
+                        '</div>' +
+                        '<h1">{MODEL}</h1>' +
+                        '<p class="dv-prod-price">{PRICE}</p>' +
+                        '<p class="dv-prod-desc">{PRODDESC}</p>' +
+                        //'<p><button class="dv-prod-btn">Add to Cart</button></p>' +
+                        '<p><button class="{addBtnClass}">{addBtnText}</button></p>' +
+                        '</div>',
+                    // {
+                    //     showAtl: function (name) {
+                    //         console.info('showshow')
+                    //         //return Ext.String.ellipsis(name,4,false);
+                    //     }
+                    // }
+
+
+                    //hidden: true,
+                    selectionModel: {
+                        mode: 'MULTI'
+                    },
+                    listeners: {
+                        itemtap: 'onProdItemTap',
+                        selectionchange: function (dv, nodes) {
+                            console.info('selectionchange called');
+                        },
+                        beforeshow: 'onBeforeShow',
+                        show: function () {
+                            console.info('show card-1 called');
+                        }
+
+                    },
+                    bind: {
+                        store: '{products}',
+                        //selection: '{selections}'
+                    },
+                    //selection: '{selections}'
+
                 }
 
-            },
-            bind: {
-                store: '{products}',
-                //selection: '{selections}'
-            },
-            //selection: '{selections}'
+            ],
+
+
+
+            // id: 'card-1',
+            // xtype: 'dataview',
+            // inline: true,
+            // ui: 'default',
+            // cls: 'dataview-products-outer',
+            // reference: 'prodDataview',
+
+            // itemId: 'prodDv',
+            // itemSelector: 'div.dv-prod-card',
+            // itemTpl: '<div class="dv-prod-card">' +
+            //     '<div class="dv-prod-image">' +
+            //     //'<img draggable="true" onerror="this.src={SMALLPICALT}" src={SMALLPIC} />' +
+            //     "<img draggable='true' onerror='this.src=\"/Product/Images/FAB10HLR_200x200.jpg\"' src={SMALLPIC} />" +
+            //     '</div>' +
+            //     '<h1">{MODEL}</h1>' +
+            //     '<p class="dv-prod-price">{PRICE}</p>' +
+            //     '<p class="dv-prod-desc">{PRODDESC}</p>' +
+            //     //'<p><button class="dv-prod-btn">Add to Cart</button></p>' +
+            //     '<p><button class="{addBtnClass}">{addBtnText}</button></p>' +
+            //     '</div>',
+            // // {
+            // //     showAtl: function (name) {
+            // //         console.info('showshow')
+            // //         //return Ext.String.ellipsis(name,4,false);
+            // //     }
+            // // }
+
+
+            // //hidden: true,
+            // selectionModel: {
+            //     mode: 'MULTI'
+            // },
+            // listeners: {
+            //     itemtap: 'onProdItemTap',
+            //     selectionchange: function (dv, nodes) {
+            //         console.info('selectionchange called');
+            //     },
+            //     beforeshow: 'onBeforeShow',
+            //     show: function () {
+            //         console.info('show card-1 called');
+            //     }
+
+            // },
+            // bind: {
+            //     store: '{products}',
+            //     //selection: '{selections}'
+            // },
+            // //selection: '{selections}'
 
 
         }, {

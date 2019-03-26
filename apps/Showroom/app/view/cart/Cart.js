@@ -24,6 +24,7 @@ Ext.define('Showroom.view.cart.Cart', {
         //'Ext.grid.plugin.CellEditing',
         'Ext.grid.plugin.Editable',
         //'Ext.field.ComboBox'
+        'Ext.grid.*'
     ],
 
     //title: 'Cart',
@@ -57,13 +58,13 @@ Ext.define('Showroom.view.cart.Cart', {
                 {
                     text: '',
                     header: 'Photo',
-                    // minWidth: 0,
-                    // maxWidth: 50,
+                    //minWidth: 0,
+                    //maxWidth: 50,
                     width: 100,
                     dataIndex: 'SMALLPIC',
                     align: 'center',
                     sortable: false,
-                    renderer: function (v, meta, record) {
+                    renderer: function (v, meta, record, three) {
                         // console.info(meta);
                         // console.info(record);
                         // if (!Ext.isEmpty(v)) {
@@ -71,7 +72,11 @@ Ext.define('Showroom.view.cart.Cart', {
                         //     return '<img src="' + v + '" />';
                         // }
                         // return '';
-                        return '\<img src="' + v + '"\>';
+                        console.info(v);
+                        console.info(meta);
+                        console.info(record);
+                        console.info(three);
+                        return '<img src="' + v + '">';
                     }
                 }, {
                     text: 'Model',
