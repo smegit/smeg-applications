@@ -16,4 +16,8 @@
 //     layout: 'fit',
 //     closable: true,
 //     modal: true,
+//     items: [{
+//         xtype: 'uxiframe',
+//         //src: me.iframeSource
+//     }]
 // })

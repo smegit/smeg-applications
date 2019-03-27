@@ -548,8 +548,11 @@ Ext.define('Showroom.view.category.Category', {
                 '<li>',
                 //'<span class="{ICONCLASS}" style="color: {ICONCOL}"></span>',
                 '<span class="{ICONCLASS}" style="color: {ICONCOL}">&nbsp</span>',
-                '<a href="{URL}" data-event="showpdf" target="_blank">{DOWNLDSC}</a>' +
-                //'<a data-event="showdownload" target="_blank" style="text-decoration: underline;">{DOWNLDSC}</a>' +
+                //'<a href="{URL}" data-event="showpdf" target="_blank">{DOWNLDSC}</a>' +
+                '<a data-link={URL} data-event="showdownload" target="_blank" style="text-decoration: underline;">{DOWNLDSC}</a>' +
+                // '<form method="get" action="/Product/Techspecs/CPRA115N.pdf">',
+                // '<button type="submit">Download!</button>',
+                // '</form>',
                 '</li>',
                 '</tpl>',
                 '</ul>',

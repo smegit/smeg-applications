@@ -5,6 +5,8 @@ Ext.define('Showroom.view.category.CategoryController', {
         //'Ext.Button'
         //'Ext.ux.IFrame',
         //'Showroom.view.category.Download'
+        //'Ext.window.Window'
+        //'Showroom.view.category.Download'
     ],
 
     init: function (view) {
@@ -270,6 +272,13 @@ Ext.define('Showroom.view.category.CategoryController', {
                 });
                 // prodStore.loadData(res.prods);
                 prodStore.loadData(prodArray);
+
+                // set the search bar text / ban text
+                var searchField2 = me.lookupReference('searchField2');
+                searchField2.setValue(res.searchText);
+                if (!Ext.isEmpty(res.CATDESC)) {
+                    vm.set('banText', res.CATDESC);
+                }
                 console.info(prodStore);
             } else {
                 Ext.Msg.alert('Failed to load products', JSON.stringify(res), Ext.emptyFn);
@@ -457,7 +466,7 @@ Ext.define('Showroom.view.category.CategoryController', {
 
 
             // Load BanText
-            vm.set('banText', rec.get('BANTEXT'));
+            //vm.set('banText', rec.get('BANTEXT'));
 
 
             // if has not sub cats than load the products
@@ -465,7 +474,7 @@ Ext.define('Showroom.view.category.CategoryController', {
 
             vm.set('currentCatId', rec.get('CATID'));
             vm.set('currentCatDesc', rec.get('CATDESC'));
-            searchField2.reset();
+            //searchField2.reset();
             me.loadProds({ cat: rec.get('CATID') }).then(function () {
                 console.info('load products success');
                 me.doCardNavigation(1);
@@ -547,7 +556,7 @@ Ext.define('Showroom.view.category.CategoryController', {
     },
 
 
-    onShowDownload: function () {
+    onShowDownload: function (target) {
         console.info('onShowDownload called');
         var me = this,
             view = me.getView(),
@@ -556,21 +565,41 @@ Ext.define('Showroom.view.category.CategoryController', {
             product = vm.get('product'),
             url = product.Downloads[0].URL;
 
-        console.info();
+        var link = target.target.getAttribute('data-link');
+        var downloadText = target.target.text;
+        console.info(link);
+        console.info(downloadText);
+        var overlay = Ext.Viewport.add({
+            xtype: 'panel',
+            floated: true,
+            modal: true,
+            closable: true,
+            hideOnMaskTap: true,
+            showAnimation: {
+                type: 'popIn',
+                duration: 250,
+                easing: 'ease-out'
+            },
+            hideAnimation: {
+                type: 'popOut',
+                duration: 250,
+                easing: 'ease-out'
+            },
+            centered: true,
+            width: '80%',
+            height: '700px',
+            styleHtmlContent: true,
+            html: '<iframe src="' + link + '" width="100%" height="700px" ></iframe>',
+            header: {
+                title: downloadText
+            },
+            scrollable: true
+        });
+
+        overlay.show();
 
 
-        // var win = Ext.create('Ext.Window', {
-        //     title: 'PDF Content',
-        //     width: 400,
-        //     height: 600,
-        //     modal: true,
-        //     closeAction: 'hide',
-        //     items: [{
-        //         xtype: 'component',
-        //         html: '<iframe src="/Product/Techspecs/KPFA9_Portofino.pdf" width="100%" height="100%"></iframe>',
-        //     }]
-        // });
-        // win.show();
+
 
     },
 
@@ -605,7 +634,7 @@ Ext.define('Showroom.view.category.CategoryController', {
         me.loadProds(obj).then(function () {
             console.info(prodStore);
             if (currentIdx == 'card-0' && prodStore.getCount() > 0) {
-                searchField2.reset();
+                //searchField2.reset();
                 me.doCardNavigation(1);
             }
             if (prodStore.getCount() == 0) {
