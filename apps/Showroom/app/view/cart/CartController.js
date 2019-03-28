@@ -55,11 +55,11 @@ Ext.define('Showroom.view.cart.CartController', {
         var idx = selectedProdsStore.find('MODEL', rec.MODEL);
         console.info(findRecord);
         if (findRecord) {
-            if (findRecord.getData().QUANTY > 1) {
-                findRecord.set('QUANTY', findRecord.getData().QUANTY - 1)
-            } else {
-                selectedProdsStore.remove(findRecord);
-            }
+            // if (findRecord.getData().QUANTY > 1) {
+            //     findRecord.set('QUANTY', findRecord.getData().QUANTY - 1)
+            // } else {
+            selectedProdsStore.remove(findRecord);
+            //}
         }
     },
 

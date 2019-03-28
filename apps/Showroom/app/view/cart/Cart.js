@@ -72,7 +72,9 @@ Ext.define('Showroom.view.cart.Cart', {
                     },
                     padding: 0,
                     renderer: function (v, record, dataIndex, cell, column) {
-                        return '<img src="' + v + '" style="height:40px" / >';
+                        //return '<img src="' + v + '" style="height:40px" / >';
+                        var onErrorReplace = '\"/Product/Images/FAB10HLR_200x200.jpg\"';
+                        return "<img  src=\"" + v + "\" onerror='this.src=\"/Product/Images/FAB10HLR_200x200.jpg\"' style='height:40px'/>";
                     }
                 }, {
                     text: 'Model',

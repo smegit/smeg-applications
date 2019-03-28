@@ -211,7 +211,8 @@ Ext.define('Showroom.view.category.Category', {
                         listeners: {
                             buffer: 500,
                             //change: 'doSearch'
-                            action: 'onSearchProds'
+                            action: 'onSearchProds',
+                            clearicontap: 'onClearIconTap'
                         }
                     },
                     {
@@ -312,7 +313,9 @@ Ext.define('Showroom.view.category.Category', {
                         listeners: {
                             buffer: 500,
                             //change: 'doSearch'
-                            action: 'onSearchProds2'
+                            action: 'onSearchProds2',
+                            clearicontap: 'onClearIconTap'
+
                         }
                     },
                     {

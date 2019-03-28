@@ -18,11 +18,11 @@ Ext.define('Showroom.view.main.MainModel', {
     //TODO - add data, formulas and/or methods to support your view
 
     stores: {
-        products: {
-            model: 'Showroom.model.Product',
-            autoLoad: true,
-            pageSize: 0,
-        },
+        // products: {
+        //     model: 'Showroom.model.Product',
+        //     autoLoad: true,
+        //     pageSize: 0,
+        // },
         // categories: {
         //     type: 'tree',
         //     model: 'Showroom.model.Category',

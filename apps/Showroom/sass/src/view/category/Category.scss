@@ -1,9 +1,14 @@
 .dataview-catalogue-outer {
-    display: flex;
-    flex-wrap: wrap;
-    float: left;
+    //display: flex;
+    //flex-wrap: wrap;
+    //float: left;
     margin: 10px;
-    justify-content: space-around; 
+    //justify-content: space-around; 
+    .x-unsized.x-dataview-container.x-component.x-layout-auto-item{
+        display: flex;
+        -webkit-flex-flow: row wrap;
+        justify-content: space-around;
+    }
 }
 .category-search-box{
     margin: auto;
@@ -180,4 +185,13 @@
 }
 
 .vvicon-file-pdf:before {
+}
+
+
+.dataview-products-outer{
+    .x-unsized.x-dataview-container.x-component.x-layout-auto-item{
+        display: flex;
+        -webkit-flex-flow: row wrap;
+        justify-content: space-around;
+    }
 }

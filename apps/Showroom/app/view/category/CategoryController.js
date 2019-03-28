@@ -592,7 +592,7 @@ Ext.define('Showroom.view.category.CategoryController', {
             width: '80%',
             height: '700px',
             styleHtmlContent: true,
-            html: '<iframe src="' + link + '" width="100%" height="700px" ></iframe>',
+            html: '<iframe src="' + link + '" width="100%" height="700px" >This is iframe</iframe>',
             header: {
                 title: downloadText
             },
@@ -696,7 +696,8 @@ Ext.define('Showroom.view.category.CategoryController', {
             searchField = me.lookupReference('searchField2'),
             searchString = searchField.getValue(),
             currentCatId = vm.get('currentCatId'),
-            obj = {};
+            obj = {},
+            prodStore = vm.getStore('products');
         Ext.apply(obj, {
             searchText: searchString,
             cat: currentCatId
@@ -735,6 +736,39 @@ Ext.define('Showroom.view.category.CategoryController', {
             }
         });
         return deferred.promise;
+    },
+
+    onClearIconTap: function (field, input, e) {
+        console.info('onClearIconTap called');
+        console.info(field);
+        console.info(input);
+        console.info(e);
+        console.info(field.getReference());
+        var me = this,
+            vm = me.getViewModel(),
+            view = me.getView();
+        console.info(vm.get('currentCatId'));
+
+        var searchField = me.lookupReference('searchField'),
+            searchField2 = me.lookupReference('searchField2');
+        searchField.reset();
+        searchField2.reset();
+
+
+
+        if (field.getReference() == 'searchField2') {
+            if (vm.get('currentCatId') == 'CAT') {
+                me.doCardNavigation(-1);
+                vm.set('banText', 'Products');
+            } else {
+                me.onSearchProds2();
+            }
+
+
+
+        } else {
+            // do nothing
+        }
     },
 
     onSegBtnToggle: function (container, button, pressed) {
