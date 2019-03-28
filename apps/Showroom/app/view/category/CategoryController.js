@@ -558,6 +558,8 @@ Ext.define('Showroom.view.category.CategoryController', {
 
     onShowDownload: function (target) {
         console.info('onShowDownload called');
+        console.info(Ext.os);
+        console.info(Ext.browser);
         var me = this,
             view = me.getView(),
             vm = me.getViewModel(),
@@ -566,6 +568,7 @@ Ext.define('Showroom.view.category.CategoryController', {
             url = product.Downloads[0].URL;
 
         var link = target.target.getAttribute('data-link');
+        //var link = '/Product/testdoc.docx';
         var downloadText = target.target.text;
         console.info(link);
         console.info(downloadText);
@@ -599,10 +602,39 @@ Ext.define('Showroom.view.category.CategoryController', {
         overlay.show();
 
 
+        //window.open(link);
+        //Ext.Msg.alert('Note', JSON.stringify(Ext.browser), Ext.emptyFn);
+        //console.info(Ext.device);
+
+
+
+
+        // var downloadUrl = link;
+
+        // var downloading = browser.downloads.download({
+        //     url: downloadUrl,
+        //     filename: 'CPR115N.pdf',
+        //     conflictAction: 'uniquify'
+        // });
+
+        // downloading.then(function (id) {
+        //     console.log(`Started downloading: ${id}`);
+        // }, function (error) {
+        //     console.log(`Download failed: ${error}`);
+        // });
+
+
 
 
     },
 
+    // onStartedDownload: function (id) {
+    //     console.log(`Started downloading: ${id}`);
+    // },
+
+    // onFailed: function (error) {
+    //     console.log(`Download failed: ${error}`);
+    // },
     // Mark selected products
 
     // Search products

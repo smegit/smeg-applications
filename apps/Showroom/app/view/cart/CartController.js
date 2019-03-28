@@ -10,6 +10,13 @@ Ext.define('Showroom.view.cart.CartController', {
             vm = me.getViewModel();
         console.info(vm);
         vm.notify();
+
+
+        var imgColumn = view.down('grid').getColumns()[0];
+        // imgColumn.setRenderer(function () {
+        //     return '<img src="/Product/Images/CPRA115N_200x200.jpg" />';
+        // });
+        console.info(imgColumn);
     },
 
     onAddToCart: function (content) {

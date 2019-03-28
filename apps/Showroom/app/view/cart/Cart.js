@@ -54,29 +54,25 @@ Ext.define('Showroom.view.cart.Cart', {
             emptyText: 'No products being selected yet',
             //flex: 1,
             height: 300,
+            cls: 'cart-list',
+            striped: false,
             columns: [
                 {
                     text: '',
-                    header: 'Photo',
                     //minWidth: 0,
                     //maxWidth: 50,
                     width: 100,
+                    cls: 'img-column',
                     dataIndex: 'SMALLPIC',
                     align: 'center',
                     sortable: false,
-                    renderer: function (v, meta, record, three) {
-                        // console.info(meta);
-                        // console.info(record);
-                        // if (!Ext.isEmpty(v)) {
-                        //     //meta.tdCls += ' image-column';
-                        //     return '<img src="' + v + '" />';
-                        // }
-                        // return '';
-                        console.info(v);
-                        console.info(meta);
-                        console.info(record);
-                        console.info(three);
-                        return '<img src="' + v + '">';
+                    cell: {
+                        encodeHtml: false,
+                        cls: 'img-cell'
+                    },
+                    padding: 0,
+                    renderer: function (v, record, dataIndex, cell, column) {
+                        return '<img src="' + v + '" style="height:40px" / >';
                     }
                 }, {
                     text: 'Model',
