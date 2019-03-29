@@ -139,6 +139,62 @@ Ext.define('Showroom.view.cart.CartController', {
     },
 
 
+    autoFillAddress: function (cmp) {
+        console.info('autoFillAddress called');
+        console.info(cmp);
+        var me = this,
+            view = me.getView(),
+            place = cmp.googleAutoComplete.getPlace(),
+            street_number, route, suburb, state, postal_code;
+        console.info(place);
+
+
+        place.address_components.forEach(function (e) {
+            console.info(e);
+
+            // get street number
+            if (e.types.includes('street_number')) {
+                street_number = e.long_name;
+            }
+            // get street name
+            if (e.types.includes('route')) {
+                route = e.long_name;
+            }
+            // get suburb
+            if (e.types.includes('locality')) {
+                suburb = e.long_name;
+            }
+            // get state
+            if (e.types.includes('administrative_area_level_1')) {
+                state = e.short_name;
+            }
+            // get postal code
+            if (e.types.includes('postal_code')) {
+                postal_code = e.long_name;
+            }
+        });
+
+
+        //console.info(`${street_number} ${route} ${suburb} ${state} ${postal_code} `)
+
+        //var street = place.address_components
+        console.info(view.down('fieldset').down('[name=address]'));
+        view.down('fieldset').down('[name=address]').setValue(street_number + ' ' + route);
+        view.down('fieldset').down('[name=suburb]').setValue(suburb);
+        view.down('fieldset').down('[name=state]').setValue(state);
+        view.down('fieldset').down('[name=postCode]').setValue(postal_code);
+    },
+
+    onClearAddr: function () {
+        console.info('onClearAddr called');
+        var me = this,
+            view = me.getView();
+        //view.down('fieldset').down('[name=address]').reset();
+        view.down('fieldset').down('[name=suburb]').reset();
+        view.down('fieldset').down('[name=state]').reset();
+        view.down('fieldset').down('[name=postCode]').reset();
+
+    },
 
 
     onSave: function (one, two, three) {

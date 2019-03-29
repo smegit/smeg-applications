@@ -9,7 +9,9 @@ Ext.define('Showroom.view.cart.Cart', {
     requires: [
         //'Showroom.store.Personnel'
         //'Showroom.view.product.ProductController'
+        'Ext.form.FieldContainer',
         'Ext.form.FieldSet',
+        //'Ext.form.ContainerField',
         'Ext.field.Number',
         'Ext.field.Spinner',
         'Ext.field.Password',
@@ -153,22 +155,76 @@ Ext.define('Showroom.view.cart.Cart', {
                         name: 'name',
                         label: 'Name',
                         placeHolder: 'Tom Roy',
-                        clearIcon: true
+                        clearIcon: true,
+
                     },
                     {
                         xtype: 'textfield',
                         //xtype: 'combo',
                         name: 'address',
                         label: 'Address',
-                        gApiAddrType: 'baseAddressLine1',
+                        //gApiAddrType: 'baseAddressLine1',
                         clearIcon: true,
                         listeners: {
-                            afterrender: 'onAfterRenderAddressSearch'
+                            //added: 'onAfterRenderAddressSearch'
+                            painted: 'onAfterRenderAddressSearch',
+                            clearicontap: 'onClearAddr'
                         }
                     },
+
+
                     {
-                        xtype: 'textfield',
-                        name: 'Email',
+                        xtype: 'container',
+                        layout: {
+                            type: 'hbox',
+                            pack: 'end'
+                        },
+                        //title: 'Address',
+
+                        //defaultType: 'textfield',
+                        //margin: '0 0 5 0',
+                        //width: '65%',
+                        items: [
+                            // {
+                            //     xtype: 'textfield',
+                            //     name: 'street',
+                            //     //label: 'Address',
+                            //     //labelWidth: '35%',
+                            //     //labelAlign: 'top',
+                            //     placeHolder: 'Street',
+                            //     margin: "0 10 0 0",
+                            //     flex: 1,
+                            // },
+
+                            {
+                                xtype: 'textfield',
+                                name: 'suburb',
+                                //label: 'Suburb',
+                                placeHolder: 'Suburb',
+                                margin: "0 10 0 0",
+                                //flex: 1,
+
+                            }, {
+                                xtype: 'textfield',
+                                name: 'state',
+                                //label: 'State',
+                                placeHolder: 'State',
+                                margin: "0 10 0 0",
+                                //flex: 1
+
+                            }, {
+                                xtype: 'textfield',
+                                name: 'postCode',
+                                //label: 'Post Code',
+                                placeHolder: 'Post Code',
+                                //margin: "0 10 0 0",
+                                //flex: 1
+
+                            }],
+                    },
+                    {
+                        xtype: 'emailfield',
+                        name: 'email',
                         label: 'Email',
                         clearIcon: true,
                         //handler: 'onEmail'
