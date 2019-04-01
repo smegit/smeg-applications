@@ -1,6 +1,6 @@
-Ext.define('Showroom.view.list.ListModel', {
+Ext.define('Showroom.view.qlist.QlistModel', {
     extend: 'Ext.app.ViewModel',
-    alias: 'viewmodel.list',
+    alias: 'viewmodel.qlist',
 
     requires: [
         'Showroom.model.Qoute'

@@ -13,17 +13,15 @@ Ext.define('Showroom.view.main.Main', {
     requires: [
         'Ext.MessageBox',
 
-        //'Showroom.view.*',
+        'Showroom.view.*',
         // 'Showroom.view.main.MainController',
         // 'Showroom.view.main.MainModel',
-        // 'Showroom.view.main.List',
-        // 'Showroom.view.cart.Cart',
+        //'Showroom.view.cart.Cart',
         // 'Showroom.view.cart.CartController',
         // 'Showroom.view.cart.CartModel',
-        // 'Showroom.view.category.Category',
-        // 'Showroom.view.list.List',
-        // 'Showroom.view.list.ListController',
-        // 'Showroom.view.list.ListModel'
+        //'Showroom.view.category.Category',
+        //'Showroom.view.qlist.Qlist',
+
 
     ],
 
@@ -68,9 +66,9 @@ Ext.define('Showroom.view.main.Main', {
             title: 'List',
             iconCls: 'x-fa fa-users',
             items: [{
-                xtype: 'list',
+                xtype: 'qlist',
             }]
-        }
+        },
         //{
         //     title: 'Settings',
         //     iconCls: 'x-fa fa-cog',
