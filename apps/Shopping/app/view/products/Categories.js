@@ -38,9 +38,7 @@ Ext.define('Shopping.view.products.Categories', {
     selectedItemCls: 'cat-wrap-sel',
 
     listeners: {
-        // select: function () {
-        //     console.info('click called');
-        // }
+        select: 'onSelectCat'
     },
 
     // Add Global Search Button to the title

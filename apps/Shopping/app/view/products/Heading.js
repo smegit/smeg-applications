@@ -52,6 +52,7 @@ Ext.define('Shopping.view.products.Heading', {
             }, {
                 xtype: 'textfield',
                 cls: 'fld-in-header',
+                reference: 'searchField',
                 itemId: 'search',
                 width: 200,
                 height: 32,

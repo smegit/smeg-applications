@@ -59,10 +59,20 @@ Ext.define('Shopping.view.products.ProductsController', {
             str = vm.getStore('products');
 
         //str.clearFilter();
-        console.info(vm);
-        console.info(catStore.getAt(0));
+        //console.info(vm);
+        //console.info(catStore.getAt(0));
         me.lookupReference('cats').getSelectionModel().deselectAll();
         me.lookupReference('cats').getSelectionModel().select(catStore.getAt(0));
+    },
+
+    onSelectCat: function () {
+        //console.info('onSelectCat called');
+        var me = this,
+            view = me.getView(),
+            searchField = me.lookupReference('searchField');
+
+        searchField.reset();
+        //console.info(searchField);
     },
 
     onKeyupSearch: function (fld) {
@@ -73,14 +83,18 @@ Ext.define('Shopping.view.products.ProductsController', {
             prodStore = vm.getStore('products'),
 
             str = vm.getStore('products');
-        console.info(value);
-        console.info(vm);
+        // console.info(value);
+        // console.info(vm);
+
+        me.lookupReference('cats').getSelectionModel().deselectAll();
+
 
         //Valence.util.Helper.processTypedInputFilter(str, ['PRODDESC', 'MODEL'], value);
         var obj = {
             cat: 'CAT',
             searchText: value
-        }
+        };
+
 
         me.lookupReference('productsdv').mask('Loading');
         me.requestSearch(obj).then(function (res) {

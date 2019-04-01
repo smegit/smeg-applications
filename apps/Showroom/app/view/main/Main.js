@@ -13,7 +13,7 @@ Ext.define('Showroom.view.main.Main', {
     requires: [
         'Ext.MessageBox',
 
-        'Showroom.view.*',
+        //'Showroom.view.*',
         // 'Showroom.view.main.MainController',
         // 'Showroom.view.main.MainModel',
         // 'Showroom.view.main.List',
@@ -70,7 +70,7 @@ Ext.define('Showroom.view.main.Main', {
             items: [{
                 xtype: 'list',
             }]
-        },
+        }
         //{
         //     title: 'Settings',
         //     iconCls: 'x-fa fa-cog',
