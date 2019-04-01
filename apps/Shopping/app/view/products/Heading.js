@@ -8,6 +8,11 @@ Ext.define('Shopping.view.products.Heading', {
     layout: {
         type: 'hbox'
     },
+    // listeners: {
+    //     action: function () {
+    //         console.info('onSearchAction called');
+    //     }
+    // },
     initComponent: function () {
         var me = this;
         Ext.apply(me, {
@@ -50,7 +55,7 @@ Ext.define('Shopping.view.products.Heading', {
                 itemId: 'search',
                 width: 200,
                 height: 32,
-                emptyText: 'Filter Products',
+                emptyText: 'Search Products',
                 margin: '0 8 0 0',
                 enableKeyEvents: true,
                 plugins: [{
@@ -59,9 +64,16 @@ Ext.define('Shopping.view.products.Heading', {
                 listeners: {
                     clear: 'onClearSearch',
                     keyup: {
-                        buffer: 250,
+                        buffer: 500,
                         fn: 'onKeyupSearch'
-                    }
+                    },
+                    // action: {
+                    //     fn: function () {
+                    //         console.info('onSearchAction called');
+                    //     }
+                    // }
+
+
                 }
             }, {
                 xtype: 'button',

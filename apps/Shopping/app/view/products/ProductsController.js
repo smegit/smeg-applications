@@ -51,20 +51,79 @@ Ext.define('Shopping.view.products.ProductsController', {
     // },
 
     onClearSearch: function (fld) {
+        console.info('onClearSearch called');
         var me = this,
             vm = me.getViewModel(),
+            catStore = vm.getStore('categories'),
+
             str = vm.getStore('products');
 
-        str.clearFilter();
+        //str.clearFilter();
+        console.info(vm);
+        console.info(catStore.getAt(0));
+        me.lookupReference('cats').getSelectionModel().deselectAll();
+        me.lookupReference('cats').getSelectionModel().select(catStore.getAt(0));
     },
 
     onKeyupSearch: function (fld) {
+        console.info('onKeyupSearch called');
         var me = this,
             value = fld.getValue(),
             vm = me.getViewModel(),
-            str = vm.getStore('products');
+            prodStore = vm.getStore('products'),
 
-        Valence.util.Helper.processTypedInputFilter(str, ['PRODDESC', 'MODEL'], value);
+            str = vm.getStore('products');
+        console.info(value);
+        console.info(vm);
+
+        //Valence.util.Helper.processTypedInputFilter(str, ['PRODDESC', 'MODEL'], value);
+        var obj = {
+            cat: 'CAT',
+            searchText: value
+        }
+
+        me.lookupReference('productsdv').mask('Loading');
+        me.requestSearch(obj).then(function (res) {
+            console.info(res);
+            if (res.success) {
+                prodStore.loadData(res.prods, false);
+                vm.set({
+                    bannerText: res.CATDESC,
+                });
+            }
+            me.lookupReference('productsdv').unmask();
+        }, function () {
+            Ext.Msg.alert('Server Error', 'Failed to search products', Ext.emptyFn);
+            me.lookupReference('productsdv').unmask();
+        });
+    },
+
+
+    requestSearch: function (obj) {
+        console.log('requestSearch called');
+        var me = this,
+            deferred = Ext.create('Ext.Deferred'),
+            params = {};
+        params = {
+            pgm: 'EC1010',
+            action: 'getProds',
+        };
+        Ext.apply(params, obj);
+        Ext.Ajax.request({
+            url: '/valence/vvcall.pgm',
+            method: 'GET',
+            params: params,
+            success: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.resolve(response);
+            },
+            failure: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.reject(response);
+            }
+        });
+        return deferred.promise;
+
     },
 
     onLoadCategories: function (cmp, recs) {
@@ -285,5 +344,9 @@ Ext.define('Shopping.view.products.ProductsController', {
         searchView.setHidden(true);
         cateTreeStore.clearFilter();
         prodStore.clearFilter();
+    },
+
+    onSearchAction: function () {
+        console.info('onSearchAction called');
     }
 });

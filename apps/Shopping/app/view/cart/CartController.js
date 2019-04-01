@@ -353,10 +353,11 @@ Ext.define('Shopping.view.cart.CartController', {
                 rec = store.getAt(i);
                 product = rec.getData();
                 //console.info(Shopping.util.Helper.getOutstanding(rec));
-                //console.info(product.release);
+                console.info(product);
                 prodArray.push({
                     OBITM: product.product_id,
                     OBQTYO: product.quantity,
+                    OBQTYD: product.delivered,
                     OBUPRC: product.price,
                     //OBQTYR: (standardOrder) ? Shopping.util.Helper.getOutstanding(rec) : product.release
                     OBQTYR: product.release,
@@ -434,6 +435,7 @@ Ext.define('Shopping.view.cart.CartController', {
             prodArray.push({
                 OBITM: item.product_id,
                 OBQTYO: item.quantity,
+                OBQTYD: item.delivered,
                 OBUPRC: item.price,
                 //OBQTYR: (standardOrder) ? Shopping.util.Helper.getOutstanding(rec) : product.release
                 OBQTYR: item.release,
@@ -2112,7 +2114,7 @@ Ext.define('Shopping.view.cart.CartController', {
             params = {},
             cartInfo = me.getCartInformation(),
             valid = me.isFormValid();
-        //console.info(cartInfo);
+        console.info(cartInfo);
         params = {
             pgm: 'EC1050',
             action: 'calculate',

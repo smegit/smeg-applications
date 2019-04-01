@@ -13,13 +13,18 @@ Ext.define('Showroom.view.main.Main', {
     requires: [
         'Ext.MessageBox',
 
-        'Showroom.view.main.MainController',
-        'Showroom.view.main.MainModel',
-        'Showroom.view.main.List',
-        'Showroom.view.cart.Cart',
-        'Showroom.view.cart.CartController',
-        'Showroom.view.cart.CartModel',
-        'Showroom.view.category.Category',
+        'Showroom.view.*',
+        // 'Showroom.view.main.MainController',
+        // 'Showroom.view.main.MainModel',
+        // 'Showroom.view.main.List',
+        // 'Showroom.view.cart.Cart',
+        // 'Showroom.view.cart.CartController',
+        // 'Showroom.view.cart.CartModel',
+        // 'Showroom.view.category.Category',
+        // 'Showroom.view.list.List',
+        // 'Showroom.view.list.ListController',
+        // 'Showroom.view.list.ListModel'
+
     ],
 
     controller: 'main',
@@ -59,13 +64,14 @@ Ext.define('Showroom.view.main.Main', {
                 xtype: 'cart',
             }]
         },
-        // {
-        //     title: 'Groups',
-        //     iconCls: 'x-fa fa-users',
-        //     bind: {
-        //         html: '{loremIpsum}'
-        //     }
-        // }, {
+        {
+            title: 'List',
+            iconCls: 'x-fa fa-users',
+            items: [{
+                xtype: 'list',
+            }]
+        },
+        //{
         //     title: 'Settings',
         //     iconCls: 'x-fa fa-cog',
         //     bind: {
