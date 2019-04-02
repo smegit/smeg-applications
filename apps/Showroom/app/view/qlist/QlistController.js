@@ -17,14 +17,20 @@ Ext.define('Showroom.view.qlist.QlistController', {
             vm = me.getViewModel(),
             cartView = Ext.ComponentQuery.query('cart')[0],
             cartVm = cartView.getViewModel(),
-            selectedProdsStore = cartVm.getStore('selectedProds');
+            selectedProdsStore = cartVm.getStore('selectedProds'),
+            tabPanel = Ext.ComponentQuery.query('app-main')[0];
         console.info(selectedProdsStore);
 
 
         // Load selects products
         console.info(rec.get('products'));
         selectedProdsStore.loadRawData(rec.get('products'), true);
+        console.info(selectedProdsStore);
 
+
+        // Set Active tab 
+        console.info(tabPanel);
+        tabPanel.setActiveItem(1);
     }
 
 });

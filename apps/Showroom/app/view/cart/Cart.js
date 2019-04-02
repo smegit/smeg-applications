@@ -75,6 +75,7 @@ Ext.define('Showroom.view.cart.Cart', {
                     padding: 0,
                     renderer: function (v, record, dataIndex, cell, column) {
                         //return '<img src="' + v + '" style="height:40px" / >';
+                        console.info(v);
                         var onErrorReplace = '\"/Product/Images/FAB10HLR_200x200.jpg\"';
                         return "<img  src=\"" + v + "\" onerror='this.src=\"/Product/Images/FAB10HLR_200x200.jpg\"' style='height:40px'/>";
                     }
@@ -186,24 +187,26 @@ Ext.define('Showroom.view.cart.Cart', {
                         xtype: 'container',
                         layout: {
                             type: 'hbox',
-                            pack: 'end'
+                            //pack: 'end'
                         },
+                        cls: 'address-container',
                         //title: 'Address',
 
                         //defaultType: 'textfield',
                         //margin: '0 0 5 0',
                         //width: '65%',
                         items: [
-                            // {
-                            //     xtype: 'textfield',
-                            //     name: 'street',
-                            //     //label: 'Address',
-                            //     //labelWidth: '35%',
-                            //     //labelAlign: 'top',
-                            //     placeHolder: 'Street',
-                            //     margin: "0 10 0 0",
-                            //     flex: 1,
-                            // },
+                            {
+                                xtype: 'textfield',
+                                name: 'address2',
+                                width: '30%',
+                                //label: 'Address',
+                                //labelWidth: '35%',
+                                //labelAlign: 'top',
+                                placeHolder: 'Address Line 2',
+                                margin: "0 10 0 0",
+                                flex: 1,
+                            },
 
                             {
                                 xtype: 'textfield',
@@ -246,6 +249,7 @@ Ext.define('Showroom.view.cart.Cart', {
                         label: 'Email',
                         clearIcon: true,
                         //handler: 'onEmail'
+                        placeHolder: 'email@email.com',
                         bind: {
                             value: '{theQoute.email}'
                         },

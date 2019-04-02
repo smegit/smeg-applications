@@ -282,11 +282,24 @@ Ext.define('Showroom.view.cart.CartController', {
 
     onCancel: function () {
         console.info('onCancel called');
+        var me = this,
+            vm = me.getViewModel(),
+            tabPanel = Ext.ComponentQuery.query('app-main')[0],
+            custInfoForm = custInfoForm = me.lookupReference('custInfoFormRef'),
+            qouteGrid = Ext.ComponentQuery.query('qlist')[0].down('grid'),
+            selectedProdsStore = vm.getStore('selectedProds');
         Ext.Msg.confirm('Confirmation', 'Are you sure you want to leave this page ?', function (res) {
             if (res == 'yes') {
                 //Ext.getCmp('app-main').setActiveTab(0);
-                console.info(Ext.ComponentQuery.query('app-main')[0].setActiveTab(0));
+                //console.info(Ext.ComponentQuery.query('app-main')[0].setActiveTab(0));
+                tabPanel.setActiveItem(0);
 
+                // reset cart
+                selectedProdsStore.removeAll();
+                //
+
+                // Deselect grid
+                qouteGrid.deselectAll();
 
             } else {
 

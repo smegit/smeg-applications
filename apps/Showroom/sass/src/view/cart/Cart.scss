@@ -1,3 +1,10 @@
 .img-cell{
     padding: 0;
 }
+
+.address-container{
+    justify-content: flex-end;
+    .x-inner.x-container-inner{
+        width: 65%;
+    }
+}

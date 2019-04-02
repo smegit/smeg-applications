@@ -2,7 +2,7 @@ Ext.define('Showroom.view.qlist.Qlist', {
     extend: 'Ext.Panel',
     xtype: 'qlist',
     controller: 'qlist',
-    title: 'Qoute List',
+    //title: 'Qoute List',
 
     requires: [
         //'Ext.grid.filters.*'
@@ -13,12 +13,14 @@ Ext.define('Showroom.view.qlist.Qlist', {
     //     //gridfilters: true
     // },
 
+    //plugins: 'gridfilters',
 
     items: [{
         xtype: 'grid',
         rowNumbers: true,
 
-        height: 600,
+        title: "Qoute List",
+        height: 800,
         bind: {
             store: '{qoutes}',
             selection: '{theQoute}'
@@ -32,6 +34,12 @@ Ext.define('Showroom.view.qlist.Qlist', {
             text: 'Referring Agent',
             flex: 1,
             dataIndex: 'referringAgent',
+            // filter: {
+            //     type: 'string',
+            //     itemDefaults: {
+            //         emptyText: 'Search for...'
+            //     }
+            // }
 
         }, {
             text: 'Name',
@@ -74,11 +82,26 @@ Ext.define('Showroom.view.qlist.Qlist', {
         },
         {
             text: 'Email',
+            //flex: 1,
+            width: 160,
             dataIndex: 'email'
         }, {
             text: 'Contact Number',
+            //flex: 1,
+            width: 160,
             dataIndex: 'contactNumber'
-        }]
+        },
+        {
+            text: 'Date',
+            flex: 1,
+            //dataIndex: 'email'
+        },
+            // {
+            // text: 'Update At',
+            // flex: 1,
+            // //dataIndex: 'contactNumber'
+            // }
+        ]
     }]
 
 
