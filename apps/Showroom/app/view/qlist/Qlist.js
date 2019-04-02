@@ -13,20 +13,66 @@ Ext.define('Showroom.view.qlist.Qlist', {
     //     //gridfilters: true
     // },
 
+
     items: [{
         xtype: 'grid',
         rowNumbers: true,
 
+        height: 600,
+        bind: {
+            store: '{qoutes}',
+            selection: '{theQoute}'
+        },
+        listeners: {
+            select: 'onGridSelect'
+        },
+
+
         columns: [{
             text: 'Referring Agent',
+            flex: 1,
             dataIndex: 'referringAgent',
+
         }, {
             text: 'Name',
             dataIndex: 'name'
-        }, {
+        },
+        {
             text: 'Address',
-            dataIndex: 'address'
-        }, {
+            flex: 1,
+            columns: [{
+                text: 'Street',
+                dataIndex: 'address',
+
+                flex: 1,
+                sortable: true,
+            },
+            {
+                text: 'Suburb',
+                dataIndex: 'suburb',
+
+                flex: 1,
+                sortable: true,
+            },
+            {
+                text: 'State',
+                dataIndex: 'state',
+
+                flex: 1,
+                sortable: true,
+            },
+            {
+                text: 'Post Code',
+                dataIndex: 'postCode',
+
+                flex: 1,
+                sortable: true,
+            },]
+
+
+            //dataIndex: 'address'
+        },
+        {
             text: 'Email',
             dataIndex: 'email'
         }, {

@@ -139,6 +139,9 @@ Ext.define('Showroom.view.cart.Cart', {
                         label: 'Referring Agent',
                         placeHolder: 'Harvey Norman',
                         clearIcon: true,
+                        bind: {
+                            value: '{theQoute.referringAgent}'
+                        },
                         listeners: {
                             focus: function (comp, e, eopts) {
                                 console.info('focus called');
@@ -156,6 +159,9 @@ Ext.define('Showroom.view.cart.Cart', {
                         label: 'Name',
                         placeHolder: 'Tom Roy',
                         clearIcon: true,
+                        bind: {
+                            value: '{theQoute.name}'
+                        }
 
                     },
                     {
@@ -165,6 +171,9 @@ Ext.define('Showroom.view.cart.Cart', {
                         label: 'Address',
                         //gApiAddrType: 'baseAddressLine1',
                         clearIcon: true,
+                        bind: {
+                            value: '{theQoute.address}'
+                        },
                         listeners: {
                             //added: 'onAfterRenderAddressSearch'
                             painted: 'onAfterRenderAddressSearch',
@@ -202,6 +211,9 @@ Ext.define('Showroom.view.cart.Cart', {
                                 //label: 'Suburb',
                                 placeHolder: 'Suburb',
                                 margin: "0 10 0 0",
+                                bind: {
+                                    value: '{theQoute.suburb}'
+                                },
                                 //flex: 1,
 
                             }, {
@@ -210,6 +222,9 @@ Ext.define('Showroom.view.cart.Cart', {
                                 //label: 'State',
                                 placeHolder: 'State',
                                 margin: "0 10 0 0",
+                                bind: {
+                                    value: '{theQoute.state}'
+                                },
                                 //flex: 1
 
                             }, {
@@ -219,6 +234,9 @@ Ext.define('Showroom.view.cart.Cart', {
                                 placeHolder: 'Post Code',
                                 //margin: "0 10 0 0",
                                 //flex: 1
+                                bind: {
+                                    value: '{theQoute.postCode}'
+                                },
 
                             }],
                     },
@@ -228,13 +246,19 @@ Ext.define('Showroom.view.cart.Cart', {
                         label: 'Email',
                         clearIcon: true,
                         //handler: 'onEmail'
+                        bind: {
+                            value: '{theQoute.email}'
+                        },
                     },
                     {
                         xtype: 'textfield',
                         name: 'contactNumber',
                         label: 'Contact Number',
                         placeHolder: '0412345678',
-                        clearIcon: true
+                        clearIcon: true,
+                        bind: {
+                            value: '{theQoute.contactNumber}'
+                        },
                     }]
                 },
                 {
