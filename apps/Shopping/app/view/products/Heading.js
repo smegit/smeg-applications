@@ -54,6 +54,7 @@ Ext.define('Shopping.view.products.Heading', {
                 cls: 'fld-in-header',
                 reference: 'searchField',
                 itemId: 'search',
+                id: 'searchFieldId',
                 width: 200,
                 height: 32,
                 emptyText: 'Search Products',
@@ -72,8 +73,7 @@ Ext.define('Shopping.view.products.Heading', {
                     //     fn: function () {
                     //         console.info('onSearchAction called');
                     //     }
-                    // }
-
+                    // },
 
                 }
             }, {

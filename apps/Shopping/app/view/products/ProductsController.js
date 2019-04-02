@@ -75,6 +75,23 @@ Ext.define('Shopping.view.products.ProductsController', {
         //console.info(searchField);
     },
 
+    // Used to add "Enter Key" listeners
+    // onSearchFieldRender: function (cmp, listeners) {
+    //     var me = this;
+    //     console.info('onSearchFieldRender called');
+    //     console.info(cmp);
+    //     console.info(listeners);
+    //     cmp.getEl().on('keypress', function (e, t, eOpts) {
+    //         console.info(e);
+    //         console.info(t);
+    //         var key = e.which || e.keyCode;
+    //         if (key === 13) { // 13 is enter
+    //             // code for enter
+    //             //Ext.getCmp('searchFieldId').setValue("TEXT");
+    //             me.onKeyupSearch(cmp)
+    //         }
+    //     });
+    // },
     onKeyupSearch: function (fld) {
         console.info('onKeyupSearch called');
         var me = this,
@@ -83,33 +100,43 @@ Ext.define('Shopping.view.products.ProductsController', {
             prodStore = vm.getStore('products'),
 
             str = vm.getStore('products');
-        // console.info(value);
+        console.info(value);
+        console.info(value.length);
         // console.info(vm);
+        if (value.length == 0) {
+            me.onClearSearch();
 
-        me.lookupReference('cats').getSelectionModel().deselectAll();
+        }
+        if (value.length > 2) {
+            me.lookupReference('cats').getSelectionModel().deselectAll();
+            var obj = {
+                cat: 'CAT',
+                searchText: value
+            };
+
+
+            me.lookupReference('productsdv').mask('Loading');
+            me.requestSearch(obj).then(function (res) {
+                console.info(res);
+                if (res.success) {
+                    prodStore.loadData(res.prods, false);
+                    vm.set({
+                        bannerText: res.CATDESC,
+                    });
+                }
+                me.lookupReference('productsdv').unmask();
+            }, function () {
+                Ext.Msg.alert('Server Error', 'Failed to search products', Ext.emptyFn);
+                me.lookupReference('productsdv').unmask();
+            });
+
+
+        }
+
 
 
         //Valence.util.Helper.processTypedInputFilter(str, ['PRODDESC', 'MODEL'], value);
-        var obj = {
-            cat: 'CAT',
-            searchText: value
-        };
 
-
-        me.lookupReference('productsdv').mask('Loading');
-        me.requestSearch(obj).then(function (res) {
-            console.info(res);
-            if (res.success) {
-                prodStore.loadData(res.prods, false);
-                vm.set({
-                    bannerText: res.CATDESC,
-                });
-            }
-            me.lookupReference('productsdv').unmask();
-        }, function () {
-            Ext.Msg.alert('Server Error', 'Failed to search products', Ext.emptyFn);
-            me.lookupReference('productsdv').unmask();
-        });
     },
 
 
