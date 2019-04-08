@@ -95,6 +95,15 @@ Ext.define('Showroom.view.main.MainController', {
 
     onAppSelected: function () {
         console.info('onAppSelected called');
-    }
+    },
 
+    onActiveItemChange: function (sender, value, oldValue) {
+        console.info('onTabChange called');
+        console.info(sender);
+        console.info(value);
+        console.info(oldValue);
+        if (value.id == 'QouteList') {
+            Ext.ComponentQuery.query('qlist')[0].fireEvent('getQouteList');
+        }
+    }
 });

@@ -39,6 +39,9 @@ Ext.define('Showroom.view.main.Main', {
 
 
 
+    listeners: {
+        activeItemchange: 'onActiveItemChange'
+    },
 
     items: [
         {
@@ -65,6 +68,7 @@ Ext.define('Showroom.view.main.Main', {
         {
             title: 'List',
             iconCls: 'x-fa fa-users',
+            id: 'QouteList',
             items: [{
                 xtype: 'qlist',
             }]

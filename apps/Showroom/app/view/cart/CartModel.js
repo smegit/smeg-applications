@@ -7,7 +7,7 @@ Ext.define('Showroom.view.cart.CartModel', {
     ],
 
     data: {
-        //theQoute: null,
+        theQoute: null,
     },
 
     stores: {

@@ -83,21 +83,21 @@ Ext.define('Showroom.view.cart.Cart', {
                     text: 'Model',
                     //flex: 1,
                     width: 150,
-                    dataIndex: 'MODEL'
+                    dataIndex: 'SBITM'
                 }, {
                     text: 'Description',
                     flex: 1,
-                    dataIndex: 'PRODDESC'
+                    dataIndex: 'I1IDSC'
                 },
                 {
                     text: 'Unit Price',
                     width: 120,
-                    dataIndex: 'PRICE'
+                    dataIndex: 'SBUPRC'
                 },
                 {
                     text: 'Quanty',
                     width: 75,
-                    dataIndex: 'QUANTY',
+                    dataIndex: 'SBQTYO',
                     editable: true,
                     editor: {
                         xtype: 'numberfield'
@@ -134,169 +134,183 @@ Ext.define('Showroom.view.cart.Cart', {
                     defaults: {
                         labelWidth: '35%'
                     },
-                    items: [{
-                        xtype: 'textfield',
-                        name: 'referringAgent',
-                        label: 'Referring Agent',
-                        placeHolder: 'Harvey Norman',
-                        clearIcon: true,
-                        bind: {
-                            value: '{theQoute.referringAgent}'
-                        },
-                        listeners: {
-                            focus: function (comp, e, eopts) {
-                                // console.info('focus called');
-                                // var ost = comp.element.dom.offsetTop;
-                                // console.info(ost);
-                                // this.getParent().getParent().getScrollable().scrollTo(0, 0)
-                                //console.info();
-                                //this.getParent().getParent().getScrollable().getScroller().scrollTo(0, ost);
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            name: 'SAORDKEY',
+                            hidden: true,
+                            bind: {
+                                value: '{theQoute.SAORDKEY}'
                             }
-                        }
-                    },
-                    {
-                        xtype: 'textfield',
-                        name: 'name',
-                        label: 'Name',
-                        placeHolder: 'Tom Roy',
-                        clearIcon: true,
-                        bind: {
-                            value: '{theQoute.name}'
-                        }
 
-                    },
-                    {
-                        xtype: 'textfield',
-                        //xtype: 'combo',
-                        name: 'address',
-                        label: 'Address',
-                        placeHolder: 'Address Line 1',
-                        //gApiAddrType: 'baseAddressLine1',
-                        clearIcon: true,
-                        bind: {
-                            value: '{theQoute.address}'
                         },
-                        listeners: {
-                            //added: 'onAfterRenderAddressSearch'
-                            painted: 'onAfterRenderAddressSearch',
-                            clearicontap: 'onClearAddr'
-                        }
-                    },
 
-                    {
-                        xtype: 'container',
-                        layout: {
-                            type: 'hbox',
-                            //pack: 'end'
+                        {
+                            xtype: 'textfield',
+                            name: 'SACSTNAM',
+                            label: 'Name',
+                            placeHolder: 'Tom Roy',
+                            clearIcon: true,
+                            bind: {
+                                value: '{theQoute.SACSTNAM}'
+                            }
+
                         },
-                        cls: 'address-container2',
-                        margin: "0 0 5 0",
-                        items: [
-                            {
-                                xtype: 'textfield',
-                                name: 'address2',
-                                //label: 'Address',
-                                //labelWidth: '35%',
-                                //labelAlign: 'top',
-                                placeHolder: 'Address Line 2',
-                                //margin: "0 10 0 0",
-                                flex: 1,
+                        {
+                            xtype: 'textfield',
+                            //xtype: 'combo',
+                            name: 'SACSTST1',
+                            label: 'Address',
+                            placeHolder: 'Address Line 1',
+                            //gApiAddrType: 'baseAddressLine1',
+                            clearIcon: true,
+                            bind: {
+                                value: '{theQoute.SACSTST1}'
                             },
-                        ]
-                    },
-
-                    {
-                        xtype: 'container',
-                        layout: {
-                            type: 'hbox',
-                            //pack: 'end'
+                            listeners: {
+                                //added: 'onAfterRenderAddressSearch'
+                                painted: 'onAfterRenderAddressSearch',
+                                clearicontap: 'onClearAddr'
+                            }
                         },
-                        cls: 'address-container',
-                        //title: 'Address',
 
-                        //defaultType: 'textfield',
-                        //margin: '0 0 5 0',
-                        //width: '65%',
-                        items: [
-                            // {
-                            //     xtype: 'textfield',
-                            //     name: 'address2',
-                            //     //label: 'Address',
-                            //     //labelWidth: '35%',
-                            //     //labelAlign: 'top',
-                            //     placeHolder: 'Address Line 2',
-                            //     margin: "0 10 0 0",
-                            //     flex: 1,
-                            // },
-
-                            {
-                                xtype: 'textfield',
-                                name: 'suburb',
-                                //label: 'Suburb',
-                                placeHolder: 'Suburb',
-                                margin: "0 10 0 0",
-                                bind: {
-                                    value: '{theQoute.suburb}'
-                                },
-                                flex: 1,
-
-                            }, {
-                                xtype: 'textfield',
-                                name: 'state',
-                                //label: 'State',
-                                placeHolder: 'State',
-                                margin: "0 10 0 0",
-                                bind: {
-                                    value: '{theQoute.state}'
-                                },
-                                flex: 1
-
-                            }, {
-                                xtype: 'textfield',
-                                name: 'postCode',
-                                //label: 'Post Code',
-                                placeHolder: 'Post Code',
-                                margin: "0 10 0 0",
-                                flex: 1,
-                                bind: {
-                                    value: '{theQoute.postCode}'
-                                },
-
+                        {
+                            xtype: 'container',
+                            layout: {
+                                type: 'hbox',
+                                //pack: 'end'
                             },
-                            {
-                                xtype: 'textfield',
-                                name: 'country',
-                                //label: 'Post Code',
-                                placeHolder: 'Country',
-                                //margin: "0 10 0 0",
-                                flex: 1,
-                                bind: {
-                                    value: '{theQoute.country}'
+                            cls: 'address-container2',
+                            margin: "0 0 5 0",
+                            items: [
+                                {
+                                    xtype: 'textfield',
+                                    name: 'SACSTST2',
+                                    //label: 'Address',
+                                    //labelWidth: '35%',
+                                    //labelAlign: 'top',
+                                    bind: {
+                                        value: '{theQoute.SACSTST2}'
+                                    },
+                                    placeHolder: 'Address Line 2',
+                                    //margin: "0 10 0 0",
+                                    flex: 1,
                                 },
+                            ]
+                        },
 
-                            }],
-                    },
-                    {
-                        xtype: 'emailfield',
-                        name: 'email',
-                        label: 'Email',
-                        clearIcon: true,
-                        //handler: 'onEmail'
-                        placeHolder: 'email@email.com',
-                        bind: {
-                            value: '{theQoute.email}'
+                        {
+                            xtype: 'container',
+                            layout: {
+                                type: 'hbox',
+                                //pack: 'end'
+                            },
+                            cls: 'address-container',
+                            //title: 'Address',
+
+                            //defaultType: 'textfield',
+                            //margin: '0 0 5 0',
+                            //width: '65%',
+                            items: [
+                                // {
+                                //     xtype: 'textfield',
+                                //     name: 'address2',
+                                //     //label: 'Address',
+                                //     //labelWidth: '35%',
+                                //     //labelAlign: 'top',
+                                //     placeHolder: 'Address Line 2',
+                                //     margin: "0 10 0 0",
+                                //     flex: 1,
+                                // },
+
+                                {
+                                    xtype: 'textfield',
+                                    name: 'SACSTCTY',
+                                    //label: 'Suburb',
+                                    placeHolder: 'Suburb',
+                                    margin: "0 10 0 0",
+                                    bind: {
+                                        value: '{theQoute.SACSTCTY}'
+                                    },
+                                    flex: 1,
+
+                                }, {
+                                    xtype: 'textfield',
+                                    name: 'SACSTSTA',
+                                    //label: 'State',
+                                    placeHolder: 'State',
+                                    margin: "0 10 0 0",
+                                    bind: {
+                                        value: '{theQoute.SACSTSTA}'
+                                    },
+                                    flex: 1
+
+                                }, {
+                                    xtype: 'textfield',
+                                    name: 'SACSTPST',
+                                    //label: 'Post Code',
+                                    placeHolder: 'Post Code',
+                                    margin: "0 10 0 0",
+                                    flex: 1,
+                                    bind: {
+                                        value: '{theQoute.SACSTPST}'
+                                    },
+
+                                },
+                                {
+                                    xtype: 'textfield',
+                                    name: 'SACSTCOU',
+                                    //label: 'Post Code',
+                                    placeHolder: 'Country',
+                                    //margin: "0 10 0 0",
+                                    flex: 1,
+                                    bind: {
+                                        value: '{theQoute.SACSTCOU}'
+                                    },
+
+                                }],
                         },
-                    },
-                    {
-                        xtype: 'textfield',
-                        name: 'contactNumber',
-                        label: 'Contact Number',
-                        placeHolder: '0412345678',
-                        clearIcon: true,
-                        bind: {
-                            value: '{theQoute.contactNumber}'
+                        {
+                            xtype: 'emailfield',
+                            name: 'SACSTEML',
+                            label: 'Email',
+                            clearIcon: true,
+                            //handler: 'onEmail'
+                            placeHolder: 'email@email.com',
+                            bind: {
+                                value: '{theQoute.SACSTEML}'
+                            },
                         },
-                    },
+                        {
+                            xtype: 'textfield',
+                            name: 'SACSTPH1',
+                            label: 'Contact Number',
+                            placeHolder: '0412345678',
+                            clearIcon: true,
+                            bind: {
+                                value: '{theQoute.SACSTPH1}'
+                            },
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: 'SARFAG',
+                            label: 'Referring Agent',
+                            placeHolder: 'Harvey Norman',
+                            clearIcon: true,
+                            bind: {
+                                value: '{theQoute.SARFAG}'
+                            },
+                            listeners: {
+                                focus: function (comp, e, eopts) {
+                                    // console.info('focus called');
+                                    // var ost = comp.element.dom.offsetTop;
+                                    // console.info(ost);
+                                    // this.getParent().getParent().getScrollable().scrollTo(0, 0)
+                                    //console.info();
+                                    //this.getParent().getParent().getScrollable().getScroller().scrollTo(0, ost);
+                                }
+                            }
+                        },
 
                         // {
                         //     xtype: 'selectfield',

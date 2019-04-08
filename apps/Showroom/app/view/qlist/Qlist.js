@@ -15,6 +15,9 @@ Ext.define('Showroom.view.qlist.Qlist', {
 
     //plugins: 'gridfilters',
 
+    listeners: {
+        getQouteList: 'onGetQouteList'
+    },
     items: [{
         xtype: 'grid',
         rowNumbers: true,
@@ -23,7 +26,7 @@ Ext.define('Showroom.view.qlist.Qlist', {
         height: 800,
         bind: {
             store: '{qoutes}',
-            selection: '{theQoute}'
+            //selection: '{theQoute}'
         },
         listeners: {
             select: 'onGridSelect'
@@ -31,9 +34,9 @@ Ext.define('Showroom.view.qlist.Qlist', {
 
 
         columns: [{
-            text: 'Referring Agent',
+            text: 'Order Key',
             flex: 1,
-            dataIndex: 'referringAgent',
+            dataIndex: 'SAORDKEY',
             // filter: {
             //     type: 'string',
             //     itemDefaults: {
@@ -43,35 +46,35 @@ Ext.define('Showroom.view.qlist.Qlist', {
 
         }, {
             text: 'Name',
-            dataIndex: 'name'
+            dataIndex: 'SACSTNAM'
         },
         {
             text: 'Address',
             flex: 1,
             columns: [{
                 text: 'Street',
-                dataIndex: 'address',
+                dataIndex: 'SACSTST1',
 
                 flex: 1,
                 sortable: true,
             },
             {
                 text: 'Suburb',
-                dataIndex: 'suburb',
+                dataIndex: 'SACSTCTY',
 
                 flex: 1,
                 sortable: true,
             },
             {
                 text: 'State',
-                dataIndex: 'state',
+                dataIndex: 'SACSTSTA',
 
                 flex: 1,
                 sortable: true,
             },
             {
                 text: 'Post Code',
-                dataIndex: 'postCode',
+                dataIndex: 'SACSTPST',
 
                 flex: 1,
                 sortable: true,
@@ -84,18 +87,18 @@ Ext.define('Showroom.view.qlist.Qlist', {
             text: 'Email',
             //flex: 1,
             width: 160,
-            dataIndex: 'email'
+            dataIndex: 'SACSTEML'
         }, {
             text: 'Contact Number',
             //flex: 1,
             width: 160,
-            dataIndex: 'contactNumber'
+            dataIndex: 'SACSTPH1'
         },
-        {
-            text: 'Date',
-            flex: 1,
-            //dataIndex: 'email'
-        },
+            // {
+            //     text: 'Date',
+            //     flex: 1,
+            //     //dataIndex: 'email'
+            // },
             // {
             // text: 'Update At',
             // flex: 1,

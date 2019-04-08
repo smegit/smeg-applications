@@ -253,9 +253,9 @@ Ext.define('Showroom.view.category.CategoryController', {
             if (res.success) {
                 //load AddBtn text / class
                 res.prods.forEach(function (e) {
-                    if (selectedProdsStore.findRecord('MODEL', e.MODEL, 0, false, false, true)) {
+                    if (selectedProdsStore.findRecord('SBITM', e.MODEL, 0, false, false, true)) {
                         console.info(e);
-                        console.info(selectedProdsStore.findRecord('MODEL', e.MODEL, 0, false, false, true));
+                        console.info(selectedProdsStore.findRecord('SBITM', e.MODEL, 0, false, false, true));
                         Ext.apply(e, {
                             addBtnClass: 'dv-prod-btn-selected',
                             addBtnText: 'Added'

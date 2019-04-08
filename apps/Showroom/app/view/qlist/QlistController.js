@@ -6,25 +6,11 @@ Ext.define('Showroom.view.qlist.QlistController', {
     init: function (view) {
         console.info('initList called');
         console.info(view);
-        var me = this,
-            vm = me.getViewModel(),
-            qoutesStore = vm.getStore('qoutes');
+
 
         // get the list of quotes(carts)
-        me.requestGetCarts().then(
-            function (res) {
-                console.info(res);
-                if (res.success) {
-                    qoutesStore.loadData(res.carts, false);
-                } else {
-                    console.info('loading carts error');
-                }
-            },
-            function (res) {
-                console.info(res);
-                console.info('Server error: loading carts');
-            }
-        );
+
+
 
     },
 
@@ -52,7 +38,7 @@ Ext.define('Showroom.view.qlist.QlistController', {
         });
         return deferred.promise;
     },
-    requestGetCartDetails: function (cartId) {
+    requestGetCartDetails: function (orderKey) {
         console.info('requestCartDetails called');
         var me = this,
             deferred = Ext.create('Ext.Deferred'),
@@ -60,7 +46,7 @@ Ext.define('Showroom.view.qlist.QlistController', {
         params = {
             pgm: 'EC3050',
             action: 'getCartDetails',
-            cartId: cartId,
+            SAORDKEY: orderKey,
         };
         Ext.Ajax.request({
             url: '/valence/vvcall.pgm',
@@ -68,7 +54,7 @@ Ext.define('Showroom.view.qlist.QlistController', {
             params: params,
             success: function (res) {
                 var response = Ext.decode(res.responseText);
-                deferred.resovle(response);
+                deferred.resolve(response);
             },
             failure: function (res) {
                 var response = Ext.decode(res.responseText);
@@ -90,8 +76,10 @@ Ext.define('Showroom.view.qlist.QlistController', {
             cartVm = cartView.getViewModel(),
             selectedProdsStore = cartVm.getStore('selectedProds'),
             tabPanel = Ext.ComponentQuery.query('app-main')[0],
-            cartId = rec.get('cartId');
+            orderKey = rec.get('SAORDKEY');
         console.info(selectedProdsStore);
+        console.info(vm);
+        console.info(cartVm);
 
 
         // Load selects products
@@ -100,10 +88,11 @@ Ext.define('Showroom.view.qlist.QlistController', {
         // console.info(selectedProdsStore);
 
 
-        me.requestGetCartDetails(cartId).then(
+        me.requestGetCartDetails(orderKey).then(
             function (res) {
                 console.info(res);
-                selectedProdsStore.loadRawData(res.products, true);
+                cartVm.set('theQoute', res.CartHdr[0]);
+                selectedProdsStore.loadRawData(res.CartDtl, true);
 
             },
             function (res) {
@@ -116,6 +105,30 @@ Ext.define('Showroom.view.qlist.QlistController', {
         // Set Active tab 
         console.info(tabPanel);
         tabPanel.setActiveItem(1);
+    },
+
+    onGetQouteList: function () {
+        console.info('onGetQouteList called');
+        var me = this,
+            vm = me.getViewModel(),
+            qoutesStore = vm.getStore('qoutes');
+        me.requestGetCarts().then(
+            function (res) {
+                console.info(res);
+                if (res.success) {
+                    qoutesStore.loadData(res.Carts, false);
+                } else {
+                    console.info('loading carts error');
+                }
+            },
+            function (res) {
+                console.info(res);
+                console.info('Server error: loading carts');
+            }
+        );
     }
+
+
+
 
 });

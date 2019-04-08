@@ -33,7 +33,8 @@ Ext.define('Showroom.view.cart.CartController', {
         var me = this,
             vm = me.getViewModel(),
             selectedProdsStore = vm.getStore('selectedProds'),
-            rec = content.getData();
+            rec = content.getData(),
+            payload = {};
         console.info('onAddToCart called');
         console.info(content.getData());
 
@@ -41,10 +42,22 @@ Ext.define('Showroom.view.cart.CartController', {
         delete rec.ATTRIBS;
         delete rec.id
         Ext.apply(rec, {
-            QUANTY: 1,
-        })
+            SBQTYO: 1,
+        });
+
+        payload = {
+            SBITM: rec.MODEL,
+            SBQTYO: 1,
+            SBUPRC: rec.PRICE,
+            I1IDSC: rec.PRODDESC,
+            SMALLPIC: rec.SMALLPIC,
+            addBtnClass: rec.addBtnClass,
+            addBtnText: rec.addBtnText
+        };
         console.info(rec);
-        selectedProdsStore.loadRawData(rec, true);
+        console.info(payload);
+        //selectedProdsStore.loadRawData(rec, true);
+        selectedProdsStore.loadRawData(payload, true);
         console.info(selectedProdsStore);
         //vm.notify();
 
@@ -59,10 +72,9 @@ Ext.define('Showroom.view.cart.CartController', {
             vm = me.getViewModel(),
             selectedProdsStore = vm.getStore('selectedProds'),
             rec = content.getData(),
-            findRecord = selectedProdsStore.findRecord('MODEL', rec.MODEL, 0, false, false, true);
+            findRecord = selectedProdsStore.findRecord('SBITM', rec.MODEL, 0, false, false, true);
 
         // looking up rec in store
-        var idx = selectedProdsStore.find('MODEL', rec.MODEL);
         console.info(findRecord);
         if (findRecord) {
             // if (findRecord.getData().QUANTY > 1) {
@@ -83,12 +95,12 @@ Ext.define('Showroom.view.cart.CartController', {
         console.info(record);
 
 
-        Ext.Msg.confirm('Confirmation', 'Are you sure you want to delete ' + record.get('MODEL') + '?', function (res) {
+        Ext.Msg.confirm('Confirmation', 'Are you sure you want to delete ' + record.get('SBITM') + '?', function (res) {
             console.info(1)
             console.info(res);
             if (res == 'yes') {
                 if (record) {
-                    var findRecord = selectedProdsStore.findRecord('MODEL', record.getData().MODEL, 0, false, false, true);
+                    var findRecord = selectedProdsStore.findRecord('SBITM', record.getData().SBITM, 0, false, false, true);
                     selectedProdsStore.remove(findRecord);
 
                     var prodDv = Ext.ComponentQuery.query('#prodDv');
@@ -99,7 +111,7 @@ Ext.define('Showroom.view.cart.CartController', {
                     var catView = Ext.ComponentQuery.query('category')[0],
                         catVm = catView.getViewModel(),
                         prodStore = catVm.getStore('products'),
-                        findRecordInProds = prodStore.findRecord('MODEL', record.getData().MODEL, 0, false, false, true);
+                        findRecordInProds = prodStore.findRecord('SBITM', record.getData().SBITM, 0, false, false, true);
                     if (findRecordInProds) {
                         findRecordInProds.set('addBtnClass', 'dv-prod-btn-deSelected');
                         findRecordInProds.set('addBtnText', 'Add to Cart');
@@ -194,11 +206,11 @@ Ext.define('Showroom.view.cart.CartController', {
 
         //var street = place.address_components
         console.info(view.down('fieldset').down('[name=address]'));
-        view.down('fieldset').down('[name=address]').setValue(street_number + ' ' + route);
-        view.down('fieldset').down('[name=suburb]').setValue(suburb);
-        view.down('fieldset').down('[name=state]').setValue(state);
-        view.down('fieldset').down('[name=postCode]').setValue(postal_code);
-        view.down('fieldset').down('[name=country]').setValue(country);
+        view.down('fieldset').down('[name=SACSTST1]').setValue(street_number + ' ' + route);
+        view.down('fieldset').down('[name=SACSTCTY]').setValue(suburb);
+        view.down('fieldset').down('[name=SACSTSTA]').setValue(state);
+        view.down('fieldset').down('[name=SACSTPST]').setValue(postal_code);
+        view.down('fieldset').down('[name=SACSTCOU]').setValue(country);
     },
 
     onClearAddr: function () {
@@ -234,14 +246,15 @@ Ext.define('Showroom.view.cart.CartController', {
         for (var i = 0; i < selectedProdsStore.getCount(); i++) {
             var p = selectedProdsStore.getAt(i).getData();
             selectedArray.push({
-                MODEL: p.MODEL,
-                PRICEOLD: p.PRICEOLD,
-                PRICE: p.PRICE,
-                PRODGROUP: p.PRODGROUP,
-                QUANTY: p.QUANTY
+                SBITM: p.SBITM,
+                //PRICEOLD: p.PRICEOLD,
+                SBUPRC: p.SBUPRC,
+                //PRODGROUP: p.PRODGROUP,
+                SBQTYO: p.SBQTYO
             });
             console.info(selectedProdsStore.getAt(i).getData());
         }
+        console.info(selectedArray);
 
         me.requestSave(custInfoValues, JSON.stringify(selectedArray)).then(function (res) {
             console.info(res);
@@ -269,7 +282,7 @@ Ext.define('Showroom.view.cart.CartController', {
         params = {
             pgm: 'EC3050',
             action: 'saveCart',
-            selectedProds: list
+            products: list
         };
         Ext.apply(params, formData)
         Ext.Ajax.request({
@@ -329,7 +342,7 @@ Ext.define('Showroom.view.cart.CartController', {
         var me = this,
             vm = me.getViewModel(),
             tabPanel = Ext.ComponentQuery.query('app-main')[0],
-            custInfoForm = custInfoForm = me.lookupReference('custInfoFormRef'),
+            custInfoForm = me.lookupReference('custInfoFormRef'),
             qouteGrid = Ext.ComponentQuery.query('qlist')[0].down('grid'),
             selectedProdsStore = vm.getStore('selectedProds'),
             cartId = '1';
@@ -345,6 +358,10 @@ Ext.define('Showroom.view.cart.CartController', {
 
                 // Deselect grid
                 qouteGrid.deselectAll();
+
+                // reset the customer form
+                custInfoForm.reset();
+
 
                 // release the cart
                 me.requestRelease(cartId).then(function (res) {
