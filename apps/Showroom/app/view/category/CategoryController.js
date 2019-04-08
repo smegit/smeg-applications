@@ -572,34 +572,60 @@ Ext.define('Showroom.view.category.CategoryController', {
         var downloadText = target.target.text;
         console.info(link);
         console.info(downloadText);
-        var overlay = Ext.Viewport.add({
-            xtype: 'panel',
-            floated: true,
-            modal: true,
+        // var overlay = Ext.Viewport.add({
+        //     xtype: 'sheet',
+        //     //floated: true,
+        //     //modal: true,
+        //     closable: true,
+        //     hideOnMaskTap: true,
+        //     animation: 'fadeIn',
+        //     // showAnimation: {
+        //     //     type: 'popIn',
+        //     //     duration: 250,
+        //     //     easing: 'ease-out'
+        //     // },
+        //     // hideAnimation: {
+        //     //     type: 'popOut',
+        //     //     duration: 250,
+        //     //     easing: 'ease-out'
+        //     // },
+        //     centered: true,
+        //     width: '80%',
+        //     height: 700,
+        //     layout: 'fit',
+        //     //styleHtmlContent: true,
+        //     // html: '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>',
+        //     // header: {
+        //     //     title: downloadText
+        //     // },
+
+        //     scrollable: true
+        // });
+
+        // overlay.show();
+
+
+
+        Ext.Viewport.add({
+            xtype: 'sheet',
             closable: true,
             hideOnMaskTap: true,
             showAnimation: {
-                type: 'popIn',
-                duration: 250,
-                easing: 'ease-out'
-            },
-            hideAnimation: {
-                type: 'popOut',
-                duration: 250,
-                easing: 'ease-out'
+                type: 'pop',
+                // duration: 250,
+                // easing: 'ease-out'
             },
             centered: true,
             width: '80%',
-            height: '700px',
-            styleHtmlContent: true,
-            html: '<iframe src="' + link + '" width="100%" height="700px" >This is iframe</iframe>',
-            header: {
-                title: downloadText
-            },
-            scrollable: true
-        });
-
-        overlay.show();
+            height: 700,
+            layout: 'fit',
+            title: downloadText,
+            items: [{
+                xtype: 'component',
+                cls: 'download-cmp',
+                html: '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>',
+            }]
+        }).show();
 
 
         //window.open(link);

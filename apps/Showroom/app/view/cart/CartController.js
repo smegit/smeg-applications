@@ -17,6 +17,16 @@ Ext.define('Showroom.view.cart.CartController', {
         //     return '<img src="/Product/Images/CPRA115N_200x200.jpg" />';
         // });
         console.info(imgColumn);
+        var padElement = Ext.get('touchpad');
+        //console.info(padElement);
+        //Ext.Msg.alert('padElement', JSON.stringify(padElement), Ext.emptyFn);
+
+        view.on({
+            click: function (e) {
+                console.info('tap event');
+                console.info(e);
+            }
+        });
     },
 
     onAddToCart: function (content) {
@@ -121,10 +131,10 @@ Ext.define('Showroom.view.cart.CartController', {
 
         //google api auto places a place holder on the element. Stop it by adding the attribute
         //
-        input.dom.placeholder = 'Street';
+        //input.dom.placeholder = 'Street';
 
         cmp.googleAutoComplete = new google.maps.places.Autocomplete(
-            document.getElementById(input.id),
+            document.getElementById(input['id']),
             { types: ['geocode', 'establishment'] });
 
         //limit auto complete to Australia
@@ -136,6 +146,7 @@ Ext.define('Showroom.view.cart.CartController', {
         // When the user selects an address from the dropdown, populate the address
         // fields in the form.
         cmp.googleAutoComplete.addListener('place_changed', Ext.bind(me.autoFillAddress, me, [cmp]));
+        console.info('end');
     },
 
 
@@ -172,6 +183,10 @@ Ext.define('Showroom.view.cart.CartController', {
             if (e.types.includes('postal_code')) {
                 postal_code = e.long_name;
             }
+            // get country
+            if (e.types.includes('country')) {
+                country = e.long_name;
+            }
         });
 
 
@@ -183,6 +198,7 @@ Ext.define('Showroom.view.cart.CartController', {
         view.down('fieldset').down('[name=suburb]').setValue(suburb);
         view.down('fieldset').down('[name=state]').setValue(state);
         view.down('fieldset').down('[name=postCode]').setValue(postal_code);
+        view.down('fieldset').down('[name=country]').setValue(country);
     },
 
     onClearAddr: function () {
@@ -193,6 +209,7 @@ Ext.define('Showroom.view.cart.CartController', {
         view.down('fieldset').down('[name=suburb]').reset();
         view.down('fieldset').down('[name=state]').reset();
         view.down('fieldset').down('[name=postCode]').reset();
+        view.down('fieldset').down('[name=country]').reset();
 
     },
 
@@ -250,8 +267,8 @@ Ext.define('Showroom.view.cart.CartController', {
             deferred = Ext.create('Ext.Deferred'),
             params = {};
         params = {
-            pgm: 'EC1010',
-            action: 'saveQuote',
+            pgm: 'EC3050',
+            action: 'saveCart',
             selectedProds: list
         };
         Ext.apply(params, formData)
@@ -266,6 +283,33 @@ Ext.define('Showroom.view.cart.CartController', {
             failure: function (res) {
                 var response = Ext.decode(res.responseText);
                 deferred.reject(response);
+            }
+        });
+        return deferred.promise;
+    },
+
+    requestRelease: function (cartId) {
+        console.info('requestRelease called');
+        var me = this,
+            deferred = Ext.create('Ext.Deferred'),
+            params = {};
+        params = {
+            pgm: 'EC3050',
+            action: 'releaseCart',
+            cartId: cartId
+        };
+        Ext.Ajax.request({
+            url: '/valence/vvcall.pgm',
+            method: 'POST',
+            params: params,
+            success: function (res) {
+                console.info(res);
+                if (res.success) {
+                    console.info('cart has been released');
+                }
+            },
+            failure: function (res) {
+                console.info('failed to release the cart');
             }
         });
         return deferred.promise;
@@ -287,7 +331,8 @@ Ext.define('Showroom.view.cart.CartController', {
             tabPanel = Ext.ComponentQuery.query('app-main')[0],
             custInfoForm = custInfoForm = me.lookupReference('custInfoFormRef'),
             qouteGrid = Ext.ComponentQuery.query('qlist')[0].down('grid'),
-            selectedProdsStore = vm.getStore('selectedProds');
+            selectedProdsStore = vm.getStore('selectedProds'),
+            cartId = '1';
         Ext.Msg.confirm('Confirmation', 'Are you sure you want to leave this page ?', function (res) {
             if (res == 'yes') {
                 //Ext.getCmp('app-main').setActiveTab(0);
@@ -300,6 +345,13 @@ Ext.define('Showroom.view.cart.CartController', {
 
                 // Deselect grid
                 qouteGrid.deselectAll();
+
+                // release the cart
+                me.requestRelease(cartId).then(function (res) {
+                    console.info('cart released');
+                }, function (res) {
+                    console.info('failed to release the cart');
+                });
 
             } else {
 

@@ -145,10 +145,10 @@ Ext.define('Showroom.view.cart.Cart', {
                         },
                         listeners: {
                             focus: function (comp, e, eopts) {
-                                console.info('focus called');
-                                var ost = comp.element.dom.offsetTop;
-                                console.info(ost);
-                                this.getParent().getParent().getScrollable().scrollTo(0, 0)
+                                // console.info('focus called');
+                                // var ost = comp.element.dom.offsetTop;
+                                // console.info(ost);
+                                // this.getParent().getParent().getScrollable().scrollTo(0, 0)
                                 //console.info();
                                 //this.getParent().getParent().getScrollable().getScroller().scrollTo(0, ost);
                             }
@@ -170,6 +170,7 @@ Ext.define('Showroom.view.cart.Cart', {
                         //xtype: 'combo',
                         name: 'address',
                         label: 'Address',
+                        placeHolder: 'Address Line 1',
                         //gApiAddrType: 'baseAddressLine1',
                         clearIcon: true,
                         bind: {
@@ -182,6 +183,27 @@ Ext.define('Showroom.view.cart.Cart', {
                         }
                     },
 
+                    {
+                        xtype: 'container',
+                        layout: {
+                            type: 'hbox',
+                            //pack: 'end'
+                        },
+                        cls: 'address-container2',
+                        margin: "0 0 5 0",
+                        items: [
+                            {
+                                xtype: 'textfield',
+                                name: 'address2',
+                                //label: 'Address',
+                                //labelWidth: '35%',
+                                //labelAlign: 'top',
+                                placeHolder: 'Address Line 2',
+                                //margin: "0 10 0 0",
+                                flex: 1,
+                            },
+                        ]
+                    },
 
                     {
                         xtype: 'container',
@@ -196,17 +218,16 @@ Ext.define('Showroom.view.cart.Cart', {
                         //margin: '0 0 5 0',
                         //width: '65%',
                         items: [
-                            {
-                                xtype: 'textfield',
-                                name: 'address2',
-                                width: '30%',
-                                //label: 'Address',
-                                //labelWidth: '35%',
-                                //labelAlign: 'top',
-                                placeHolder: 'Address Line 2',
-                                margin: "0 10 0 0",
-                                flex: 1,
-                            },
+                            // {
+                            //     xtype: 'textfield',
+                            //     name: 'address2',
+                            //     //label: 'Address',
+                            //     //labelWidth: '35%',
+                            //     //labelAlign: 'top',
+                            //     placeHolder: 'Address Line 2',
+                            //     margin: "0 10 0 0",
+                            //     flex: 1,
+                            // },
 
                             {
                                 xtype: 'textfield',
@@ -217,7 +238,7 @@ Ext.define('Showroom.view.cart.Cart', {
                                 bind: {
                                     value: '{theQoute.suburb}'
                                 },
-                                //flex: 1,
+                                flex: 1,
 
                             }, {
                                 xtype: 'textfield',
@@ -228,17 +249,29 @@ Ext.define('Showroom.view.cart.Cart', {
                                 bind: {
                                     value: '{theQoute.state}'
                                 },
-                                //flex: 1
+                                flex: 1
 
                             }, {
                                 xtype: 'textfield',
                                 name: 'postCode',
                                 //label: 'Post Code',
                                 placeHolder: 'Post Code',
-                                //margin: "0 10 0 0",
-                                //flex: 1
+                                margin: "0 10 0 0",
+                                flex: 1,
                                 bind: {
                                     value: '{theQoute.postCode}'
+                                },
+
+                            },
+                            {
+                                xtype: 'textfield',
+                                name: 'country',
+                                //label: 'Post Code',
+                                placeHolder: 'Country',
+                                //margin: "0 10 0 0",
+                                flex: 1,
+                                bind: {
+                                    value: '{theQoute.country}'
                                 },
 
                             }],
@@ -263,7 +296,28 @@ Ext.define('Showroom.view.cart.Cart', {
                         bind: {
                             value: '{theQoute.contactNumber}'
                         },
-                    }]
+                    },
+
+                        // {
+                        //     xtype: 'selectfield',
+                        //     name: 'rank',
+                        //     label: 'Rank',
+                        //     options: [
+                        //         {
+                        //             text: 'Master',
+                        //             value: 'master'
+                        //         },
+                        //         {
+                        //             text: 'Journeyman',
+                        //             value: 'journeyman'
+                        //         },
+                        //         {
+                        //             text: 'Apprentice',
+                        //             value: 'apprentice'
+                        //         }
+                        //     ]
+                        // },
+                    ]
                 },
                 {
                     xtype: 'container',

@@ -66,7 +66,7 @@ Ext.define('Shopping.view.products.Heading', {
                 listeners: {
                     clear: 'onClearSearch',
                     keyup: {
-                        buffer: 500,
+                        buffer: 1000,
                         fn: 'onKeyupSearch'
                     },
                     // action: {

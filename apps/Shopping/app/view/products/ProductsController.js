@@ -110,7 +110,7 @@ Ext.define('Shopping.view.products.ProductsController', {
         if (value.length > 2) {
             me.lookupReference('cats').getSelectionModel().deselectAll();
             var obj = {
-                cat: 'CAT',
+                cat: '***',
                 searchText: value
             };
 
