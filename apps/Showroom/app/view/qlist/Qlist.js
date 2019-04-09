@@ -29,7 +29,9 @@ Ext.define('Showroom.view.qlist.Qlist', {
             //selection: '{theQoute}'
         },
         listeners: {
-            select: 'onGridSelect'
+            select: 'onGridSelect',
+            selectionchange: 'onGridSelectionChange'
+
         },
 
 

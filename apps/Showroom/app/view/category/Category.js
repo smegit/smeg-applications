@@ -38,7 +38,8 @@ Ext.define('Showroom.view.category.Category', {
             //     ui: 'action',
             //     renderTo: 'renderbutton'
             // });
-        }
+        },
+        goToCatPage: 'onGoToCatPage'
     },
     header: {
         //cls: 'header-cls',
@@ -340,7 +341,7 @@ Ext.define('Showroom.view.category.Category', {
                         "<img draggable='true' onerror='this.src=\"/Product/Images/FAB10HLR_200x200.jpg\"' src={SMALLPIC} />" +
                         '</div>' +
                         '<h1">{MODEL}</h1>' +
-                        '<p class="dv-prod-price">{PRICE}</p>' +
+                        '<p class="dv-prod-price">{formatedPrice}</p>' +
                         '<p class="dv-prod-desc">{PRODDESC}</p>' +
                         //'<p><button class="dv-prod-btn">Add to Cart</button></p>' +
                         '<p><button class="{addBtnClass}">{addBtnText}</button></p>' +
@@ -360,7 +361,7 @@ Ext.define('Showroom.view.category.Category', {
                     listeners: {
                         itemtap: 'onProdItemTap',
                         selectionchange: function (dv, nodes) {
-                            console.info('selectionchange called');
+                            //console.info('selectionchange called');
                         },
                         beforeshow: 'onBeforeShow',
                         show: function () {
@@ -534,7 +535,10 @@ Ext.define('Showroom.view.category.Category', {
 
                 '<div class=prd-dtl-desc-right>',
                 '<div class=prd-dtl-price>',
-                '<h1>${[values.Product[0].PRICE]}</h1>',
+                //'<h1>${[values.Product[0].PRICE]}</h1>',
+                '<h1>',
+                '{[this.getFormatedPrice(values.Product[0].PRICE)]}',
+                '</h1>',
                 '</div>',
                 '<div class=prd-dtl-btn>',
                 //'<button type="button" class="addBtn" >Add to Cart</button>',
@@ -567,7 +571,13 @@ Ext.define('Showroom.view.category.Category', {
 
                 //'</div>',
 
-                '</div>'
+                '</div>',
+                {
+                    getFormatedPrice: function (value) {
+                        console.info(value);
+                        return Ext.util.Format.usMoney(value);
+                    }
+                }
             ]
         }, {
             id: 'card-3',

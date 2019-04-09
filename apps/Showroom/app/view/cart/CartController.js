@@ -226,6 +226,24 @@ Ext.define('Showroom.view.cart.CartController', {
     },
 
 
+    onSelectedDataChanged: function (store) {
+        console.info('onSelectedDataChanged called');
+        console.info(store);
+        console.info(store.getCount());
+        var me = this,
+            qouteListTab = Ext.ComponentQuery.query('app-main')[0].down('#QouteList');
+
+        if (store.getCount() > 0) {
+            // disable list
+            console.info(Ext.ComponentQuery.query('app-main')[0].down('#QouteList'));
+            qouteListTab.setDisabled(true);
+            //Ext.ComponentQuery.query('app-main')[0].down('#QouteList').setDisabled(true);
+
+        } else {
+            qouteListTab.setDisabled(false);
+            //Ext.ComponentQuery.query('app-main')[0].down('#QouteList').setDisabled(false)
+        }
+    },
     onSave: function (one, two, three) {
         console.info('onSave called');
         console.info(one);
@@ -236,44 +254,78 @@ Ext.define('Showroom.view.cart.CartController', {
             custInfoForm = me.lookupReference('custInfoFormRef'),
             custInfoValues = custInfoForm.getValues(),
             selectedProdsStore = vm.getStore('selectedProds'),
-            selectedArray = [];
-
+            selectedCount = selectedProdsStore.getCount(),
+            tabPanel = Ext.ComponentQuery.query('app-main')[0];
+        selectedArray = [];
 
         console.info(custInfoForm.getValues());
         var allRecords = (selectedProdsStore.getData().getSource() || selectedProdsStore.getData()).getRange();
 
-        // Constract selectedArray[]
-        for (var i = 0; i < selectedProdsStore.getCount(); i++) {
-            var p = selectedProdsStore.getAt(i).getData();
-            selectedArray.push({
-                SBITM: p.SBITM,
-                //PRICEOLD: p.PRICEOLD,
-                SBUPRC: p.SBUPRC,
-                //PRODGROUP: p.PRODGROUP,
-                SBQTYO: p.SBQTYO
-            });
-            console.info(selectedProdsStore.getAt(i).getData());
-        }
-        console.info(selectedArray);
-
-        me.requestSave(custInfoValues, JSON.stringify(selectedArray)).then(function (res) {
-            console.info(res);
-            if (res.success) {
-                Ext.Msg.alert('Your quote has been saved.', JSON.stringify(res), Ext.emptyFn);
-            } else {
-                Ext.Msg.alert('Failed to save your quote', JSON.stringify(res), Ext.emptyFn);
-
+        if (selectedCount > 0) {
+            // Constract selectedArray[]
+            for (var i = 0; i < selectedProdsStore.getCount(); i++) {
+                var p = selectedProdsStore.getAt(i).getData();
+                selectedArray.push({
+                    SBITM: p.SBITM,
+                    //PRICEOLD: p.PRICEOLD,
+                    SBUPRC: p.SBUPRC,
+                    //PRODGROUP: p.PRODGROUP,
+                    SBQTYO: p.SBQTYO
+                });
+                console.info(selectedProdsStore.getAt(i).getData());
             }
-        }, function (res) {
-            console.info(res);
-            Ext.Msg.alert('Server Error', JSON.stringify(res), Ext.emptyFn);
-        });
+            console.info(selectedArray);
+
+            me.requestSave(custInfoValues, JSON.stringify(selectedArray)).then(function (res) {
+                console.info(res);
+                if (res.success) {
+                    Ext.Msg.alert('Message', 'Your cart has been saved.', function () {
+                        // Go to Category Page
+                        me.resetCart();
+                        tabPanel.setActiveItem(0);
+                        // Go To Cat Page
+                        Ext.ComponentQuery.query('category')[0].fireEvent('goToCatPage');
+
+                    });
 
 
 
-        console.info(selectedArray);
-        console.info(custInfoValues);
+
+                } else {
+                    Ext.Msg.alert('Failed to save your quote', JSON.stringify(res), Ext.emptyFn);
+
+                }
+            }, function (res) {
+                console.info(res);
+                Ext.Msg.alert('Server Error', JSON.stringify(res), Ext.emptyFn);
+            });
+
+
+
+            console.info(selectedArray);
+            console.info(custInfoValues);
+
+        } else {
+            Ext.Msg.alert('Message', 'Your cart is empty, please select products', Ext.emptyFn);
+
+        }
+
+
     },
+
+    // Reset cart
+    resetCart: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            selectedProdsStore = vm.getStore('selectedProds'),
+            custInfoForm = me.lookupReference('custInfoFormRef');
+        selectedProdsStore.removeAll();
+        custInfoForm.reset();
+
+
+
+    },
+
     requestSave: function (formData, list) {
         console.info('requestSave called');
         var me = this,
@@ -345,7 +397,11 @@ Ext.define('Showroom.view.cart.CartController', {
             custInfoForm = me.lookupReference('custInfoFormRef'),
             qouteGrid = Ext.ComponentQuery.query('qlist')[0].down('grid'),
             selectedProdsStore = vm.getStore('selectedProds'),
-            cartId = '1';
+            cartId = custInfoForm.getValues().SAORDKEY || '';
+
+        console.info(custInfoForm.getValues().SAORDKEY);
+        console.info(cartId);
+
         Ext.Msg.confirm('Confirmation', 'Are you sure you want to leave this page ?', function (res) {
             if (res == 'yes') {
                 //Ext.getCmp('app-main').setActiveTab(0);
@@ -353,22 +409,25 @@ Ext.define('Showroom.view.cart.CartController', {
                 tabPanel.setActiveItem(0);
 
                 // reset cart
-                selectedProdsStore.removeAll();
-                //
+                //selectedProdsStore.removeAll();
+                me.resetCart();
+                Ext.ComponentQuery.query('category')[0].fireEvent('goToCatPage');
 
                 // Deselect grid
                 qouteGrid.deselectAll();
 
                 // reset the customer form
-                custInfoForm.reset();
+                //custInfoForm.reset();
 
 
                 // release the cart
-                me.requestRelease(cartId).then(function (res) {
-                    console.info('cart released');
-                }, function (res) {
-                    console.info('failed to release the cart');
-                });
+                if (!Ext.isEmpty(cartId)) {
+                    me.requestRelease(cartId).then(function (res) {
+                        console.info('cart released');
+                    }, function (res) {
+                        console.info('failed to release the cart');
+                    });
+                }
 
             } else {
 

@@ -8,7 +8,15 @@ Ext.define('Showroom.model.Product', {
         {
             name: 'PRICE',
             convert: function (v) {
-                return Ext.util.Format.usMoney(v);
+                return Ext.util.Format.number(v, '0.00');
+            }
+        },
+        {
+            name: 'formatedPrice',
+            convert: function (v, rec) {
+                var p = rec.get('PRICE');
+                //console.info(p);
+                return Ext.util.Format.usMoney(p);
             }
         }
     ],

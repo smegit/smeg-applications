@@ -188,9 +188,11 @@ Ext.define('Showroom.view.category.CategoryController', {
             product = vm.get('product'),
             products = vm.getStore('products'),
             findRecordInProds = products.findRecord('MODEL', product.Product[0].MODEL, 0, false, false, true),
-            isSelected = selectedProdsStore.findRecord('MODEL', product.Product[0].MODEL, 0, false, false, true) ? true : false;
+            isSelected = selectedProdsStore.findRecord('MODEL', product.Product[0].MODEL, 0, false, false, true) ? true : false,
+            mainView = Ext.ComponentQuery.query('app-main')[0];
 
 
+        console.info(mainView);
         if (target.target.innerText == 'Added') {
             // product.addBtnClass = 'prd-dtl-add-btn';
             // product.addBtnText = 'Add to Cart';
@@ -199,6 +201,9 @@ Ext.define('Showroom.view.category.CategoryController', {
             Ext.ComponentQuery.query('cart')[0].fireEvent('removeFromCart', findRecordInProds);
             findRecordInProds.set('addBtnClass', 'dv-prod-btn-deSelected');
             findRecordInProds.set('addBtnText', 'Add to Cart');
+
+            // disable list
+
 
         } else {
             // product.addBtnClass = 'prd-dtl-add-btn-pressed';
@@ -499,6 +504,16 @@ Ext.define('Showroom.view.category.CategoryController', {
         }
     },
 
+    onGoToCatPage: function () {
+        console.info('onGoToCatPage called');
+        var me = this,
+            view = me.getView(),
+            catDataview = me.lookupReference('catDataview');
+
+        view.setActiveItem(0);
+
+
+    },
     onGoBack: function () {
         console.info('onGoBack called');
         var me = this,

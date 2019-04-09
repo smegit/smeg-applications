@@ -64,6 +64,21 @@ Ext.define('Showroom.view.qlist.QlistController', {
         return deferred.promise;
     },
 
+    onGridSelectionChange: function () {
+        console.info('onGridSelectionChange called');
+        //return false;
+
+    },
+
+    hasValueObj: function (obj) {
+        for (var key in obj) {
+            // if (obj[key] != null || obj[key] != '')
+            //     return true;
+            if (!Ext.isEmpty(obj[key])) return true;
+            //console.info();
+        }
+        return false
+    },
 
     onGridSelect: function (dv, rec) {
         console.info('onGridSelect called');
@@ -80,6 +95,17 @@ Ext.define('Showroom.view.qlist.QlistController', {
         console.info(selectedProdsStore);
         console.info(vm);
         console.info(cartVm);
+
+
+        console.info(cartView.down('formpanel').getValues());
+        console.info(me.hasValueObj(cartView.down('formpanel').getValues()));
+        // check if there is cart open 
+        if (selectedProdsStore.getCount() > 0 || me.hasValueObj(cartView.down('formpanel').getValues())) {
+            // Non empty cart 
+        } else {
+            // Empty cart
+
+        }
 
 
         // Load selects products

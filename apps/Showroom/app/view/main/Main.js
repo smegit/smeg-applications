@@ -55,7 +55,7 @@ Ext.define('Showroom.view.main.Main', {
             }]
         }, {
             title: 'Cart',
-            iconCls: 'x-fa fa-user',
+            iconCls: 'x-fas fa-shopping-cart',
 
 
             // bind: {
@@ -67,8 +67,9 @@ Ext.define('Showroom.view.main.Main', {
         },
         {
             title: 'List',
-            iconCls: 'x-fa fa-users',
+            iconCls: 'x-fas fa-list',
             id: 'QouteList',
+            //disabled: true,
             items: [{
                 xtype: 'qlist',
             }]
