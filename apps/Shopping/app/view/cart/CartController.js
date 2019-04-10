@@ -176,6 +176,7 @@ Ext.define('Shopping.view.cart.CartController', {
     },
 
     confirmRelease: function () {
+        console.info('confirmRelease called');
         var me = this,
             vm = me.getViewModel(),
             deferred = Ext.create('Ext.Deferred'),
@@ -353,7 +354,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 rec = store.getAt(i);
                 product = rec.getData();
                 //console.info(Shopping.util.Helper.getOutstanding(rec));
-                console.info(product);
+                //console.info(product);
                 prodArray.push({
                     OBITM: product.product_id,
                     OBQTYO: product.quantity,
@@ -1254,6 +1255,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * onClickReleaseConfirm - process the release of products requesting payment if needed.
      */
     onClickReleaseConfirm: function () {
+        console.info('onClickReleaseConfirm called');
         var me = this,
             vm = me.getViewModel(),
             releaseWindow = me.lookupReference('releasewindow');
@@ -1275,6 +1277,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 }
 
                 if (requestPay) {
+                    console.info('requestPay');
                     me.requestPayment(content);
                 } else {
                     var cartInfo = me.getCartInformation();
@@ -1283,6 +1286,7 @@ Ext.define('Shopping.view.cart.CartController', {
                     //
                     me.confirmRelease()
                         .then(function (content) {
+                            console.info('afterconfirmRelease');
                             me.closeShowReleaseWindow('close');
                             me.printCart(content.OAORDKEY, cartInfo.data, content.printURL);
                             me.onClickClear();
@@ -1801,6 +1805,7 @@ Ext.define('Shopping.view.cart.CartController', {
      * sendPayment - send the payment on the active cart
      */
     sendPayment: function () {
+        console.info('sendPayment called');
         var me = this,
             formPanel = Ext.ComponentQuery.query('cartpayment')[0],
             form = formPanel.getForm(),
@@ -1906,6 +1911,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 success: function (response) {
                     formPanel.up('window').enable();
                     resp = Ext.decode(response.responseText);
+                    console.info(resp);
                     if (resp.success) {
                         wdw = formPanel.up('window');
                         keepGoing = resp['continue'];
@@ -1913,14 +1919,18 @@ Ext.define('Shopping.view.cart.CartController', {
                         if (keepGoing != 'yes') {
                             var cartInfo = me.getCartInformation();
                             wdw.hide();
+                            //console.info(wdw);
                             if (wdw.checkout) {
                                 //process release confirmation
                                 //
                                 me.confirmRelease()
                                     .then(function (content) {
+                                        //console.info(content);
                                         wdw.close();
                                         me.closeShowReleaseWindow('close');
+                                        //if (!Ext.isEmpty(resp.printURL)) {
                                         me.printCart(orderKey, cartInfo.data, content.printURL);
+                                        //}
                                         me.onClickClear();
                                     }, function () {
                                         wdw.close();
@@ -1929,15 +1939,17 @@ Ext.define('Shopping.view.cart.CartController', {
                                     });
                             } else {
                                 Valence.common.util.Snackbar.show({
-                                    text: !Ext.isEmpty(resp.msg) ? 'Your order has been processed.' : resp.msg
+                                    text: Ext.isEmpty(resp.msg) ? 'Your order has been processed.' : resp.msg
                                 });
                                 wdw.close();
-                                me.printCart(orderKey, cartInfo.data, wdw.printURL);
+                                if (!Ext.isEmpty(resp.printURL)) {
+                                    me.printCart(orderKey, cartInfo.data, resp.printURL);
+                                }
                                 me.onClickClear();
                             }
                         } else {
                             Valence.common.util.Snackbar.show({
-                                text: !Ext.isEmpty(resp.msg) ? 'Payment accepted, thank you.' : resp.msg
+                                text: Ext.isEmpty(resp.msg) ? 'Payment accepted, thank you.' : resp.msg
                             });
                             Ext.Ajax.request({
                                 url: '/valence/vvcall.pgm',
