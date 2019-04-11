@@ -31,6 +31,10 @@ app.all('/desktop/autocodeApps/*', valenceProxy);
 app.all('/resources/*', valenceProxy);
 app.all('/packages/local/*', valenceProxy);
 
+app.all('/build/production/pdf/*', express.static(__dirname));
+app.all('/build/development/pdf/*', express.static(__dirname));
+app.all('/apps/pdf/*', express.static(__dirname));
+
 app.all('/build/production/Showroom/*', express.static(__dirname));
 app.all('/build/development/Showroom/*', express.static(__dirname));
 app.all('/apps/Showroom/*', express.static(__dirname));

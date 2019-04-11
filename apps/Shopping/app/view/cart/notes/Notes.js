@@ -129,13 +129,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         width: 120,
                         filter: true
                     },
-                    // {
-                    //     text: 'Created By',
-                    //     align: 'center',
-                    //     dataIndex: 'OFCRTUSER',
-                    //     width: 60,
-                    //     //filter: 'list'
-                    // }, {
+                    //    {
                     //     text: 'Updated by',
                     //     align: 'center',
                     //     dataIndex: 'OFCHGUSER',
@@ -187,7 +181,14 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         // renderer: function (v) {
                         //     return v.replace(/(?:\r\n|\r|\n)/g, ' ');
                         // }
-                    }]
+                    },
+                    {
+                        text: 'Created By',
+                        align: 'center',
+                        dataIndex: 'OFCRTUSER',
+                        width: 80,
+                        //filter: 'list'
+                    },]
                 },
                 dockedItems: [{
                     xtype: 'toolbar',

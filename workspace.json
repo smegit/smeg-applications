@@ -9,7 +9,8 @@
         "apps/Welcome",
         "apps/new-app",
         "apps/Showroom",
-        "apps/ShowroomApp"
+        "apps/ShowroomApp",
+        "apps/pdf"
     ],
 
     /**

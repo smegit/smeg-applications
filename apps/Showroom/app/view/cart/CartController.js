@@ -382,7 +382,7 @@ Ext.define('Showroom.view.cart.CartController', {
     onEmail: function () {
         console.info('onEmail called');
         setTimeout(function () {
-            Ext.Msg.alert('Sent', 'The quote has been sent do you successfully.', Ext.emptyFn);
+            Ext.Msg.alert('Sent', 'The quote has been sent to you successfully.', Ext.emptyFn);
         }, 500);
 
         // Should go to first page
