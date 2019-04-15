@@ -15,6 +15,14 @@ Ext.define('pdf.view.main.MainController', {
             vm = me.getViewModel(),
             link, iframeHTML;
 
+        Ext.MessageBox.show({
+            msg: 'Generating PDF files, please wait...',
+            progressText: 'Saving...',
+            width: 300,
+            wait: {
+                interval: 400
+            },
+        });
         setTimeout(function () {
             me.requestPDF().then(
                 function (res) {
@@ -26,13 +34,12 @@ Ext.define('pdf.view.main.MainController', {
                     }
                     iframeHTML = '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>';
                     vm.set('iframeHTML', iframeHTML);
+                    Ext.MessageBox.hide();
                 },
                 function (res) {
                     console.info(res);
                 });
-
-        }, 500);
-
+        }, 300);
     },
 
     onItemSelected: function (sender, record) {

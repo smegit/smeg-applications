@@ -104,7 +104,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                     'Ext.grid.filters.Filters'
                 ],
                 reference: 'notelist',
-                width: '30%',
+                width: '40%',
                 margin: '0 5 0 0',
                 bind: {
                     store: '{Notes}',
@@ -128,6 +128,13 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         align: 'center',
                         width: 120,
                         filter: true
+                    },
+                    {
+                        text: 'User',
+                        align: 'center',
+                        dataIndex: 'OFCRTUSER',
+                        width: 80,
+                        //filter: 'list'
                     },
                     //    {
                     //     text: 'Updated by',
@@ -182,13 +189,7 @@ Ext.define('Shopping.view.cart.notes.Notes', {
                         //     return v.replace(/(?:\r\n|\r|\n)/g, ' ');
                         // }
                     },
-                    {
-                        text: 'Created By',
-                        align: 'center',
-                        dataIndex: 'OFCRTUSER',
-                        width: 80,
-                        //filter: 'list'
-                    },]
+                    ]
                 },
                 dockedItems: [{
                     xtype: 'toolbar',
