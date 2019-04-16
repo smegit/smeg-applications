@@ -2,6 +2,12 @@ Ext.define('Showroom.view.cart.CartController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.cart',
 
+    requires: [
+        // 'Ext.form.*',
+        // 'Ext.Button.*'
+        'Valence.mobile.InAppBrowser'
+    ],
+
     init: function (view) {
         // We provide the updater for the activeState config of our View.
         //view.updateActiveState = this.updateActiveState.bind(this);
@@ -141,24 +147,30 @@ Ext.define('Showroom.view.cart.CartController', {
         var me = this,
             input = cmp.el.down('input');
 
-        //google api auto places a place holder on the element. Stop it by adding the attribute
-        //
-        //input.dom.placeholder = 'Street';
+        console.info(Ext.os);
+        if (Ext.os.deviceType == "Desktop") {
+            //google api auto places a place holder on the element. Stop it by adding the attribute
+            //
+            //input.dom.placeholder = 'Street';
 
-        cmp.googleAutoComplete = new google.maps.places.Autocomplete(
-            document.getElementById(input['id']),
-            { types: ['geocode', 'establishment'] });
+            cmp.googleAutoComplete = new google.maps.places.Autocomplete(
+                document.getElementById(input['id']),
+                { types: ['geocode', 'establishment'] });
 
-        //limit auto complete to Australia
-        //
-        cmp.googleAutoComplete.setComponentRestrictions({
-            country: ['au']
-        });
+            //limit auto complete to Australia
+            //
+            cmp.googleAutoComplete.setComponentRestrictions({
+                country: ['au']
+            });
 
-        // When the user selects an address from the dropdown, populate the address
-        // fields in the form.
-        cmp.googleAutoComplete.addListener('place_changed', Ext.bind(me.autoFillAddress, me, [cmp]));
-        console.info('end');
+            //console.info(cmp.googleAutoComplete);
+            // When the user selects an address from the dropdown, populate the address
+            // fields in the form.
+            cmp.googleAutoComplete.addListener('place_changed', Ext.bind(me.autoFillAddress, me, [cmp]));
+            //console.info('end');
+
+        }
+
     },
 
 
@@ -205,7 +217,7 @@ Ext.define('Showroom.view.cart.CartController', {
         //console.info(`${street_number} ${route} ${suburb} ${state} ${postal_code} `)
 
         //var street = place.address_components
-        console.info(view.down('fieldset').down('[name=address]'));
+        console.info(view.down('fieldset').down('[name=SACSTST1]'));
         view.down('fieldset').down('[name=SACSTST1]').setValue(street_number + ' ' + route);
         view.down('fieldset').down('[name=SACSTCTY]').setValue(suburb);
         view.down('fieldset').down('[name=SACSTSTA]').setValue(state);
@@ -218,10 +230,10 @@ Ext.define('Showroom.view.cart.CartController', {
         var me = this,
             view = me.getView();
         //view.down('fieldset').down('[name=address]').reset();
-        view.down('fieldset').down('[name=suburb]').reset();
-        view.down('fieldset').down('[name=state]').reset();
-        view.down('fieldset').down('[name=postCode]').reset();
-        view.down('fieldset').down('[name=country]').reset();
+        view.down('fieldset').down('[name=SACSTCTY]').reset();
+        view.down('fieldset').down('[name=SACSTSTA]').reset();
+        view.down('fieldset').down('[name=SACSTPST]').reset();
+        view.down('fieldset').down('[name=SACSTCOU]').reset();
 
     },
 
@@ -244,22 +256,20 @@ Ext.define('Showroom.view.cart.CartController', {
             //Ext.ComponentQuery.query('app-main')[0].down('#QouteList').setDisabled(false)
         }
     },
-    onSave: function (one, two, three) {
+    onSave: function (one, two) {
         console.info('onSave called');
         console.info(one);
         console.info(two);
-        console.info(three);
         var me = this,
             vm = me.getViewModel(),
             custInfoForm = me.lookupReference('custInfoFormRef'),
             custInfoValues = custInfoForm.getValues(),
             selectedProdsStore = vm.getStore('selectedProds'),
             selectedCount = selectedProdsStore.getCount(),
-            tabPanel = Ext.ComponentQuery.query('app-main')[0];
-        selectedArray = [];
+            tabPanel = Ext.ComponentQuery.query('app-main')[0],
+            selectedArray = [];
 
         console.info(custInfoForm.getValues());
-        var allRecords = (selectedProdsStore.getData().getSource() || selectedProdsStore.getData()).getRange();
 
         if (selectedCount > 0) {
             // Constract selectedArray[]
@@ -279,18 +289,99 @@ Ext.define('Showroom.view.cart.CartController', {
             me.requestSave(custInfoValues, JSON.stringify(selectedArray)).then(function (res) {
                 console.info(res);
                 if (res.success) {
-                    Ext.Msg.alert('Message', 'Your cart has been saved.', function () {
-                        // Go to Category Page
-                        me.resetCart();
-                        tabPanel.setActiveItem(0);
-                        // Go To Cat Page
-                        Ext.ComponentQuery.query('category')[0].fireEvent('goToCatPage');
+                    var link = res.printURL,
+                        //htmlIframe = '<iframe src="/Product/ORD20000504.pdf" width="100%" height="100%" >This is iframe</iframe>';
+                        htmlIframe = '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>';
+                    //"<img draggable='true' onerror='this.src=\"/Product/Images/FAB10HLR_200x200.jpg\"' src={SMALLPIC} />"
 
-                    });
+                    if (Ext.os.deviceType == "Desktop") {
+                        Ext.Viewport.add({
+                            xtype: 'panel',
+                            reference: 'pdfPanelRef',
+                            id: 'qoutePdfPanelId',
+                            closable: true,
+                            hideOnMaskTap: true,
+                            showAnimation: {
+                                type: 'pop',
+                                // duration: 250,
+                                // easing: 'ease-out'
+                            },
+                            modal: true,
+                            centered: true,
+                            width: '80%',
+                            height: 700,
+                            layout: 'fit',
+                            title: 'Qoute ' + res.SAORDKEY,
+                            layout: {
+                                type: 'vbox'
+                            },
+                            items: [{
+                                xtype: 'component',
+                                cls: 'pdf-cmp',
+                                //html: '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>',
+                                html: htmlIframe
+                            },
+
+                            {
+                                xtype: 'container',
+                                //height: '10%',
+                                cls: 'footer-container',
+                                defaults: {
+                                    xtype: 'button',
+                                    style: 'margin: 5px',
+                                    //flex: 1
+                                },
+                                layout: {
+                                    type: 'hbox'
+                                },
+                                items: [
+                                    {
+                                        xtype: 'spacer'
+                                    },
+                                    {
+                                        text: 'Cancel',
+                                        ui: 'forward',
+
+                                        handler: function (cmp) {
+                                            console.info('close called');
+                                            console.info(cmp);
+                                            cmp.up('panel').close();
+                                        }
+                                    },
+                                    {
+                                        text: 'Email',
+                                        ui: 'action',
+                                        // //handler: 'onEmail',
+                                        scope: me,
+                                        handler: me.onEmail
+                                    },
+                                ]
+                            }
+                            ],
+                        }).show();
+                    } else {
+                        Ext.Viewport.mask();
+                        Valence.mobile.InAppBrowser.show({
+                            url: 'https://sys.smeg.com.au/Product/UM3434A.pdf',
+                            options: {
+                                closebuttoncaption: 'Close CNX Corp'
+                            },
+                            scope: me,
+                            callback: function () {
+                                Ext.Viewport.unmask();
+                            }
+                        });
+                    }
 
 
+                    // Ext.Msg.alert('Message', 'Your cart has been saved.', function () {
+                    //     // Go to Category Page
+                    //     me.resetCart();
+                    //     tabPanel.setActiveItem(0);
+                    //     // Go To Cat Page
+                    //     Ext.ComponentQuery.query('category')[0].fireEvent('goToCatPage');
 
-
+                    // });
                 } else {
                     Ext.Msg.alert('Failed to save your quote', JSON.stringify(res), Ext.emptyFn);
 
@@ -336,7 +427,7 @@ Ext.define('Showroom.view.cart.CartController', {
             action: 'saveCart',
             products: list
         };
-        Ext.apply(params, formData)
+        Ext.apply(params, formData);
         Ext.Ajax.request({
             url: '/valence/vvcall.pgm',
             method: 'POST',
@@ -379,14 +470,240 @@ Ext.define('Showroom.view.cart.CartController', {
         });
         return deferred.promise;
     },
-    onEmail: function () {
+    onEmail: function (cmp) {
         console.info('onEmail called');
-        setTimeout(function () {
-            Ext.Msg.alert('Sent', 'The quote has been sent to you successfully.', Ext.emptyFn);
-        }, 500);
+        // setTimeout(function () {
+        //     Ext.Msg.alert('Sent', 'The quote has been sent to you successfully.', Ext.emptyFn);
+        // }, 500);
 
         // Should go to first page
+        var me = this,
+            vm = me.getViewModel(),
+            view = me.getView(),
+            custInfoForm = me.lookupReference('custInfoFormRef'),
+            custInfoValues = custInfoForm.getValues();
+        console.info(view);
+        // custInfoForm = me.lookupReference('custInfoFormRef'),
+        // custInfoValues = custInfoForm.getValues(),
+        // selectedProdsStore = vm.getStore('selectedProds'),
+        // selectedCount = selectedProdsStore.getCount(),
+        // selectedArray = [];
 
+
+        // console.info(custInfoValues);
+        // if (selectedCount > 0) {
+        //     // Constract selectedArray[]
+        //     for (var i = 0; i < selectedProdsStore.getCount(); i++) {
+        //         var p = selectedProdsStore.getAt(i).getData();
+        //         selectedArray.push({
+        //             SBITM: p.SBITM,
+        //             //PRICEOLD: p.PRICEOLD,
+        //             SBUPRC: p.SBUPRC,
+        //             //PRODGROUP: p.PRODGROUP,
+        //             SBQTYO: p.SBQTYO
+        //         });
+        //     }
+        //     me.requestSave(custInfoValues, JSON.stringify(selectedArray)).then(function (res) {
+        //         console.info(res);
+        //         if (res.success) {
+        //             var link = res.printURL;
+
+
+
+        //             Ext.Viewport.add({
+        //                 xtype: 'sheet',
+        //                 closable: true,
+        //                 hideOnMaskTap: true,
+        //                 showAnimation: {
+        //                     type: 'pop',
+        //                     // duration: 250,
+        //                     // easing: 'ease-out'
+        //                 },
+        //                 centered: true,
+        //                 width: '80%',
+        //                 height: 700,
+        //                 layout: 'fit',
+        //                 title: 'downloadText',
+        //                 items: [{
+        //                     xtype: 'component',
+        //                     cls: 'download-cmp',
+        //                     html: '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>',
+        //                 },
+        //                 {
+        //                     xtype: 'container',
+        //                     defaults: {
+        //                         xtype: 'button',
+        //                         style: 'margin-left: 5px',
+        //                         //flex: 1
+        //                     },
+        //                     layout: {
+        //                         type: 'hbox'
+        //                     },
+        //                     items: [
+        //                         {
+        //                             xtype: 'spacer'
+        //                         },
+        //                         {
+        //                             text: 'Cancel',
+        //                             ui: 'forward',
+
+        //                             handler: function (cmp) {
+        //                                 console.info('close called');
+        //                                 console.info(cmp);
+        //                                 cmp.up('formpanel').close();
+        //                             }
+        //                         },
+        //                         {
+        //                             text: 'Send',
+        //                             ui: 'action',
+        //                             handler: me.onSendEmail
+        //                         },
+        //                     ]
+        //                 }]
+        //             }).show();
+
+
+        Ext.Viewport.add({
+            xtype: 'formpanel',
+            //closable: true,
+            reference: 'sendFormRef',
+            centered: true,
+            width: 500,
+
+            bodyPadding: '16 32 16 32',
+            modal: true,
+            items: [
+                {
+                    xtype: 'textfield',
+                    name: 'SAORDKEY',
+                    label: 'Order Key:',
+                    value: custInfoValues.SAORDKEY,
+                    hidden: true
+                }, {
+                    xtype: 'emailfield',
+                    name: 'to',
+                    label: 'To:',
+                    value: custInfoValues.SACSTEML
+                },
+                {
+                    xtype: 'emailfield',
+                    name: 'cc',
+                    label: 'Cc:'
+                },
+                {
+                    xtype: 'textfield',
+                    name: 'subject',
+                    label: 'Subject:',
+                    value: 'Smeg Qoute ' + custInfoValues.SAORDKEY
+                },
+                {
+                    xtype: 'textareafield',
+                    label: 'Message:',
+                    maxRows: 8,
+                    name: 'message'
+                },
+                // {
+                //     xtype: 'button',
+                //     text: 'Submit Form',
+                // }
+                {
+                    xtype: 'container',
+                    defaults: {
+                        xtype: 'button',
+                        style: 'margin-left: 5px',
+                        //flex: 1
+                    },
+                    layout: {
+                        type: 'hbox'
+                    },
+                    items: [
+                        {
+                            xtype: 'spacer'
+                        },
+                        {
+                            text: 'Cancel',
+                            ui: 'forward',
+
+                            handler: function (cmp) {
+                                console.info('close called');
+                                console.info(cmp);
+                                cmp.up('formpanel').close();
+                            }
+                        },
+                        {
+                            text: 'Send',
+                            ui: 'action',
+                            scope: me,
+                            handler: me.onSend
+                        },
+                    ]
+                }],
+        }).show();
+
+    },
+
+    onSend: function () {
+        console.info('onSendEmail called');
+        var me = this,
+            view = me.getView(),
+            sendForm = Ext.ComponentQuery.query('formpanel')[1],
+            pdfPanel = Ext.ComponentQuery.query('#qoutePdfPanelId')[0];
+
+        sendFormValues = sendForm.getValues();
+        console.info(sendForm.getValues());
+        console.info(pdfPanel);
+
+        me.requestSendEmail(sendFormValues).then(function (res) {
+            if (res.success) {
+                //cmp.up('formpanel').close();
+                Ext.Msg.alert('Sent', 'Your qoute has been sent successfully', function () {
+                    sendForm.close();
+                    //pdfPanel.close();
+                });
+
+            } else {
+                Ext.Msg.alert('Error', JSON.stringify(res), function () {
+                    sendForm.close();
+                    //pdfPanel.close();
+                });
+
+
+            }
+        }, function () {
+            Ext.Msg.alert('Server Error', JSON.stringify(res), function () {
+                sendForm.close();
+                //pdfPanel.close();
+            });
+
+
+        })
+    },
+
+
+    requestSendEmail: function (sendFormValues) {
+
+        var me = this,
+            deferred = Ext.create('Ext.Deferred'),
+            params = {};
+        params = {
+            pgm: 'EC3050',
+            action: 'emailQoute',
+        };
+        Ext.apply(params, sendFormValues);
+        Ext.Ajax.request({
+            url: '/valence/vvcall.pgm',
+            method: 'POST',
+            params: params,
+            success: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.resolve(response);
+            },
+            failure: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.reject(response);
+            }
+        });
+        return deferred.promise;
     },
 
     onCancel: function () {

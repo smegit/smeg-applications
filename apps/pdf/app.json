@@ -52,7 +52,10 @@
      *      ]
      */
     "requires": [
-        "font-awesome"
+        "font-awesome",
+        "valence",
+        "valence-common",
+        "valence-login"
     ],
     /**
      * Fashion build configuration properties.
@@ -210,6 +213,10 @@
         {
             "path": "app.js",
             "bundle": true
+        },
+        {
+            "path": "/resources/valence-debug.js",
+            "bootstrap": true
         }
     ],
     /**

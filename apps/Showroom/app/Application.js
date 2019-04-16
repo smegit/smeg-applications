@@ -17,16 +17,18 @@ Ext.define('Showroom.Application', {
 
 
         Ext.Ajax.on('beforerequest', function (conn, options) {
-            console.info('beforerequest called');
-            console.info(conn);
+            // console.info('beforerequest called');
+            // console.info(conn);
             console.info(options);
-            var queryString = window.location.search,
-                SID = queryString.substring(queryString.indexOf("&sid=") + 5, queryString.indexOf("&env=")),
-                APP = queryString.substring(5, 9);
-            Ext.apply(options.params, {
-                sid: SID,
-                app: APP
-            });
+            // var queryString = window.location.search,
+            //     SID = queryString.substring(queryString.indexOf("&sid=") + 5, queryString.indexOf("&env=")),
+            //     APP = queryString.substring(5, 9);
+
+            if (options.params.pgm === 'EC1010') {
+                Ext.apply(options.params, {
+                    function: 'showroom'
+                });
+            }
         });
         var me = this;
         me.requestSetAgent('339277')
@@ -42,7 +44,7 @@ Ext.define('Showroom.Application', {
 
             }, function (res) {
                 console.info(res);
-                Ext.Msg.alert('Error12', JSON.stringify(window.location.search.substring(5, 9) + localStorage.getItem('sid')), Ext.emptyFn);
+                Ext.Msg.alert('Error12', JSON.stringify(queryString), Ext.emptyFn);
 
             });
         //Ext.Msg.alert('loc', JSON.stringify(window.location.search), Ext.emptyFn);

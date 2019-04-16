@@ -149,7 +149,7 @@ Ext.define('Showroom.view.cart.Cart', {
                             xtype: 'textfield',
                             name: 'SACSTNAM',
                             label: 'Name',
-                            placeHolder: 'Tom Roy',
+                            //placeHolder: 'Tom Roy',
                             clearIcon: true,
                             bind: {
                                 value: '{theQoute.SACSTNAM}'
@@ -276,7 +276,7 @@ Ext.define('Showroom.view.cart.Cart', {
                             label: 'Email',
                             clearIcon: true,
                             //handler: 'onEmail'
-                            placeHolder: 'email@email.com',
+                            //placeHolder: 'email@email.com',
                             bind: {
                                 value: '{theQoute.SACSTEML}'
                             },
@@ -285,7 +285,7 @@ Ext.define('Showroom.view.cart.Cart', {
                             xtype: 'textfield',
                             name: 'SACSTPH1',
                             label: 'Contact Number',
-                            placeHolder: '0412345678',
+                            //placeHolder: '0412345678',
                             clearIcon: true,
                             bind: {
                                 value: '{theQoute.SACSTPH1}'
@@ -295,7 +295,7 @@ Ext.define('Showroom.view.cart.Cart', {
                             xtype: 'textfield',
                             name: 'SARFAG',
                             label: 'Referring Agent',
-                            placeHolder: 'Harvey Norman',
+                            //placeHolder: 'Harvey Norman',
                             clearIcon: true,
                             bind: {
                                 value: '{theQoute.SARFAG}'
@@ -345,25 +345,30 @@ Ext.define('Showroom.view.cart.Cart', {
                     },
                     items: [
                         {
+                            xtype: 'spacer'
+                        },
+                        {
                             text: 'Save',
                             ui: 'action',
                             handler: 'onSave'
                         },
                         {
-                            text: 'Email',
-                            ui: 'action',
-                            handler: 'onEmail'
-                        },
-                        {
-                            text: 'Print',
-                            ui: 'action',
-                            //handler: 'onSave'
-                        },
-                        {
                             text: 'Cancel',
                             ui: 'action',
                             handler: 'onCancel'
-                        },
+                        }, {
+                            xtype: 'spacer'
+                        }
+                        // {
+                        //     text: 'Email',
+                        //     ui: 'action',
+                        //     handler: 'onEmail'
+                        // },
+                        // {
+                        //     text: 'Print',
+                        //     ui: 'action',
+                        //     //handler: 'onSave'
+                        // },
                     ]
                 }]
 

@@ -15,18 +15,18 @@ Ext.define('pdf.Application', {
     launch: function () {
         // TODO - Launch the application
         console.info('launch called');
-        Ext.Ajax.on('beforerequest', function (conn, options) {
-            console.info('beforerequest called');
-            console.info(conn);
-            console.info(options);
-            var queryString = window.location.search,
-                SID = queryString.substring(queryString.indexOf("&sid=") + 5, queryString.indexOf("&env=")),
-                APP = queryString.substring(5, 9);
-            Ext.apply(options.params, {
-                sid: SID,
-                app: APP
-            });
-        });
+        // Ext.Ajax.on('beforerequest', function (conn, options) {
+        //     console.info('beforerequest called');
+        //     console.info(conn);
+        //     console.info(options);
+        //     var queryString = window.location.search,
+        //         SID = queryString.substring(queryString.indexOf("&sid=") + 5, queryString.indexOf("&env=")),
+        //         APP = queryString.substring(5, 9);
+        //     Ext.apply(options.params, {
+        //         sid: SID,
+        //         app: APP
+        //     });
+        // });
     },
 
     onAppUpdate: function () {

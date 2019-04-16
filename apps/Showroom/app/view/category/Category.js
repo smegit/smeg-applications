@@ -242,10 +242,10 @@ Ext.define('Showroom.view.category.Category', {
 
                 {
                     xtype: 'dataview',
-                    inline: true,
+                    //inline: true,
                     ui: 'default',
                     cls: 'dataview-catalogue-outer',
-                    //autoScroll: true,
+                    scrollable: false,
                     reference: 'catDataview',
                     showAnimation: {
                         type: 'fade',

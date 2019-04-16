@@ -1,0 +1,18 @@
+.signature-tlbr{
+  border : none;
+  .x-button-transparent-action {
+    background: none;
+    border: none;
+    .x-button-label {
+      text-transform: uppercase;
+      color : $primary-color;
+    }
+  }
+  .x-button-transparent {
+    background: none;
+    border: none;
+    .x-button-label {
+      text-transform: uppercase;
+    }
+  }
+}

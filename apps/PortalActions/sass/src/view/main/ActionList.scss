@@ -1,0 +1,18 @@
+.x-listitem {
+  padding : 8px;
+  .valence-menu-list-action-icon,.valence-menu-list-action-item {
+    display:inline-block;
+  }
+  .valence-menu-list-action-icon {
+    padding-left: 16px;
+    color : $black-2-color;
+    font-size : 28px;
+    width : 30px;
+  }
+  .valence-menu-list-action-item {
+    font-size: 21px;
+    left: 40px;
+    position: relative;
+    top: -4px;
+  }
+}
