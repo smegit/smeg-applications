@@ -126,6 +126,7 @@ Ext.define('Shopping.view.cart.Print', {
                                 scope: me,
                                 click: function (cmp) {
                                     var form = emailWindow.down('#emailForm');
+                                    console.info(form);
                                     if (form.isValid()) {
                                         me.onEmailOrder(emailWindow, form.getValues());
                                     }
@@ -140,7 +141,8 @@ Ext.define('Shopping.view.cart.Print', {
             params = {
                 pgm: 'EC1065',
                 action: 'emailOrder',
-                OAORDKEY: me.orderData.OAORDKEY
+                OAORDKEY: me.orderData.OAORDKEY,
+                attachment: me.iframeSource
             },
             showError = function (d) {
                 var msg = 'Error';

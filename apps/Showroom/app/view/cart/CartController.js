@@ -262,16 +262,33 @@ Ext.define('Showroom.view.cart.CartController', {
         console.info(two);
         var me = this,
             vm = me.getViewModel(),
+            view = me.getView(),
             custInfoForm = me.lookupReference('custInfoFormRef'),
             custInfoValues = custInfoForm.getValues(),
             selectedProdsStore = vm.getStore('selectedProds'),
             selectedCount = selectedProdsStore.getCount(),
             tabPanel = Ext.ComponentQuery.query('app-main')[0],
-            selectedArray = [];
+            selectedArray = [],
+            inputName = custInfoValues.SACSTNAM,
+            toEmail = custInfoValues.SACSTEML;
 
         console.info(custInfoForm.getValues());
 
+        if (inputName.length == 0) {
+            Ext.Msg.alert('Message', 'Please fill in your name.', Ext.emptyFn);
+            return false;
+        }
+
+
+
+
+        console.info(view);
         if (selectedCount > 0) {
+            console.info('starting loading mask');
+            view.setMasked({
+                xtype: 'loadmask',
+                message: 'Saving......'
+            });
             // Constract selectedArray[]
             for (var i = 0; i < selectedProdsStore.getCount(); i++) {
                 var p = selectedProdsStore.getAt(i).getData();
@@ -294,100 +311,112 @@ Ext.define('Showroom.view.cart.CartController', {
                         htmlIframe = '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>';
                     //"<img draggable='true' onerror='this.src=\"/Product/Images/FAB10HLR_200x200.jpg\"' src={SMALLPIC} />"
 
-                    if (Ext.os.deviceType == "Desktop") {
-                        Ext.Viewport.add({
-                            xtype: 'panel',
-                            reference: 'pdfPanelRef',
-                            id: 'qoutePdfPanelId',
-                            closable: true,
-                            hideOnMaskTap: true,
-                            showAnimation: {
-                                type: 'pop',
-                                // duration: 250,
-                                // easing: 'ease-out'
+                    //if (Ext.os.deviceType == "Desktop") {
+                    Ext.Viewport.add({
+                        xtype: 'panel',
+                        reference: 'pdfPanelRef',
+                        id: 'qoutePdfPanelId',
+                        closable: true,
+                        hideOnMaskTap: true,
+                        showAnimation: {
+                            type: 'pop',
+                            // duration: 250,
+                            // easing: 'ease-out'
+                        },
+                        modal: true,
+                        centered: true,
+                        width: '80%',
+                        height: 700,
+                        layout: 'fit',
+                        title: 'Quote ' + res.SAORDKEY,
+                        layout: {
+                            type: 'vbox'
+                        },
+                        items: [{
+                            xtype: 'component',
+                            cls: 'pdf-cmp',
+                            //html: '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>',
+                            html: htmlIframe
+                        },
+
+                        {
+                            xtype: 'container',
+                            //height: '10%',
+                            cls: 'footer-container',
+                            defaults: {
+                                xtype: 'button',
+                                style: 'margin: 5px',
+                                //flex: 1
                             },
-                            modal: true,
-                            centered: true,
-                            width: '80%',
-                            height: 700,
-                            layout: 'fit',
-                            title: 'Qoute ' + res.SAORDKEY,
                             layout: {
-                                type: 'vbox'
+                                type: 'hbox'
                             },
-                            items: [{
-                                xtype: 'component',
-                                cls: 'pdf-cmp',
-                                //html: '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>',
-                                html: htmlIframe
-                            },
-
-                            {
-                                xtype: 'container',
-                                //height: '10%',
-                                cls: 'footer-container',
-                                defaults: {
-                                    xtype: 'button',
-                                    style: 'margin: 5px',
-                                    //flex: 1
+                            items: [
+                                {
+                                    xtype: 'spacer'
                                 },
-                                layout: {
-                                    type: 'hbox'
-                                },
-                                items: [
-                                    {
-                                        xtype: 'spacer'
-                                    },
-                                    {
-                                        text: 'Cancel',
-                                        ui: 'forward',
+                                {
+                                    text: 'Close',
+                                    ui: 'forward',
 
-                                        handler: function (cmp) {
-                                            console.info('close called');
-                                            console.info(cmp);
-                                            cmp.up('panel').close();
-                                        }
-                                    },
-                                    {
-                                        text: 'Email',
-                                        ui: 'action',
-                                        // //handler: 'onEmail',
-                                        scope: me,
-                                        handler: me.onEmail
-                                    },
-                                ]
-                            }
-                            ],
-                        }).show();
-                    } else {
-                        Ext.Viewport.mask();
-                        Valence.mobile.InAppBrowser.show({
-                            url: 'https://sys.smeg.com.au/Product/UM3434A.pdf',
-                            options: {
-                                closebuttoncaption: 'Close CNX Corp'
-                            },
-                            scope: me,
-                            callback: function () {
-                                Ext.Viewport.unmask();
-                            }
-                        });
-                    }
+                                    handler: function (cmp) {
+                                        console.info('close called');
+                                        console.info(cmp);
+                                        cmp.up('panel').close();
+                                    }
+                                },
+                                {
+                                    text: 'Email',
+                                    ui: 'action',
+                                    // //handler: 'onEmail',
+                                    scope: me,
+                                    handler: me.onEmail
+                                },
+                            ]
+                        }
+                        ],
+                    }).show();
+                    // update Order Key
+                    //custInfoForm.down('[name=SAORDKEY]').setValue(res.SAORDKEY);
+                    vm.set('quoteKey', res.SAORDKEY);
+                    vm.set('printURL', res.printURL);
+                    vm.set('toEmail', toEmail);
+
+                    console.info(vm.get('quoteKey'));
+                    console.info(vm.get('printURL'));
+                    console.info(vm.get('toEmail'));
+                    // } else {
+                    //     Ext.Viewport.mask();
+                    //     Valence.mobile.InAppBrowser.show({
+                    //         url: 'https://www.google.com/',
+                    //         //url: 'https://sys.smeg.com.au/Product/UM3434A.pdf',
+                    //         options: {
+                    //             closebuttoncaption: 'Close CNX Corp'
+                    //         },
+                    //         scope: me,
+                    //         callback: function () {
+                    //             Ext.Viewport.unmask();
+                    //         }
+                    //     });
+                    // }
 
 
                     // Ext.Msg.alert('Message', 'Your cart has been saved.', function () {
-                    //     // Go to Category Page
-                    //     me.resetCart();
-                    //     tabPanel.setActiveItem(0);
-                    //     // Go To Cat Page
-                    //     Ext.ComponentQuery.query('category')[0].fireEvent('goToCatPage');
+                    // Go to Category Page
+                    me.resetCart();
+                    tabPanel.setActiveItem(0);
+                    // Go To Cat Page
+                    Ext.ComponentQuery.query('category')[0].fireEvent('goToCatPage');
 
                     // });
                 } else {
                     Ext.Msg.alert('Failed to save your quote', JSON.stringify(res), Ext.emptyFn);
 
                 }
+                view.unmask();
             }, function (res) {
                 console.info(res);
+                view.unmask();
                 Ext.Msg.alert('Server Error', JSON.stringify(res), Ext.emptyFn);
             });
 
@@ -569,7 +598,7 @@ Ext.define('Showroom.view.cart.CartController', {
             reference: 'sendFormRef',
             centered: true,
             width: 500,
-
+            viewModel: 'cart',
             bodyPadding: '16 32 16 32',
             modal: true,
             items: [
@@ -577,13 +606,13 @@ Ext.define('Showroom.view.cart.CartController', {
                     xtype: 'textfield',
                     name: 'SAORDKEY',
                     label: 'Order Key:',
-                    value: custInfoValues.SAORDKEY,
+                    value: vm.get('quoteKey'),
                     hidden: true
                 }, {
                     xtype: 'emailfield',
                     name: 'to',
                     label: 'To:',
-                    value: custInfoValues.SACSTEML
+                    value: vm.get('toEmail'),
                 },
                 {
                     xtype: 'emailfield',
@@ -594,7 +623,7 @@ Ext.define('Showroom.view.cart.CartController', {
                     xtype: 'textfield',
                     name: 'subject',
                     label: 'Subject:',
-                    value: 'Smeg Qoute ' + custInfoValues.SAORDKEY
+                    value: 'Smeg Quote ' + vm.get('quoteKey'),
                 },
                 {
                     xtype: 'textareafield',
@@ -656,7 +685,7 @@ Ext.define('Showroom.view.cart.CartController', {
         me.requestSendEmail(sendFormValues).then(function (res) {
             if (res.success) {
                 //cmp.up('formpanel').close();
-                Ext.Msg.alert('Sent', 'Your qoute has been sent successfully', function () {
+                Ext.Msg.alert('Sent', 'Your quote has been sent successfully', function () {
                     sendForm.close();
                     //pdfPanel.close();
                 });
@@ -683,11 +712,13 @@ Ext.define('Showroom.view.cart.CartController', {
     requestSendEmail: function (sendFormValues) {
 
         var me = this,
+            vm = me.getViewModel(),
             deferred = Ext.create('Ext.Deferred'),
             params = {};
         params = {
-            pgm: 'EC3050',
-            action: 'emailQoute',
+            pgm: 'EC1065',
+            action: 'emailOrder',
+            attachment: vm.get('printURL')
         };
         Ext.apply(params, sendFormValues);
         Ext.Ajax.request({

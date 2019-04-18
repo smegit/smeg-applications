@@ -127,12 +127,15 @@ Ext.define('Showroom.view.cart.Cart', {
             reference: 'custInfoFormRef',
             //height: 300,
             //layout: 'fit',
+            defaults: {
+                msgTarget: 'under'
+            },
             items: [
                 {
                     xtype: 'fieldset',
                     id: 'fieldset1',
-                    title: 'Customer Info',
-                    instructions: 'Please enter the information above.',
+                    //title: 'Customer Info',
+                    //instructions: 'Please enter the information above.',
                     defaults: {
                         labelWidth: '35%'
                     },
@@ -152,11 +155,13 @@ Ext.define('Showroom.view.cart.Cart', {
                             name: 'SACSTNAM',
                             label: 'Name',
                             //placeHolder: 'Tom Roy',
+                            allowBlank: false,
+                            required: true,
+                            msgTarget: 'under',
                             clearIcon: true,
                             bind: {
                                 value: '{theQoute.SACSTNAM}'
-                            }
-
+                            },
                         },
                         {
                             xtype: 'textfield',
@@ -230,6 +235,7 @@ Ext.define('Showroom.view.cart.Cart', {
                                     name: 'SACSTCTY',
                                     //label: 'Suburb',
                                     placeHolder: 'Suburb',
+                                    clearIcon: false,
                                     margin: "0 10 0 0",
                                     bind: {
                                         value: '{theQoute.SACSTCTY}'
@@ -241,6 +247,7 @@ Ext.define('Showroom.view.cart.Cart', {
                                     name: 'SACSTSTA',
                                     //label: 'State',
                                     placeHolder: 'State',
+                                    clearIcon: false,
                                     margin: "0 10 0 0",
                                     bind: {
                                         value: '{theQoute.SACSTSTA}'
@@ -252,6 +259,7 @@ Ext.define('Showroom.view.cart.Cart', {
                                     name: 'SACSTPST',
                                     //label: 'Post Code',
                                     placeHolder: 'Post Code',
+                                    clearIcon: false,
                                     margin: "0 10 0 0",
                                     flex: 1,
                                     bind: {
@@ -264,6 +272,7 @@ Ext.define('Showroom.view.cart.Cart', {
                                     name: 'SACSTCOU',
                                     //label: 'Post Code',
                                     placeHolder: 'Country',
+                                    clearIcon: false,
                                     //margin: "0 10 0 0",
                                     flex: 1,
                                     bind: {
@@ -276,7 +285,7 @@ Ext.define('Showroom.view.cart.Cart', {
                             xtype: 'emailfield',
                             name: 'SACSTEML',
                             label: 'Email',
-                            clearIcon: true,
+                            //clearIcon: true,
                             //handler: 'onEmail'
                             //placeHolder: 'email@email.com',
                             bind: {

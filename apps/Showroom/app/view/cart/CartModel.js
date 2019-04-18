@@ -9,7 +9,10 @@ Ext.define('Showroom.view.cart.CartModel', {
 
     data: {
         theQoute: null,
-        titleText: 'This is the title'
+        titleText: 'This is the title',
+        printURL: null,
+        quoteKey: null,
+        toEmail: null,
     },
 
     stores: {
