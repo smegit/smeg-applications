@@ -47,10 +47,12 @@ Ext.define('Showroom.view.cart.Cart', {
         {
             xtype: 'grid',
             title: "You've selected",
+
             plugins: [{
                 type: 'grideditable'
             }],
             bind: {
+                //title: '{titleText}',
                 store: '{selectedProds}',
             },
             emptyText: 'No products being selected yet',

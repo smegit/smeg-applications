@@ -120,6 +120,13 @@ Ext.define('Showroom.view.qlist.QlistController', {
                 cartVm.set('theQoute', res.CartHdr[0]);
                 selectedProdsStore.loadRawData(res.CartDtl, true);
 
+                console.info(cartView.down('grid'));
+                var qDate = 'Date: ' + Ext.util.Format.date(res.CartHdr[0].SADATE, 'd/m/Y'),
+                    oKey = 'Qoute: ' + res.CartHdr[0].SAORDKEY;
+
+                console.info(cartVm.get('titleText'));
+                //cartVm.set('titleText', oKey + '  ' + qDate);
+                cartView.down('grid').setTitle(oKey + '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' + qDate);
             },
             function (res) {
                 console.info(res);

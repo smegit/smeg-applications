@@ -714,42 +714,40 @@ Ext.define('Showroom.view.cart.CartController', {
             custInfoForm = me.lookupReference('custInfoFormRef'),
             qouteGrid = Ext.ComponentQuery.query('qlist')[0].down('grid'),
             selectedProdsStore = vm.getStore('selectedProds'),
-            cartId = custInfoForm.getValues().SAORDKEY || '';
+            cartId = custInfoForm.getValues().SAORDKEY || '',
+            view = me.getView();
 
         console.info(custInfoForm.getValues().SAORDKEY);
         console.info(cartId);
 
-        Ext.Msg.confirm('Confirmation', 'Are you sure you want to leave this page ?', function (res) {
-            if (res == 'yes') {
-                //Ext.getCmp('app-main').setActiveTab(0);
-                //console.info(Ext.ComponentQuery.query('app-main')[0].setActiveTab(0));
-                tabPanel.setActiveItem(0);
 
-                // reset cart
-                //selectedProdsStore.removeAll();
-                me.resetCart();
-                Ext.ComponentQuery.query('category')[0].fireEvent('goToCatPage');
+        //Ext.getCmp('app-main').setActiveTab(0);
+        //console.info(Ext.ComponentQuery.query('app-main')[0].setActiveTab(0));
+        tabPanel.setActiveItem(0);
 
-                // Deselect grid
-                qouteGrid.deselectAll();
+        // reset cart
+        //selectedProdsStore.removeAll();
+        me.resetCart();
+        Ext.ComponentQuery.query('category')[0].fireEvent('goToCatPage');
 
-                // reset the customer form
-                //custInfoForm.reset();
+        // Deselect grid
+        qouteGrid.deselectAll();
+
+        // reset the customer form
+        //custInfoForm.reset();
 
 
-                // release the cart
-                if (!Ext.isEmpty(cartId)) {
-                    me.requestRelease(cartId).then(function (res) {
-                        console.info('cart released');
-                    }, function (res) {
-                        console.info('failed to release the cart');
-                    });
-                }
+        // release the cart
+        if (!Ext.isEmpty(cartId)) {
+            me.requestRelease(cartId).then(function (res) {
+                console.info('cart released');
+            }, function (res) {
+                console.info('failed to release the cart');
+            });
+        }
 
-            } else {
-
-            }
-        });
+        // reset the title 
+        view.down('grid').setTitle("You've selected");
 
     }
 
