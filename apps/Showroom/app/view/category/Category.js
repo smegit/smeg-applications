@@ -338,7 +338,7 @@ Ext.define('Showroom.view.category.Category', {
                     itemTpl: '<div class="dv-prod-card">' +
                         '<div class="dv-prod-image">' +
                         //'<img draggable="true" onerror="this.src={SMALLPICALT}" src={SMALLPIC} />' +
-                        "<img draggable='true' onerror='this.src=\"/Product/Images/FAB10HLR_200x200.jpg\"' src={SMALLPIC} />" +
+                        "<img draggable='true' onerror='this.src=\"/Product/Images/missing.png\"' src={SMALLPIC} />" +
                         '</div>' +
                         '<h1">{MODEL}</h1>' +
                         '<p class="dv-prod-price">{formatedPrice}</p>' +

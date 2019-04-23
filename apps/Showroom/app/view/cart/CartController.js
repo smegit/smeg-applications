@@ -23,7 +23,7 @@ Ext.define('Showroom.view.cart.CartController', {
         //     return '<img src="/Product/Images/CPRA115N_200x200.jpg" />';
         // });
         console.info(imgColumn);
-        var padElement = Ext.get('touchpad');
+        //var padElement = Ext.get('touchpad');
         //console.info(padElement);
         //Ext.Msg.alert('padElement', JSON.stringify(padElement), Ext.emptyFn);
 

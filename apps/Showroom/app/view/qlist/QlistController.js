@@ -9,19 +9,123 @@ Ext.define('Showroom.view.qlist.QlistController', {
 
 
         // get the list of quotes(carts)
+        this.control({
+            "#ext-slider-1": {
+                click: this.onPageChanged
 
+            }
+        });
+
+        //console.info(view.getPlugin('qlist_pagingtool'));
+        var pagingToolBar = Ext.ComponentQuery.query('pagingtoolbar')[0],
+            pagingSlider = Ext.ComponentQuery.query('slider')[0],
+            prevBtn = pagingToolBar.getPrevButton(),
+            nextBtn = pagingToolBar.getNextButton();
+
+
+        console.info(prevBtn);
+        console.info(pagingSlider);
+        prevBtn.on({
+            //scope: 
+            tap: 'onPageChange'
+        });
+        nextBtn.on({
+            tap: 'onPageChange'
+        })
+        pagingSlider.on({
+            scope: this,
+            change: 'onPageChange'
+        });
+
+        view.add({
+            xtype: 'titlebar',
+            docked: 'top',
+            title: 'Product Selections',
+            items: [
+                // {
+                //     align: 'left',
+                //     text: 'This button has a super long title'
+                // },
+                {
+                    xtype: 'textfield',
+                    align: 'right',
+                    clearIcon: false,
+                    listeners: {
+                        action: 'onCartSearch',
+                    }
+                },
+                {
+                    //xtype: 'button',
+                    align: 'right',
+                    text: 'Search',
+                    handler: 'onCartSearch'
+                },
+            ]
+        });
 
 
     },
 
-    requestGetCarts: function () {
+    onCartSearch: function (cmp, evt, three) {
+        console.info('onCartSearch called');
+        console.info(cmp);
+        console.info(evt);
+        console.info(three);
+        var me = this,
+            view = me.getView(),
+            vm = me.getViewModel(),
+            searchField = cmp.up().down('textfield'),
+            searchString = searchField.getValue(),
+            pagingTool = view.getPlugin('qlist_pagingtool'),
+            qoutesStore = vm.getStore('qoutes'),
+            sorter = qoutesStore.getSorters().getAt(0),
+            sort = {};
+        console.info(searchString);
+        console.info(sorter);
+
+        if (!Ext.isEmpty(sorter)) {
+            sort = sorter.config;
+        }
+
+
+        // reset the paging slider 
+        me.onGetQouteList(1, 0, 20, searchString);
+        pagingTool.setCurrentPage(1);
+    },
+
+    onPageChange: function () {
+        console.info('onPageChanged called');
+        var me = this,
+            view = me.getView(),
+            pagingTool = view.getPlugin('qlist_pagingtool'),
+            page, start, limit = 20;
+        console.info(pagingTool);
+        page = pagingTool.getCurrentPage();
+        start = (page - 1) * limit;
+
+
+        me.onGetQouteList(page, start, limit);
+
+
+
+
+
+
+
+    },
+    requestGetCarts: function (page, start, limit, searchString) {
         console.info('requestGetCarts called');
+        console.info(page + start + limit);
         var me = this,
             deferred = Ext.create('Ext.Deferred'),
             params = {};
         params = {
             pgm: 'EC3050',
-            action: 'getCarts'
+            action: 'getCarts',
+            page: page,
+            start: start,
+            limit: limit,
+            searchText: searchString
         };
         Ext.Ajax.request({
             url: '/valence/vvcall.pgm',
@@ -140,12 +244,33 @@ Ext.define('Showroom.view.qlist.QlistController', {
         tabPanel.setActiveItem(1);
     },
 
-    onGetQouteList: function () {
+    onGetQouteList: function (page, start, limit, searchString) {
         console.info('onGetQouteList called');
         var me = this,
             vm = me.getViewModel(),
-            qoutesStore = vm.getStore('qoutes');
-        me.requestGetCarts().then(
+            view = me.getView(),
+            qoutesStore = vm.getStore('qoutes'),
+            pagingTool = view.getPlugin('qlist_pagingtool'),
+            page = page,
+            limit = limit,
+            limit = limit,
+            searchString = searchString;
+        console.info(pagingTool);
+
+        if (typeof page != 'number') {
+            page = 1
+        }
+        if (typeof start != 'number') {
+            start = 0;
+        }
+        if (typeof limit != 'number') {
+            limit = 20
+        }
+        if (typeof searchString != 'string') {
+            searchString = ''
+        }
+
+        me.requestGetCarts(page, start, limit, searchString).then(
             function (res) {
                 console.info(res);
                 if (res.success) {
@@ -153,6 +278,11 @@ Ext.define('Showroom.view.qlist.QlistController', {
                 } else {
                     console.info('loading carts error');
                 }
+                pagingTool.setTotalCount(res.totalCount);
+                // pagingTool.setPageSize(10);
+                // pagingTool.setCurrentPage(2);
+                pagingTool.setTotalPages(Math.ceil(res.totalCount / limit));
+                console.info(pagingTool.getTotalCount());
             },
             function (res) {
                 console.info(res);

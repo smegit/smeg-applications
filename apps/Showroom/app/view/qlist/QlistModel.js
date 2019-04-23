@@ -10,6 +10,7 @@ Ext.define('Showroom.view.qlist.QlistModel', {
         qoutes: {
             model: 'Showroom.model.Qoute',
             autoLoad: false,
+            pageSize: 10,
             //     data: [
             //         {
             //             referringAgent: 'agent1', name: 'First Last1',

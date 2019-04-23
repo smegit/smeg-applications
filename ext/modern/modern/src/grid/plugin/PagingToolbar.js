@@ -24,17 +24,17 @@ Ext.define('Ext.grid.plugin.PagingToolbar', {
         }
     },
 
-    init: function(grid) {
+    init: function (grid) {
         this.setGrid(grid);
         grid.add(this.getToolbar());
     },
 
-    destroy: function(){
+    destroy: function () {
         this.setGrid(null);
         this.callParent();
     },
 
-    updateGrid: function(grid, oldGrid) {
+    updateGrid: function (grid, oldGrid) {
         var me = this;
 
         me.gridListeners = me.storeListeners = Ext.destroy(me.gridListeners, me.storeListeners);
@@ -56,13 +56,13 @@ Ext.define('Ext.grid.plugin.PagingToolbar', {
         }
     },
 
-    bindStore: function(store){
+    bindStore: function (store) {
         var me = this;
 
         Ext.destroy(me.storeListeners);
         me.getToolbar().setDisabled(!!store);
 
-        if(!store){
+        if (!store) {
             return;
         }
 
@@ -84,19 +84,19 @@ Ext.define('Ext.grid.plugin.PagingToolbar', {
          */
         me.setLoadPages(store.pageSize > 0);
 
-        if(store.isLoaded()){
+        if (store.isLoaded()) {
             me.onTotalCountChange(store);
         }
     },
 
-    onStoreChanged: function(grid, store){
+    onStoreChanged: function (grid, store) {
         this.bindStore(store);
     },
 
     /**
      * @private
      */
-    getPageData: function() {
+    getPageData: function () {
         var grid = this.getGrid(),
             store = grid.getStore(),
             totalCount = store.getTotalCount() || store.getCount(),
@@ -104,20 +104,20 @@ Ext.define('Ext.grid.plugin.PagingToolbar', {
             pageCount = Math.ceil(totalCount / pageSize);
 
         return {
-            totalCount : totalCount,
+            totalCount: totalCount,
             totalPages: Ext.Number.isFinite(pageCount) ? pageCount : 1,
-            currentPage : store.currentPage,
+            currentPage: store.currentPage,
             pageSize: pageSize
         };
     },
 
-    checkPageChange: function() {
+    checkPageChange: function () {
         var me = this,
             grid = me.getGrid(),
             pageSize = me.getPageSize(),
             currentPage = me.getCurrentPage(),
             topVisibleIndex = grid.topVisibleIndex,
-            newPage = Math.ceil( (topVisibleIndex + pageSize) / pageSize); // on the first page topVisibleIndex is 0
+            newPage = Math.ceil((topVisibleIndex + pageSize) / pageSize); // on the first page topVisibleIndex is 0
 
         if (grid.getStore() && !me.getLoadPages() && newPage > 0 && newPage !== currentPage) {
             me.preventGridScroll = true;
@@ -126,11 +126,11 @@ Ext.define('Ext.grid.plugin.PagingToolbar', {
         }
     },
 
-    applyToolbar: function(toolbar, oldToolbar) {
+    applyToolbar: function (toolbar, oldToolbar) {
         return Ext.factory(toolbar, Ext.Toolbar, oldToolbar);
     },
 
-    updateToolbar: function(toolbar) {
+    updateToolbar: function (toolbar) {
         var me = this;
 
         if (toolbar) {
@@ -152,29 +152,29 @@ Ext.define('Ext.grid.plugin.PagingToolbar', {
         }
     },
 
-    onPageChange: function(field, value) {
+    onPageChange: function (field, value) {
         this.setCurrentPage(value);
     },
 
-    onPageSliderDrag: function(field, slider, value) {
+    onPageSliderDrag: function (field, slider, value) {
         this.setCurrentPage(Ext.isArray(value) ? value[0] : value);
     },
 
-    onNextPageTap: function() {
+    onNextPageTap: function () {
         var nextPage = this.getCurrentPage() + 1;
         if (nextPage <= this.getTotalPages()) {
             this.setCurrentPage(nextPage);
         }
     },
 
-    onPreviousPageTap: function() {
+    onPreviousPageTap: function () {
         var previousPage = this.getCurrentPage() - 1;
         if (previousPage > 0) {
             this.setCurrentPage(previousPage);
         }
     },
 
-    onTotalCountChange: function(store) {
+    onTotalCountChange: function (store) {
         var me = this,
             data = me.getPageData();
 
@@ -184,43 +184,43 @@ Ext.define('Ext.grid.plugin.PagingToolbar', {
         me.syncSummary();
     },
 
-    onUpdateVisibleCount: function(grid, visibleCount) {
+    onUpdateVisibleCount: function (grid, visibleCount) {
         var store = grid.getStore(),
             totalCount;
 
-        if(store && !this.getLoadPages()){
+        if (store && !this.getLoadPages()) {
             visibleCount -= 1;
             this.setPageSize(visibleCount);
             totalCount = store.getTotalCount() || store.getCount();
-            this.setTotalPages( Math.ceil(totalCount / visibleCount) );
+            this.setTotalPages(Math.ceil(totalCount / visibleCount));
         }
     },
 
-    updateTotalPages: function() {
-        if(!this.isConfiguring) {
+    updateTotalPages: function () {
+        if (!this.isConfiguring) {
             this.syncSummary();
         }
     },
 
-    updateCurrentPage: function(page) {
+    updateCurrentPage: function (page) {
         var me = this;
 
-        if(!me.isConfiguring) {
-            if(me.getLoadPages()){
+        if (!me.isConfiguring) {
+            if (me.getLoadPages()) {
                 me.getGrid().getStore().loadPage(page);
-            }else{
+            } else {
                 me.syncSummary();
             }
         }
     },
 
-    updateTotalCount: function(totalCount) {
-        if(!this.isConfiguring) {
+    updateTotalCount: function (totalCount) {
+        if (!this.isConfiguring) {
             this.syncSummary();
         }
     },
 
-    getPageTopRecord: function(page) {
+    getPageTopRecord: function (page) {
         var grid = this.getGrid(),
             store = grid && grid.getStore(),
             pageSize = this.getPageSize(),
@@ -230,7 +230,7 @@ Ext.define('Ext.grid.plugin.PagingToolbar', {
     },
 
     privates: {
-        syncSummary: function() {
+        syncSummary: function () {
             var me = this,
                 grid = me.getGrid(),
                 toolbar = me.getToolbar(),
@@ -239,7 +239,7 @@ Ext.define('Ext.grid.plugin.PagingToolbar', {
                 totalPages = me.getTotalPages(),
                 pageTopRecord;
 
-            if(me.bulkConfigs){
+            if (me.bulkConfigs) {
                 return;
             }
 

@@ -192,7 +192,7 @@
     .x-unsized.x-dataview-container.x-component.x-layout-auto-item{
         display: flex;
         -webkit-flex-flow: row wrap;
-        justify-content: space-around;
+        justify-content: flex-start;
     }
 }
 .download-cmp {
