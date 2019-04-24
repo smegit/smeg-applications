@@ -32,9 +32,12 @@ Ext.define('Showroom.view.qlist.Qlist', {
     items: [{
         xtype: 'grid',
         rowNumbers: true,
+        id: 'qlistInner',
 
         //title: "Product Selections",
-        height: 800,
+        border: true,
+        //style: 'border: 1px solid blue;',
+        height: 700,
         bind: {
             store: '{qoutes}',
             //selection: '{theQoute}'
@@ -48,11 +51,14 @@ Ext.define('Showroom.view.qlist.Qlist', {
         columns: [
             {
                 text: 'Date',
-                dataIndex: 'SADATE'
+                dataIndex: 'SADATE',
+                id: 'SADATE'
             }, {
                 text: 'Order Key',
                 flex: 1,
                 dataIndex: 'SAORDKEY',
+                id: 'SAORDKEY',
+                //sortable: false,
                 // filter: {
                 //     type: 'string',
                 //     itemDefaults: {
@@ -62,11 +68,13 @@ Ext.define('Showroom.view.qlist.Qlist', {
 
             }, {
                 text: 'Name',
-                dataIndex: 'SACSTNAM'
+                dataIndex: 'SACSTNAM',
+                id: 'SACSTNAM',
             },
             {
                 text: 'Suburb',
                 dataIndex: 'SACSTCTY',
+                id: 'SACSTCTY',
 
                 flex: 1,
                 sortable: true,
@@ -74,6 +82,7 @@ Ext.define('Showroom.view.qlist.Qlist', {
             {
                 text: 'Post Code',
                 dataIndex: 'SACSTPST',
+                id: 'SACSTPST',
 
                 flex: 1,
                 sortable: true,
@@ -81,6 +90,7 @@ Ext.define('Showroom.view.qlist.Qlist', {
             {
                 text: 'Status',
                 dataIndex: 'SAOSTS',
+                id: 'SAOSTS',
 
                 flex: 1,
                 sortable: true,

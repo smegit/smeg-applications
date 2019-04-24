@@ -48,6 +48,7 @@ Ext.define('Showroom.view.qlist.QlistController', {
                 // },
                 {
                     xtype: 'textfield',
+                    id: 'cartSearchField',
                     align: 'right',
                     clearIcon: false,
                     listeners: {
@@ -60,8 +61,106 @@ Ext.define('Showroom.view.qlist.QlistController', {
                     text: 'Search',
                     handler: 'onCartSearch'
                 },
+                {
+                    //xtype: 'button',
+                    align: 'right',
+                    iconCls: 'x-fa fa-refresh',
+                    handler: 'onCartRefresh'
+                    // handler: function (btn, e, opts) {
+                    //     var grid = btn.up('grid').down('#quoteList');
+                    //     console.info(grid);
+                    //     grid.getStore().sorters.clear();
+                    //     grid.refresh();
+                    // }
+                },
             ]
         });
+
+
+    },
+
+    onCartRefresh: function () {
+        console.info('onCartRefresh called');
+
+
+        var me = this,
+            view = me.getView(),
+            vm = me.getViewModel(),
+            quotesStore = vm.getStore('qoutes'),
+            pagingTool = view.getPlugin('qlist_pagingtool'),
+            cartSearchField = view.down('#cartSearchField'),
+            cartsGrid = view.down('grid'),
+            sorter = quotesStore.getSorters().getAt(0),
+            sortedCol = Ext.isEmpty(sorter) ? null : sorter.config.property;
+
+
+        console.info(cartSearchField);
+        console.info(cartsGrid);
+        console.info(quotesStore);
+        // 
+
+
+        //qoutesStore.sorters.clear();
+
+
+        //quotesStore.sort('SADATE', 'DESC');
+        console.info(sorter.config.property);
+        // var colIndex = sorter.config.property,
+        //     sortedCol = cartsGrid.down('[dataIndex=' + colIndex + ']');
+
+        // console.info(sortedCol);
+
+
+
+
+
+        //cartsGrid.refresh();
+        //view.refresh();
+        //cartsGrid.removeCls('x-sorted-asc');
+        //console.info(cartsGrid.getColumns().child('#SAOSTS'));
+
+        // remove sort icon from grid
+        if (sortedCol) {
+            var cols = cartsGrid.getColumns();
+            cols.forEach(function (e) {
+                console.info(e);
+                var el, sortedCls;
+                if (e.id == sortedCol) {
+                    el = e.element;
+                    sortedCls = e.sortedCls;
+                    el.removeCls([sortedCls, sortedCls + '-' + 'desc']);
+                    el.removeCls([sortedCls, sortedCls + '-' + 'asc']);
+                }
+            });
+
+        }
+
+        // remove sort from store
+        if (cartsGrid.getStore().sorters) {
+            cartsGrid.getStore().sorters.clear();
+        }
+
+        // reload the carts
+        me.onGetQouteList(1, 0, 20);
+        pagingTool.setCurrentPage(1);
+        cartSearchField.reset();
+
+        // var ordKeyCol = cartsGrid.getColumns()[1],
+        //     el = ordKeyCol.element,
+        //     sortedCls = ordKeyCol.sortedCls;
+
+        // // ordKeyCol.setSortable(false);
+        // // //ordKeyCol.setSortable(true);
+
+        // console.info(ordKeyCol.element);
+        // console.info(ordKeyCol.sortedCls);
+        // el.removeCls([sortedCls, sortedCls + '-' + 'desc']);
+        // el.removeCls([sortedCls, sortedCls + '-' + 'asc']);
+
+        // // console.info(cartsGrid.sortClasses);
+        // // cartsGrid.refresh();
+
+
 
 
     },
@@ -79,18 +178,26 @@ Ext.define('Showroom.view.qlist.QlistController', {
             pagingTool = view.getPlugin('qlist_pagingtool'),
             qoutesStore = vm.getStore('qoutes'),
             sorter = qoutesStore.getSorters().getAt(0),
-            sort = {};
+            sort = [];
         console.info(searchString);
         console.info(sorter);
 
         if (!Ext.isEmpty(sorter)) {
-            sort = sorter.config;
+            var obj = sorter.config;
+            delete obj.root;
+            sort.push(obj);
+
         }
+        console.info(sort);
 
 
         // reset the paging slider 
-        me.onGetQouteList(1, 0, 20, searchString);
+        me.onGetQouteList(1, 0, 20, searchString, JSON.stringify(sort));
         pagingTool.setCurrentPage(1);
+
+        console.info(view);
+        //view.refresh();
+
     },
 
     onPageChange: function () {
@@ -113,7 +220,7 @@ Ext.define('Showroom.view.qlist.QlistController', {
 
 
     },
-    requestGetCarts: function (page, start, limit, searchString) {
+    requestGetCarts: function (page, start, limit, searchString, sort) {
         console.info('requestGetCarts called');
         console.info(page + start + limit);
         var me = this,
@@ -125,7 +232,8 @@ Ext.define('Showroom.view.qlist.QlistController', {
             page: page,
             start: start,
             limit: limit,
-            searchText: searchString
+            searchText: searchString,
+            sort: sort
         };
         Ext.Ajax.request({
             url: '/valence/vvcall.pgm',
@@ -244,7 +352,7 @@ Ext.define('Showroom.view.qlist.QlistController', {
         tabPanel.setActiveItem(1);
     },
 
-    onGetQouteList: function (page, start, limit, searchString) {
+    onGetQouteList: function (page, start, limit, searchString, sort) {
         console.info('onGetQouteList called');
         var me = this,
             vm = me.getViewModel(),
@@ -254,7 +362,8 @@ Ext.define('Showroom.view.qlist.QlistController', {
             page = page,
             limit = limit,
             limit = limit,
-            searchString = searchString;
+            searchString = searchString,
+            sort = sort;
         console.info(pagingTool);
 
         if (typeof page != 'number') {
@@ -269,8 +378,11 @@ Ext.define('Showroom.view.qlist.QlistController', {
         if (typeof searchString != 'string') {
             searchString = ''
         }
+        if (typeof sort != 'string' || sort == '[]') {
+            sort = ''
+        }
 
-        me.requestGetCarts(page, start, limit, searchString).then(
+        me.requestGetCarts(page, start, limit, searchString, sort).then(
             function (res) {
                 console.info(res);
                 if (res.success) {
