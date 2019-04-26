@@ -85,7 +85,7 @@ Ext.define('ShowroomApp.view.cart.CartController', {
                         findRecordInProds = prodStore.findRecord('MODEL', record.getData().MODEL, 0, false, false, true);
                     if (findRecordInProds) {
                         findRecordInProds.set('addBtnClass', 'dv-prod-btn-deSelected');
-                        findRecordInProds.set('addBtnText', 'Add to Cart');
+                        findRecordInProds.set('addBtnText', 'Select');
                     }
                     console.info(catView);
                     console.info(catVm);

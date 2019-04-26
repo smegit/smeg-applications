@@ -54,7 +54,7 @@ Ext.define('Showroom.view.main.Main', {
                 xtype: 'category'
             }]
         }, {
-            title: 'Cart',
+            title: 'Selection',
             iconCls: 'x-fas fa-shopping-cart',
 
 

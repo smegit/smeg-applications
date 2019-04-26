@@ -543,7 +543,7 @@ Ext.define('Showroom.view.category.Category', {
                 '<div class=prd-dtl-btn>',
                 //'<button type="button" class="addBtn" >Add to Cart</button>',
                 //'<div class="testbutton" id="renderbutton"></div>',
-                '<p><button data-event="addtocart" class="{addBtnClass}">{addBtnText}</button></p>' +
+                '<p><button data-event="addtocartfromdetail" class="{addBtnClass}">{addBtnText}</button></p>' +
                 '</div>',
 
 

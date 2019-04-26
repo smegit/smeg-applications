@@ -79,7 +79,7 @@ Ext.define('Showroom.view.cart.Cart', {
                         //return '<img src="' + v + '" style="height:40px" / >';
                         console.info(v);
                         var onErrorReplace = '\"/Product/Images/FAB10HLR_200x200.jpg\"';
-                        return "<img  src=\"" + v + "\" onerror='this.src=\"/Product/Images/FAB10HLR_200x200.jpg\"' style='height:40px'/>";
+                        return "<img  src=\"" + v + "\" onerror='this.src=\"/Product/Images/missing.png\"' style='height:40px'/>";
                     }
                 }, {
                     text: 'Model',
@@ -94,30 +94,37 @@ Ext.define('Showroom.view.cart.Cart', {
                 {
                     text: 'Unit Price',
                     width: 120,
-                    dataIndex: 'SBUPRC'
+                    dataIndex: 'SBUPRC',
+                    align: 'right',
+                    renderer: function (value, record) {
+                        return Ext.util.Format.usMoney(value);
+                    }
                 },
                 {
-                    text: 'Quanty',
+                    text: 'Quantity',
                     width: 75,
                     dataIndex: 'SBQTYO',
+                    align: 'right',
                     editable: true,
                     editor: {
                         xtype: 'numberfield'
                     },
-                }, {
-                    width: 70,
+                },
+                // {
+                //     width: 70,
 
-                    cell: {
-                        xtype: 'widgetcell',
-                        widget: {
-                            xtype: 'button',
-                            iconCls: 'x-fa fa-ban',
-                            ui: 'round',
-                            bind: '{record}',
-                            handler: 'onDeleteRecord'
-                        }
-                    }
-                }]
+                //     cell: {
+                //         xtype: 'widgetcell',
+                //         widget: {
+                //             xtype: 'button',
+                //             iconCls: 'x-fa fa-ban',
+                //             ui: 'round',
+                //             bind: '{record}',
+                //             handler: 'onDeleteRecord'
+                //         }
+                //     }
+                // }
+            ]
 
         }, {
             xtype: 'formpanel',

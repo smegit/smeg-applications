@@ -104,7 +104,7 @@ Ext.define('Showroom.view.qlist.QlistController', {
 
 
         //quotesStore.sort('SADATE', 'DESC');
-        console.info(sorter.config.property);
+        //console.info(sorter.config.property);
         // var colIndex = sorter.config.property,
         //     sortedCol = cartsGrid.down('[dataIndex=' + colIndex + ']');
 

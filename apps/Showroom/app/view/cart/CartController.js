@@ -43,6 +43,9 @@ Ext.define('Showroom.view.cart.CartController', {
             payload = {};
         console.info('onAddToCart called');
         console.info(content.getData());
+        Ext.toast({
+            message: 'Product selected.'
+        });
 
         // Trim Record 
         delete rec.ATTRIBS;
@@ -89,6 +92,9 @@ Ext.define('Showroom.view.cart.CartController', {
             selectedProdsStore.remove(findRecord);
             //}
         }
+        Ext.toast({
+            message: 'Product removed.'
+        });
     },
 
     onDeleteRecord: function (btn) {
@@ -120,7 +126,7 @@ Ext.define('Showroom.view.cart.CartController', {
                         findRecordInProds = prodStore.findRecord('SBITM', record.getData().SBITM, 0, false, false, true);
                     if (findRecordInProds) {
                         findRecordInProds.set('addBtnClass', 'dv-prod-btn-deSelected');
-                        findRecordInProds.set('addBtnText', 'Add to Cart');
+                        findRecordInProds.set('addBtnText', 'Select');
                     }
                     console.info(catView);
                     console.info(catVm);

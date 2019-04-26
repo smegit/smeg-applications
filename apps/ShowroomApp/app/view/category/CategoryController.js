@@ -49,7 +49,7 @@ Ext.define('ShowroomApp.view.category.CategoryController', {
             findRecordInProds = prodStore.findRecord('MODEL', prodModel, 0, false, false, true);
         console.info(prodModel);
         if (e.target.localName === 'button') {
-            if (e.target.innerText == 'Add to Cart') {
+            if (e.target.innerText == 'Select') {
                 // e.target.innerText = 'Added'
                 // e.target.className = 'dv-prod-btn-selected';
 
@@ -67,11 +67,11 @@ Ext.define('ShowroomApp.view.category.CategoryController', {
                 vm.notify();
 
             } else {
-                // e.target.innerText = 'Add to Cart';
+                // e.target.innerText = 'Select';
                 // e.target.className = 'dv-prod-btn-deSelected';
                 if (findRecordInProds) {
                     findRecordInProds.set('addBtnClass', 'dv-prod-btn-deSelected');
-                    findRecordInProds.set('addBtnText', 'Add to Cart');
+                    findRecordInProds.set('addBtnText', 'Select');
                 }
 
                 // Remove product from the selection store
@@ -162,7 +162,7 @@ Ext.define('ShowroomApp.view.category.CategoryController', {
                     } else {
                         Ext.apply(e, {
                             addBtnClass: 'dv-prod-btn-deSelected',
-                            addBtnText: 'Add to Cart'
+                            addBtnText: 'Select'
                         });
                     }
 
