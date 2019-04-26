@@ -52,7 +52,8 @@ Ext.define('Showroom.view.qlist.Qlist', {
             {
                 text: 'Date',
                 dataIndex: 'SADATE',
-                id: 'SADATE'
+                id: 'SADATE',
+                //sortable: false,
             }, {
                 text: 'Order Key',
                 flex: 1,

@@ -183,8 +183,12 @@ Ext.define('Showroom.view.qlist.QlistController', {
         console.info(sorter);
 
         if (!Ext.isEmpty(sorter)) {
-            var obj = sorter.config;
-            delete obj.root;
+            // var obj = sorter.config;
+            // delete obj.root;
+            var obj = {
+                direction: sorter.getDirection(),
+                property: sorter.getProperty()
+            }
             sort.push(obj);
 
         }
@@ -204,21 +208,31 @@ Ext.define('Showroom.view.qlist.QlistController', {
         console.info('onPageChanged called');
         var me = this,
             view = me.getView(),
+            vm = me.getViewModel(),
             pagingTool = view.getPlugin('qlist_pagingtool'),
-            page, start, limit = 20;
+            searchField = view.down('textfield'),
+            searchString = searchField.getValue(),
+            page, start, limit = 20,
+            qoutesStore = vm.getStore('qoutes'),
+            sorter = qoutesStore.getSorters().getAt(0),
+            sort = [];
         console.info(pagingTool);
+        console.info(sorter);
         page = pagingTool.getCurrentPage();
         start = (page - 1) * limit;
+        if (!Ext.isEmpty(sorter)) {
+            // var obj = sorter.config;
+            // delete obj.root;
 
+            var obj = {
+                direction: sorter.getDirection(),
+                property: sorter.getProperty()
+            }
+            sort.push(obj);
 
-        me.onGetQouteList(page, start, limit);
+        }
 
-
-
-
-
-
-
+        me.onGetQouteList(page, start, limit, searchString, JSON.stringify(sort));
     },
     requestGetCarts: function (page, start, limit, searchString, sort) {
         console.info('requestGetCarts called');
@@ -401,6 +415,33 @@ Ext.define('Showroom.view.qlist.QlistController', {
                 console.info('Server error: loading carts');
             }
         );
+    },
+
+    onBeforeSort: function () {
+        console.info('onBeforeSort called');
+        var me = this,
+            view = me.getView(),
+            vm = me.getViewModel(),
+            quotesStore = vm.getStore('qoutes'),
+            searchField = view.down('textfield'),
+            searchString = searchField.getValue(),
+            sorter = quotesStore.getSorters().getAt(0),
+            pagingTool = view.getPlugin('qlist_pagingtool'),
+            sort = [];
+        if (!Ext.isEmpty(sorter)) {
+            // var obj = sorter.config;
+            // delete obj.root;
+            var obj = {
+                direction: sorter.getDirection(),
+                property: sorter.getProperty()
+            }
+            sort.push(obj);
+
+        }
+
+        me.onGetQouteList(1, 0, 20, searchString, JSON.stringify(sort));
+        pagingTool.setCurrentPage(1);
+
     }
 
 

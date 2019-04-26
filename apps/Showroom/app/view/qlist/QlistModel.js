@@ -11,6 +11,9 @@ Ext.define('Showroom.view.qlist.QlistModel', {
             model: 'Showroom.model.Qoute',
             autoLoad: false,
             pageSize: 10,
+            listeners: {
+                beforesort: 'onBeforeSort'
+            }
             //     data: [
             //         {
             //             referringAgent: 'agent1', name: 'First Last1',
