@@ -354,7 +354,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 rec = store.getAt(i);
                 product = rec.getData();
                 //console.info(Shopping.util.Helper.getOutstanding(rec));
-                //console.info(product);
+                console.info(product);
                 prodArray.push({
                     OBITM: product.product_id,
                     OBQTYO: product.quantity,
@@ -368,7 +368,8 @@ Ext.define('Shopping.view.cart.CartController', {
                     ALWORDQ: product.orderQtyEditable,
                     ALWRLSQ: product.releaseQtyEditable,
                     OBORDLNO: product.orderLineNO,
-                    OBPRMCOD: product.OBPRMCOD
+                    OBPRMCOD: product.OBPRMCOD,
+                    OBDCRT: product.OBDCRT
 
                 });
             }
@@ -446,7 +447,8 @@ Ext.define('Shopping.view.cart.CartController', {
                 ALWORDQ: product.orderQtyEditable,
                 ALWRLSQ: product.releaseQtyEditable,
                 OBORDLNO: product.orderLineNO,
-                OBPRMCOD: product.OBPRMCOD
+                OBPRMCOD: product.OBPRMCOD,
+                OBDCRT: product.OBDCRT
             })
 
         }
@@ -2202,7 +2204,8 @@ Ext.define('Shopping.view.cart.CartController', {
                     "orderQtyEditable": cartItems[i].ALWORDQ,
                     "orderLineNO": cartItems[i].OBORDLNO,
                     "OBPRMCOD": cartItems[i].OBPRMCOD,
-                    "plain_txt": cartItems[i].PALINTXT
+                    "plain_txt": cartItems[i].PALINTXT,
+                    "OBDCRT": cartItems[i].OBDCRT
                     // TODO: add "deletable"
                 });
             }

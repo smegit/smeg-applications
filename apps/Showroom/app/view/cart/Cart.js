@@ -84,7 +84,7 @@ Ext.define('Showroom.view.cart.Cart', {
                 }, {
                     text: 'Model',
                     //flex: 1,
-                    width: 150,
+                    width: 100,
                     dataIndex: 'SBITM'
                 }, {
                     text: 'Description',
@@ -93,7 +93,7 @@ Ext.define('Showroom.view.cart.Cart', {
                 },
                 {
                     text: 'Unit Price',
-                    width: 120,
+                    width: 100,
                     dataIndex: 'SBUPRC',
                     align: 'right',
                     renderer: function (value, record) {
@@ -102,7 +102,8 @@ Ext.define('Showroom.view.cart.Cart', {
                 },
                 {
                     text: 'Quantity',
-                    width: 75,
+                    width: 100,
+                    //padding: 10,
                     dataIndex: 'SBQTYO',
                     align: 'right',
                     editable: true,
@@ -132,7 +133,7 @@ Ext.define('Showroom.view.cart.Cart', {
             id: 'custInfoForm',
             shadow: true,
             reference: 'custInfoFormRef',
-            //height: 300,
+            height: 400,
             //layout: 'fit',
             defaults: {
                 msgTarget: 'under'

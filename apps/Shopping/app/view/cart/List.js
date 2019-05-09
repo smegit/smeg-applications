@@ -314,6 +314,9 @@ Ext.define('Shopping.view.cart.List', {
                     // console.info(meta);
                     // console.info(rec);
 
+                    if (rec.get('deletable') == 'N') {
+                        return '';
+                    }
                     if (rec.get('generated') == 'Y') {
                         return '';
                     }

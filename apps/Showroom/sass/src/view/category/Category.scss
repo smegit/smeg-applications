@@ -200,3 +200,16 @@
         height: 100%;
     }
 }
+.cart-outer {
+    overflow-y: auto;
+}
+
+.search-container{
+    position: absolute;
+    float: left;
+    .x-inner.x-container-inner.x-layout-hbox.x-horizontal.x-align-stretch.x-pack-start.x-layout-box.x-component-inner{
+        // display: flex;
+        // margin: auto;
+        align-items: center;
+    }
+}

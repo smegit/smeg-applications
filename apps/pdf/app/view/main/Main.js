@@ -104,7 +104,7 @@ Ext.define('pdf.view.main.Main', {
     //     //     }
     // ]
 
-    extend: 'Ext.Panel',
+    extend: 'Ext.Container',
     xtype: 'app-main',
     //closable: true,
 
@@ -114,7 +114,7 @@ Ext.define('pdf.view.main.Main', {
 
         'pdf.view.main.MainController',
         'pdf.view.main.MainModel',
-        'pdf.view.main.List'
+        'Ext.view.View',
     ],
     viewModel: 'main',
     controller: 'main',
@@ -124,20 +124,164 @@ Ext.define('pdf.view.main.Main', {
         // duration: 250,
         // easing: 'ease-out'
     },
-    cls: 'pdf-panel',
-    centered: true,
-    width: '100%',
-    height: '100%',
-    layout: 'fit',
-    //title: 'PDF',
-    items: [{
-        xtype: 'component',
-        cls: 'download-cmp',
-        height: '100%',
-        //html: '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>',
-        //html: '<iframe src="/PRODUCT/DEL20001428.pdf" width="100%" height="100%" >This is iframe</iframe>',
-        bind: {
-            html: '{iframeHTML}'
+    cls: 'pdf-panel1',
+    // centered: true,
+    // width: '100%',
+    // height: '100%',
+    // layout: 'fit',
+    //title: 'AGENT STOCK',
+    // title: {
+    //     text: 'AGENT STOCK',
+    //     style: 'text-align: center'
+    // },
+
+    items: [
+        // {
+        // xtype: 'component',
+        // cls: 'download-cmp',
+        // height: '100%',
+        // //html: '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>',
+        // //html: '<iframe src="/PRODUCT/DEL20001428.pdf" width="100%" height="100%" >This is iframe</iframe>',
+        // bind: {
+        //     html: '{iframeHTML}'
+        // }
+        // }
+        {
+            xtype: 'form',
+            width: 500,
+            //height: 500,
+            cls: 'pdf-menu',
+            border: true,
+            title: {
+                text: 'AGENT STOCK',
+                style: 'text-align: center'
+            },
+            //     type: 'vbox',
+            //     align: 'center'
+
+            // },
+            // flex: 1,
+            items: [
+                {
+                    xtype: 'container',
+                    layout: {
+                        type: 'table',
+                        columns: 2,
+                        tdAttrs: {
+                            style: 'padding: 5px 10px'
+                        }
+                    },
+                    cls: 'menu-container',
+                    items: [
+                        {
+                            xtype: 'component',
+                            html: 'Download New Stock Report',
+                            cls: 'menu-cmp'
+                        },
+                        {
+                            xtype: 'button',
+                            text: 'Download',
+                            width: 120,
+                            scale: 'medium',
+                            handler: 'onDownload',
+                        },
+                        {
+                            xtype: 'component',
+                            html: 'Upload Scanned Stock Count',
+                            cls: 'menu-cmp'
+                        },
+                        {
+                            xtype: 'button',
+                            text: 'Upload',
+                            width: 120,
+                            scale: 'medium',
+                            handler: 'onUpload',
+                        },
+                        {
+                            xtype: 'component',
+                            html: 'View Saved Stock Counts',
+                            cls: 'menu-cmp'
+                        },
+                        {
+                            xtype: 'button',
+                            text: 'View',
+                            width: 120,
+                            scale: 'medium',
+                            handler: 'onView',
+                        },
+                        {
+                            xtype: 'dataview',
+                            itemSelector: 'div.dataview-multisort-item',
+                            tpl: [
+                                '<tpl for=".">',
+                                '<div class="dataview-multisort-item">',
+                                '<a href="{fileUrl}" target="_blank">{fileName}</a>' +
+                                '</div>',
+                                '</tpl>',
+                            ],
+                            bind: {
+                                hidden: '{hideList}',
+                                store: '{fileList}'
+                            }
+
+                        }
+
+                    ]
+                },
+                // {
+                //     xtype: 'button',
+                //     scale: 'large',
+                //     text: 'Download New Stock Report',
+                //     margin: 'auto',
+                //     handler: 'onDownload',
+                //     //flex: 1,
+                //     margin: 10,
+                // },
+                // {
+                //     xtype: 'button',
+                //     scale: 'large',
+                //     text: 'Upload Scanned Stock Count',
+                //     margin: 'auto',
+                //     handler: 'onUpload',
+                //     //flex: 1,
+                //     margin: 10,
+                // },
+                // {
+                //     xtype: 'button',
+                //     scale: 'large',
+                //     text: 'View Saved Stock Counts',
+                //     margin: 'auto',
+                //     handler: 'onView',
+                //     //flex: 1,
+                //     margin: 10,
+                // }, {
+                //     xtype: 'dataview',
+                //     itemSelector: 'div.dataview-multisort-item',
+                //     tpl: [
+                //         '<tpl for=".">',
+                //         '<div class="dataview-multisort-item">',
+                //         '<a href="{fileUrl}" target="_blank">{fileName}</a>' +
+                //         '</div>',
+                //         '</tpl>',
+                //     ],
+                //     bind: {
+                //         hidden: '{hideList}',
+                //         store: '{fileList}'
+                //     }
+
+                // }
+                // {
+                //     xtype: 'fileuploadfield', // Same as filefield above
+                //     buttonOnly: true,
+                //     hideLabel: true,
+                //     listeners: {
+                //         change: 'buttonOnlyChange'
+                //     }
+                // }
+            ]
+
         }
-    }]
+    ]
+
+
 });

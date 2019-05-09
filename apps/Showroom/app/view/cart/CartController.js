@@ -487,7 +487,7 @@ Ext.define('Showroom.view.cart.CartController', {
         params = {
             pgm: 'EC3050',
             action: 'releaseCart',
-            cartId: cartId
+            SAORDKEY: cartId
         };
         Ext.Ajax.request({
             url: '/valence/vvcall.pgm',
@@ -687,6 +687,10 @@ Ext.define('Showroom.view.cart.CartController', {
         sendFormValues = sendForm.getValues();
         console.info(sendForm.getValues());
         console.info(pdfPanel);
+        sendForm.setMasked({
+            xtype: 'loadmask',
+            message: 'Sending......'
+        });
 
         me.requestSendEmail(sendFormValues).then(function (res) {
             if (res.success) {
@@ -704,7 +708,9 @@ Ext.define('Showroom.view.cart.CartController', {
 
 
             }
+            sendForm.unmask();
         }, function () {
+            sendForm.unmask();
             Ext.Msg.alert('Server Error', JSON.stringify(res), function () {
                 sendForm.close();
                 //pdfPanel.close();

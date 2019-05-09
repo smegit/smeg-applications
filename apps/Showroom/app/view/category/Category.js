@@ -58,6 +58,42 @@ Ext.define('Showroom.view.category.Category', {
         },
         items: [
             {
+                xtype: 'container',
+                cls: 'search-container',
+                layout: {
+                    type: 'hbox'
+                },
+                items: [
+                    {
+                        xtype: 'textfield',
+                        id: 'prodSearchField',
+                        align: 'left',
+                        clearIcon: false,
+                        listeners: {
+                            action: 'onProdSearch',
+                        }
+                    },
+                    {
+                        xtype: 'paneltool',
+                        //itemId: 'goBack',
+                        margin: '10 5 10 10',
+                        type: 'search',
+                        handler: 'onProdSearch',
+                    },
+                    {
+                        xtype: 'paneltool',
+                        //itemId: 'goBack',
+                        margin: '10 10 10 10',
+                        align: 'left',
+                        type: 'refresh',
+                        handler: 'onRefresh',
+                    },
+
+                ]
+            },
+
+
+            {
                 xtype: 'paneltool',
                 //itemId: 'goBack',
                 type: 'close',
@@ -195,33 +231,33 @@ Ext.define('Showroom.view.category.Category', {
             scrollable: 'y',
             margin: 20,
             items: [
-                {
-                    xtype: 'container',
-                    //inline: true,
-                    layout: 'hbox',
-                    cls: 'category-search-box',
-                    width: '50%',
-                    items: [{
-                        xtype: 'searchfield',
-                        ui: 'solo',
-                        reference: 'searchField',
-                        margin: 'auto',
-                        flex: 1,
+                // {
+                //     xtype: 'container',
+                //     //inline: true,
+                //     layout: 'hbox',
+                //     cls: 'category-search-box',
+                //     width: '50%',
+                //     items: [{
+                //         xtype: 'searchfield',
+                //         ui: 'solo',
+                //         reference: 'searchField',
+                //         margin: 'auto',
+                //         flex: 1,
 
-                        placeholder: 'Search the Sencha Forums',
-                        listeners: {
-                            buffer: 500,
-                            //change: 'doSearch'
-                            action: 'onSearchProds',
-                            clearicontap: 'onClearIconTap'
-                        }
-                    },
-                    {
-                        xtype: 'button',
-                        text: 'Search',
-                        handler: 'onSearchProds'
-                    }]
-                },
+                //         placeholder: 'Search the Sencha Forums',
+                //         listeners: {
+                //             buffer: 500,
+                //             //change: 'doSearch'
+                //             action: 'onSearchProds',
+                //             clearicontap: 'onClearIconTap'
+                //         }
+                //     },
+                //     {
+                //         xtype: 'button',
+                //         text: 'Search',
+                //         handler: 'onSearchProds'
+                //     }]
+                // },
 
                 // {
                 //     xtype: 'searchfield',
@@ -297,34 +333,34 @@ Ext.define('Showroom.view.category.Category', {
             scrollable: 'y',
             margin: 20,
             items: [
-                {
-                    xtype: 'container',
-                    //inline: true,
-                    layout: 'hbox',
-                    cls: 'category-search-box',
-                    width: '50%',
-                    items: [{
-                        xtype: 'searchfield',
-                        ui: 'solo',
-                        reference: 'searchField2',
-                        margin: 'auto',
-                        flex: 1,
+                // {
+                //     xtype: 'container',
+                //     //inline: true,
+                //     layout: 'hbox',
+                //     cls: 'category-search-box',
+                //     width: '50%',
+                //     items: [{
+                //         xtype: 'searchfield',
+                //         ui: 'solo',
+                //         reference: 'searchField2',
+                //         margin: 'auto',
+                //         flex: 1,
 
-                        placeholder: 'Search the Sencha Forums',
-                        listeners: {
-                            buffer: 500,
-                            //change: 'doSearch'
-                            action: 'onSearchProds2',
-                            clearicontap: 'onClearIconTap'
+                //         placeholder: 'Search the Sencha Forums',
+                //         listeners: {
+                //             buffer: 500,
+                //             //change: 'doSearch'
+                //             action: 'onSearchProds2',
+                //             clearicontap: 'onClearIconTap'
 
-                        }
-                    },
-                    {
-                        xtype: 'button',
-                        text: 'Search',
-                        handler: 'onSearchProds2'
-                    }]
-                },
+                //         }
+                //     },
+                //     {
+                //         xtype: 'button',
+                //         text: 'Search',
+                //         handler: 'onSearchProds2'
+                //     }]
+                // },
                 {
                     xtype: 'dataview',
                     inline: true,

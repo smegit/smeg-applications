@@ -49,7 +49,7 @@ Ext.define('Showroom.view.qlist.QlistController', {
                 {
                     xtype: 'textfield',
                     id: 'cartSearchField',
-                    align: 'right',
+                    align: 'left',
                     clearIcon: false,
                     listeners: {
                         action: 'onCartSearch',
@@ -57,13 +57,13 @@ Ext.define('Showroom.view.qlist.QlistController', {
                 },
                 {
                     //xtype: 'button',
-                    align: 'right',
-                    text: 'Search',
+                    align: 'left',
+                    iconCls: 'x-fa fa-search',
                     handler: 'onCartSearch'
                 },
                 {
                     //xtype: 'button',
-                    align: 'right',
+                    align: 'left',
                     iconCls: 'x-fa fa-refresh',
                     handler: 'onCartRefresh'
                     // handler: function (btn, e, opts) {

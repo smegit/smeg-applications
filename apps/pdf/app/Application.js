@@ -22,11 +22,15 @@ Ext.define('pdf.Application', {
         //     var queryString = window.location.search,
         //         SID = queryString.substring(queryString.indexOf("&sid=") + 5, queryString.indexOf("&env=")),
         //         APP = queryString.substring(5, 9);
+        //     console.info(SID);
+        //     console.info(APP);
         //     Ext.apply(options.params, {
         //         sid: SID,
         //         app: APP
         //     });
         // });
+
+
     },
 
     onAppUpdate: function () {

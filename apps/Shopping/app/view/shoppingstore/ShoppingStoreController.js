@@ -342,7 +342,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 ALWORDQ: !Ext.isEmpty(item.orderQtyEditable) ? item.orderQtyEditable : '',
                 ALWRLSQ: !Ext.isEmpty(item.releaseQtyEditable) ? item.releaseQtyEditable : '',
                 OBORDLNO: !Ext.isEmpty(item.orderLineNO) ? item.orderLineNO : '',
-                OBPRMCOD: !Ext.isEmpty(item.OBPRMCOD) ? item.OBPRMCOD : ''
+                OBPRMCOD: !Ext.isEmpty(item.OBPRMCOD) ? item.OBPRMCOD : '',
+                OBDCRT: !Ext.isEmpty(item.OBDCRT) ? item.OBDCRT : '',
+
+
             })
 
         }
@@ -430,7 +433,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 releaseQtyEditable: Ext.isEmpty(product.ALWRLSQ) ? '' : product.ALWRLSQ,
                 orderQtyEditable: Ext.isEmpty(product.ALWORDQ) ? '' : product.ALWORDQ,
                 orderLineNO: Ext.isEmpty(product.OBORDLNO) ? '' : product.OBORDLNO,
-                OBPRMCOD: Ext.isEmpty(product.OBPRMCOD) ? '' : product.OBPRMCOD
+                OBPRMCOD: Ext.isEmpty(product.OBPRMCOD) ? '' : product.OBPRMCOD,
+                OBDCRT: !Ext.isEmpty(product.OBDCRT) ? product.OBDCRT : '',
             },
             //existingRec = cartItemStore.findRecord('product_id', product.MODEL, 0, false, true, true),
             existingRec,
@@ -1051,7 +1055,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                             "orderQtyEditable": product.ALWORDQ,
                             "orderLineNO": product.OBORDLNO,
                             "OBPRMCOD": product.OBPRMCOD,
-                            "plain_txt": product.PALINTXT
+                            "plain_txt": product.PALINTXT,
+                            "OBDCRT": product.OBDCRT
 
                             //TODO: add "deletable"
                         });
@@ -1279,7 +1284,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                                 "orderQtyEditable": product.ALWORDQ,
                                 "orderLineNO": product.OBORDLNO,
                                 "OBPRMCOD": product.OBPRMCOD,
-                                "plain_txt": product.PALINTXT
+                                "plain_txt": product.PALINTXT,
+                                "OBDCRT": product.OBDCRT
 
                                 // TODO: add "deletable"
                             });

@@ -61,6 +61,7 @@ Ext.define('Showroom.view.main.Main', {
             // bind: {
             //     html: '{loremIpsum}'
             // }
+            cls: 'cart-outer',
             items: [{
                 xtype: 'cart',
             }]
