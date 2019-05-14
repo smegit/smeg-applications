@@ -38,3 +38,25 @@
         $background-color: $green,
         $border-color: $green
 );
+
+  
+@include extjs-button-toolbar-small-ui(
+        $ui: 'grey',
+        $background-color: $grey,
+        $border-color: $grey
+);
+@include extjs-button-toolbar-medium-ui(
+        $ui: 'grey',
+        $background-color: $grey,
+        $border-color: $grey
+);
+@include extjs-button-small-ui(
+        $ui: 'grey',
+        $background-color: $grey,
+        $border-color: $grey
+);
+@include extjs-button-medium-ui(
+        $ui: 'grey',
+        $background-color: $grey,
+        $border-color: $grey
+);

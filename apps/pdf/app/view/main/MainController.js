@@ -242,6 +242,7 @@ Ext.define('pdf.view.main.MainController', {
             width: 400,
             //layout: 'fit',
             modal: true,
+            closable: true,
             items: {  // Let's put an empty grid in just to illustrate fit layout
                 // xtype: 'grid',
                 // border: false,
@@ -311,14 +312,23 @@ Ext.define('pdf.view.main.MainController', {
                         name: 'file',
                         allowBlank: false,
                         //buttonText: 'Browser..',
+                        //ui: 'grey',
+                        listeners: {
+                            change: function (fld, value) {
+                                var newValue = value.replace(/C:\\fakepath\\/g, '');
+                                fld.setRawValue(newValue);
+                            }
+                        },
                         buttonConfig: {
                             text: '',
-                            iconCls: 'x-fa fa-file'
+                            iconCls: 'x-fa fa-file',
+                            ui: 'grey',
                         }
                     }],
                 buttons: [{
                     text: 'Upload',
-                    handler: 'onUploadFile'
+                    handler: 'onUploadFile',
+                    ui: 'grey'
                     // handler: function () {
                     //     var form = this.up('form').getForm();
                     //     console.info(form);
@@ -340,7 +350,8 @@ Ext.define('pdf.view.main.MainController', {
                     // }
                 }, {
                     text: 'Cancel',
-                    handler: 'onCancel'
+                    handler: 'onCancel',
+                    ui: 'grey'
                 }]
             }
         }).show();
@@ -372,6 +383,7 @@ Ext.define('pdf.view.main.MainController', {
             var listArray = [];
             if (res.files.length > 0) {
                 res.files.forEach(function (e) {
+                    console.info(e);
                     var obj = e;
                     Ext.apply(obj, {
                         link: res.path + e.URL
@@ -408,14 +420,25 @@ Ext.define('pdf.view.main.MainController', {
         window.open(fileLink, '_blank');
     },
 
-    onSelectFile: function (grid, record, index) {
-        console.info('onSelectFile called');
-        console.info(grid);
-        console.info(record);
-        console.info(index);
+    // onSelectFile: function (grid, record, index) {
+    //     console.info('onSelectFile called');
+    //     console.info(grid);
+    //     console.info(record);
+    //     console.info(index);
+    //     var fileLink = record.get('link');
+    //     window.open(fileLink, '_blank');
+    // },
+    onItemDblClick: function (grid, record, item, index, e) {
+        console.info('onItemDbClick called');
+        // console.info(grid);
+        // console.info(record);
+        // console.info(item);
+        // console.info(index);
+        // console.info(e);
         var fileLink = record.get('link');
         window.open(fileLink, '_blank');
     },
+
 
     requestList: function () {
         console.info('requestList called');

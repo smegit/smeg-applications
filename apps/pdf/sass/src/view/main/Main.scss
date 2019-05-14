@@ -26,7 +26,16 @@
 
 .menu-container{
     .x-table-layout{
-        width: 100%
+        margin: auto;
+        // .x-btn-default-medium {
+        //     background-color: #f6f6f6;
+        //     .x-btn-inner-default-medium {
+        //         color: #606060;
+        //     }
+        // }
+        // .x-btn-pressed{
+        //     color: #606060;
+        // }
     }
 }
 
@@ -34,3 +43,12 @@
     font-size: medium;
 }
 
+.upload-form{
+    // .x-btn-default-small {
+    //     background-color: #f6f6f6;
+    //     .x-btn-inner-default-small {
+    //         color: #606060;
+    //     }
+    // }
+
+}

@@ -153,7 +153,7 @@ Ext.define('pdf.view.main.Main', {
             cls: 'pdf-menu',
             border: true,
             title: {
-                text: 'AGENT STOCK',
+                text: 'AGENCY STOCK',
                 style: 'text-align: center'
             },
             //     type: 'vbox',
@@ -184,6 +184,7 @@ Ext.define('pdf.view.main.Main', {
                             width: 120,
                             scale: 'medium',
                             handler: 'onDownload',
+                            ui: 'grey'
                         },
                         {
                             xtype: 'component',
@@ -196,6 +197,7 @@ Ext.define('pdf.view.main.Main', {
                             width: 120,
                             scale: 'medium',
                             handler: 'onUpload',
+                            ui: 'grey'
                         },
                         {
                             xtype: 'component',
@@ -208,6 +210,7 @@ Ext.define('pdf.view.main.Main', {
                             width: 120,
                             scale: 'medium',
                             handler: 'onView',
+                            ui: 'grey'
                         },
                         {
                             xtype: 'dataview',

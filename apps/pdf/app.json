@@ -41,7 +41,8 @@
     /**
      * The name of the theme for this application.
      */
-    "theme": "theme-triton",
+    //"theme": "theme-triton",
+    "theme": "smeg-theme",
     /**
      * The list of required packages (with optional versions; default is "latest").
      *
@@ -55,7 +56,8 @@
         "font-awesome",
         "valence",
         "valence-common",
-        "valence-login"
+        "valence-login",
+        "valence-theme"
     ],
     /**
      * Fashion build configuration properties.
