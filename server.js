@@ -45,6 +45,9 @@ app.all('/build/production/ShowroomApp/*', express.static(__dirname));
 app.all('/build/development/ShowroomApp/*', express.static(__dirname));
 app.all('/apps/ShowroomApp/*', express.static(__dirname));
 
+app.all('/build/production/OrderMaint/*', express.static(__dirname));
+app.all('/build/development/OrderMaint/*', express.static(__dirname));
+app.all('/apps/OrderMaint/*', express.static(__dirname));
 
 
 app.all('/build/testing/Shopping/*', express.static(__dirname));

@@ -10,7 +10,8 @@
         "apps/new-app",
         "apps/Showroom",
         "apps/ShowroomApp",
-        "apps/pdf"
+        "apps/pdf",
+        "apps/OrderMaint"
     ],
 
     /**
