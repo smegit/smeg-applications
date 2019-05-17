@@ -39,6 +39,9 @@ Ext.define('OrderMaint.view.main.List', {
     xtype: 'orderlist',
     itemId: 'ordergrid',
     cls: 'orderlist-panel',
+    //border: true,
+    //margin: '0 10 0 0',
+    //padding: '10 0',
 
     //title: 'Orders',
     scroable: true,

@@ -52,7 +52,11 @@
      *      ]
      */
     "requires": [
-        "font-awesome"
+        "font-awesome",
+        "valence",
+        "valence-common",
+        //"valence-theme",
+        "valence-login"
     ],
     /**
      * Fashion build configuration properties.

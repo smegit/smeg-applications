@@ -264,6 +264,8 @@ Ext.define('Shopping.view.cart.CartController', {
                     var d = Ext.decode(r.responseText),
                         orderKey = d.OAORDKEY;
 
+                    console.info(d);
+
                     if (!Ext.isEmpty(orderKey)) {
                         vm.set('activeCartNumber', orderKey);
                         orderKeyFld.setValue(orderKey);
@@ -1211,7 +1213,7 @@ Ext.define('Shopping.view.cart.CartController', {
             me.depositRelease(cmp, 'checkout')
                 .then(function (content) {
                     //check if all release values are zero
-                    //console.info(content);
+                    console.info(content);
                     var standardOrder = me.isStandardOrder(),
                         store = view.lookupViewModel(true).getStore('cartItems'),
                         count = store.getCount(),
@@ -1266,41 +1268,91 @@ Ext.define('Shopping.view.cart.CartController', {
 
         Valence.common.util.Helper.loadMask('Processing');
 
-        me.getPayments(releaseWindow.chkContent)
-            .then(Ext.bind(function (content) {
-                //first check if we need to request payment
-                //
-                var requestPay = true,
-                    orderPay = vm.get('orderPayments');
-                //check if max pay is equal to 0 and if so we do not have to request payment
-                //
-                if (!Ext.isEmpty(orderPay.maxpay) && !Ext.isEmpty(orderPay.maxpay[0].maxpay) && parseFloat(orderPay.maxpay[0].maxpay) == 0) {
-                    requestPay = false;
-                }
+        console.info(releaseWindow.chkContent);
+        // me.getPayments(releaseWindow.chkContent)
+        //     .then(Ext.bind(function (content) {
+        //         console.info(content);
+        //         //first check if we need to request payment
+        //         //
+        //         var requestPay = true,
+        //             orderPay = vm.get('orderPayments');
+        //         //check if max pay is equal to 0 and if so we do not have to request payment
+        //         //
+        //         if (!Ext.isEmpty(orderPay.maxpay) && !Ext.isEmpty(orderPay.maxpay[0].maxpay) && parseFloat(orderPay.maxpay[0].maxpay) == 0) {
+        //             requestPay = false;
+        //         }
 
-                if (requestPay) {
-                    console.info('requestPay');
-                    me.requestPayment(content);
-                } else {
-                    var cartInfo = me.getCartInformation();
+        //         if (requestPay) {
+        //             console.info('requestPay');
+        //             me.requestPayment(content);
+        //         } else {
+        //             var cartInfo = me.getCartInformation();
 
-                    // confirm release because they have a max pay of 0 meaning they already deposited the full amount.
-                    //
-                    me.confirmRelease()
-                        .then(function (content) {
-                            console.info('afterconfirmRelease');
-                            me.closeShowReleaseWindow('close');
-                            me.printCart(content.OAORDKEY, cartInfo.data, content.printURL);
-                            me.onClickClear();
-                        }, function () {
-                            me.closeShowReleaseWindow('close');
-                            me.onClickClear();
-                        });
-                }
-            }, me))
-            .then(Ext.bind(me.requestPayment, me), function () {
-                releaseWindow.show();
-            });
+        //             // confirm release because they have a max pay of 0 meaning they already deposited the full amount.
+        //             //
+        //             me.confirmRelease()
+        //                 .then(function (content) {
+        //                     console.info('afterconfirmRelease');
+        //                     me.closeShowReleaseWindow('close');
+        //                     me.printCart(content.OAORDKEY, cartInfo.data, content.printURL);
+        //                     me.onClickClear();
+        //                 }, function () {
+        //                     me.closeShowReleaseWindow('close');
+        //                     me.onClickClear();
+        //                 });
+        //         }
+        //     }, me))
+        //     .then(Ext.bind(me.requestPayment, me), function () {
+        //         releaseWindow.show();
+        //     });
+
+
+
+        var requestPay = true,
+            orderPay = vm.get('orderPayments'),
+            content = releaseWindow.chkContent;
+        //check if max pay is equal to 0 and if so we do not have to request payment
+        //
+        // if (!Ext.isEmpty(orderPay.maxpay) && !Ext.isEmpty(orderPay.maxpay[0].maxpay) && parseFloat(orderPay.maxpay[0].maxpay) == 0) {
+        //     requestPay = false;
+        // }
+        console.info(content);
+        if (!Ext.isEmpty(content.requirePayment) && content.requirePayment == '1') {
+            requestPay = true
+        } else {
+            requestPay = false;
+        }
+        console.info(requestPay);
+        if (requestPay) {
+            console.info('requestPay');
+            me.getPayments(content).then(Ext.bind(function (payments) {
+                console.info(payments);
+                me.requestPayment(content);
+            }), me)
+                .then(function (res) {
+                    console.info(res);
+                }, function (res) {
+                    console.info();
+                });
+            //me.requestPayment(content);
+        } else {
+            var cartInfo = me.getCartInformation();
+
+            // confirm release because they have a max pay of 0 meaning they already deposited the full amount.
+            //
+            me.confirmRelease()
+                .then(function (content) {
+                    console.info('afterconfirmRelease');
+                    me.closeShowReleaseWindow('close');
+                    me.printCart(content.OAORDKEY, cartInfo.data, content.printURL);
+                    me.onClickClear();
+                }, function () {
+                    me.closeShowReleaseWindow('close');
+                    me.onClickClear();
+                });
+        }
+
+
     },
 
 
