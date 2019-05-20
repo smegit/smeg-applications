@@ -11,6 +11,7 @@ Ext.define('OrderMaint.view.main.MainController', {
     requires: [
         'OrderMaint.view.main.OrderView',
         'OrderMaint.view.main.PdfWindow',
+        'OrderMaint.view.main.NoteForm',
         'Ext.container.Viewport'
     ],
 
@@ -51,6 +52,7 @@ Ext.define('OrderMaint.view.main.MainController', {
         }
     },
 
+    /*------------------------ Notes Event Region Start -----------------------------------*/
     onExpandNoteGrid: function (p) {
         console.info('onExpendNoteGrid');
         console.info(p);
@@ -73,12 +75,76 @@ Ext.define('OrderMaint.view.main.MainController', {
             noteGrid.setStore({
                 data: res.notes
             });
+            Ext.apply(noteGrid, {
+                emailDefaults: res.emailDefaults,
+                noteActions: res.noteActions,
+                noteTypes: res.noteTypes,
+                orderKey: orderKey
+            });
+            noteGrid.setData(res.emailDefaults);
+
+            // noteActions: res.noteActions,
+            // noteTypes: res.noteTypes
             activeTab.scrollBy(999999, 999999, true);
             //activeTab.scrollTo(100, 100, true);
         }, function (res) {
             console.info(res);
         });
     },
+    onAddNote: function (btn, evt, three) {
+        console.info('onAddNote called');
+        var me = this,
+            noteGrid = btn.up('expander-note');
+        console.info(btn);
+        console.info(evt);
+        console.info(noteGrid);
+
+        Ext.create('Ext.window.Window', {
+            //title: 'Coming soon',
+            height: '80%',
+            width: '70%',
+            modal: true,
+            layout: 'fit',
+            items: {  // Let's put an empty grid in just to illustrate fit layout
+                xtype: 'noteForm',
+                noteOptions: {
+                    emailDefaults: noteGrid.emailDefaults,
+                    noteActions: noteGrid.noteActions,
+                    noteTypes: noteGrid.noteTypes
+                },
+                orderKey: noteGrid.orderKey
+                // noteOpton
+                // border: false,
+                // columns: [{ header: 'Hello World' }],                 // One header just for show. There's no data,
+                // store: Ext.create('Ext.data.ArrayStore', {}) // A dummy empty data store
+            }
+        }).show();
+
+    },
+    onSaveClick: function (btn, evt) {
+        console.info('onSaveClick called');
+        console.info(btn);
+        console.info(evt);
+        var me = this,
+            noteForm = btn.up('noteForm'),
+            noteFormValues = noteForm.getValues();
+        console.info(noteForm);
+        console.info(noteFormValues);
+        if (noteForm.isValid()) {
+            console.info('good form');
+            me.postNote(noteFormValues).then(
+                function (res) {
+                    console.info(res);
+                },
+                function (res) {
+                    console.info(res);
+                }
+            );
+        }
+    },
+
+    /*------------------------ Notes Event Region End -----------------------------------*/
+
     onOrderGridItemDblClick: function (grid, record, item, index, e) {
         console.info('onOrderGridItemDblClick called');
         console.info(grid);
@@ -274,23 +340,7 @@ Ext.define('OrderMaint.view.main.MainController', {
     onSend: function () {
         console.info('onSend called');
     },
-    onAddNote: function () {
-        console.info('onAddNote');
-        Ext.create('Ext.window.Window', {
-            title: 'Coming soon',
-            height: 200,
-            width: 400,
-            modal: true,
-            layout: 'fit',
-            items: {  // Let's put an empty grid in just to illustrate fit layout
-                xtype: 'grid',
-                border: false,
-                columns: [{ header: 'Hello World' }],                 // One header just for show. There's no data,
-                store: Ext.create('Ext.data.ArrayStore', {}) // A dummy empty data store
-            }
-        }).show();
 
-    },
     // services to back-end calls
     requestOrderList: function () {
         console.info('requestOrderList called');
@@ -397,6 +447,35 @@ Ext.define('OrderMaint.view.main.MainController', {
         });
         return deferred.promise;
     },
+
+    // Post Note
+    postNote: function (formData) {
+        console.info('postNote called');
+        var me = this,
+            deferred = Ext.create('Ext.Deferred'),
+            params = {};
+        params = {
+            pgm: 'EC1050',
+            action: 'saveNote',
+            // OAORDKEY: orderKey
+        };
+        Ext.apply(params, formData);
+        Ext.Ajax.request({
+            url: '/valence/vvcall.pgm',
+            method: 'POST',
+            params: params,
+            success: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.resolve(response);
+            },
+            failure: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.reject(response);
+            }
+        });
+        return deferred.promise;
+    },
+
 
 
 });

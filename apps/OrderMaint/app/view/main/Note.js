@@ -15,9 +15,9 @@ Ext.define('OrderMaint.view.main.Note', {
     enableLocking: true,
     border: true,
     //padding: 10,
-    margin: '0 10 0 0',
+    margin: '0 10 100 0',
     //width: 750,
-    //height: 300,
+    height: 500,
     emptyText: 'No Notes Saved',
     plugins: [{
         ptype: 'rowexpander',

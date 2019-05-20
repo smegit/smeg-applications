@@ -19,7 +19,8 @@ Ext.define('OrderMaint.view.main.OrderView', {
             title: me.buildTitleTextData(),
             titleAlign: 'center',
             cls: 'item-list',
-            padding: '10 0',
+            //ui: 'background',
+            //padding: '10 0',
             border: true,
             margin: '0 10 0 0',
             // bind: {
@@ -52,7 +53,7 @@ Ext.define('OrderMaint.view.main.OrderView', {
                 // },
                 {
                     text: 'Item',
-                    width: 100,
+                    flex: 1,
                     dataIndex: 'OBITM',
                     // renderer: function (v, meta) {
                     //     meta.tdCls += ' cart-list-prd-detail';
@@ -62,7 +63,7 @@ Ext.define('OrderMaint.view.main.OrderView', {
                     text: 'Description',
                     cellWrap: true,
                     dataIndex: 'I1IDSC',
-                    flex: 1,
+                    flex: 2,
                     // renderer: function (v, meta, record) {
                     //     // console.info(v);
                     //     // console.info(record);
@@ -75,29 +76,113 @@ Ext.define('OrderMaint.view.main.OrderView', {
                     text: 'Order',
                     align: 'right',
                     dataIndex: 'OBQTYO',
+                    flex: 1,
+
                 },
                 {
                     text: 'Delivered',
                     align: 'right',
                     dataIndex: 'OBQTYD',
+                    flex: 1,
+
                 },
                 {
                     text: 'Price',
                     align: 'right',
                     dataIndex: 'OBUPRC',
+                    flex: 1,
+
                 },
                 {
                     text: 'Sub Total',
                     align: 'right',
                     dataIndex: 'OBTOTA',
+                    flex: 1,
+
+                },
+                {
+                    text: '',
+                    width: 30
                 }
             ]
         },
+        // {
+        //     xtype: 'container',
+        //     // height: 400,
+        //     // width: 400,
+        //     margin: 'auto',
+        //     width: '40%',
+        //     flex: 1,
+        //     items: [{
+        //         xtype: 'gridpanel',
+        //         padding: '10 0',
+        //         border: true,
+        //         //margin: '0 10 0 0',
+        //         //width: '95%',
+        //         cls: 'payment-component',
+        //         emptyText: 'No Payment Received.',
+        //         store: Ext.create('Ext.data.Store', {
+        //             data: me.buildPaymentStoreData()
+        //         }),
+        //         hidden: me.hidePaymentHistory(),
+        //         features: [{
+        //             id: 'paymentSummary',
+        //             ftype: 'summary',
+        //             showSummaryRow: true,
+        //         }],
+        //         columns: [
+        //             // {
+        //             //     text: 'Label',
+        //             //     dataIndex: 'label',
+        //             //     sortable: false,
+
+        //             // },
+        //             {
+        //                 text: 'Payment Detail',
+        //                 flex: 1,
+        //                 dataIndex: 'NOTE',
+        //                 sortable: false,
+        //                 menuDisabled: true
+        //             },
+        //             {
+        //                 text: 'Amount',
+        //                 align: 'right',
+        //                 dataIndex: 'AMOUNT',
+        //                 flex: 1,
+        //                 sortable: false,
+        //                 menuDisabled: true,
+        //                 cls: 'gridTitle',
+        //                 renderer: function (value, meta) {
+        //                     meta.tdCls += ' cart-list-prd-detail';
+        //                     return Ext.util.Format.number(value, '0,0.00');
+        //                 },
+        //                 summaryType: 'sum',
+        //                 summaryRenderer: function (value) {
+        //                     console.info(this.up('orderView'));
+        //                     var data = this.up('orderView').config.data;
+
+        //                     if (data.payments.length > 0) {
+        //                         var totalPaid = data.TOTALPAID,
+        //                             balance = data.CartHdr[0].OAORDTOT - totalPaid;
+        //                         return Ext.String.format('<b>BALANCE: {0} </b> <b>Paid: {1}</b>', Ext.util.Format.currency(balance), Ext.util.Format.currency(totalPaid));
+        //                     } else {
+        //                         return;
+        //                     }
+        //                 }
+        //             },
+        //             // {
+        //             //     text: '',
+        //             //     maxWidth: 30
+        //             // }
+        //         ],
+        //     }]
+        // },
         {
             xtype: 'gridpanel',
             padding: '10 0',
             border: true,
             margin: '0 10 0 0',
+            ui: 'background',
             emptyText: 'No Payment Received.',
             store: Ext.create('Ext.data.Store', {
                 data: me.buildPaymentStoreData()
