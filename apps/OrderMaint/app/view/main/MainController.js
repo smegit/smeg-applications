@@ -126,17 +126,48 @@ Ext.define('OrderMaint.view.main.MainController', {
         console.info(btn);
         console.info(evt);
         var me = this,
+            view = me.getView(),
+            activeTab = view.getActiveTab(),
+            currOrderView = activeTab.down('orderView'),
+            currOrderData = currOrderView.config.data,
+            orderKey = currOrderData.CartHdr[0].OAORDKEY,
+            noteGrid = currOrderView.down('expander-note'),
+            noteGridStore = noteGrid.getStore(),
             noteForm = btn.up('noteForm'),
+            noteWindow = noteForm.up('window'),
             noteFormValues = noteForm.getValues();
         console.info(noteForm);
+        console.info(noteWindow);
         console.info(noteFormValues);
+        console.info(noteGridStore);
+
         if (noteForm.isValid()) {
             console.info('good form');
+            noteWindow.mask('Saving note......');
             me.postNote(noteFormValues).then(
                 function (res) {
+                    noteWindow.unmask();
+                    noteWindow.close();
+                    if (res.success) {
+                        // reload note grid
+                        me.onExpandNoteGrid();
+                        //Ext.Msg.alert('Note', 'Note saved successfully.');
+                        Ext.toast({
+                            html: 'Note saved successfully',
+                            closable: false,
+                            align: 't',
+                            slideInDuration: 400,
+                            minWidth: 400
+                        });
+
+                    } else {
+                        Ext.Msg.alert('Error', 'Failed to saved your note.');
+                    }
                     console.info(res);
+
                 },
                 function (res) {
+                    Ext.Msg.alert('Error', 'Failed to saved your note.');
                     console.info(res);
                 }
             );

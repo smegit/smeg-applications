@@ -25,7 +25,8 @@ Ext.define('OrderMaint.view.main.Note', {
             // '<p><b>Date/Time:</b> {OFCRTDATE}</p>',
             // '<p><b>User:</b> {OFCRTUSER}</p>',
             // '<p><b>Type:</b> {OFTYPE}</p>',
-            '<p><b>Note:</b> {OFNOTE}</p>')
+            //'<p><b>Note:</b> {OFNOTE}</p>')
+            '<p style="white-space: pre-wrap;"><b>Note:</b> {OFNOTE}</p>')
     }],
     listeners: {
         render: function (cmp) {

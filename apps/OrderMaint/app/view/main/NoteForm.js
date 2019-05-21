@@ -45,6 +45,7 @@ Ext.define('OrderMaint.view.main.NoteForm', {
                     xtype: 'combo',
                     fieldLabel: 'Type',
                     allowBlank: false,
+                    editable: false,
                     queryMode: 'local',
                     displayField: 'NOTETYPED',
                     valueField: 'NOTETYPEC',
@@ -61,6 +62,7 @@ Ext.define('OrderMaint.view.main.NoteForm', {
                     xtype: 'combo',
                     fieldLabel: 'Follow Up',
                     displayField: 'NOTEACTD',
+                    editable: false,
                     valueField: 'NOTEACTC',
                     reference: 'noteAction',
                     publishes: 'value',
@@ -68,12 +70,38 @@ Ext.define('OrderMaint.view.main.NoteForm', {
                     store: Ext.create('Ext.data.Store', {
                         data: me.buildActionStoreData()
                     }),
+                    listeners: {
+                        beforeselect: function (combo, record, index) {
+                            // console.info(combo);
+                            // console.info(record);
+                            // console.info(index);
+                            // console.info(record.get('NOTEACTC'));
+                            var codeField = combo.up('form').down('#codeFieldId'),
+                                emailField = combo.up('form').down('#emailFieldId'),
+                                dateField = combo.up('form').down('#dateFieldId'),
+                                noteAction = record.get('NOTEACTC');
+                            // emailField.reset();
+                            // dateField.reset();
+                            if (noteAction == 'P') {
+                                codeField.setValue('*PHONE');
+                            } else {
+                                codeField.setValue('');
+                            }
+                            // console.info(codeField);
+                        }
+                    }
                 }, {
                     xtype: 'datefield',
+                    itemId: 'dateFieldId',
                     fieldLabel: 'Date',
+                    editable: false,
                     name: 'OFFUPDAT',
+                    format: 'd/m/Y',
+                    submitFormat: 'Y-m-d',
+                    allowBlank: false,
                     bind: {
                         hidden: '{noteAction.value == null || noteAction.value == "" }',
+                        disabled: '{noteAction.value == null || noteAction.value == "" }'
                     }
                 }, {
                     xtype: 'combo',
@@ -81,14 +109,49 @@ Ext.define('OrderMaint.view.main.NoteForm', {
                     displayField: 'EMLDSC',
                     valueField: 'EMLCOD',
                     name: 'OFFUPDET',
+                    publishes: [
+                        'value',
+                        'rawValue',
+                        'dirty'
+                    ],
+                    reference: 'emailField',
+                    itemId: 'emailFieldId',
                     vtype: 'email',
+                    allowBlank: false,
                     store: Ext.create('Ext.data.Store', {
                         data: me.buildEmailDefaultStoreData()
                     }),
                     bind: {
                         visible: '{noteAction.value == "E"}',
                         disabled: '{noteAction.value != "E"}'
+                    },
+                    listeners: {
+                        beforeselect: function (combo, record, index) {
+                            console.info(combo);
+                            console.info(record);
+                            console.info(index);
+                            console.info(record.get('EMLCOD'));
+                            var codeField = combo.up('form').down('#codeFieldId'),
+                                OFFUPCOD = record.get('EMLCOD');
+                            if (OFFUPCOD != '*EMAIL') {
+                                Ext.apply(combo, { vtype: '' });
+                            } else {
+                                console.info('in email');
+                                combo.selectText();
+                                Ext.apply(combo, { vtype: 'email' });
+                                codeField.setValue('*EMAIL');
+                                //combo.selectText();
+                            }
+                            console.info(codeField);
+                        },
+                        select: function (combo, record, index) {
+                            var OFFUPCOD = record.get('EMLCOD');
+                            if (OFFUPCOD == '*EMAIL') {
+                                combo.selectText();
+                            }
+                        }
                     }
+
                 }, {
                     xtype: 'textfield',
                     fieldLabel: 'Phone',
@@ -131,6 +194,7 @@ Ext.define('OrderMaint.view.main.NoteForm', {
                 xtype: 'textarea',
                 fieldLabel: 'Note',
                 name: 'OFNOTE',
+                allowBlank: false,
                 flex: 1,
                 width: '100%'
             },
@@ -143,10 +207,28 @@ Ext.define('OrderMaint.view.main.NoteForm', {
             },
             {
                 xtype: 'textfield',
+                itemId: 'codeFieldId',
                 fieldLabel: 'OFFUPCOD',
                 name: 'OFFUPCOD',
-                hidden: true
-                //value: me.buildOrderKey()
+                hidden: true,
+                bind: {
+                    value: '{emailField.value}' || '{noteAction.value == "P" ? "*PHONE": ""}'
+                },
+                scope: this,
+                listeners: {
+                    change: function (cmp, newValue, oldValue) {
+                        console.info('change called');
+                        // console.info(cmp);
+                        // console.info(newValue);
+                        // console.info(oldValue);
+                        var codeField = cmp.up('form').down('#codeFieldId'),
+                            ereg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+                        if (ereg.test(newValue)) {
+                            codeField.setValue('*EMAIL')
+                        }
+                    }
+                }
+
             }
         ]
     },
@@ -186,5 +268,20 @@ Ext.define('OrderMaint.view.main.NoteForm', {
     buildOrderKey: function () {
         var me = this;
         return me.orderKey;
+    },
+    beforeselectEmail: function (combo, record, index) {
+        var me = this;
+        console.info('beforeselectEmail called');
+        console.info(combo);
+        console.info(record);
+        console.info(index);
+    },
+    codeFieldChange: function (cmp, newValue, oldValue) {
+        console.info('change called');
+        console.info(cmp);
+        console.info(newValue);
+        console.info(oldValue);
+        var codeFieldValues = ['', ''];
+
     }
 });
