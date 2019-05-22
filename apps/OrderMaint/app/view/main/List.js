@@ -50,6 +50,38 @@ Ext.define('OrderMaint.view.main.List', {
     bind: {
         store: '{orderList}'
     },
+    tbar: [
+        // {
+        //     text: 'Toggle groups...',
+        //     reference: 'groupsBtn',
+
+        //     bind: {
+        //         disabled: '{!groupBy}'
+        //     },
+        //     destroyMenu: true,
+        //     menu: {
+        //         hideOnScroll: false,
+        //         items: []
+        //     }
+        // },
+        {
+            xtype: 'textfield',
+            itemId: 'searchFieldId',
+            flex: 1,
+            enableKeyEvents: true,
+            emptyText: 'Global search orders, try order #, name, reps...',
+
+            listeners: {
+                //specialkey: 'onEnterKeyPressed',
+                //keyup: 'onKeyup'
+            }
+        },
+        {
+            text: 'Search',
+            tooltip: 'Search',
+            iconCls: 'fa fa-search',
+            //handler: 'onSearchNotes'
+        }],
     dockedItems: [
 
         {
@@ -66,7 +98,7 @@ Ext.define('OrderMaint.view.main.List', {
     ],
     //layout: 'fit',
 
-    height: 800,
+    // height: '50%',
 
     columns: [
         {

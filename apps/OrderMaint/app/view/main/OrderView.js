@@ -19,6 +19,7 @@ Ext.define('OrderMaint.view.main.OrderView', {
             title: me.buildTitleTextData(),
             titleAlign: 'center',
             cls: 'item-list',
+            emptyText: 'No Data Available',
             //ui: 'background',
             //padding: '10 0',
             border: true,
@@ -26,6 +27,14 @@ Ext.define('OrderMaint.view.main.OrderView', {
             // bind: {
             //     store: '{data.CartDtl}'
             // },
+            tools: [{
+                glyph: 'f1c1@FontAwesome',
+                handler: 'getPDF',
+                tooltip: 'Open PDF File',
+                bind: {
+                    hidden: '{!groupBy}'
+                }
+            }],
             store: Ext.create('Ext.data.Store', {
                 data: me.buildStoreData()
             }),
@@ -854,6 +863,23 @@ Ext.define('OrderMaint.view.main.OrderView', {
                 preserveScrollOnRefresh: true,
                 deferEmptyText: true,
                 emptyText: 'No data available.'
+            },
+            listeners: {
+                afterrender: function (panel) {
+                    console.info('afterrender called');
+                    console.info(Ext.get(panel.el.query('.x-panel-header')));
+                    Ext.get(panel.el.query('.x-panel-header')[0]).on('click', function (e) {
+                        console.info('click event captured');
+                        //alert(e.target.innerText)
+                        console.info(panel.getCollapsed());
+                        if (panel.getCollapsed()) {
+                            panel.expand();
+                        } else {
+                            panel.collapse();
+                        }
+
+                    }, panel);
+                }
             }
         },
         {

@@ -174,6 +174,50 @@ Ext.define('OrderMaint.view.main.MainController', {
         }
     },
 
+    onSearchNotes: function (btn, evt) {
+        console.info('onSearchNotes called');
+        console.info(btn);
+        console.info(evt);
+        var me = this,
+            view = me.getView(),
+            activeTab = view.getActiveTab(),
+            currOrderView = activeTab.down('orderView'),
+            currOrderData = currOrderView.config.data,
+            orderKey = currOrderData.CartHdr[0].OAORDKEY,
+            noteGrid = currOrderView.down('expander-note'),
+            noteGridStore = noteGrid.getStore(),
+            searchString = noteGrid.down('#searchFieldId').getValue();
+        console.info(searchString);
+        console.info(noteGrid.down('textfield'));
+        noteGridStore.filter([
+            {
+                property: 'OFNOTE',
+                value: searchString,
+                anyMatch: true,
+                caseSensitive: false
+            },
+        ])
+
+    },
+
+    onEnterKeyPressed: function (field, e) {
+        // e.HOME, e.END, e.PAGE_UP, e.PAGE_DOWN,
+        // e.TAB, e.ESC, arrow keys: e.LEFT, e.RIGHT, e.UP, e.DOWN
+        var me = this;
+        console.info('onEnterKeyPressed called');
+        if (e.getKey() == e.ENTER) {
+            me.onSearchNotes();
+        }
+    },
+
+    onKeyup: function (field, e) {
+        console.info(field);
+        var me = this;
+        if (field.getValue() == '') {
+            me.onSearchNotes();
+        }
+    },
+
     /*------------------------ Notes Event Region End -----------------------------------*/
 
     onOrderGridItemDblClick: function (grid, record, item, index, e) {
@@ -222,14 +266,15 @@ Ext.define('OrderMaint.view.main.MainController', {
     },
     getPDF: function (button, evt) {
         console.info('getPDF called');
-        console.info(button);
-        console.info(evt);
-        console.info(button.up('orderView'));
+        // console.info(button);
+        // console.info(evt);
+        // console.info(button.up('orderView'));
         var me = this,
             view = me.getView(),
-            orderKey = button.up('orderView').orderKey,
-            orderView = button.up('orderView'),
-            tabPanel = orderView.up();
+            activeTab = view.getActiveTab(),
+            currOrderView = activeTab.down('orderView'),
+            currOrderData = currOrderView.config.data,
+            orderKey = currOrderData.CartHdr[0].OAORDKEY;
         me.requestPDF(orderKey).then(function (res) {
             console.info(res);
             //var iframeSource = '<iframe src="' + res.printURL + '" width="100%" height="100%" >This is iframe</iframe>';
@@ -265,7 +310,11 @@ Ext.define('OrderMaint.view.main.MainController', {
                 orderKey: res.OAORDKEY,
                 bbar: [
                     '->',
-                    { xtype: 'button', text: 'Close' },
+                    {
+                        xtype: 'button', text: 'Close', handler: function (cmp) {
+                            cmp.up('window').close();
+                        }
+                    },
                     { xtype: 'button', text: 'Email', handler: 'onEmail' },
                     '->'
                 ]

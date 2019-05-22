@@ -15,7 +15,7 @@ Ext.define('OrderMaint.view.main.Note', {
     enableLocking: true,
     border: true,
     //padding: 10,
-    margin: '0 10 100 0',
+    margin: '10 10 100 0',
     //width: 750,
     height: 500,
     emptyText: 'No Notes Saved',
@@ -39,12 +39,27 @@ Ext.define('OrderMaint.view.main.Note', {
     tbar: [
         {
             xtype: 'textfield',
-            flex: 1
+            itemId: 'searchFieldId',
+            flex: 1,
+            enableKeyEvents: true,
+            listeners: {
+                specialkey: 'onEnterKeyPressed',
+                keyup: 'onKeyup'
+            }
         },
+        // {
+        //     xtype: 'widget_dockedsearch',
+        //     flex: 1,
+        //     fields: ['NOTE'],
+        //     // bind: {
+        //     //     store: '{Notes}'
+        //     // }
+        // },
         {
             text: 'Search',
             tooltip: 'Search',
-            iconCls: 'fa fa-search'
+            iconCls: 'fa fa-search',
+            handler: 'onSearchNotes'
         }, '-', {
             text: 'Add Note',
             tooltip: 'Add a new note',

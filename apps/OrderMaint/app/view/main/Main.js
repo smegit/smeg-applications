@@ -128,6 +128,7 @@ Ext.define('OrderMaint.view.main.Main', {
             title: 'Orders',
             iconCls: 'fa fa-list',
             // The following grid shares a store with the classic version's grid as well!
+            layout: 'fit',
             items: [{
                 xtype: 'orderlist'
             }]
