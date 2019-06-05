@@ -31,15 +31,8 @@ Ext.define('Showroom.view.category.Category', {
     ],
     listeners: {
         //resize: 'onSizeChange'
-        beforeshow: function () {
-            console.info('after111');
-            // new Ext.Button({
-            //     text: 'Button',
-            //     ui: 'action',
-            //     renderTo: 'renderbutton'
-            // });
-        },
-        goToCatPage: 'onGoToCatPage'
+        goToCatPage: 'onGoToCatPage',
+        loadCategory: 'onLoadCategory'
     },
     header: {
         //cls: 'header-cls',
@@ -90,6 +83,17 @@ Ext.define('Showroom.view.category.Category', {
                     },
 
                 ]
+            },
+
+            {
+                xtype: 'paneltool',
+                type: 'gear',
+                handler: 'onChangeShowroom',
+                tooltip: 'Change showroom here',
+                bind: {
+                    hidden: '{!hideCloseBtn || hideGear}'
+                }
+                //html: 'Switch'
             },
 
 
@@ -395,7 +399,7 @@ Ext.define('Showroom.view.category.Category', {
                         mode: 'MULTI'
                     },
                     listeners: {
-                        itemtap: 'onProdItemTap',
+                        itemsingletap: 'onProdItemTap',
                         selectionchange: function (dv, nodes) {
                             //console.info('selectionchange called');
                         },
@@ -477,7 +481,7 @@ Ext.define('Showroom.view.category.Category', {
                 initialize: function (cmp) {
                     console.info('render called');
                     cmp.el.on('click', function (e, target) {
-                        //e.stopEvent();
+                        e.stopEvent();
                         console.info('click called');
                         console.info(target);
                         var me = this,

@@ -15,7 +15,8 @@ Ext.define('Showroom.view.category.CategoryController', {
         console.log('init called');
         console.info(view);
         view.updateActiveState = this.updateActiveState.bind(this);
-        var me = this;
+        var me = this,
+            vm = me.getViewModel();
 
         me.control({
             'category container': {
@@ -25,6 +26,35 @@ Ext.define('Showroom.view.category.CategoryController', {
                 addtocartfromdetail: me.onAddToCart
             }
         });
+
+        console.info(Ext.data.StoreManager.lookup('Agency'));
+        var agencyStore = Ext.data.StoreManager.lookup('Agency');
+        setTimeout(function () {
+            if (agencyStore.getCount() === 1) {
+                vm.set('hideGear', true);
+                me.requestSetAgent().then(function (res) {
+                    console.info(res);
+                    if (res.success) {
+                        me.loadCat('CAT');
+                    }
+                }, function (res) {
+                    console.info(res);
+                })
+            }
+            if (agencyStore.getCount() > 1) {
+                console.info('show select');
+                // Ext.Viewport.add({
+                //     xtype: 'agencyList',
+                // }).show();
+                var agencyList = Ext.Viewport.add({ xtype: 'agencyList', });
+            } else {
+                // set agent
+                console.info('set agent');
+            }
+        }, 800);
+
+
+
 
     },
     initViewModel: function (viewModel) {
@@ -40,21 +70,67 @@ Ext.define('Showroom.view.category.CategoryController', {
         // });
 
         //me.loadCat('***');
-        setTimeout(function () {
+        // setTimeout(function () {
 
-            me.loadCat('CAT');
-            //Ext.Msg.alert('loc', JSON.stringify(window.location.search), Ext.emptyFn);
+        //     me.loadCat('CAT');
+        //     //Ext.Msg.alert('loc', JSON.stringify(window.location.search), Ext.emptyFn);
 
 
-        }, 500)
+        // }, 500);
         //me.loadCat('CAT');
-
-
-
 
     },
 
+
+    requestSetAgent: function (agentId) {
+        console.log('requestSetAgent called');
+        var me = this,
+            deferred = Ext.create('Ext.Deferred'),
+            params = {};
+        params = {
+            pgm: 'EC1000',
+            action: 'setAgent',
+            agent: agentId
+        };
+        Ext.Ajax.request({
+            url: '/valence/vvcall.pgm',
+            method: 'POST',
+            params: params,
+            success: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.resolve(response);
+            },
+            failure: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.reject(response);
+            }
+        });
+        return deferred.promise;
+    },
+
+
+
+    onLoadCategory: function (cat) {
+        console.info('onLoadCategory');
+        var me = this;
+        console.info(cat);
+        me.loadCat(cat);
+
+    },
+    onChangeShowroom: function () {
+        console.info('onChangeShowroom called');
+        var agencyStore = Ext.data.StoreManager.lookup('Agency');
+        if (agencyStore.getCount() > 0) {
+            console.info('show select');
+            var agencyList = Ext.Viewport.add({ xtype: 'agencyList', });
+            // exit existing selection
+        } else {
+            // set agent
+            console.info('set agent');
+        }
+    },
     onProdItemTap: function (dv, index, target, rec, e) {
+        console.info('onProdItemTap called');
         console.info(dv);
         console.info(index);
         console.info(target);

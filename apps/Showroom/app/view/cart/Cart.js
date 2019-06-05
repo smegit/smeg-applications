@@ -39,7 +39,8 @@ Ext.define('Showroom.view.cart.Cart', {
 
     listeners: {
         addToCart: 'onAddToCart',
-        removeFromCart: 'onRemoveFromCart'
+        removeFromCart: 'onRemoveFromCart',
+        cancelCart: 'onCancel'
     },
 
     //height: '200',

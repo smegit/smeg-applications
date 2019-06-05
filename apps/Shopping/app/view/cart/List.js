@@ -25,7 +25,10 @@ Ext.define('Shopping.view.cart.List', {
         viewready: 'onViewReadyList',
         //storechange: 'onListStorechange'
         // CAN
-        itemkeydown: 'onRowBodyKeyPress'
+        itemkeydown: 'onRowBodyKeyPress',
+        afterrender: function (grid) {
+            grid.down('header').getTitle().textEl.selectable()
+        },
     },
     header: {
         bind: {

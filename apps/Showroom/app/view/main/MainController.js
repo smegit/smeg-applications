@@ -40,6 +40,81 @@ Ext.define('Showroom.view.main.MainController', {
 
     },
 
+    // onTabShow: function () {
+    //     console.info('onTabShow called');
+    //     var agencyStore = Ext.data.StoreManager.lookup('Agency');
+    //     console.info(agencyStore);
+    //     setTimeout(function () {
+    //         if (agencyStore.getCount() > 0) {
+    //             console.info('add selection');
+    //             // Ext.Viewport.add({
+    //             //     xtype: 'agencyList',
+    //             // }).show();
+    //             var agencyList = Ext.Viewport.add({ xtype: 'agencyList', });
+
+    //         } else {
+    //             console.info('not add selection');
+    //         }
+
+    //     }, 500);
+
+    // },
+    onSelectAgency: function (cmp, record) {
+        console.info('onSelectAgency called');
+        console.info(record);
+        console.info(record.getData().ACCOUNT);
+        var me = this,
+            agencyList = Ext.ComponentQuery.query('agencyList')[0];
+        console.info(agencyList);
+        me.requestSetAgent(record.getData().ACCOUNT).then(
+            function (res) {
+                console.info(res);
+                agencyList.close();
+                // load cats 
+                Ext.ComponentQuery.query('category')[0].fireEvent('loadCategory', 'CAT');
+                Ext.ComponentQuery.query('cart')[0].fireEvent('cancelCart');
+                console.info(Ext.ComponentQuery.query('category')[0]);
+            },
+            function (res) {
+                console.info(res);
+            }
+        );
+    },
+
+    requestSetAgent: function (agentId) {
+        console.log('requestSetAgent called');
+        var queryString = window.location.search;
+        console.info(queryString);
+        console.info(queryString.indexOf("&sid="));
+        console.info(queryString.indexOf("&env="));
+        console.info(queryString.substring(queryString.indexOf("&sid=") + 5, queryString.indexOf("&env=")));
+
+
+        var me = this,
+            deferred = Ext.create('Ext.Deferred'),
+            params = {};
+        params = {
+            pgm: 'EC1000',
+            action: 'setAgent',
+            //sid: queryString.substring(queryString.indexOf("&sid=") + 5, queryString.indexOf("&env=")),
+            //app: window.location.search.substring(5, 9),
+            agent: agentId
+        };
+        Ext.Ajax.request({
+            url: '/valence/vvcall.pgm',
+            method: 'POST',
+            params: params,
+            success: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.resolve(response);
+            },
+            failure: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.reject(response);
+            }
+        });
+        return deferred.promise;
+    },
 
     onConfirm: function (choice) {
         // var me = this;

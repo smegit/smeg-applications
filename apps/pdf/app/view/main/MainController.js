@@ -10,7 +10,8 @@ Ext.define('pdf.view.main.MainController', {
     alias: 'controller.main',
 
     requires: [
-        'pdf.view.main.FileListWindow'
+        'pdf.view.main.FileListWindow',
+        'Ext.ux.IFrame',
     ],
     init: function (view) {
         console.info(view);
@@ -89,7 +90,7 @@ Ext.define('pdf.view.main.MainController', {
     onDownload: function () {
         console.info('onDownload called');
         var me = this,
-            url = '/PRODUCT/testpdf.pdf';
+            url = '/PRODUCT/testpdf.pdf', link;
         //window.open(url, '_blank');
 
         Ext.MessageBox.show({
@@ -100,24 +101,39 @@ Ext.define('pdf.view.main.MainController', {
                 interval: 400
             },
         });
-        setTimeout(function () {
-            me.requestPDF().then(
-                function (res) {
-                    console.info(res);
-                    if (res.success) {
-                        link = res.URL;
-                    } else {
-                        link = '/PRODUCT/testpdf.pdf';
-                    }
-                    // iframeHTML = '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>';
-                    // vm.set('iframeHTML', iframeHTML);
-                    window.open(link, '_blank');
-                    Ext.MessageBox.hide();
-                },
-                function (res) {
-                    console.info(res);
-                });
-        }, 300);
+        //setTimeout(function () {
+        me.requestPDF().then(
+            function (res) {
+                console.info(res);
+                if (res.success) {
+                    link = res.URL;
+                } else {
+                    link = '/PRODUCT/testpdf.pdf';
+                }
+                // iframeHTML = '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>';
+                // vm.set('iframeHTML', iframeHTML);
+                // setTimeout(function () {
+                //     window.open(link, '_blank');
+                //     Ext.MessageBox.hide();
+                // }, 500);
+
+                Ext.create('Ext.window.Window', {
+                    title: 'Agency Stock',
+                    height: '80%',
+                    width: '50%',
+                    closable: true,
+                    layout: 'fit',
+                    items: [{
+                        xtype: 'uxiframe',
+                        src: link
+                    }],
+                }).show();
+                Ext.MessageBox.hide();
+            },
+            function (res) {
+                console.info(res);
+            });
+        //}, 300);
 
     },
     onUploadFile: function () {

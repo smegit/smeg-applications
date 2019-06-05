@@ -1870,12 +1870,13 @@ Ext.define('Shopping.view.cart.CartController', {
             blankStr = 'This field is required.',
             paymentWin = formPanel.up('window').el,
             invalidForm = false,
+            orderTotal = me.getViewModel().get('cartValues').OAORDTOT,
             wdw, resp, params, payAmtCnt, keepGoing, maxpay;
 
         invalidForm = !form.isValid();
         //formPanel.up('window').disable();
         //formPanel.disable();
-
+        console.info(me.getViewModel().get('cartValues').OAORDTOT);
         if (!invalidForm) {
             if (Ext.isEmpty(formValues.OAPAYM)) {
                 formPanel.down('#payMethCombo').markInvalid('This field is required');
@@ -1887,8 +1888,8 @@ Ext.define('Shopping.view.cart.CartController', {
                 // cnx update
                 invalidForm = true;
             }
-            if (Ext.isEmpty(payAmt) || !Ext.isEmpty(payAmt) && parseFloat(payAmt) < -4000.00) {
-                formPanel.down('#payAmtFld').markInvalid('Payment amount required and must not be negative.');
+            if (Ext.isEmpty(payAmt) || !Ext.isEmpty(payAmt) && parseFloat(payAmt) < (-1) * orderTotal) {
+                formPanel.down('#payAmtFld').markInvalid('Payment amount required and must not be less than order total.');
                 // cnx update
                 invalidForm = true;
             }

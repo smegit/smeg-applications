@@ -10,6 +10,7 @@ Ext.define('Showroom.Application', {
 
     stores: [
         // TODO: add global / shared stores here
+        'Agency'
     ],
 
     launch: function () {
@@ -31,22 +32,31 @@ Ext.define('Showroom.Application', {
             }
         });
         var me = this;
-        me.requestSetAgent('339277')
-            .then(function (res) {
+        me.requestGetAgencies().
+            then(function (res) {
                 console.info(res);
-                if (res.success) {
-                    //Ext.Msg.alert('Success', JSON.stringify(res), Ext.emptyFn);
-
-                } else {
-                    Ext.Msg.alert('Error1', JSON.stringify(res), Ext.emptyFn);
-
-                }
-
-            }, function (res) {
+                var agencyStore = Ext.data.StoreManager.lookup('Agency');
+                agencyStore.loadData(res.agencies);
+                console.info(agencyStore);
+            }, function () {
                 console.info(res);
-                Ext.Msg.alert('Error12', JSON.stringify(queryString), Ext.emptyFn);
-
             });
+        // me.requestSetAgent('339277')
+        //     .then(function (res) {
+        //         console.info(res);
+        //         if (res.success) {
+        //             //Ext.Msg.alert('Success', JSON.stringify(res), Ext.emptyFn);
+
+        //         } else {
+        //             Ext.Msg.alert('Error1', JSON.stringify(res), Ext.emptyFn);
+
+        //         }
+
+        //     }, function (res) {
+        //         console.info(res);
+        //         Ext.Msg.alert('Error12', JSON.stringify(queryString), Ext.emptyFn);
+
+        //     });
         //Ext.Msg.alert('loc', JSON.stringify(window.location.search), Ext.emptyFn);
 
     },
@@ -78,6 +88,31 @@ Ext.define('Showroom.Application', {
             //sid: queryString.substring(queryString.indexOf("&sid=") + 5, queryString.indexOf("&env=")),
             //app: window.location.search.substring(5, 9),
             agent: agentId
+        };
+        Ext.Ajax.request({
+            url: '/valence/vvcall.pgm',
+            method: 'POST',
+            params: params,
+            success: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.resolve(response);
+            },
+            failure: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.reject(response);
+            }
+        });
+        return deferred.promise;
+    },
+
+    requestGetAgencies: function (agentId) {
+        console.log('requestGetAgencies called');
+        var me = this,
+            deferred = Ext.create('Ext.Deferred'),
+            params = {};
+        params = {
+            pgm: 'EC1000',
+            action: 'getAgencies',
         };
         Ext.Ajax.request({
             url: '/valence/vvcall.pgm',

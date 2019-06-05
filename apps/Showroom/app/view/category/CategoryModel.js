@@ -18,7 +18,8 @@ Ext.define('Showroom.view.category.CategoryModel', {
         banText: 'Products',
         hideCloseBtn: true,
         currentCatId: 'CAT',
-        currentCatDesc: 'Products'
+        currentCatDesc: 'Products',
+        hideGear: false,
     },
 
     stores: {

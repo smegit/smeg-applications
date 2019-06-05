@@ -789,7 +789,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     xtype: 'window',
                     frame: true,
                     closable: true,
-                    draggable: false,
+                    //draggable: false,
                     ui: 'smeg',
                     width: 600,
                     height: "80%",
