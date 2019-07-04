@@ -3,3 +3,69 @@
  */
 
 $enable-font-awesome: dynamic(true);
+
+
+
+//Override scss variables
+// Good place for colors is Google Material Design "https://material.io/guidelines/style/color.html#color-color-palette"
+// Example below
+//
+$window-header-background-color: #fafafa;
+$smeg-red: #B20000;
+$smeg-white:#fff;
+$black-12-color:rgba(0, 0, 0, 0.7);
+$primary-dark-color:#333333;
+$secondary-color:#424242;
+$window-header-background-color:$primary-dark-color;
+$window-header-color:$smeg-white;
+$window-header-glyph-color:$smeg-white;
+$window-background-color:$smeg-white;
+$window-body-background-color:$smeg-white;
+$default-body-background-color:$smeg-white;
+$panel-body-background-color:$smeg-white;
+$form-field-padding: 5px 5px 4px;
+
+.x-window-header.x-window-header-default{
+  .x-tool-img{
+    color:$smeg-white;
+  }
+}
+
+
+.x-panel-header {
+  background-color: $primary-dark-color !important;
+} 
+
+.x-tabbar {
+  background-color: $primary-dark-color !important;
+}
+
+.x-titlebar {
+  background-color: $primary-dark-color !important;
+}
+
+.x-button-alt {
+  background-color: $primary-dark-color !important;
+}
+// .x-button-action {
+//     border-color: $primary-dark-color !important;
+//     background-color: $primary-dark-color !important;
+// }
+// .x-button-pressing {
+//     border-color: $primary-dark-color !important;
+//     background-color: $primary-dark-color !important;
+// }
+
+.x-tab.x-tab-active {
+    color: $primary-dark-color !important;
+    .x-button-icon {
+  color: $primary-dark-color !important;
+  }
+}
+
+.x-msgbox {
+  border: $primary-dark-color !important;
+}
+.x-panel-header {
+  border: $primary-dark-color !important;
+}

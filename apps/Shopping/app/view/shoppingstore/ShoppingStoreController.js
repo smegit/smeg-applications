@@ -67,6 +67,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
             cartItems = vm.getStore('cartItems');
 
         releaseCartItems.setSource(cartItems);
+        console.info(vm);
+        console.info(window);
     },
 
     agentSelected: function (content) {
@@ -1357,7 +1359,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     mainVm = me.getView().lookupViewModel(true),
                     activeAgent = mainVm.get('agent');
 
-
+                console.info(selectedAgent);
+                console.info(activeAgent);
                 // reset form value
                 // var cartForm = Ext.ComponentQuery.query('cartmain')[0].down('cartform').getForm();
 
@@ -1371,16 +1374,18 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     // console.info(activeAgent);
 
 
-                    //console.info(parent.Portal);
+                    console.info(parent.Portal);
                     if (!Ext.isEmpty(parent.Portal)) {
                         // console.log('in parent Portal');
                         // console.info(parent.Portal.getApplication());
-                        parent.Portal.getApplication().fireEvent('smegagentchanged', selectedAgent);
+                        // parent.Portal.getApplication().fireEvent('smegagentchanged', selectedAgent);
                     }
                     mainController.getOptions(selectedAgent)
                         .then(function (content) {
                             Valence.common.util.Helper.destroyLoadMask();
                             var stockDefault = mainVm.get('STKLOC');
+                            mainVm.set('agent', selectedAgent);
+                            console.info(content);
                             // Added to reload the categories and products
                             Shopping.getApplication().fireEvent('agentselected', content);
 

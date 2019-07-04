@@ -369,12 +369,12 @@ Ext.define('Showroom.view.cart.Cart', {
                         },
                         {
                             text: 'Save',
-                            ui: 'action',
+                            ui: 'grey',
                             handler: 'onSave'
                         },
                         {
                             text: 'Cancel',
-                            ui: 'action',
+                            ui: 'grey',
                             handler: 'onCancel'
                         }, {
                             xtype: 'spacer'

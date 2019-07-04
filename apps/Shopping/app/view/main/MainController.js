@@ -48,6 +48,7 @@ Ext.define('Shopping.view.main.MainController', {
      */
     getOptions: function (agent) {
         console.log('getOptions called');
+        console.info(agent);
         var me = this,
             vm = me.getViewModel(),
             deferred = Ext.create('Ext.Deferred'),
@@ -73,14 +74,18 @@ Ext.define('Shopping.view.main.MainController', {
                 var me = this,
                     d = Ext.decode(r.responseText),
                     stockDefault, vmObj;
-
+                console.info(d);
                 if (!Ext.isEmpty(d.msg)) {
                     deferred.reject(d);
                 } else {
                     var activeAgent;
-                    if (!Ext.isEmpty(parent.smegGetCurrentAgent) && typeof parent.smegGetCurrentAgent === 'function') {
-                        activeAgent = parent.smegGetCurrentAgent();
+                    if (localStorage.getItem('activeAgent')) {
+                        activeAgent = localStorage.getItem('activeAgent');
+                        localStorage.removeItem('activeAgent');
                     }
+                    // if (!Ext.isEmpty(parent.smegGetCurrentAgent) && typeof parent.smegGetCurrentAgent === 'function') {
+                    //     activeAgent = parent.smegGetCurrentAgent();
+                    // }
 
                     // if (!Ext.isEmpty(d.StockDft)) {
                     //     stockDefault = d.StockDft[0].STKDFT;
@@ -109,7 +114,7 @@ Ext.define('Shopping.view.main.MainController', {
                         });
                     }
 
-                    //console.info(vmObj);
+                    console.info(vmObj);
                     // console.info(d);
 
                     vm.set(vmObj);

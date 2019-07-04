@@ -25,11 +25,11 @@ Ext.define('Showroom.Application', {
             //     SID = queryString.substring(queryString.indexOf("&sid=") + 5, queryString.indexOf("&env=")),
             //     APP = queryString.substring(5, 9);
 
-            if (options.params.pgm === 'EC1010') {
-                Ext.apply(options.params, {
-                    function: 'showroom'
-                });
-            }
+            //if (options.params.pgm === 'EC1010') {
+            Ext.apply(options.params, {
+                function: 'showroom'
+            });
+            //}
         });
         var me = this;
         me.requestGetAgencies().

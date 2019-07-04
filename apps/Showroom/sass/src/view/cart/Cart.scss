@@ -22,3 +22,16 @@
 .footer-container{
     margin: auto;
 }
+
+.note-component {
+    img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 20px;
+    }
+    p {
+        text-align: center;
+        font-size: large;
+    }
+}

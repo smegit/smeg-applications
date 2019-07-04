@@ -22,6 +22,7 @@ Ext.define('Shopping.view.products.Heading', {
     },
 
     buildItems: function () {
+        console.info(this);
         var me = this;
         return [
             // {
@@ -49,7 +50,78 @@ Ext.define('Shopping.view.products.Heading', {
             // },
             {
                 xtype: 'tbfill'
-            }, {
+            },
+            {
+                xtype: 'combo',
+                cls: 'smeg-agency-sel',
+                itemId: 'smegAgencySelector',
+                store: Ext.data.StoreManager.lookup('Agency'),
+                bind: {
+                    value: '{agent}'
+                },
+                grow: true,
+                hideLabel: true,
+                valueField: 'ACCOUNT',
+                displayField: 'NAME',
+                queryMode: 'local',
+                allowBlank: false,
+                forceSelection: true,
+                anyMatch: true,
+                caseSensitive: false,
+                // readOnly: (!Ext.isEmpty(agencies) && agencies.length === 1) ? true : false,
+                // hidden: (Ext.isEmpty(agencies)) ? true : false,
+                // value: me.activeAgent,
+                listConfig: {
+                    cls: 'smeg-agency-sel-list'
+                },
+                // beforeQuery: function (plan) {
+                //     //overriding the query plan so we can filter agents by words entered
+                //     //
+                //     var originalQuery = plan.query;
+                //     if (!Ext.isEmpty(originalQuery)) {
+                //         var items = Ext.Array.clean(originalQuery.split(' '));
+                //         plan.query = new RegExp('(?=.*' + items.join(')(?=.*') + ')', 'gi');
+                //         // plan.query = new RegExp('(.*' + items.join(')(.*') + ')', 'gi');
+                //     }
+                //     return plan;
+                // },
+                listeners: {
+                    afterrender: 'onAfterRenderAgencySel',
+                    focus: function (cmp, evt) {
+                        console.info('focus called');
+                        cmp.selectText();
+                    },
+                    // scope: me,
+                    // afterrender: function (cmp) {
+                    //     cmp.agentTip = Ext.create('Ext.tip.ToolTip', {
+                    //         showDelay: 800,
+                    //         target: cmp.el,
+                    //         html: '',
+                    //         listeners: {
+                    //             scope: me,
+                    //             beforeshow: function (cmp) {
+                    //                 var sel = Ext.ComponentQuery.query('#smegAgencySelector')[0],
+                    //                     selectedRec = (!Ext.isEmpty(sel)) ? sel.getSelection() : null;
+                    //                 if (!Ext.isEmpty(selectedRec)) {
+                    //                     cmp.setHtml('<div class="smeg-agency-sel-tip"><span class="label">Agent #: </span><span class="code">' + selectedRec.get('ACCOUNT') + '</span></div>')
+                    //                     return true;
+                    //                 }
+                    //                 return false;
+                    //             }
+                    //         }
+                    //     });
+                    // },
+                    // select: function (cmp, rec) {
+                    //     var me = this;
+                    //     if (rec.get('ACCOUNT') !== me.activeAgent) {
+                    //         me.setAgent(rec);
+                    //         cmp.blur();
+                    //     }
+                    // },
+                    select: 'setAgent'
+                }
+            },
+            {
                 xtype: 'textfield',
                 cls: 'fld-in-header',
                 reference: 'searchField',

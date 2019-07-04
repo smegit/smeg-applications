@@ -19,8 +19,11 @@ Ext.define('Shopping.view.products.ProductsController', {
             controller: {
                 '*': { callChangeStockLocation: me.onChangeStockLocation }
             }
-        })
+        });
 
+        // remove filter
+        var agencyStore = Ext.data.StoreManager.lookup('Agency');
+        agencyStore.removeFilter('smegAgentFilter');
     },
 
     getCategoriesStore: function () {
@@ -389,5 +392,72 @@ Ext.define('Shopping.view.products.ProductsController', {
 
     onSearchAction: function () {
         console.info('onSearchAction called');
+    },
+
+    setAgent: function (cmp, rec) {
+        console.info('setAgent called');
+        console.info(rec);
+
+        var me = this,
+            agent = rec.get('ACCOUNT');
+        Valence.common.util.Helper.loadMask('Setting Agent');
+        //localStorage.setItem('reloadAgentId', agent);
+        Ext.Ajax.request({
+            url: '/valence/vvcall.pgm',
+            params: {
+                pgm: 'EC1000',
+                action: 'setAgent',
+                agent: agent
+            },
+            success: function (r) {
+                var me = this,
+                    d = Ext.decode(r.responseText);
+                Valence.common.util.Helper.destroyLoadMask()
+                if (!d.success) {
+                    Valence.common.util.Dialog.show({
+                        msg: d.msg || 'Not able to set agency at this time.',
+                        buttons: [{
+                            text: Valence.lang.lit.ok
+                        }],
+                        // scope: me,
+                        // handler: resetAgent
+                    });
+                } else {
+                    //Ext.create('Shopping.view.main.Main');
+                    //window.location.reload();
+                    console.info(window);
+                    //Shopping.getApplication().fireEvent('agentselected', content);
+                    var mainController = Ext.ComponentQuery.query('app-main')[0].getController();
+                    console.info(Ext.ComponentQuery.query('app-main')[0]);
+                    mainController.onSmegAgentSetPortal();
+                    // console.info(Ext.ComponentQuery.query('app-main')[0]);
+                }
+            },
+            failure: function () {
+                Valence.common.util.Helper.destroyLoadMask();
+            }
+        });
+    },
+
+    onAfterRenderAgencySel: function (cmp) {
+        var me = this;
+        // console.info(me.getView());
+        // setTimeout(function () {
+        //     var appMain = me.getView().up('app-main'),
+        //         mainVm = appMain.getViewModel(),
+        //         activeAgent = mainVm.get('agent');
+
+        //     console.info(appMain);
+        //     console.info(mainVm);
+        //     console.info(activeAgent);
+        //     console.info(Ext.data.StoreManager);
+        //     cmp.setValue(activeAgent);
+        // }, 1000);
+
+
+
+
+
     }
+
 });

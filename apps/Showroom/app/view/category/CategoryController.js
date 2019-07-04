@@ -7,7 +7,8 @@ Ext.define('Showroom.view.category.CategoryController', {
         //'Showroom.view.category.Download'
         //'Ext.window.Window'
         //'Showroom.view.category.Download'
-        'Ext.Toast'
+        'Ext.Toast',
+        // 'Showroom.view.pdf.panel.PDF'
     ],
 
     init: function (view) {
@@ -29,10 +30,20 @@ Ext.define('Showroom.view.category.CategoryController', {
 
         console.info(Ext.data.StoreManager.lookup('Agency'));
         var agencyStore = Ext.data.StoreManager.lookup('Agency');
+        // me.requestSetAgent('339277').then(function (res) {
+        //     console.info(res);
+        //     if (res.success) {
+        //         me.loadCat('CAT');
+        //     }
+        // }, function (res) {
+        //     console.info(res);
+        // })
+
         setTimeout(function () {
+            var accountId = agencyStore.getAt(0).getData().ACCOUNT
             if (agencyStore.getCount() === 1) {
                 vm.set('hideGear', true);
-                me.requestSetAgent().then(function (res) {
+                me.requestSetAgent(accountId).then(function (res) {
                     console.info(res);
                     if (res.success) {
                         me.loadCat('CAT');
@@ -253,6 +264,16 @@ Ext.define('Showroom.view.category.CategoryController', {
         });
     },
 
+    // showPDF: function () {
+    //     console.info('showPDF called');
+    //     var panel = Ext.create('Showroom.view.pdf.panel.PDF', {
+    //         src: 'STK01805.pdf',
+    //         pageScale: 0.5,
+    //     });
+    //     console.info(panel);
+    //     Ext.Viewport.add(panel);
+
+    // },
 
     onBeforeShow: function () {
         console.info('onBeforeShow called');

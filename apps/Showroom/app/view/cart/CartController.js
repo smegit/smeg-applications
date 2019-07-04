@@ -5,7 +5,10 @@ Ext.define('Showroom.view.cart.CartController', {
     requires: [
         // 'Ext.form.*',
         // 'Ext.Button.*'
-        'Valence.mobile.InAppBrowser'
+        'Valence.mobile.InAppBrowser',
+        //'Ext.ux.PdfViewer',
+        'Ext.XTemplate',
+        //'Showroom.view.pdf.panel.PDF'
     ],
 
     init: function (view) {
@@ -33,6 +36,14 @@ Ext.define('Showroom.view.cart.CartController', {
                 console.info(e);
             }
         });
+
+
+        // var panel = Ext.create('Showroom.view.pdf.panel.PDF', {
+        //     src: 'testpdf.pdf',
+        //     pageScale: 1.25,
+        // });
+
+        // Ext.Viewport.add(panel);
     },
 
     onAddToCart: function (content) {
@@ -43,9 +54,9 @@ Ext.define('Showroom.view.cart.CartController', {
             payload = {};
         console.info('onAddToCart called');
         console.info(content.getData());
-        Ext.toast({
-            message: 'Product selected.'
-        });
+        // Ext.toast({
+        //     message: 'Product selected.'
+        // });
 
         // Trim Record 
         delete rec.ATTRIBS;
@@ -92,9 +103,9 @@ Ext.define('Showroom.view.cart.CartController', {
             selectedProdsStore.remove(findRecord);
             //}
         }
-        Ext.toast({
-            message: 'Product removed.'
-        });
+        // Ext.toast({
+        //     message: 'Product removed.'
+        // });
     },
 
     onDeleteRecord: function (btn) {
@@ -317,93 +328,280 @@ Ext.define('Showroom.view.cart.CartController', {
                         htmlIframe = '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>';
                     //"<img draggable='true' onerror='this.src=\"/Product/Images/FAB10HLR_200x200.jpg\"' src={SMALLPIC} />"
 
-                    //if (Ext.os.deviceType == "Desktop") {
-                    Ext.Viewport.add({
-                        xtype: 'panel',
-                        reference: 'pdfPanelRef',
-                        id: 'qoutePdfPanelId',
-                        closable: true,
-                        hideOnMaskTap: true,
-                        showAnimation: {
-                            type: 'pop',
-                            // duration: 250,
-                            // easing: 'ease-out'
-                        },
-                        modal: true,
-                        centered: true,
-                        width: '80%',
-                        height: 700,
-                        layout: 'fit',
-                        title: 'Quote ' + res.SAORDKEY,
-                        layout: {
-                            type: 'vbox'
-                        },
-                        items: [{
-                            xtype: 'component',
-                            cls: 'pdf-cmp',
-                            //html: '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>',
-                            html: htmlIframe
-                        },
+                    // if (Ext.os.deviceType == "Desktop") {
+                    // Ext.Viewport.add({
+                    //     xtype: 'panel',
+                    //     reference: 'pdfPanelRef',
+                    //     id: 'qoutePdfPanelId',
+                    //     closable: true,
+                    //     hideOnMaskTap: true,
+                    //     showAnimation: {
+                    //         type: 'pop',
+                    //         // duration: 250,
+                    //         // easing: 'ease-out'
+                    //     },
+                    //     modal: true,
+                    //     centered: true,
+                    //     width: '80%',
+                    //     height: 700,
+                    //     layout: 'fit',
+                    //     title: 'Quote ' + res.SAORDKEY,
+                    //     layout: {
+                    //         type: 'vbox'
+                    //     },
+                    //     items: [{
+                    //         xtype: 'component',
+                    //         cls: 'pdf-cmp',
+                    //         //html: '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>',
+                    //         html: htmlIframe
+                    //     },
 
-                        {
-                            xtype: 'container',
-                            //height: '10%',
-                            cls: 'footer-container',
-                            defaults: {
-                                xtype: 'button',
-                                style: 'margin: 5px',
-                                //flex: 1
-                            },
-                            layout: {
-                                type: 'hbox'
-                            },
-                            items: [
-                                {
-                                    xtype: 'spacer'
-                                },
-                                {
-                                    text: 'Close',
-                                    ui: 'forward',
+                    //     {
+                    //         xtype: 'container',
+                    //         //height: '10%',
+                    //         cls: 'footer-container',
+                    //         defaults: {
+                    //             xtype: 'button',
+                    //             style: 'margin: 5px',
+                    //             //flex: 1
+                    //         },
+                    //         layout: {
+                    //             type: 'hbox'
+                    //         },
+                    //         items: [
+                    //             {
+                    //                 xtype: 'spacer'
+                    //             },
+                    //             {
+                    //                 text: 'Close',
+                    //                 ui: 'forward',
 
-                                    handler: function (cmp) {
-                                        console.info('close called');
-                                        console.info(cmp);
-                                        cmp.up('panel').close();
-                                    }
-                                },
-                                {
-                                    text: 'Email',
-                                    ui: 'action',
-                                    // //handler: 'onEmail',
-                                    scope: me,
-                                    handler: me.onEmail
-                                },
-                            ]
-                        }
-                        ],
-                    }).show();
+                    //                 handler: function (cmp) {
+                    //                     console.info('close called');
+                    //                     console.info(cmp);
+                    //                     cmp.up('panel').close();
+                    //                 }
+                    //             },
+                    //             {
+                    //                 text: 'Email',
+                    //                 ui: 'grey',
+                    //                 // //handler: 'onEmail',
+                    //                 scope: me,
+                    //                 handler: me.onEmail
+                    //             },
+                    //         ]
+                    //     }
+                    //     ],
+                    // }).show();
+
+
+                    // Ext.Viewport.add({
+                    //     xtype: 'panel',
+                    //     closable: true,
+                    //     hideOnMaskTap: true,
+                    //     showAnimation: {
+                    //         type: 'pop',
+                    //         // duration: 250,
+                    //         // easing: 'ease-out'
+                    //     },
+                    //     modal: true,
+                    //     centered: true,
+                    //     width: '80%',
+                    //     height: 700,
+                    //     layout: 'fit',
+                    //     title: 'Quote ' + res.SAORDKEY,
+                    //     layout: {
+                    //         type: 'vbox'
+                    //     },
+                    //     items: [
+                    //         {
+                    //             title: 'Viewer',
+                    //             xtype: 'PdfViewerPdfPanel',
+                    //             layout: 'fit',
+                    //             src: '/data/sample2.pdf'
+                    //             //cls: 'pdf-cmp',
+                    //             //html: '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>',
+
+                    //         },
+                    //         {
+                    //             xtype: 'container',
+                    //             //height: '10%',
+                    //             cls: 'footer-container',
+                    //             defaults: {
+                    //                 xtype: 'button',
+                    //                 style: 'margin: 5px',
+                    //                 //flex: 1
+                    //             },
+                    //             layout: {
+                    //                 type: 'hbox'
+                    //             },
+                    //             items: [
+                    //                 {
+                    //                     xtype: 'spacer'
+                    //                 },
+                    //                 {
+                    //                     text: 'Close',
+                    //                     ui: 'forward',
+
+                    //                     handler: function (cmp) {
+                    //                         console.info('close called');
+                    //                         console.info(cmp);
+                    //                         cmp.up('panel').close();
+                    //                     }
+                    //                 },
+                    //                 {
+                    //                     text: 'Email',
+                    //                     ui: 'grey',
+                    //                     // //handler: 'onEmail',
+                    //                     scope: me,
+                    //                     handler: me.onEmail
+                    //                 },
+                    //             ]
+                    //         }
+                    //     ]
+                    // }).show();
+
+
+
+                    // Ext.create('Showroom.view.pdf.panel.PDF', {
+                    //     title: 'PDF Panel',
+                    //     width: 600,
+                    //     height: 500,
+                    //     pageScale: 1.25,
+                    //     src: 'testpdf.pdf',
+                    //     renderTo: Ext.getBody()
+                    // });
                     // update Order Key
                     //custInfoForm.down('[name=SAORDKEY]').setValue(res.SAORDKEY);
+
+                    //     vm.set('quoteKey', res.SAORDKEY);
+                    //     vm.set('printURL', res.printURL);
+                    //     vm.set('toEmail', toEmail);
+
+                    //     console.info(vm.get('quoteKey'));
+                    //     console.info(vm.get('printURL'));
+                    //     console.info(vm.get('toEmail'));
+                    // } else {
+
+                    // var msgBox = Ext.create('Ext.Msg', {
+                    //     title: 'Note',
+                    //     message: 'Your qoute has been generated. You can: ',
+                    //     width: 300,
+                    //     modal: false,
+                    //     //zIndex: 17000,
+                    //     buttons: [
+                    //         {
+                    //             text: 'Email',
+                    //             itemId: 'email',
+                    //             scope: me,
+                    //             handler: me.onEmail
+                    //         },
+                    //         { text: 'Print', itemId: 'print' },
+                    //         { text: 'Close', itemId: 'close' },
+                    //     ],
+                    // });
+
+
+                    // Ext.create('Showroom.view.pdf.panel.PDF', {
+                    //     title: 'PDF Panel',
+                    //     width: 600,
+                    //     height: 500,
+                    //     pageScale: 1.25,
+                    //     src: 'testpdf.pdf',
+                    //     renderTo: Ext.getBody()
+                    // });
+
+                    Ext.Viewport.add({
+                        xtype: 'panel',
+                        title: 'Note',
+                        message: 'Your qoute has been generated. You can: ',
+                        width: 300,
+                        height: 200,
+                        modal: true,
+                        centered: true,
+                        items: [
+                            {
+                                xtype: 'component',
+                                //cls: 'pdf-cmp',
+                                //html: '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>',
+                                styleHtmlContent: true,
+                                styleHtmlCls: 'note-component',
+                                html: '<img src="resources/images/checked.png"  width="20%" ><p>You quote has been saved. </p>'
+                            },
+
+                            {
+                                xtype: 'container',
+                                margin: '10 10 10 10',
+                                //height: '10%',
+                                // cls: 'footer-container',
+                                defaults: {
+                                    xtype: 'button',
+                                    style: 'margin: 5px',
+                                    //flex: 1
+                                },
+                                layout: {
+                                    type: 'hbox'
+                                },
+                                items: [
+                                    {
+                                        xtype: 'spacer'
+                                    },
+                                    {
+                                        text: 'Close',
+                                        ui: 'forward',
+
+                                        handler: function (cmp) {
+                                            console.info('close called');
+                                            console.info(cmp);
+                                            cmp.up('panel').close();
+                                        }
+                                    },
+                                    {
+                                        text: 'Email',
+                                        ui: 'grey',
+                                        // //handler: 'onEmail',
+                                        scope: me,
+                                        handler: me.onEmail
+                                    },
+                                    {
+                                        text: 'Print',
+                                        ui: 'grey',
+                                        scope: me,
+                                        handler: me.onPrint
+                                    },
+                                    {
+                                        xtype: 'spacer'
+                                    },
+                                ]
+                            }
+                        ]
+                    }).show();
                     vm.set('quoteKey', res.SAORDKEY);
                     vm.set('printURL', res.printURL);
                     vm.set('toEmail', toEmail);
 
-                    console.info(vm.get('quoteKey'));
-                    console.info(vm.get('printURL'));
-                    console.info(vm.get('toEmail'));
-                    // } else {
-                    //     Ext.Viewport.mask();
-                    //     Valence.mobile.InAppBrowser.show({
-                    //         url: 'https://www.google.com/',
-                    //         //url: 'https://sys.smeg.com.au/Product/UM3434A.pdf',
-                    //         options: {
-                    //             closebuttoncaption: 'Close CNX Corp'
+                    // Ext.Msg.show({
+                    //     title: 'Note',
+                    //     message: 'Your qoute has been generated. You can: ',
+                    //     width: 300,
+                    //     modal: false,
+
+                    //     //zIndex: 17000,
+                    //     buttons: [
+                    //         {
+                    //             text: 'Email',
+                    //             itemId: 'email',
+                    //             scope: me,
+                    //             handler: me.onEmail
                     //         },
-                    //         scope: me,
-                    //         callback: function () {
-                    //             Ext.Viewport.unmask();
-                    //         }
-                    //     });
+                    //         { text: 'Print', itemId: 'print' },
+                    //         { text: 'Close', itemId: 'close' },
+                    //     ],
+
+                    //     // fn: function (buttonId) {
+                    //     //     alert('You pressed the "' + buttonId + '" button.');
+                    //     // }
+                    // });
                     // }
 
 
@@ -427,15 +625,32 @@ Ext.define('Showroom.view.cart.CartController', {
             });
 
 
-
             console.info(selectedArray);
             console.info(custInfoValues);
-
         } else {
             Ext.Msg.alert('Message', 'Your cart is empty, please select products', Ext.emptyFn);
 
         }
 
+
+    },
+
+    onPrint: function () {
+        console.info('onPrint called');
+        var me = this,
+            vm = me.getViewModel(),
+            orderKey = vm.get('quoteKey');
+        me.requestPrint(orderKey).then(function (res) {
+            console.info(res);
+            if (res.success) {
+                // Ext.Msg.alert('Message', JSON.stringify(res), Ext.emptyFn);
+            } else {
+                Ext.Msg.alert('Message', JSON.stringify(res), Ext.emptyFn);
+            }
+        }, function (res) {
+            console.info(res);
+            Ext.Msg.alert('Message', JSON.stringify(res), Ext.emptyFn);
+        });
 
     },
 
@@ -450,6 +665,33 @@ Ext.define('Showroom.view.cart.CartController', {
 
 
 
+    },
+
+    // request print 
+    requestPrint: function (orderKey) {
+        console.info('requestPrint called');
+        var me = this,
+            deferred = Ext.create('Ext.Deferred'),
+            params = {};
+        params = {
+            pgm: 'EC3050',
+            action: 'printQuote',
+            SAORDKEY: orderKey,
+        };
+        Ext.Ajax.request({
+            url: '/valence/vvcall.pgm',
+            method: 'POST',
+            params: params,
+            success: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.resolve(response);
+            },
+            failure: function (res) {
+                var response = Ext.decode(res.responseText);
+                deferred.reject(response);
+            }
+        });
+        return deferred.promise;
     },
 
     requestSave: function (formData, list) {
@@ -597,7 +839,7 @@ Ext.define('Showroom.view.cart.CartController', {
         //                 }]
         //             }).show();
 
-
+        console.info(Ext.Viewport);
         Ext.Viewport.add({
             xtype: 'formpanel',
             //closable: true,
@@ -607,6 +849,7 @@ Ext.define('Showroom.view.cart.CartController', {
             viewModel: 'cart',
             bodyPadding: '16 32 16 32',
             modal: true,
+            //zIndex: 80000,
             items: [
                 {
                     xtype: 'textfield',
@@ -667,7 +910,7 @@ Ext.define('Showroom.view.cart.CartController', {
                         },
                         {
                             text: 'Send',
-                            ui: 'action',
+                            ui: 'grey',
                             scope: me,
                             handler: me.onSend
                         },
@@ -728,8 +971,8 @@ Ext.define('Showroom.view.cart.CartController', {
             deferred = Ext.create('Ext.Deferred'),
             params = {};
         params = {
-            pgm: 'EC1065',
-            action: 'emailOrder',
+            pgm: 'EC3050',
+            action: 'emailQuote',
             attachment: vm.get('printURL')
         };
         Ext.apply(params, sendFormValues);
