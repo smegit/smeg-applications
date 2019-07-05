@@ -26,16 +26,16 @@ Ext.define('Shopping.view.cart.List', {
         //storechange: 'onListStorechange'
         // CAN
         itemkeydown: 'onRowBodyKeyPress',
-        afterrender: function (grid) {
-            grid.down('header').getTitle().textEl.selectable()
-        },
+        // afterrender: function (grid) {
+        //     grid.down('header').getTitle().textEl.selectable()
+        // },
     },
-    header: {
-        bind: {
-            hidden: '{hideOrdKey}',
-            title: '{ordKeyText}' + '.&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' + '{orderDate}'
-        }
-    },
+    // header: {
+    //     bind: {
+    //         hidden: '{hideOrdKey}',
+    //         title: '{ordKeyText}' + '.&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' + '{orderDate}'
+    //     }
+    // },
 
     // added start
 

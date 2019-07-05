@@ -12,7 +12,7 @@ Ext.define('Shopping.view.cart.Main', {
     ],
     controller: 'cart',
     cls: 'cart',
-    bodyPadding: '10 20',
+    //bodyPadding: '10 20',
     scrollable: true,
     layout: 'anchor',
     listeners: {
@@ -295,369 +295,406 @@ Ext.define('Shopping.view.cart.Main', {
     },
 
     buildItems: function (opts) {
-        return [{
-            xtype: 'cartlist',
-            bind: {
-                store: '{cartItems}'
-            },
-            minHeight: 80
-        },
-        // {
-        //     xtype: 'container',
-        //     layout: {
-        //         type: 'hbox',
-        //         align: 'stretch'
-        //     },
-        //     bind: {
-        //         //hidden: '{hideOrdKey}'
-        //     },
-        //     items: [{
-        //         xtype: 'component',
-        //         bind: {
-        //             html: '{orderNotesInfo}'
-        //         },
-        //         listeners: {
-        //             el: {
-        //                 click: 'onClickNotes'
-        //             }
-        //         }
-        //     }, {
-        //         xtype: 'component',
-        //         flex: 1
-        //     }, {
-        //         xtype: 'component',
-        //         bind: {
-        //             hidden: '{!orderHasPayments}',
-        //             html: '{orderPaymentsInfo}'
-        //         },
-        //         listeners: {
-        //             el: {
-        //                 click: 'onClickViewPayments'
-        //             }
-        //         }
-        //     }]
-        // },
-
-
-        // {
-        //     xtype: 'container',
-        //     layout: {
-        //         type: 'hbox',
-        //         align: 'stretch'
-        //     },
-        //     items: [
-        //         { xtype: 'tbfill' },
-        //         {
-        //             xtype: 'paymenthistory',
-        //             width: '50%'
-        //         },
-        //     ]
-        // },
-
-        {
-            xtype: 'paymenthistory'
-        },
-        {
-            xtype: 'cartform',
-            cartOptions: opts
-        },
-
-
-
-
-        {
-            xtype: 'container',
-            layout: {
-                type: 'hbox',
-                align: 'stretch'
-            },
-            padding: '10 0 10 0',
-            defaults: {
-                xtype: 'button'
-            },
-            items: [
-                { xtype: 'tbfill' },
-                {
-                    text: 'Continue Shopping',
-                    //ui: 'white',
-                    //ui: 'round',
-                    ui: 'blue',
-                    handler: 'onClickBack',
-                    listeners: {
-                        // mouseover: 'onMouseOver',
-                        // mouseout: 'onMouseOut'
-                    }
+        return [
+            {
+                xtype: 'toolbar',
+                ui: 'primary-dark',
+                region: 'north',
+                height: 50,
+                //html: 'This is html',
+                listeners: {
+                    afterrender: 'onToolBarAfterRender'
                 },
-
-                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-
-                {
-                    xtype: 'container',
-                    layout: {
-                        type: 'hbox',
-                        align: 'stretch'
-                    },
-                    listeners: {
-                        click: {
-                            element: 'el',
-                            fn: 'onClickDisabledBtn'
-                        }
-                    },
-                    items: [
-                        {
-                            xtype: 'button',
-                            text: 'PDF',
-                            //iconCls: 'button-home-small',
-                            //ui: 'white',
-                            itemId: 'pdfBtnSelector',
-                            reference: 'pdfBtn',
-                            ui: 'blue',
-                            icon: 'resources/images/file-pdf-regular.svg',
-                            //maskMsg: 'Saving Order',
-                            listeners: {
-                                click: 'onClickPDF',
-                                // mouseover: 'onMouseOver',
-                                // mouseout: 'onMouseOut'
-                            }
+                // style: {
+                //     'margin-top': '0px',
+                //     //'width': '100% !important'
+                // },
+                items: [
+                    { xtype: 'tbfill' },
+                    {
+                        xtype: 'tbtext',
+                        bind: {
+                            hidden: '{hideOrdKey}',
+                            html: '{ordKeyText}' + '.&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' + '{orderDate}'
                         },
-                    ]
-                },
-
-                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-
-                {
-                    xtype: 'container',
-                    layout: {
-                        type: 'hbox',
-                        align: 'stretch'
-                    },
-                    listeners: {
-                        click: {
-                            element: 'el',
-                            fn: 'onClickDisabledBtn'
-                        }
-                    },
-                    items: [
-                        {
-                            xtype: 'button',
-                            text: 'Notes',
-                            //ui: 'white',
-                            ui: 'blue',
-                            maskMsg: 'Loading Notes',
-                            itemId: 'notesBtnSelector',
-                            reference: 'notesBtn',
-                            listeners: {
-                                click: 'onClickNotes1',
-                                // mouseover: 'onMouseOver',
-                                // mouseout: 'onMouseOut'
-                            }
+                        style: {
+                            'font-size': '15px',
                         },
-                    ]
+                    }, {
+                        xtype: 'tbtext',
+                        bind: {
+                            html: 'Agent: {agentName}'
+                        },
+                        style: {
+                            'font-size': '15px',
+                        },
+                    },
+                    { xtype: 'tbfill' },
+                ]
+            },
+            {
+                xtype: 'cartlist',
+                bind: {
+                    store: '{cartItems}'
                 },
-                // {
-                //     text: 'PDF',
-                //     //iconCls: 'button-home-small',
-                //     //ui: 'white',
-                //     itemId: 'pdfBtnSelector',
-                //     ui: 'blue',
-                //     icon: 'resources/images/file-pdf-regular.svg',
-                //     //maskMsg: 'Saving Order',
-                //     listeners: {
-                //         click: 'onClickPDF',
-                //         // mouseover: 'onMouseOver',
-                //         // mouseout: 'onMouseOut'
-                //     }
-                // },
+                minHeight: 80
+            },
+            // {
+            //     xtype: 'container',
+            //     layout: {
+            //         type: 'hbox',
+            //         align: 'stretch'
+            //     },
+            //     bind: {
+            //         //hidden: '{hideOrdKey}'
+            //     },
+            //     items: [{
+            //         xtype: 'component',
+            //         bind: {
+            //             html: '{orderNotesInfo}'
+            //         },
+            //         listeners: {
+            //             el: {
+            //                 click: 'onClickNotes'
+            //             }
+            //         }
+            //     }, {
+            //         xtype: 'component',
+            //         flex: 1
+            //     }, {
+            //         xtype: 'component',
+            //         bind: {
+            //             hidden: '{!orderHasPayments}',
+            //             html: '{orderPaymentsInfo}'
+            //         },
+            //         listeners: {
+            //             el: {
+            //                 click: 'onClickViewPayments'
+            //             }
+            //         }
+            //     }]
+            // },
 
-                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-                // {
-                //     text: 'Save',
-                //     ui: 'white',
-                //     maskMsg: 'Saving Order',
-                //     listeners: {
-                //         click: 'onClickSave'
-                //     }
-                // },
+
+            // {
+            //     xtype: 'container',
+            //     layout: {
+            //         type: 'hbox',
+            //         align: 'stretch'
+            //     },
+            //     items: [
+            //         { xtype: 'tbfill' },
+            //         {
+            //             xtype: 'paymenthistory',
+            //             width: '50%'
+            //         },
+            //     ]
+            // },
+
+            {
+                xtype: 'paymenthistory'
+            },
+            {
+                xtype: 'cartform',
+                cartOptions: opts
+            },
 
 
 
-                // {
-                //     text: 'Notes',
-                //     //ui: 'white',
-                //     ui: 'blue',
-                //     maskMsg: 'Loading Notes',
-                //     itemId: 'notesBtnSelector',
-                //     listeners: {
-                //         click: 'onClickNotes1',
-                //         // mouseover: 'onMouseOver',
-                //         // mouseout: 'onMouseOut'
-                //     }
-                // },
 
-                {
-                    xtype: 'container',
-                    layout: {
-                        type: 'hbox',
-                        align: 'stretch'
-                    },
-                    listeners: {
-                        click: {
-                            element: 'el',
-                            fn: 'onClickDisabledBtn'
-                        }
-                    },
-                    items: [{
-                        xtype: 'button',
-                        text: 'Payment',
+            {
+                xtype: 'container',
+                layout: {
+                    type: 'hbox',
+                    align: 'stretch'
+                },
+                padding: '10 0 10 0',
+                defaults: {
+                    xtype: 'button'
+                },
+                items: [
+                    { xtype: 'tbfill' },
+                    {
+                        text: 'Continue Shopping',
                         //ui: 'white',
-                        disabled: false,
+                        //ui: 'round',
                         ui: 'blue',
-                        reference: 'payBtn',
-                        itemId: 'payBtnSelector',
-                        maskMsg: 'Setting up Deposit',
-                        //tooltip: 'Calculate your order first',
+                        handler: 'onClickBack',
                         listeners: {
-                            click: 'onClickDeposit',
-                            //disable: 'onBtnDisable',
-                            //mouseover: 'onMouseOver',
-                            //mouseout: 'onMouseOut'
-                        }
-                    }]
-                },
-                // {
-                //     text: 'Payment',
-                //     //ui: 'white',
-                //     ui: 'blue',
-                //     reference: 'payBtn',
-                //     itemId: 'payBtnSelector',
-                //     maskMsg: 'Setting up Deposit',
-                //     //tooltip: 'Calculate your order first',
-                //     listeners: {
-                //         click: 'onClickDeposit',
-                //         disable: 'onBtnDisable',
-                //         mouseover: 'onMouseOver',
-                //         //mouseout: 'onMouseOut'
-                //     }
-                // },
-                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-                // {
-                //     text: 'Deliver',
-                //     reference: 'checkoutButton',
-                //     ui: 'blue',
-                //     //reference: 'delBtn',
-                //     itemId: 'chkoutBtnSelector',
-                //     maskMsg: 'Preparing to process order',
-                //     handler: 'onClickRelease',
-                //     listeners: {
-                //     }
-                // },
-                {
-                    xtype: 'container',
-                    layout: {
-                        type: 'hbox',
-                        align: 'stretch'
-                    },
-                    listeners: {
-                        click: {
-                            element: 'el',
-                            fn: 'onClickDisabledBtn'
+                            // mouseover: 'onMouseOver',
+                            // mouseout: 'onMouseOut'
                         }
                     },
-                    items: [
-                        {
-                            xtype: 'button',
-                            text: 'Deliver',
-                            reference: 'checkoutButton',
-                            ui: 'blue',
-                            disabled: false,
-                            //reference: 'delBtn',
-                            itemId: 'chkoutBtnSelector',
-                            maskMsg: 'Preparing to process order',
-                            handler: 'onClickRelease',
-                            listeners: {
+
+                    { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                    { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+
+                    {
+                        xtype: 'container',
+                        layout: {
+                            type: 'hbox',
+                            align: 'stretch'
+                        },
+                        listeners: {
+                            click: {
+                                element: 'el',
+                                fn: 'onClickDisabledBtn'
                             }
                         },
-                    ]
-                },
-                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-
-
-                {
-                    xtype: 'container',
-                    layout: {
-                        type: 'hbox',
-                        align: 'stretch'
+                        items: [
+                            {
+                                xtype: 'button',
+                                text: 'PDF',
+                                //iconCls: 'button-home-small',
+                                //ui: 'white',
+                                itemId: 'pdfBtnSelector',
+                                reference: 'pdfBtn',
+                                ui: 'blue',
+                                icon: 'resources/images/file-pdf-regular.svg',
+                                //maskMsg: 'Saving Order',
+                                listeners: {
+                                    click: 'onClickPDF',
+                                    // mouseover: 'onMouseOver',
+                                    // mouseout: 'onMouseOut'
+                                }
+                            },
+                        ]
                     },
-                    listeners: {
-                        click: {
-                            element: 'el',
-                            fn: 'onClickDisabledBtn'
-                        }
-                    },
-                    items: [
-                        {
-                            xtype: 'button',
-                            text: 'Save',
-                            maskMsg: 'Saving Order',
-                            //ui: 'white',
-                            ui: 'blue',
-                            itemId: 'saveBtnSelector',
-                            reference: 'saveBtn',
-                            listeners: {
-                                //click: 'onClickClear',
-                                click: 'onClickSave'
+
+                    { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                    { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+
+                    {
+                        xtype: 'container',
+                        layout: {
+                            type: 'hbox',
+                            align: 'stretch'
+                        },
+                        listeners: {
+                            click: {
+                                element: 'el',
+                                fn: 'onClickDisabledBtn'
                             }
+                        },
+                        items: [
+                            {
+                                xtype: 'button',
+                                text: 'Notes',
+                                //ui: 'white',
+                                ui: 'blue',
+                                maskMsg: 'Loading Notes',
+                                itemId: 'notesBtnSelector',
+                                reference: 'notesBtn',
+                                listeners: {
+                                    click: 'onClickNotes1',
+                                    // mouseover: 'onMouseOver',
+                                    // mouseout: 'onMouseOut'
+                                }
+                            },
+                        ]
+                    },
+                    // {
+                    //     text: 'PDF',
+                    //     //iconCls: 'button-home-small',
+                    //     //ui: 'white',
+                    //     itemId: 'pdfBtnSelector',
+                    //     ui: 'blue',
+                    //     icon: 'resources/images/file-pdf-regular.svg',
+                    //     //maskMsg: 'Saving Order',
+                    //     listeners: {
+                    //         click: 'onClickPDF',
+                    //         // mouseover: 'onMouseOver',
+                    //         // mouseout: 'onMouseOut'
+                    //     }
+                    // },
+
+                    { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                    { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                    // {
+                    //     text: 'Save',
+                    //     ui: 'white',
+                    //     maskMsg: 'Saving Order',
+                    //     listeners: {
+                    //         click: 'onClickSave'
+                    //     }
+                    // },
+
+
+
+                    // {
+                    //     text: 'Notes',
+                    //     //ui: 'white',
+                    //     ui: 'blue',
+                    //     maskMsg: 'Loading Notes',
+                    //     itemId: 'notesBtnSelector',
+                    //     listeners: {
+                    //         click: 'onClickNotes1',
+                    //         // mouseover: 'onMouseOver',
+                    //         // mouseout: 'onMouseOut'
+                    //     }
+                    // },
+
+                    {
+                        xtype: 'container',
+                        layout: {
+                            type: 'hbox',
+                            align: 'stretch'
+                        },
+                        listeners: {
+                            click: {
+                                element: 'el',
+                                fn: 'onClickDisabledBtn'
+                            }
+                        },
+                        items: [{
+                            xtype: 'button',
+                            text: 'Payment',
+                            //ui: 'white',
+                            disabled: false,
+                            ui: 'blue',
+                            reference: 'payBtn',
+                            itemId: 'payBtnSelector',
+                            maskMsg: 'Setting up Deposit',
+                            //tooltip: 'Calculate your order first',
+                            listeners: {
+                                click: 'onClickDeposit',
+                                //disable: 'onBtnDisable',
+                                //mouseover: 'onMouseOver',
+                                //mouseout: 'onMouseOut'
+                            }
+                        }]
+                    },
+                    // {
+                    //     text: 'Payment',
+                    //     //ui: 'white',
+                    //     ui: 'blue',
+                    //     reference: 'payBtn',
+                    //     itemId: 'payBtnSelector',
+                    //     maskMsg: 'Setting up Deposit',
+                    //     //tooltip: 'Calculate your order first',
+                    //     listeners: {
+                    //         click: 'onClickDeposit',
+                    //         disable: 'onBtnDisable',
+                    //         mouseover: 'onMouseOver',
+                    //         //mouseout: 'onMouseOut'
+                    //     }
+                    // },
+                    { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                    { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                    // {
+                    //     text: 'Deliver',
+                    //     reference: 'checkoutButton',
+                    //     ui: 'blue',
+                    //     //reference: 'delBtn',
+                    //     itemId: 'chkoutBtnSelector',
+                    //     maskMsg: 'Preparing to process order',
+                    //     handler: 'onClickRelease',
+                    //     listeners: {
+                    //     }
+                    // },
+                    {
+                        xtype: 'container',
+                        layout: {
+                            type: 'hbox',
+                            align: 'stretch'
+                        },
+                        listeners: {
+                            click: {
+                                element: 'el',
+                                fn: 'onClickDisabledBtn'
+                            }
+                        },
+                        items: [
+                            {
+                                xtype: 'button',
+                                text: 'Deliver',
+                                reference: 'checkoutButton',
+                                ui: 'blue',
+                                disabled: false,
+                                //reference: 'delBtn',
+                                itemId: 'chkoutBtnSelector',
+                                maskMsg: 'Preparing to process order',
+                                handler: 'onClickRelease',
+                                listeners: {
+                                }
+                            },
+                        ]
+                    },
+                    { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                    { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+
+
+                    {
+                        xtype: 'container',
+                        layout: {
+                            type: 'hbox',
+                            align: 'stretch'
+                        },
+                        listeners: {
+                            click: {
+                                element: 'el',
+                                fn: 'onClickDisabledBtn'
+                            }
+                        },
+                        items: [
+                            {
+                                xtype: 'button',
+                                text: 'Save',
+                                maskMsg: 'Saving Order',
+                                //ui: 'white',
+                                ui: 'blue',
+                                itemId: 'saveBtnSelector',
+                                reference: 'saveBtn',
+                                listeners: {
+                                    //click: 'onClickClear',
+                                    click: 'onClickSave'
+                                }
+                            }
+                        ]
+                    },
+                    // {
+                    //     text: 'Save',
+                    //     maskMsg: 'Saving Order',
+                    //     //ui: 'white',
+                    //     ui: 'blue',
+                    //     itemId: 'saveBtnSelector',
+                    //     listeners: {
+                    //         //click: 'onClickClear',
+                    //         click: 'onClickSave'
+                    //     }
+                    // },
+                    { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                    { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+
+                    {
+                        xtype: 'button', text: 'Recalculate', ui: 'green',
+                        //id: 'calcBtnId',
+                        itemId: 'calcBtnSelector',
+                        reference: 'calcBtn',
+                        disabled: true,
+                        listeners: {
+                            click: 'onCalculateClick'
                         }
-                    ]
-                },
-                // {
-                //     text: 'Save',
-                //     maskMsg: 'Saving Order',
-                //     //ui: 'white',
-                //     ui: 'blue',
-                //     itemId: 'saveBtnSelector',
-                //     listeners: {
-                //         //click: 'onClickClear',
-                //         click: 'onClickSave'
-                //     }
-                // },
-                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                    },
 
-                {
-                    xtype: 'button', text: 'Recalculate', ui: 'green',
-                    //id: 'calcBtnId',
-                    itemId: 'calcBtnSelector',
-                    reference: 'calcBtn',
-                    disabled: true,
-                    listeners: {
-                        click: 'onCalculateClick'
-                    }
-                },
+                    { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                    { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
+                    {
+                        text: 'Cancel',
+                        ui: 'blue',
+                        listeners: {
+                            //click: 'onClickClear',
+                            click: 'onClickClear'
+                        }
+                    },
 
-                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-                { xtype: 'tbspacer' }, { xtype: 'tbspacer' }, { xtype: 'tbspacer' },
-                {
-                    text: 'Cancel',
-                    ui: 'blue',
-                    listeners: {
-                        //click: 'onClickClear',
-                        click: 'onClickClear'
-                    }
-                },
-
-                { xtype: 'tbfill' },
-                //'', '', ''
-                { xtype: 'tbspacer' },
-                { xtype: 'tbspacer' },
-                { xtype: 'tbspacer' }
-            ]
-        }
+                    { xtype: 'tbfill' },
+                    //'', '', ''
+                    { xtype: 'tbspacer' },
+                    { xtype: 'tbspacer' },
+                    { xtype: 'tbspacer' }
+                ]
+            }
         ]
     }
 });

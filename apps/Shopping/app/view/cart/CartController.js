@@ -2738,5 +2738,9 @@ Ext.define('Shopping.view.cart.CartController', {
         vm.set('selectedPromoCount', selectedTotal);
         //console.info(vm.get('selectedPromos'));
         //console.info(vm.get('selectedPromoCount'));
+    },
+
+    onToolBarAfterRender: function () {
+        console.info('onToolbarAfterRender called');
     }
 });

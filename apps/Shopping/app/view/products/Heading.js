@@ -23,7 +23,9 @@ Ext.define('Shopping.view.products.Heading', {
 
     buildItems: function () {
         console.info(this);
-        var me = this;
+        var me = this,
+            agencyStore = Ext.data.StoreManager.lookup('Agency');
+        console.info(agencyStore.getCount());
         return [
             // {
             //     xtype: 'combo',
@@ -51,9 +53,46 @@ Ext.define('Shopping.view.products.Heading', {
             {
                 xtype: 'tbfill'
             },
+
+            {
+                xtype: 'textfield',
+                cls: 'fld-in-header',
+                reference: 'searchField',
+                itemId: 'search',
+                id: 'searchFieldId',
+                width: 200,
+                height: 32,
+                emptyText: 'Search Products',
+                margin: '0 8 0 0',
+                enableKeyEvents: true,
+                plugins: [{
+                    ptype: 'formfieldclearvalue'
+                }],
+                listeners: {
+                    clear: 'onClearSearch',
+                    keyup: {
+                        buffer: 1000,
+                        fn: 'onKeyupSearch'
+                    },
+                    // action: {
+                    //     fn: function () {
+                    //         console.info('onSearchAction called');
+                    //     }
+                    // },
+
+                }
+            }, {
+                xtype: 'button',
+                action: 'existingcarts',
+                text: 'Saved Orders',
+                bind: {
+                    hidden: '{!hideClearCart}'
+                }
+            },
             {
                 xtype: 'combo',
-                cls: 'smeg-agency-sel',
+                //cls: 'smeg-agency-sel',
+                height: 32,
                 itemId: 'smegAgencySelector',
                 store: Ext.data.StoreManager.lookup('Agency'),
                 bind: {
@@ -68,8 +107,8 @@ Ext.define('Shopping.view.products.Heading', {
                 forceSelection: true,
                 anyMatch: true,
                 caseSensitive: false,
-                // readOnly: (!Ext.isEmpty(agencies) && agencies.length === 1) ? true : false,
-                // hidden: (Ext.isEmpty(agencies)) ? true : false,
+                readOnly: (agencyStore.getCount() === 1) ? true : false,
+                hidden: (agencyStore.getCount() === 0) ? true : false,
                 // value: me.activeAgent,
                 listConfig: {
                     cls: 'smeg-agency-sel-list'
@@ -122,40 +161,6 @@ Ext.define('Shopping.view.products.Heading', {
                 }
             },
             {
-                xtype: 'textfield',
-                cls: 'fld-in-header',
-                reference: 'searchField',
-                itemId: 'search',
-                id: 'searchFieldId',
-                width: 200,
-                height: 32,
-                emptyText: 'Search Products',
-                margin: '0 8 0 0',
-                enableKeyEvents: true,
-                plugins: [{
-                    ptype: 'formfieldclearvalue'
-                }],
-                listeners: {
-                    clear: 'onClearSearch',
-                    keyup: {
-                        buffer: 1000,
-                        fn: 'onKeyupSearch'
-                    },
-                    // action: {
-                    //     fn: function () {
-                    //         console.info('onSearchAction called');
-                    //     }
-                    // },
-
-                }
-            }, {
-                xtype: 'button',
-                action: 'existingcarts',
-                text: 'Saved Orders',
-                bind: {
-                    hidden: '{!hideClearCart}'
-                }
-            }, {
                 xtype: 'component',
                 height: '100%',
                 itemId: 'cart',
