@@ -139,6 +139,7 @@ Ext.define('Showroom.view.cart.Cart', {
             defaults: {
                 msgTarget: 'under'
             },
+            relative: true,
             items: [
                 {
                     xtype: 'fieldset',
@@ -162,6 +163,7 @@ Ext.define('Showroom.view.cart.Cart', {
                         {
                             xtype: 'textfield',
                             name: 'SACSTNAM',
+                            autoComplete: false,
                             label: 'Name',
                             //placeHolder: 'Tom Roy',
                             allowBlank: false,
@@ -172,20 +174,47 @@ Ext.define('Showroom.view.cart.Cart', {
                                 value: '{theQoute.SACSTNAM}'
                             },
                         },
+                        // {
+                        //     xtype: 'textfield',
+                        //     //xtype: 'combo',
+                        //     name: 'SACSTST1',
+                        //     label: 'Address',
+                        //     placeHolder: 'Address Line 1',
+                        //     //gApiAddrType: 'baseAddressLine1',
+                        //     clearIcon: true,
+                        //     bind: {
+                        //         value: '{theQoute.SACSTST1}'
+                        //     },
+                        //     listeners: {
+                        //         //added: 'onAfterRenderAddressSearch'
+                        //         painted: 'onAfterRenderAddressSearch',
+                        //         clearicontap: 'onClearAddr'
+                        //     }
+                        // },
+
                         {
                             xtype: 'textfield',
-                            //xtype: 'combo',
                             name: 'SACSTST1',
                             label: 'Address',
-                            placeHolder: 'Address Line 1',
-                            //gApiAddrType: 'baseAddressLine1',
-                            clearIcon: true,
+                            id: 'searchAddressField',
                             bind: {
                                 value: '{theQoute.SACSTST1}'
                             },
+                            //relative: true,
+                            //placeHolder: 'Harvey Norman',
+                            clearIcon: true,
                             listeners: {
-                                //added: 'onAfterRenderAddressSearch'
-                                painted: 'onAfterRenderAddressSearch',
+                                focus: function (cmp, e, eopts) {
+                                    cmp.select();
+                                    // console.info('focus called');
+                                    // var ost = comp.element.dom.offsetTop;
+                                    // console.info(ost);
+                                    // this.getParent().getParent().getScrollable().scrollTo(0, 0)
+                                    //console.info();
+                                    //this.getParent().getParent().getScrollable().getScroller().scrollTo(0, ost);
+                                },
+                                blur: 'onSearchAddressBlur',
+                                keyup: 'onSearchAddressTap',
                                 clearicontap: 'onClearAddr'
                             }
                         },
@@ -242,6 +271,7 @@ Ext.define('Showroom.view.cart.Cart', {
                                 {
                                     xtype: 'textfield',
                                     name: 'SACSTCTY',
+                                    autoComplete: false,
                                     //label: 'Suburb',
                                     placeHolder: 'Suburb',
                                     clearIcon: false,
@@ -254,6 +284,7 @@ Ext.define('Showroom.view.cart.Cart', {
                                 }, {
                                     xtype: 'textfield',
                                     name: 'SACSTSTA',
+                                    autoComplete: false,
                                     //label: 'State',
                                     placeHolder: 'State',
                                     clearIcon: false,
@@ -266,6 +297,7 @@ Ext.define('Showroom.view.cart.Cart', {
                                 }, {
                                     xtype: 'textfield',
                                     name: 'SACSTPST',
+                                    autoComplete: false,
                                     //label: 'Post Code',
                                     placeHolder: 'Post Code',
                                     clearIcon: false,
@@ -279,6 +311,7 @@ Ext.define('Showroom.view.cart.Cart', {
                                 {
                                     xtype: 'textfield',
                                     name: 'SACSTCOU',
+                                    autoComplete: false,
                                     //label: 'Post Code',
                                     placeHolder: 'Country',
                                     clearIcon: false,
@@ -293,6 +326,7 @@ Ext.define('Showroom.view.cart.Cart', {
                         {
                             xtype: 'emailfield',
                             name: 'SACSTEML',
+                            autoComplete: false,
                             label: 'Email',
                             //clearIcon: true,
                             //handler: 'onEmail'
@@ -305,6 +339,7 @@ Ext.define('Showroom.view.cart.Cart', {
                             xtype: 'textfield',
                             name: 'SACSTPH1',
                             label: 'Contact Number',
+                            autoComplete: false,
                             //placeHolder: '0412345678',
                             clearIcon: true,
                             bind: {
@@ -315,6 +350,7 @@ Ext.define('Showroom.view.cart.Cart', {
                             xtype: 'textfield',
                             name: 'SARFAG',
                             label: 'Referring Agent',
+                            autoComplete: false,
                             //placeHolder: 'Harvey Norman',
                             clearIcon: true,
                             bind: {
@@ -331,6 +367,39 @@ Ext.define('Showroom.view.cart.Cart', {
                                 }
                             }
                         },
+                        // {
+                        //     xtype: 'textfield',
+                        //     name: 'searchAddress',
+                        //     label: 'Search Address',
+                        //     id: 'searchAddressField',
+                        //     //relative: true,
+                        //     //placeHolder: 'Harvey Norman',
+                        //     clearIcon: true,
+                        //     listeners: {
+                        //         focus: function (cmp, e, eopts) {
+                        //             cmp.select();
+                        //             // console.info('focus called');
+                        //             // var ost = comp.element.dom.offsetTop;
+                        //             // console.info(ost);
+                        //             // this.getParent().getParent().getScrollable().scrollTo(0, 0)
+                        //             //console.info();
+                        //             //this.getParent().getParent().getScrollable().getScroller().scrollTo(0, ost);
+                        //         },
+                        //         keyup: 'onSearchAddressTap',
+                        //     }
+                        // },
+                        {
+                            xtype: 'textfield',
+                            name: 'searchAddressDisplay',
+                            label: 'Search Address',
+                            id: 'searchAddressDisplay',
+                            //floated: true
+                            //relative: true,
+                            //placeHolder: 'Harvey Norman',
+                            hidden: true,
+
+                        },
+
 
                         // {
                         //     xtype: 'selectfield',

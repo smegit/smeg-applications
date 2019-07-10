@@ -4,7 +4,8 @@ Ext.define('Showroom.view.cart.CartModel', {
 
     requires: [
         'Showroom.model.SelectedProd',
-        'Showroom.model.AddressList'
+        'Showroom.model.AddressList',
+        'Showroom.model.AddressSuggestion'
     ],
 
     data: {
@@ -37,6 +38,19 @@ Ext.define('Showroom.view.cart.CartModel', {
         addressList: {
             model: 'Showroom.model.AddressList',
             autoLoad: false,
+        },
+        addressSuggestion: {
+            model: 'Showroom.model.AddressSuggestion',
+            autoLoad: true,
+            proxy: {
+                type: 'memory'
+            },
+            data: [
+                { description: 'Peter', type: 'Venkman' },
+                { description: 'Raymond', type: 'Stantz' },
+                { description: 'Egon', type: 'Spengler' },
+                { description: 'Winston', type: 'Zeddemore' }
+            ]
         }
     }
 });

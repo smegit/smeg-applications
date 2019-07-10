@@ -190,7 +190,196 @@ Ext.define('Showroom.view.cart.CartController', {
 
     },
 
+    // onSearchAddressTap
+    onSearchAddressTap: function (cmp) {
+        console.info('onSearchAddressTap called');
+        var me = this,
+            vm = me.getViewModel(),
+            addressSuggestionStore = vm.getStore('addressSuggestion'),
+            addressSuggestionList = Ext.ComponentQuery.query('#addressSuggestionList'),
+            input = cmp.el.down('input');
+        console.info(addressSuggestionStore);
+        console.info(Ext.Element.get('searchAddressField'));
+        console.info(Ext.ComponentQuery.query('#addressSuggestionList'));
 
+
+        // cmp.googleAutoComplete = new google.maps.places.Autocomplete(
+        //     document.getElementById(input['id']),
+        //     { types: ['geocode', 'establishment'] });
+
+        // //limit auto complete to Australia
+        // //
+        // cmp.googleAutoComplete.setComponentRestrictions({
+        //     country: ['au']
+        // });
+
+        // setTimeout(function () {
+
+        //     var addressPredictions = cmp.googleAutoComplete.gm_accessors_.place.Yc.predictions;
+        //     console.info(addressPredictions);
+        //     addressSuggestionStore.loadRawData(addressPredictions);
+        // }, 500);
+
+        console.info(cmp.getValue().length);
+        if (cmp.getValue().length > 0) {
+            autocompleteService = new google.maps.places.AutocompleteService();
+
+            autocompleteService.getPlacePredictions({
+                input: cmp.getValue(),
+                componentRestrictions: { country: ['au'] },
+                types: ['establishment', 'geocode']
+            }, function (res) {
+                console.info(res);
+                addressSuggestionStore.loadRawData(res);
+
+                console.info(cmp);
+                console.info(Ext.os);
+                console.info(Ext.getBody().getViewSize());
+                console.info(Ext.browser);
+                console.info(addressSuggestionList);
+                //addressSuggestionList[0].destroy();
+                if (addressSuggestionList.length == 0) {
+                    Ext.create('Ext.List', {
+                        // fullscreen: true,
+                        id: 'addressSuggestionList',
+                        itemTpl: '<div class="contact">{description}</div>',
+                        store: addressSuggestionStore,
+                        grouped: true,
+                        floated: true,
+                        centered: true,
+                        //relative: true,
+                        //draggable: true,
+                        //renderTo: Ext.Element.get('#addressSuggestionContainer'),
+                        //style: 'transform: translate3d(352px, 639px, 0px)',
+                        listeners: {
+                            beforeshow: function (panel) {
+                                console.info('beforeshow called');
+                                //panel.setPosition(100, 300);
+                                var w = Ext.getBody().getViewSize().height * 0.35 + 'px', h = Ext.getBody().getViewSize().width * 0.4 + 'px';
+                                //panel.setStyle('transform: translate3d(521px, 645.6px, 0px)');
+                                panel.setStyle('transform: translate3d(' + w + ',' + h + ',' + '0px)');
+                            },
+                            scope: me,
+                            select: me.onSelectAddress,
+                            //select: google.maps.event.trigger(cmp.googleAutoComplete, 'place_changed')
+                        }
+                    }).show();
+                } else {
+                    addressSuggestionList[0].show();
+                }
+
+            });
+        }
+        else {
+            if (addressSuggestionList.length == 1) {
+                addressSuggestionList[0].destroy();
+            }
+        }
+
+
+        // addressSuggestionStore.removeAll();
+
+
+        // Ext.define('myAjax', {
+        //     extend: 'Ext.data.Connection',
+        //     singleton: true,
+        //     constructor: function (config) {
+        //         console.info(config);
+        //         this.callParent([config]);
+        //         this.on("beforerequest", function () {
+        //             console.info("beforerequest");
+        //         });
+        //         this.on("requestcomplete", function () {
+        //             console.info("requestcomplete");
+        //         });
+        //     }
+        // });
+        // myAjax.request({
+        //     url: 'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=Vict&types=geocode&language=fr&key=AIzaSyAP1Z_ggiJaruZq9H99emnWJyNHVud8now',
+        //     //url: 'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=123&key=AIzaSyAP1Z_ggiJaruZq9H99emnWJyNHVud8now&libraries=places',
+        //     method: 'GET',
+        //     params: {},
+        //     success: function (res) {
+        //         var response = Ext.decode(res.responseText);
+        //         console.info(response)
+        //         //deferred.resolve(response);
+        //     },
+        //     failure: function (res) {
+        //         var response = Ext.decode(res.responseText);
+        //         //deferred.reject(response);
+        //     }
+        // });
+
+
+
+    },
+
+    onSelectAddress: function (list, record) {
+        console.info('onSelectAddress called');
+        console.info(list);
+        console.info(record);
+        var me = this,
+            view = me.getView(),
+            addressField = Ext.ComponentQuery.query('#searchAddressField')[0],
+            placeService = new google.maps.places.PlacesService(document.getElementById('searchAddressDisplay')),
+            requestObj = { placeId: record.get('place_id') },
+            street_number, route, suburb, state, postal_code;
+        console.info(document.getElementsByClassName('x-input-body-el')[12]);
+        console.info(record.get('place_id'));
+        //document.getElementById(input['id'])
+
+        placeService.getDetails(requestObj, function (PlaceResult, PlacesServiceStatus) {
+            console.info(PlaceResult);
+            console.info(PlacesServiceStatus);
+            PlaceResult.address_components.forEach(function (e) {
+                console.info(e);
+
+                // get street number
+                if (e.types.includes('street_number')) {
+                    street_number = e.long_name;
+                }
+                // get street name
+                if (e.types.includes('route')) {
+                    route = e.long_name;
+                }
+                // get suburb
+                if (e.types.includes('locality')) {
+                    suburb = e.long_name;
+                }
+                // get state
+                if (e.types.includes('administrative_area_level_1')) {
+                    state = e.short_name;
+                }
+                // get postal code
+                if (e.types.includes('postal_code')) {
+                    postal_code = e.long_name;
+                }
+                // get country
+                if (e.types.includes('country')) {
+                    country = e.long_name;
+                }
+            });
+            addressField.setValue(street_number + ' ' + route);
+
+            view.down('fieldset').down('[name=SACSTST1]').setValue(street_number + ' ' + route);
+            view.down('fieldset').down('[name=SACSTCTY]').setValue(suburb);
+            view.down('fieldset').down('[name=SACSTSTA]').setValue(state);
+            view.down('fieldset').down('[name=SACSTPST]').setValue(postal_code);
+            view.down('fieldset').down('[name=SACSTCOU]').setValue(country);
+
+
+        });
+        list.destroy();
+        //me.autoFillAddress(addressField);
+    },
+    onSearchAddressBlur: function () {
+        var addressSuggestionList = Ext.ComponentQuery.query('#addressSuggestionList');
+
+        if (addressSuggestionList.length == 1) {
+            addressSuggestionList[0].hide(true);
+        }
+
+    },
     autoFillAddress: function (cmp) {
         console.info('autoFillAddress called');
         console.info(cmp);
@@ -514,6 +703,7 @@ Ext.define('Showroom.view.cart.CartController', {
                     Ext.Viewport.add({
                         xtype: 'panel',
                         title: 'Note',
+                        id: 'notePanel',
                         message: 'Your qoute has been generated. You can: ',
                         width: 300,
                         height: 200,
@@ -522,6 +712,7 @@ Ext.define('Showroom.view.cart.CartController', {
                         items: [
                             {
                                 xtype: 'component',
+                                id: 'noteMsgCmp',
                                 //cls: 'pdf-cmp',
                                 //html: '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>',
                                 styleHtmlContent: true,
@@ -639,17 +830,41 @@ Ext.define('Showroom.view.cart.CartController', {
         console.info('onPrint called');
         var me = this,
             vm = me.getViewModel(),
-            orderKey = vm.get('quoteKey');
+            orderKey = vm.get('quoteKey'),
+            noteMsgCmp = Ext.ComponentQuery.query('#noteMsgCmp')[0],
+            notePanel = Ext.ComponentQuery.query('#notePanel')[0];
         me.requestPrint(orderKey).then(function (res) {
             console.info(res);
             if (res.success) {
                 // Ext.Msg.alert('Message', JSON.stringify(res), Ext.emptyFn);
+
+                // const noteMsgCmp = Ext.ComponentQuery.query('#noteMsgCmp')[0];
+                // const notePanel = Ext.ComponentQuery.query('#notePanel')[0];
+                // console.info(noteMsgCmp);
+                // console.info(notePanel);
+
+                notePanel.setMasked(true);
+                setTimeout(function () {
+                    noteMsgCmp.setHtml('<img src="resources/images/print-icon.png"  width="20%" >' + '<p>' + res.msg + '</p>');
+                    notePanel.unmask();
+                }, 2000);
+
             } else {
-                Ext.Msg.alert('Message', JSON.stringify(res), Ext.emptyFn);
+                // Ext.Msg.alert('Message', JSON.stringify(res), Ext.emptyFn);
+                notePanel.setMasked(true);
+                setTimeout(function () {
+                    noteMsgCmp.setHtml('<img src="resources/images/print-icon.png"  width="20%" >' + '<p>' + res.msg + '</p>');
+                    notePanel.unmask();
+                }, 2000);
             }
         }, function (res) {
-            console.info(res);
-            Ext.Msg.alert('Message', JSON.stringify(res), Ext.emptyFn);
+            // console.info(res);
+            // Ext.Msg.alert('Message', JSON.stringify(res), Ext.emptyFn);
+            notePanel.setMasked(true);
+            setTimeout(function () {
+                noteMsgCmp.setHtml('<img src="resources/images/print-icon.png"  width="20%" >' + '<p>' + res.msg + '</p>');
+                notePanel.unmask();
+            }, 2000);
         });
 
     },
