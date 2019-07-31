@@ -22,13 +22,67 @@ Ext.define('Shopping.view.cart.Main', {
         //loadInitData: 'onLoadInitData'
     },
     defaults: {
-        maxWidth: 1060,
+        //maxWidth: 1060,
         style: {
             'margin-left': 'auto',
             'margin-right': 'auto',
-            'margin-top': '10px'
+            //'margin-top': '10px',
+            'margin-bottom': '10px'
         }
     },
+
+    // bbar: {
+    //     xtype: 'toolbar',
+    //     ui: 'primary-dark',
+    //     ui: 'light',
+    //     height: 40,
+    //     defaults: {
+    //         xtype: 'button',
+    //         margin: 5,
+    //     },
+    //     // layout: {
+    //     //     type: 'hbox',
+    //     //     align: 'middle'
+    //     // },
+
+    //     items: [
+    //         {
+    //             xtype: 'container',
+    //             layout: {
+    //                 type: 'hbox',
+    //                 align: 'stretch'
+    //             },
+    //             flex: 1,
+    //             defaults: {
+    //                 flex: 1
+    //             },
+    //             items: [
+    //                 // {
+    //                 //     xtype: 'combo',
+    //                 //     cls: 'fld-in-header',
+    //                 //     queryMode: 'local',
+    //                 //     flex: 0,
+    //                 //     width: 305,
+    //                 //     height: 32,
+    //                 //     labelWidth: 95,
+    //                 //     editable: false,
+    //                 //     valueField: 'STKCOD',
+    //                 //     displayField: 'STKDSC',
+    //                 //     reference: 'stocklocs',
+    //                 //     fieldLabel: 'Stock Location',
+    //                 //     forceSelection: true,
+    //                 //     listeners: {
+    //                 //         select: 'onSelectStockLocation'
+    //                 //     },
+    //                 //     bind: {
+    //                 //         store: '{StockLocations}',
+    //                 //         value: '{STKLOC}'
+    //                 //     }
+    //                 // }
+    //             ]
+    //         },]
+    // },
+
     // bbar: {
     //     xtype: 'toolbar',
     //     // ui: 'primary-dark',
@@ -305,10 +359,10 @@ Ext.define('Shopping.view.cart.Main', {
                 listeners: {
                     afterrender: 'onToolBarAfterRender'
                 },
-                // style: {
-                //     'margin-top': '0px',
-                //     //'width': '100% !important'
-                // },
+                style: {
+                    position: 'fixed',
+                    'z-Index': '100'
+                },
                 items: [
                     { xtype: 'tbfill' },
                     {
@@ -334,6 +388,7 @@ Ext.define('Shopping.view.cart.Main', {
             },
             {
                 xtype: 'cartlist',
+                maxWidth: 1060,
                 bind: {
                     store: '{cartItems}'
                 },
@@ -392,11 +447,13 @@ Ext.define('Shopping.view.cart.Main', {
             // },
 
             {
-                xtype: 'paymenthistory'
+                xtype: 'paymenthistory',
+                maxWidth: 1060,
             },
             {
                 xtype: 'cartform',
-                cartOptions: opts
+                cartOptions: opts,
+                maxWidth: 1060,
             },
 
 
@@ -409,6 +466,7 @@ Ext.define('Shopping.view.cart.Main', {
                     align: 'stretch'
                 },
                 padding: '10 0 10 0',
+                maxWidth: 1060,
                 defaults: {
                     xtype: 'button'
                 },

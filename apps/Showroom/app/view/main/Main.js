@@ -40,7 +40,8 @@ Ext.define('Showroom.view.main.Main', {
 
 
     listeners: {
-        activeItemchange: 'onActiveItemChange'
+        activeItemchange: 'onActiveItemChange',
+        agencyChange: 'onSelectAgency'
     },
 
     items: [
@@ -55,7 +56,9 @@ Ext.define('Showroom.view.main.Main', {
             }]
         }, {
             title: 'Selection',
+            id: 'selectionTab',
             iconCls: 'x-fas fa-shopping-cart',
+            //badgeText: '10',
 
 
             // bind: {

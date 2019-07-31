@@ -449,18 +449,36 @@ Ext.define('Showroom.view.cart.CartController', {
         console.info(store);
         console.info(store.getCount());
         var me = this,
-            qouteListTab = Ext.ComponentQuery.query('app-main')[0].down('#QouteList');
+            qouteListTab = Ext.ComponentQuery.query('app-main')[0].down('#QouteList'),
+            tab = Ext.ComponentQuery.query('app-main')[0],
+            selectionTab = tab.getTabBar().down('tab[title=Selection]');
+        console.info(selectionTab);
 
         if (store.getCount() > 0) {
             // disable list
             console.info(Ext.ComponentQuery.query('app-main')[0].down('#QouteList'));
             qouteListTab.setDisabled(true);
+            selectionTab.setBadgeText(store.getCount());
             //Ext.ComponentQuery.query('app-main')[0].down('#QouteList').setDisabled(true);
 
         } else {
             qouteListTab.setDisabled(false);
+            selectionTab.setBadgeText(null);
             //Ext.ComponentQuery.query('app-main')[0].down('#QouteList').setDisabled(false)
         }
+    },
+    onQtyUpdate: function (store, record, operation) {
+        console.info('onQtyUpdate called');
+        // console.info(store);
+        // console.info(record);
+        // console.info(operation);
+        var totalQty = 0,
+            tab = Ext.ComponentQuery.query('app-main')[0],
+            selectionTab = tab.getTabBar().down('tab[title=Selection]');
+        store.each(function (record, idx) {
+            totalQty = totalQty + record.get('SBQTYO');
+        });
+        selectionTab.setBadgeText(totalQty);
     },
     onSave: function (one, two) {
         console.info('onSave called');
@@ -717,7 +735,7 @@ Ext.define('Showroom.view.cart.CartController', {
                                 //html: '<iframe src="' + link + '" width="100%" height="100%" >This is iframe</iframe>',
                                 styleHtmlContent: true,
                                 styleHtmlCls: 'note-component',
-                                html: '<img src="resources/images/checked.png"  width="20%" ><p>You quote has been saved. </p>'
+                                html: '<img src="resources/images/save_icon.png"  width="20%" ><p>Quote saved successfully. </p>'
                             },
 
                             {
@@ -1140,7 +1158,9 @@ Ext.define('Showroom.view.cart.CartController', {
         var me = this,
             view = me.getView(),
             sendForm = Ext.ComponentQuery.query('formpanel')[1],
-            pdfPanel = Ext.ComponentQuery.query('#qoutePdfPanelId')[0];
+            pdfPanel = Ext.ComponentQuery.query('#qoutePdfPanelId')[0],
+            noteMsgCmp = Ext.ComponentQuery.query('#noteMsgCmp')[0],
+            notePanel = Ext.ComponentQuery.query('#notePanel')[0];
 
         sendFormValues = sendForm.getValues();
         console.info(sendForm.getValues());
@@ -1153,28 +1173,32 @@ Ext.define('Showroom.view.cart.CartController', {
         me.requestSendEmail(sendFormValues).then(function (res) {
             if (res.success) {
                 //cmp.up('formpanel').close();
-                Ext.Msg.alert('Sent', 'Your quote has been sent successfully', function () {
-                    sendForm.close();
-                    //pdfPanel.close();
-                });
+                // Ext.Msg.alert('Sent', 'Your quote has been sent successfully', function () {
+                //     sendForm.close();
+                //     //pdfPanel.close();
+                // });
+
+                sendForm.close();
+                noteMsgCmp.setHtml('<img src="resources/images/email_sent.png"  width="20%" >' + '<p>' + res.msg + '</p>');
+
 
             } else {
-                Ext.Msg.alert('Error', JSON.stringify(res), function () {
-                    sendForm.close();
-                    //pdfPanel.close();
-                });
-
-
+                // Ext.Msg.alert('Error', JSON.stringify(res), function () {
+                //     sendForm.close();
+                //     //pdfPanel.close();
+                // });
+                sendForm.close();
+                noteMsgCmp.setHtml('<img src="resources/images/email_sent_failure.png"  width="20%" >' + '<p>' + res.msg + '</p>');
             }
             sendForm.unmask();
         }, function () {
             sendForm.unmask();
-            Ext.Msg.alert('Server Error', JSON.stringify(res), function () {
-                sendForm.close();
-                //pdfPanel.close();
-            });
-
-
+            // Ext.Msg.alert('Server Error', JSON.stringify(res), function () {
+            //     sendForm.close();
+            //     //pdfPanel.close();
+            // });
+            sendForm.close();
+            noteMsgCmp.setHtml('<img src="resources/images/email_sent_failure.png"  width="20%" >' + '<p>' + res.msg + '</p>');
         })
     },
 

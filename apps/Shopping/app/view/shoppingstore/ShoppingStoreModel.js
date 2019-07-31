@@ -27,7 +27,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         hideBannerText: true,
         bannerText: '',
         deliveryDisabledDates: null, //Example exclude one day ['25/12/2017']
-        deliveryDisabledDays: null, //Example [0, 6] would be excluding weekends
+        // deliveryDisabledDays: null, //Example [0, 6] would be excluding weekends
+        deliveryDisabledDays: [0, 6],
         deliveryOptions: null,
         orderPayments: null,
         totalPaid: null,

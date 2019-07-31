@@ -62,7 +62,7 @@ Ext.define('Showroom.view.category.CategoryController', {
                 // set agent
                 console.info('set agent');
             }
-        }, 800);
+        }, 1000);
 
 
 
@@ -1040,6 +1040,22 @@ Ext.define('Showroom.view.category.CategoryController', {
             }
 
 
+        }
+    },
+    onFocus: function (field, evt) {
+        console.info('onFocus called');
+        console.info(field);
+    },
+    onSelectionChange: function (field, newValue, oldValue) {
+        console.info('onSelectionChange called');
+        console.info(field);
+        console.info(newValue);
+        console.info(oldValue);
+        var me = this,
+            mainView = Ext.ComponentQuery.query('app-main')[0];
+        //mainView.getViewModel()
+        if (oldValue != null) {
+            mainView.fireEvent('agencyChange', null, newValue);
         }
     }
 });

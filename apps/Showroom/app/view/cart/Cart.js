@@ -61,6 +61,9 @@ Ext.define('Showroom.view.cart.Cart', {
             height: 300,
             cls: 'cart-list',
             striped: false,
+            listeners: {
+                updatedata: 'onUpdateQtyData'
+            },
             columns: [
                 {
                     text: '',
@@ -442,7 +445,7 @@ Ext.define('Showroom.view.cart.Cart', {
                             handler: 'onSave'
                         },
                         {
-                            text: 'Cancel',
+                            text: 'Clear',
                             ui: 'grey',
                             handler: 'onCancel'
                         }, {

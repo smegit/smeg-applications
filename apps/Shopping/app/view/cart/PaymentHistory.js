@@ -20,7 +20,8 @@ Ext.define('Shopping.view.cart.PaymentHistory', {
     //padding: '0 0 10 0',
     reference: 'paymentHistoryGrid',
 
-    cls: 'cart-list',
+    //cls: 'cart-list',
+    cls: 'payment-history',
     overCls: 'cart-list-over',
     features: [{
         id: 'paymentSummary',

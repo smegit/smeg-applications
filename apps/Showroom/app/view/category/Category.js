@@ -26,7 +26,8 @@ Ext.define('Showroom.view.category.Category', {
         'Ext.plugin.Responsive',
         'Ext.mixin.Responsive',
         //'Ext.Button'
-        'Ext.field.Search'
+        'Ext.field.Search',
+        'Showroom.store.Agency'
 
     ],
     listeners: {
@@ -36,7 +37,7 @@ Ext.define('Showroom.view.category.Category', {
     },
     header: {
         //cls: 'header-cls',
-        //height: 50,
+        height: 43,
         // title: {
         //     //cls: 'header-title-cls',
         //     text: 'Products',
@@ -57,6 +58,17 @@ Ext.define('Showroom.view.category.Category', {
                     type: 'hbox'
                 },
                 items: [
+                    {
+                        xtype: 'paneltool',
+                        //itemId: 'goBack',
+                        width: 50,
+                        type: 'prev',
+                        html: 'Back',
+                        handler: 'onGoBack',
+                        bind: {
+                            hidden: '{hideCloseBtn}'
+                        }
+                    },
                     {
                         xtype: 'textfield',
                         id: 'prodSearchField',
@@ -82,30 +94,48 @@ Ext.define('Showroom.view.category.Category', {
                         handler: 'onRefresh',
                     },
 
+                    {
+                        xtype: 'selectfield',
+                        id: 'agSelectField',
+                        //label: 'Choose showroom',
+                        height: 30,
+                        width: 250,
+                        cls: 'selectfield-cls',
+                        store: 'Agency',
+                        displayField: 'NAME',
+                        valueField: 'ACCOUNT',
+                        listeners: {
+                            focus: 'onFocus',
+                            change: 'onSelectionChange'
+                        }
+                    },
+
                 ]
             },
 
-            {
-                xtype: 'paneltool',
-                type: 'gear',
-                handler: 'onChangeShowroom',
-                tooltip: 'Change showroom here',
-                bind: {
-                    hidden: '{!hideCloseBtn || hideGear}'
-                }
-                //html: 'Switch'
-            },
+            // {
+            //     xtype: 'paneltool',
+            //     type: 'gear',
+            //     handler: 'onChangeShowroom',
+            //     tooltip: 'Change showroom here',
+            //     bind: {
+            //         hidden: '{!hideCloseBtn || hideGear}'
+            //     }
+            //     //html: 'Switch'
+            // },
 
 
-            {
-                xtype: 'paneltool',
-                //itemId: 'goBack',
-                type: 'close',
-                handler: 'onGoBack',
-                bind: {
-                    hidden: '{hideCloseBtn}'
-                }
-            },
+
+
+            // {
+            //     xtype: 'paneltool',
+            //     //itemId: 'goBack',
+            //     type: 'close',
+            //     handler: 'onGoBack',
+            //     bind: {
+            //         hidden: '{hideCloseBtn}'
+            //     }
+            // },
             // {
             //     xtype: 'paneltitle',
             //     //cls: 'header-title-cls',

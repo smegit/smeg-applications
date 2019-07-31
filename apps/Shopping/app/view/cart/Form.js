@@ -28,6 +28,20 @@ Ext.define('Shopping.view.cart.Form', {
 
     buildItems: function () {
         var me = this,
+            getMinDate = function () {
+                var today = new Date(), minDate;
+                console.info(today.getDay());
+                if (today.getDay() == 0) {
+                    minDate = Ext.Date.add(today, Ext.Date.DAY, 3);
+                } else if (today.getDay() >= 1 || today.getDay() <= 3) {
+                    minDate = Ext.Date.add(today, Ext.Date.DAY, 2);
+                } else if (today.getDay() == 4) {
+                    minDate = Ext.Date.add(today, Ext.Date.DAY, 5);
+                } else if (today.getDay() == 5 || today.getDay() == 6) {
+                    minDate = Ext.Date.add(today, Ext.Date.DAY, 4);
+                }
+                return minDate;
+            },
             getRepComponent = function () {
                 var repConfig = {
                     xtype: 'combo',
@@ -134,7 +148,8 @@ Ext.define('Shopping.view.cart.Form', {
                             //labelWidth: 150,
                             //flex: 0,
                             maxWidth: 220,
-                            minValue: new Date(),
+                            // minValue: new Date(),
+                            minValue: getMinDate(),
                             maxValue: Ext.Date.add(new Date(), Ext.Date.YEAR, 1), //1 Year from the current date
                             format: 'd/m/Y',
                             submitFormat: 'Y-m-d',

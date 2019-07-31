@@ -41,9 +41,11 @@ Ext.define('Shopping.view.cart.notes.Notes', {
     //defaultFocus: 'textarea',
     maximizable: true,
     //maximized: true,
-    bind: {
-        title: 'Notes - {orderKey}'
-    },
+    //bind: {
+    // title: '{orderDate}',
+    // title: 'Order: {orderKey} Agent: ',
+    // title: buildTitle(),
+    //},
     listeners: {
         beforeshow: 'onBeforeShowWindow',
         show: 'onShow'
@@ -75,7 +77,8 @@ Ext.define('Shopping.view.cart.notes.Notes', {
         Ext.apply(me, {
             items: me.buildItems(),
             //tbar: me.buildTbar(),
-            bbar: me.buildBBar()
+            bbar: me.buildBBar(),
+            title: me.buildTitle(),
         });
         me.callParent(arguments);
     },
@@ -84,6 +87,20 @@ Ext.define('Shopping.view.cart.notes.Notes', {
             text: 'Add Note',
 
         }]
+    },
+    buildTitle: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            shoppingstore = Ext.ComponentQuery.query('shoppingstore')[0],
+            shoppingstoreVm = shoppingstore.getViewModel(),
+            appMainVm = Ext.ComponentQuery.query('shoppingstore')[0].getViewModel();
+        // console.info(shoppingstoreVm);
+        // console.info(shoppingstoreVm.linkData.agentName);
+
+        // console.info(vm);
+        var t = shoppingstoreVm.get('ordKeyText') + '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' + shoppingstoreVm.get('orderDate') + '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' +
+            'Agent: ' + shoppingstoreVm.linkData.agentName
+        return '<div style="text-align: center">' + t + '</div>';
     },
 
     buildItems: function () {

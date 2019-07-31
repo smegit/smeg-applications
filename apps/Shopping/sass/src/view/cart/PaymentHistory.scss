@@ -1,3 +1,10 @@
 .gridTitle .x-column-header-text{
     margin-right: 1px !important;
 }
+.payment-history{
+    border: solid 1px #bbb;
+    border-radius:0px;
+    .x-grid-cell-inner{
+    padding:3px!important;
+  }
+}

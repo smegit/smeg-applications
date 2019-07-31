@@ -69,7 +69,13 @@ Ext.define('Showroom.view.main.MainController', {
         me.requestSetAgent(record.getData().ACCOUNT).then(
             function (res) {
                 console.info(res);
-                agencyList.close();
+                if (agencyList != undefined) {
+                    agencyList.close();
+                }
+                // set agent select field value
+                var agSelectField = Ext.ComponentQuery.query('#agSelectField')[0];
+                agSelectField.setValue(record.getData().ACCOUNT);
+                console.info(agSelectField);
                 // load cats 
                 Ext.ComponentQuery.query('category')[0].fireEvent('loadCategory', 'CAT');
                 Ext.ComponentQuery.query('cart')[0].fireEvent('cancelCart');

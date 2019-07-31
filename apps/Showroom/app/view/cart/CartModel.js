@@ -21,7 +21,9 @@ Ext.define('Showroom.view.cart.CartModel', {
             model: 'Showroom.model.SelectedProd',
             autoLoad: false,
             listeners: {
-                datachanged: 'onSelectedDataChanged'
+                datachanged: 'onSelectedDataChanged',
+                update: 'onQtyUpdate'
+
             }
             // data: [
             //     { MODEL: 'Catalogue1', image: "https://www.smeglondon.com/sites/smeglondon.com/files/styles/product_thumbnails/public/TSF01PBUK%2050%27s%20Retro%20Style%20%202%20Slice%20Toaster.jpg?itok=3h6b3HUR", PRICE: '1000', QUANTY: '1' },
