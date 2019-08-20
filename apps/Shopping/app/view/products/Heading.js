@@ -53,6 +53,16 @@ Ext.define('Shopping.view.products.Heading', {
             {
                 xtype: 'tbfill'
             },
+            {
+                xtype: 'component',
+                html: 'Shopping',
+                style: {
+                    'font-size': '18px',
+                    'color': 'white',
+                    'font-weight': 'bolder'
+                }
+            },
+            { xtype: 'tbfill' },
 
             {
                 xtype: 'textfield',
@@ -62,7 +72,7 @@ Ext.define('Shopping.view.products.Heading', {
                 id: 'searchFieldId',
                 width: 200,
                 height: 32,
-                emptyText: 'Search Products',
+                emptyText: 'SEARCH PRODUCTS',
                 margin: '0 8 0 0',
                 enableKeyEvents: true,
                 plugins: [{
@@ -81,18 +91,12 @@ Ext.define('Shopping.view.products.Heading', {
                     // },
 
                 }
-            }, {
-                xtype: 'button',
-                action: 'existingcarts',
-                text: 'Saved Orders',
-                bind: {
-                    hidden: '{!hideClearCart}'
-                }
             },
             {
                 xtype: 'combo',
                 //cls: 'smeg-agency-sel',
                 height: 32,
+                width: 300,
                 itemId: 'smegAgencySelector',
                 store: Ext.data.StoreManager.lookup('Agency'),
                 bind: {
@@ -131,25 +135,25 @@ Ext.define('Shopping.view.products.Heading', {
                         cmp.selectText();
                     },
                     // scope: me,
-                    // afterrender: function (cmp) {
-                    //     cmp.agentTip = Ext.create('Ext.tip.ToolTip', {
-                    //         showDelay: 800,
-                    //         target: cmp.el,
-                    //         html: '',
-                    //         listeners: {
-                    //             scope: me,
-                    //             beforeshow: function (cmp) {
-                    //                 var sel = Ext.ComponentQuery.query('#smegAgencySelector')[0],
-                    //                     selectedRec = (!Ext.isEmpty(sel)) ? sel.getSelection() : null;
-                    //                 if (!Ext.isEmpty(selectedRec)) {
-                    //                     cmp.setHtml('<div class="smeg-agency-sel-tip"><span class="label">Agent #: </span><span class="code">' + selectedRec.get('ACCOUNT') + '</span></div>')
-                    //                     return true;
-                    //                 }
-                    //                 return false;
-                    //             }
-                    //         }
-                    //     });
-                    // },
+                    afterrender: function (cmp) {
+                        cmp.agentTip = Ext.create('Ext.tip.ToolTip', {
+                            showDelay: 800,
+                            target: cmp.el,
+                            html: '',
+                            listeners: {
+                                scope: me,
+                                beforeshow: function (cmp) {
+                                    var sel = Ext.ComponentQuery.query('#smegAgencySelector')[0],
+                                        selectedRec = (!Ext.isEmpty(sel)) ? sel.getSelection() : null;
+                                    if (!Ext.isEmpty(selectedRec)) {
+                                        cmp.setHtml('<div class="smeg-agency-sel-tip"><span class="label">Agent #: </span><span class="code">' + selectedRec.get('ACCOUNT') + '</span></div>')
+                                        return true;
+                                    }
+                                    return false;
+                                }
+                            }
+                        });
+                    },
                     // select: function (cmp, rec) {
                     //     var me = this;
                     //     if (rec.get('ACCOUNT') !== me.activeAgent) {
@@ -161,11 +165,69 @@ Ext.define('Shopping.view.products.Heading', {
                 }
             },
             {
+                xtype: 'button',
+                action: 'existingcarts',
+                // text: 'Saved Orders',
+                cls: 'toolbar-btn',
+                text: 'Saved Orders',
+                iconCls: 'x-fa fa-list',
+                bind: {
+                    hidden: '{!hideClearCart}'
+                },
+                // listeners: {
+                //     afterrender: function (cmp) {
+                //         console.info(cmp);
+                //         cmp.text = 'Saved Orders';
+                //     }
+                // }
+            },
+            // {
+            //     xtype: 'container',
+            //     //width: 130,
+            //     items: [
+            //         {
+            //             xtype: 'component',
+            //             height: '100%',
+            //             itemId: 'cart',
+            //             width: 50,
+            //             margin: '8 0 0 0',
+            //             bind: {
+            //                 data: {
+            //                     cartCount: '{cartCount}'
+            //                 },
+            //                 hidden: '{hideClearCart}'
+            //             },
+            //             listeners: {
+            //                 el: {
+            //                     //click: 'onViewCart',
+            //                     click: 'onUpdateCartAndShow'
+            //                 }
+            //             },
+            //             tpl: me.buildTpl()
+            //             //commenting out the reset cart since its available inside the cart but can easily be added back
+            //             // if users request it
+            //             // }, {
+            //             //     xtype  : 'button',
+            //             //     text   : 'Clear',
+            //             //     action : 'resetcart',
+            //             //     itemId : 'newOrderBtn',
+            //             //     hidden : true,
+            //             //     bind   : {
+            //             //         hidden : '{hideClearCart}'
+            //             //     }
+            //         }
+            //     ]
+            // },
+            {
                 xtype: 'component',
                 height: '100%',
                 itemId: 'cart',
-                width: 50,
+                //width: 50,
+                width: 140,
                 margin: '8 0 0 0',
+                style: {
+                    'display': 'relative'
+                },
                 bind: {
                     data: {
                         cartCount: '{cartCount}'
@@ -190,13 +252,14 @@ Ext.define('Shopping.view.products.Heading', {
                 //     bind   : {
                 //         hidden : '{hideClearCart}'
                 //     }
-            }];
+            }
+        ];
     },
 
     buildTpl: function () {
         var me = this;
         return Ext.create('Ext.XTemplate',
-            '<div data-event="viewcart" class="vvicon-cart4 cart-size">',
+            '<div data-event="viewcart" class="vvicon-cart4 cart-size" style="position: absolute;right:50px;">',
             '<div data-event="viewcart" class="cart-num">{cartCount}</div>',
             // '<div data-event="updatecartandshow" class="vvicon-cart4 cart-size">',
             // '<div data-event="updatecartandshow" class="cart-num">{cartCount}</div>',

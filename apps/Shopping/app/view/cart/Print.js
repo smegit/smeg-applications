@@ -37,7 +37,7 @@ Ext.define('Shopping.view.cart.Print', {
         var me = this;
         return {
             items: ['->', {
-                text: 'Cancel',
+                text: 'Close',
                 itemId: 'cancelButton',
                 listeners: {
                     scope: me,
