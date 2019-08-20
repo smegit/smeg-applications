@@ -281,6 +281,13 @@ Ext.define('Showroom.view.category.CategoryController', {
             vm = me.getViewModel();
         console.info(vm.getStore('products'));
     },
+    onCard1Show: function (cmp) {
+        console.info('onCard1Show called');
+        // console.info(cmp.getScrollable());
+        // cmp.getScrollable().position = { x: 0, y: 0 };
+        // cmp.getScrollable().trackingScrollTop = 0;
+        cmp.getScrollable().scrollTo('top', 0);
+    },
 
     onAddToCart: function (target) {
         console.info('onAddToCart called');

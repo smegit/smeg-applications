@@ -1,0 +1,14 @@
+.x-panel-header-default-horizontal{
+  padding: 8px;
+}
+.x-box-inner{
+  margin: auto;
+}
+
+.tool-bar > .x-toolbar-text.x-box-item.x-toolbar-item.x-toolbar-text-default {
+    font-size: 18px;
+    color: white;
+  }
+.white-btn{
+  color: white
+}

@@ -366,6 +366,9 @@ Ext.define('Showroom.view.category.Category', {
             //autoScroll: true,
             scrollable: 'y',
             margin: 20,
+            listeners: {
+                show: 'onCard1Show'
+            },
             items: [
                 // {
                 //     xtype: 'container',

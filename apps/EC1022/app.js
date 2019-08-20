@@ -8,7 +8,8 @@ Ext.application({
         'Main'
     ],
     stores: [
-        'Main'
+        'Main',
+        'Agency'
     ],
     views: [
         'Main',
@@ -21,11 +22,11 @@ Ext.application({
     ],
     name: 'EC1022',
 
-    init: function() {
+    init: function () {
         Ext.state.Manager.setProvider(Ext.create('Ext.state.LocalStorageProvider'));
     },
 
-    launch: function() {
+    launch: function () {
         //load the theme current theme
         //
         var theme = Ext.getUrlParam('theme'),
@@ -33,24 +34,24 @@ Ext.application({
             head = document.head,
             link = document.createElement('link');
 
-        link.id   = 'portaltheme';
+        link.id = 'portaltheme';
         link.type = 'text/css';
-        link.rel  = 'stylesheet';
+        link.rel = 'stylesheet';
         link.href = path;
         head.appendChild(link);
-        
+
         Ext.create('EC1022.view.Main');
     },
 
-    encodeProperties: function(obj) {
+    encodeProperties: function (obj) {
         var mapObj = {
-            "#":"p",
-            "$":"s",
-            "@":"a"
+            "#": "p",
+            "$": "s",
+            "@": "a"
         };
-        Ext.Object.each(obj,function(prop,val) {
+        Ext.Object.each(obj, function (prop, val) {
             text = prop;
-            text = text.replace(/#|\$|@/g, function(matched) {
+            text = text.replace(/#|\$|@/g, function (matched) {
                 return mapObj[matched];
             });
             if (text !== prop) {
@@ -61,15 +62,15 @@ Ext.application({
         return obj;
     },
 
-    decodeProperties: function(obj) {
+    decodeProperties: function (obj) {
         var mapObj = {
-            "p":"#",
-            "s":"$",
-            "a":"@"
+            "p": "#",
+            "s": "$",
+            "a": "@"
         };
-        Ext.Object.each(obj,function(prop,val) {
+        Ext.Object.each(obj, function (prop, val) {
             text = prop;
-            text = text.replace(/p|s|a/g, function(matched) {
+            text = text.replace(/p|s|a/g, function (matched) {
                 return mapObj[matched];
             });
             if (text !== prop) {

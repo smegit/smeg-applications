@@ -11,7 +11,7 @@ Ext.define('EC1022.view.EditWindow', {
         'Ext.form.field.Checkbox'
     ],
 
-    height: 500,
+    height: 390,
     width: 600,
     layout: 'fit',
     defaultFocus: '[name=A1USRNAM]',
@@ -34,7 +34,8 @@ Ext.define('EC1022.view.EditWindow', {
                         msgTarget: 'under'
                     },
                     layout: 'auto',
-                    bodyPadding: 10,
+                    bodyPadding: '20 10 10 10',
+                    //margin: '10px 0 0 0',
                     header: false,
                     items: [
                         {
@@ -44,7 +45,8 @@ Ext.define('EC1022.view.EditWindow', {
                             size: 15,
                             fieldLabel: 'AGENCY',
                             submitValue: true,
-                            name: 'A1CN'
+                            name: 'A1CN',
+                            hidden: true
                         },
                         {
                             xtype: 'displayfield',
@@ -53,7 +55,8 @@ Ext.define('EC1022.view.EditWindow', {
                             size: 15,
                             fieldLabel: 'USER Id',
                             submitValue: true,
-                            name: 'A1USRID'
+                            name: 'A1USRID',
+                            hidden: true
                         },
                         {
                             xtype: 'textfield',
@@ -64,7 +67,7 @@ Ext.define('EC1022.view.EditWindow', {
                             emptyText: 'Salesperson name',
                             itemId: 'A1USRNAM',
                             size: 50,
-                            fieldLabel: 'NAME',
+                            fieldLabel: 'Name',
                             name: 'A1USRNAM'
                         },
                         {
@@ -77,7 +80,7 @@ Ext.define('EC1022.view.EditWindow', {
                             emptyText: 'Login ID with no spaces',
                             itemId: 'A1LOGIN',
                             size: 50,
-                            fieldLabel: 'LOGIN',
+                            fieldLabel: 'Login',
                             name: 'A1LOGIN'
                         },
                         {
@@ -88,7 +91,7 @@ Ext.define('EC1022.view.EditWindow', {
                             allowBlank: false,
                             itemId: 'A1USREML',
                             size: 50,
-                            fieldLabel: 'EMAIL',
+                            fieldLabel: 'Email',
                             name: 'A1USREML'
                         },
                         {
@@ -97,7 +100,7 @@ Ext.define('EC1022.view.EditWindow', {
                             enforceMaxLength: true,
                             itemId: 'A1USRCOD',
                             size: 18,
-                            fieldLabel: 'CODE',
+                            fieldLabel: 'Employee No',
                             name: 'A1USRCOD'
                         },
                         {
@@ -106,7 +109,7 @@ Ext.define('EC1022.view.EditWindow', {
                             enforceMaxLength: true,
                             itemId: 'A1USRSTS',
                             size: 2,
-                            fieldLabel: 'STATUS',
+                            fieldLabel: 'Status',
                             name: 'A1USRSTS'
                         },
                         // {
@@ -153,7 +156,7 @@ Ext.define('EC1022.view.EditWindow', {
                         // },
                         {
                             xtype: 'fieldcontainer',
-                            fieldLabel: 'PASSWORD',
+                            fieldLabel: 'Password',
                             //labelWidth: 100,
 
                             // The body area will contain three text fields, arranged
