@@ -371,7 +371,8 @@ Ext.define('Shopping.view.cart.CartController', {
                     ALWRLSQ: product.releaseQtyEditable,
                     OBORDLNO: product.orderLineNO,
                     OBPRMCOD: product.OBPRMCOD,
-                    OBDCRT: product.OBDCRT
+                    OBDCRT: product.OBDCRT,
+                    ALWPROM: product.ALWPROM,
 
                 });
             }
@@ -450,7 +451,9 @@ Ext.define('Shopping.view.cart.CartController', {
                 ALWRLSQ: product.releaseQtyEditable,
                 OBORDLNO: product.orderLineNO,
                 OBPRMCOD: product.OBPRMCOD,
-                OBDCRT: product.OBDCRT
+                OBDCRT: product.OBDCRT,
+                ALWPROM: product.ALWPROM,
+
             })
 
         }
@@ -693,8 +696,8 @@ Ext.define('Shopping.view.cart.CartController', {
             rec = context.record,
             outstanding = Shopping.util.Helper.getOutstanding(rec),
             checkoutButton = me.lookupReference('checkoutButton');
-        //console.info(editor);
-        //console.info(context);
+        console.info(editor);
+        console.info(context);
 
         // if (!Ext.isEmpty(rec.get('generated')) && rec.get('generated') == 'Y') {
         //     return false;
@@ -716,6 +719,14 @@ Ext.define('Shopping.view.cart.CartController', {
         // }
 
         if (field === 'release' && (Ext.isEmpty(outstanding) || outstanding == 0)) {
+            return false;
+        }
+
+        console.info(rec);
+        console.info(field);
+        console.info(rec.get('ALWDEL'));
+        if (field === 'OBPRMCOD' && (rec.get('ALWPROM') == 'N')) {
+            console.info('not allow to edit');
             return false;
         }
 
@@ -2196,7 +2207,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 url: '/valence/vvcall.pgm',
                 params: params,
                 success: function (res) {
-                    //console.info(res);
+                    console.info(res);
                     var resp = Ext.decode(res.responseText);
                     deferred.resolve(resp);
                     //deferred.reject(resp);
@@ -2258,7 +2269,8 @@ Ext.define('Shopping.view.cart.CartController', {
                     "orderLineNO": cartItems[i].OBORDLNO,
                     "OBPRMCOD": cartItems[i].OBPRMCOD,
                     "plain_txt": cartItems[i].PALINTXT,
-                    "OBDCRT": cartItems[i].OBDCRT
+                    "OBDCRT": cartItems[i].OBDCRT,
+                    "ALWPROM": cartItems[i].ALWPROM,
                     // TODO: add "deletable"
                 });
             }
@@ -2266,7 +2278,7 @@ Ext.define('Shopping.view.cart.CartController', {
 
         cartItemStore.add(updatedItems);
         //console.info(updatedItems);
-        //console.info(cartItemStore);
+        console.info(cartItemStore);
         //console.info(cartItemStore.sum('sub_total'));
 
         vm.set({
@@ -2292,7 +2304,15 @@ Ext.define('Shopping.view.cart.CartController', {
             needUpdate: false
         });
 
-
+        // load promoCodeList
+        // vm.set({
+        //     promoCodeList: res.promoCodeList
+        // });
+        console.info('justBeforePromoCodeList');
+        var promoCodeListStore = vm.getStore('promoCodeList');
+        // console.info(promoCodeListStore);
+        promoCodeListStore.loadRawData(resp.promoCodeList);
+        console.info(vm);
         // load payment history
         //paymentHistoryStore.loadData(obj.payments);
         if (!Ext.isEmpty(resp.TOTALPAID)) {

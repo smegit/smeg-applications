@@ -306,6 +306,63 @@ Ext.define('Shopping.view.cart.List', {
                     return Ext.String.format('<b>{0}</b>', Ext.util.Format.number(value, '0,0.00'));
                 }
             },
+            {
+                text: 'Promo Code',
+                align: 'right',
+                width: 100,
+                dataIndex: 'OBPRMCOD',
+                sortable: false,
+                editor: {
+                    // xtype: 'textfield',
+                    // width: 50,
+                    xtype: 'combo',
+                    // typeAhead: true,
+                    // triggerAction: 'all',
+                    queryMode: 'local',
+                    displayField: 'PAPRMDSC',
+                    valueField: 'PAPRMCOD',
+                    matchFieldWidth: false,
+                    editable: false,
+                    bind: {
+                        store: '{promoCodeList}'
+                    },
+                    listeners: {
+                        focus: function (cmp) {
+                            console.info('onfocus');
+                            cmp.expand();
+                        }
+                    },
+                    // store: ['123', '456'],
+                },
+                bind: {
+                    hidden: '{!(cartValues.SHWPRMCOL == "Y" ? true: false)}'
+                },
+
+                renderer: function (v, meta) {
+                    meta.tdCls += ' editable-column';
+                    return v;
+                },
+                // renderer: function (value, meta, rec, rowIndex, colIndex, store) {
+                //     // console.info(meta);
+                //     // console.info(rec);
+                //     console.info(value);
+
+                //     meta.tdCls += ' editable-column';
+                //     // console.info(meta);
+                //     // // meta.tdCls += 'inactive';
+                //     // if (rec.get('ALWPROM') == 'N') {
+                //     //     return '';
+                //     // }
+                //     // return value;
+                // },
+                editRenderer: function (value, metaData, record) {
+                    // evaluate the record's `updated` field and if truthy return the value
+                    // from the `newVal` field, else return value
+                    var showPromCombo = record.get('ALWPROM');
+                    console.info(showPromCombo);
+                    return '123';
+                }
+            },
 
             {
                 text: '',

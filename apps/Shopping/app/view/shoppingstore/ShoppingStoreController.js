@@ -346,6 +346,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 OBORDLNO: !Ext.isEmpty(item.orderLineNO) ? item.orderLineNO : '',
                 OBPRMCOD: !Ext.isEmpty(item.OBPRMCOD) ? item.OBPRMCOD : '',
                 OBDCRT: !Ext.isEmpty(item.OBDCRT) ? item.OBDCRT : '',
+                ALWPROM: !Ext.isEmpty(item.ALWPROM) ? item.ALWPROM : '',
 
 
             })
@@ -437,6 +438,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 orderLineNO: Ext.isEmpty(product.OBORDLNO) ? '' : product.OBORDLNO,
                 OBPRMCOD: Ext.isEmpty(product.OBPRMCOD) ? '' : product.OBPRMCOD,
                 OBDCRT: !Ext.isEmpty(product.OBDCRT) ? product.OBDCRT : '',
+                ALWPROM: !Ext.isEmpty(product.ALWPROM) ? product.ALWPROM : '',
+
             },
             //existingRec = cartItemStore.findRecord('product_id', product.MODEL, 0, false, true, true),
             existingRec,
@@ -1058,7 +1061,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                             "orderLineNO": product.OBORDLNO,
                             "OBPRMCOD": product.OBPRMCOD,
                             "plain_txt": product.PALINTXT,
-                            "OBDCRT": product.OBDCRT
+                            "OBDCRT": product.OBDCRT,
+                            "ALWPROM": product.ALWPROM,
 
                             //TODO: add "deletable"
                         });
@@ -1243,6 +1247,13 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                         disableSalesPerson: (!Ext.isEmpty(obj.lockSalesPerson) && obj.lockSalesPerson === 'true' && !Ext.isEmpty(formValues.OAREP)) ? true : false
                     });
 
+                    // load promoCodeList
+                    // vm.set({
+                    //     promoCodeList: obj.promoCodeList
+                    // });
+                    var promoCodeListStore = vm.getStore('promoCodeList');
+                    promoCodeListStore.loadRawData(obj.promoCodeList);
+                    console.info(vm);
                     // Check to see if Delivery Address is set and should be "expanded"
                     fieldset.down('#deliveryChkbox').setValue(false);
                     // console.info(formValues);
@@ -1287,7 +1298,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                                 "orderLineNO": product.OBORDLNO,
                                 "OBPRMCOD": product.OBPRMCOD,
                                 "plain_txt": product.PALINTXT,
-                                "OBDCRT": product.OBDCRT
+                                "OBDCRT": product.OBDCRT,
+                                "ALWPROM": product.ALWPROM
 
                                 // TODO: add "deletable"
                             });
@@ -1449,7 +1461,7 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
         //console.info(Ext.getValues(record.getChanges()));
 
 
-        if (!Ext.Object.isEmpty(record.getChanges()) && record.isModified('quantity')) {
+        if (!Ext.Object.isEmpty(record.getChanges()) && (record.isModified('quantity') || record.isModified('OBPRMCOD'))) {
             console.log('have changes');
             vm.set('needUpdate', true);
             Ext.ComponentQuery.query('#calcBtnSelector')[0].enable();

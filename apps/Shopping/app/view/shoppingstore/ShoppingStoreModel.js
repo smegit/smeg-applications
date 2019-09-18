@@ -14,7 +14,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
 
         // Add payment history model
         'Shopping.model.PaymentHistory',
-        'Shopping.model.PromoSelection'
+        'Shopping.model.PromoSelection',
+        'Shopping.model.PromoCodeList'
     ],
 
     data: {
@@ -218,6 +219,10 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         },
         promoSelections: {
             model: 'Shopping.model.PromoSelection',
+            autoLoad: false
+        },
+        promoCodeList: {
+            model: 'Shopping.model.PromoCodeList',
             autoLoad: false
         }
     }
