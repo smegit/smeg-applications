@@ -60,6 +60,20 @@ Ext.define('Shopping.view.cart.PaymentHistory', {
             //     return '{listFooterText}'
             // }
         },
+        // {
+        //     text: 'Received',
+        //     align: 'center',
+        //     dataIndex: 'amount',
+        //     renderer: function (value, meta) {
+        //         // console.info(meta);
+        //         if (value > 1000) {
+        //             // meta.innerCls += ' x-fa fa-home';
+        //             return '<i class="fa fa-check" style="font-size:18px;color:green;"></i>';
+        //         } else {
+        //             return '<i class="fa fa-exclamation" style="font-size:18px;color:red;"></i>';
+        //         }
+        //     }
+        // },
         {
             text: '',
             width: 30

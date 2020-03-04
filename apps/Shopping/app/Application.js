@@ -48,7 +48,7 @@ Ext.define('Shopping.Application', {
             // console.info(options);
             // if (options.params.pgm === 'EC1010') {
             Ext.apply(options.params, {
-                function: 'shopping'
+                function: 'AGN'
             });
             // }
         });
@@ -106,7 +106,9 @@ Ext.define('Shopping.Application', {
                                     change: {
                                         buffer: 350,
                                         fn: function (cmp, value) {
-                                            Valence.util.Helper.processTypedInputFilter(agencyStore, ['ACCOUNT', 'NAME'], value, 'smegAgentFilter');
+                                            //Valence.util.Helper.processTypedInputFilter2(agencyStore, ['ACCOUNT', 'NAME'], value, 'smegAgentFilter');
+                                            Shopping.util.Helper.processTypedInputFilter2(agencyStore, ['NAME', 'ACCOUNT', 'SEARCH'], value, 'smegAgentFilter');
+
                                         }
                                     },
                                     // specialkey: function (cmp, e) {

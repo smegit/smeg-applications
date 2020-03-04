@@ -197,13 +197,14 @@ Ext.define('pdf.view.main.MainController', {
             console.info(uploadForm.getFieldValues('file').file.replace(/^.*\\/, ""));
             //  submit
             uploadForm.submit({
-                url: '/valence/vvupload.pgm?action=upload' + '&fileName=' + fileName + '&sid=' + localStorage.getItem('sid'),
+                url: '/valence/vvupload.pgm?action=upload' + '&fileName=' + fileName + '&sid=jz-dev-token',
                 //url: '/valence/vvcall.pgm',
                 params: {
                     pgm: 'EC2020',
                     action: 'upload',
-                    sid: localStorage.getItem('sid'),
-                    app: Ext.getUrlParam('app'),
+                    //sid: localStorage.getItem('sid'),
+                    //app: Ext.getUrlParam('app'),
+                    app: '1013',
                     // pgm: 'EC2020',
                     // action: 'upload',
                     //pgm: 'EXUPLOAD1',

@@ -1028,8 +1028,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
                 console.info(delvDate);
                 console.info(todayDate);
-
-                if (delvDate < todayDate || delvDate > ninetyDate || formValues.OADELD === '0001-01-01') {
+                //if (delvDate < todayDate || delvDate > ninetyDate || formValues.OADELD === '0001-01-01')
+                if (formValues.OADELD === '0001-01-01') {
                     console.info('change OADELD value to null');
                     formValues.OADELD = null;
                 }
@@ -1079,6 +1079,9 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                 if (!Ext.isEmpty(obj.TOTALPAID)) {
                     vm.set('totalPaid', obj.TOTALPAID)
                 }
+                // add payment status
+                vm.set('comment', obj.COMMENT);
+                vm.set('payStatus', obj.PAYSTATUS);
 
                 //console.info(cartItemStore.sum('sub_total'));
                 // set order total
@@ -1105,6 +1108,11 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
 
                 // load promote headers
                 me.loadPromoHeader(obj.promoHeader);
+
+
+                var promoCodeListStore = vm.getStore('promoCodeList');
+                promoCodeListStore.loadRawData(obj.promoCodeList);
+                console.info(vm);
 
 
                 vm.set({
@@ -1230,7 +1238,8 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     todayDate = todayDate.getTime();
                     ninetyDate = ninetyDate.getTime();
 
-                    if (delvDate < todayDate || delvDate > ninetyDate || formValues.OADELD === '0001-01-01') {
+                    // if (delvDate < todayDate || delvDate > ninetyDate || formValues.OADELD === '0001-01-01')
+                    if (formValues.OADELD === '0001-01-01') {
                         console.info('change OADELD value to null');
                         formValues.OADELD = null;
                     }
@@ -1323,6 +1332,11 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
                     if (!Ext.isEmpty(obj.TOTALPAID)) {
                         vm.set('totalPaid', obj.TOTALPAID)
                     }
+
+                    // add payment status
+                    vm.set('comment', obj.COMMENT);
+                    vm.set('payStatus', obj.PAYSTATUS);
+
                     paymentHistoryStore.removeAll();
                     vm.set('hidePaymentHistory', true);
                     if (!Ext.isEmpty(payments)) {
@@ -1446,18 +1460,20 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreController', {
     },
     onGridUpdate: function (store, record, operation, modifiedFieldNames, details, eOpts) {
         console.log('onGridUpdate called');
-        // console.info(store);
-        // console.info(record);
-        // console.info(operation);
-        // console.info(modifiedFieldNames);
-        // console.info(details);
+        console.info(store);
+        console.info(record);
+        console.info(operation);
+        console.info(modifiedFieldNames);
+        console.info(details);
         // console.info(eOpts);
         var me = this,
             vm = me.getViewModel(),
             view = me.getView();
-        // console.info(record.getChanges());
+        console.info(record.getChanges());
         // console.info(record.isModified('quantity'));
-        // console.info(Ext.Object.isEmpty(record.getChanges()));
+        console.info(!Ext.Object.isEmpty(record.getChanges()));
+        console.info(record.isModified('OBPRMCOD'));
+        console.info(Ext.isEmpty(null));
         //console.info(Ext.getValues(record.getChanges()));
 
 

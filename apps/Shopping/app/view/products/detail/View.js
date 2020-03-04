@@ -27,7 +27,7 @@ Ext.define('Shopping.view.products.detail.View', {
         '<div class="prd-desc">{[values.Product[0].PRODDESC]}</div>',
         '<div class="prd-model">Model: {[values.Product[0].MODEL]}</div>',
         '<div class="prd-ean">EAN: <b>{[values.Product[0].EAN]}</b></div>',
-
+        '<div class="prd-comment">{[values.Product[0].COMMENT]}',
         '<div class="prd-price-wrpr">',
         '{[this.getPriceText(values.Product[0])]}',
         '{[this.getExpirationText(values.Product[0])]}',

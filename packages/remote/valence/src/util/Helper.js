@@ -3,17 +3,17 @@
  * Various helper methods for working within the Portal.
  */
 Ext.define('Valence.util.Helper', {
-    singleton        : true,
-    currencies       : null,
-    isDb2i           : null,
-    constructor      : function () {
+    singleton: true,
+    currencies: null,
+    isDb2i: null,
+    constructor: function () {
         // setup literal object...
         //
         if (typeof Valence.lang !== 'object') {
             if (typeof parent.Valence.lang === 'object') {
                 Ext.apply(Valence, {
-                    lang : {
-                        lit : parent.Valence.lang.lit
+                    lang: {
+                        lit: parent.Valence.lang.lit
                     }
                 });
                 vlit = Valence.lang.lit;
@@ -39,10 +39,10 @@ Ext.define('Valence.util.Helper', {
      *     },this);
      *
      */
-    addEventListener : function (event, cb, scope) {
+    addEventListener: function (event, cb, scope) {
         if (!Ext.isEmpty(Ext.isClassic) && Ext.isClassic) {
-            var scope     = scope || window,
-                key       = Ext.getUrlParam('key'),
+            var scope = scope || window,
+                key = Ext.getUrlParam('key'),
                 iframeCmp = (!Ext.isEmpty(key)) ? parent.Ext.ComponentQuery.query('uxiframe[key=' + key + ']')[0] : null;
             if (iframeCmp) {
                 iframeCmp.mon(iframeCmp, event, cb, scope);
@@ -80,7 +80,7 @@ Ext.define('Valence.util.Helper', {
      *
      */
 
-    download         : function (parms, returnSource) {
+    download: function (parms, returnSource) {
         var me = this;
         if (Ext.isEmpty(Valence.mobile) || !Valence.mobile.Access.isNativePortal()) {
             var url = '/valence/vvcall.pgm',
@@ -104,12 +104,12 @@ Ext.define('Valence.util.Helper', {
 
             if (Ext.isEmpty(returnSource) || !returnSource) {
                 Ext.core.DomHelper.append(document.body, {
-                    tag         : 'iframe',
-                    frameBorder : 0,
-                    width       : 0,
-                    height      : 0,
-                    css         : 'display:none;visibility:hidden;height:1px;',
-                    src         : src
+                    tag: 'iframe',
+                    frameBorder: 0,
+                    width: 0,
+                    height: 0,
+                    css: 'display:none;visibility:hidden;height:1px;',
+                    src: src
                 });
             } else {
                 return src;
@@ -139,13 +139,13 @@ Ext.define('Valence.util.Helper', {
      *     });
      *
      */
-    fireEvent        : function (event, o) {
+    fireEvent: function (event, o) {
         if (!Valence.mobile.Access.isNativePortal()) {
             var Portal = parent.Portal || Portal,
-                parms  = o || {};
+                parms = o || {};
 
             Ext.apply(parms, {
-                event : event
+                event: event
             });
 
             Portal.getApplication().fireEvent('bubbledown', parms);
@@ -163,9 +163,9 @@ Ext.define('Valence.util.Helper', {
      * @param {Number} value Value
      * @return {String} The formatted currency string
      */
-    formatCurrency : function (code, value, config) {
-        var me                   = this,
-            extFormat            = Ext.util.Format,
+    formatCurrency: function (code, value, config) {
+        var me = this,
+            extFormat = Ext.util.Format,
             commaDecimalSepartor = false;
 
         if (Ext.isEmpty(value)) {
@@ -191,15 +191,15 @@ Ext.define('Valence.util.Helper', {
             }
 
             if (commaDecimalSepartor) {
-                var orgThousandSeparator    = extFormat.thousandSeparator,
-                    orgDecimalSeparator     = extFormat.decimalSeparator;
-                extFormat.decimalSeparator  = ',';
+                var orgThousandSeparator = extFormat.thousandSeparator,
+                    orgDecimalSeparator = extFormat.decimalSeparator;
+                extFormat.decimalSeparator = ',';
                 extFormat.thousandSeparator = '.';
             }
             value = extFormat.currency(value, currency.sign, currency.decimals, currency.end);
 
             if (commaDecimalSepartor) {
-                extFormat.decimalSeparator  = orgDecimalSeparator;
+                extFormat.decimalSeparator = orgDecimalSeparator;
                 extFormat.thousandSeparator = orgThousandSeparator;
             }
         }
@@ -212,13 +212,13 @@ Ext.define('Valence.util.Helper', {
      * @param {String}  date The date in 'Y-m-d' / iso format
      * @return {String} The formatted date
      */
-    formatDate : function (o) {
+    formatDate: function (o) {
         var me = this;
         if (!Valence.mobile.Access.isNativePortal()) {
-            var date     = o,
-                d        = Ext.Date.parse(date, 'Y-m-d'),
+            var date = o,
+                d = Ext.Date.parse(date, 'Y-m-d'),
                 settings = me.getValenceSettings(),
-                format   = (!Ext.isEmpty(settings)) ? settings.getDateFormat() : 'Y-m-d';
+                format = (!Ext.isEmpty(settings)) ? settings.getDateFormat() : 'Y-m-d';
 
             return (Ext.isEmpty(d)) ? date : Ext.util.Format.date(d, format);
         } else {
@@ -226,8 +226,8 @@ Ext.define('Valence.util.Helper', {
             return;
             //todo - this needs to be added to the mobile native portal
             var config = {
-                responseId : 'formatedDate',
-                requestId  : 'formatDate'
+                responseId: 'formatedDate',
+                requestId: 'formatDate'
             };
             Ext.apply(config, o);
             Valence.mobile.Access.initiate(config);
@@ -240,11 +240,11 @@ Ext.define('Valence.util.Helper', {
      * @param {Number} Date
      * @return {String} ISO Date
      */
-    formatDateCYMDToISO : function (v) {
+    formatDateCYMDToISO: function (v) {
         if (!Ext.isEmpty(v)) {
-            var year      = parseInt((v / 10000) + 1900) + '',
-                month     = parseInt((v % 10000) / 100) + '',
-                day       = parseInt((v % 100)) + '',
+            var year = parseInt((v / 10000) + 1900) + '',
+                month = parseInt((v % 10000) / 100) + '',
+                day = parseInt((v % 100)) + '',
                 formatFnc = function (v) {
                     var padding = '00';
                     return padding.substring(0, padding.length - v.length) + v;
@@ -262,8 +262,8 @@ Ext.define('Valence.util.Helper', {
      * @param {Boolean} [commaDecimalSeparator]
      * @return {String} The formatted number string
      */
-    formatNumber : function (value, format, commaDecimalSeparator) {
-        var me        = this,
+    formatNumber: function (value, format, commaDecimalSeparator) {
+        var me = this,
             extFormat = Ext.util.Format;
 
         if (Ext.isEmpty(commaDecimalSeparator)) {
@@ -274,15 +274,15 @@ Ext.define('Valence.util.Helper', {
             return Ext.util.Format.number(value, format)
         } else {
             var orgThousandSeparator = extFormat.thousandSeparator,
-                orgDecimalSeparator  = extFormat.decimalSeparator,
+                orgDecimalSeparator = extFormat.decimalSeparator,
                 v;
 
-            extFormat.decimalSeparator  = ',';
+            extFormat.decimalSeparator = ',';
             extFormat.thousandSeparator = '.';
 
             v = extFormat.number(value, format);
 
-            extFormat.decimalSeparator  = orgDecimalSeparator;
+            extFormat.decimalSeparator = orgDecimalSeparator;
             extFormat.thousandSeparator = orgThousandSeparator;
 
             return v;
@@ -295,7 +295,7 @@ Ext.define('Valence.util.Helper', {
      * @param {Number} The app id.
      * @return {String} The app name.
      */
-    getAppName : function (appId) {
+    getAppName: function (appId) {
         var proceed = typeof Portal === 'object' || typeof parent.Portal === 'object',
             str, rec;
 
@@ -319,8 +319,8 @@ Ext.define('Valence.util.Helper', {
      * @param {String} code Currency code
      * @return {Object} Currency object
      */
-    getCurrency : function (code) {
-        var me         = this,
+    getCurrency: function (code) {
+        var me = this,
             currencies = me.getCurrencies();
 
         if (!Ext.isEmpty(code)) {
@@ -336,12 +336,12 @@ Ext.define('Valence.util.Helper', {
      * @since Version 5.0
      * @return {Ext.util.MixedCollection} Collection of the currencies
      */
-    getCurrencies : function () {
-        var me         = this,
+    getCurrencies: function () {
+        var me = this,
             currencies = me.currencies;
 
-        if (Ext.isEmpty(currencies)){
-            if (Ext.getFramework().version === 3){
+        if (Ext.isEmpty(currencies)) {
+            if (Ext.getFramework().version === 3) {
                 me.currencies = new Ext.util.MixedCollection;
                 currencies = me.currencies;
             } else {
@@ -354,34 +354,34 @@ Ext.define('Valence.util.Helper', {
             //load the currencies
             //
             currencies.add('AUD', {
-                desc     : 'Australia Dollar',
-                decimals : 2,
-                sign     : 'AU$',
-                end      : false
+                desc: 'Australia Dollar',
+                decimals: 2,
+                sign: 'AU$',
+                end: false
             });
             currencies.add('CAD', {
-                desc     : 'Canada Dollar',
-                decimals : 2,
-                sign     : 'C$',
-                end      : false
+                desc: 'Canada Dollar',
+                decimals: 2,
+                sign: 'C$',
+                end: false
             });
             currencies.add('EUR', {
-                desc     : 'Euro Member Countries',
-                decimals : 2,
-                sign     : '€',
-                end      : false
+                desc: 'Euro Member Countries',
+                decimals: 2,
+                sign: '€',
+                end: false
             });
             currencies.add('JPY', {
-                desc     : 'Japan Yen',
-                decimals : 0,
-                sign     : '¥',
-                end      : false
+                desc: 'Japan Yen',
+                decimals: 0,
+                sign: '¥',
+                end: false
             });
             currencies.add('USD', {
-                desc     : 'United States Dollar',
-                decimals : 2,
-                sign     : '$',
-                end      : false
+                desc: 'United States Dollar',
+                decimals: 2,
+                sign: '$',
+                end: false
             });
         }
 
@@ -406,16 +406,16 @@ Ext.define('Valence.util.Helper', {
      *         }
      *     });
      */
-    getDateFormat : function (o) {
+    getDateFormat: function (o) {
         var me = this;
         if (!Valence.mobile.Access.isNativePortal()) {
             var settings = me.getValenceSettings(),
-                format   = (!Ext.isEmpty(settings)) ? settings.getDateFormat() : 'Y-m-d';
+                format = (!Ext.isEmpty(settings)) ? settings.getDateFormat() : 'Y-m-d';
             return format;
         } else {
             var config = {
-                responseId : 'dateFormat',
-                requestId  : 'getDateFormat'
+                responseId: 'dateFormat',
+                requestId: 'getDateFormat'
             };
             Ext.apply(config, o);
             Valence.mobile.Access.initiate(config);
@@ -440,16 +440,16 @@ Ext.define('Valence.util.Helper', {
      *         }
      *     });
      */
-    getEnvironment   : function (o) {
+    getEnvironment: function (o) {
         var me = this;
         if (!Valence.mobile.Access.isNativePortal()) {
-            var runtime     = me.getValenceRuntime(),
+            var runtime = me.getValenceRuntime(),
                 environment = (!Ext.isEmpty(runtime)) ? runtime.getLoginData().envName : null;
             return environment;
         } else {
             var config = {
-                responseId : 'currentEnvironment',
-                requestId  : 'getEnvironment'
+                responseId: 'currentEnvironment',
+                requestId: 'getEnvironment'
             };
             Ext.apply(config, o);
             Valence.mobile.Access.initiate(config);
@@ -460,7 +460,7 @@ Ext.define('Valence.util.Helper', {
      * @since Version 5.0
      * @return {Integer} envId
      */
-    getEnvironmentId : function () {
+    getEnvironmentId: function () {
         var env = Ext.getUrlParam('env');
 
         if (env) {
@@ -503,7 +503,7 @@ Ext.define('Valence.util.Helper', {
      *         });
      *
      */
-    getLanguage        : function () {
+    getLanguage: function () {
         var lang = Ext.getUrlParam('lang');
 
         if (!lang) {
@@ -512,7 +512,7 @@ Ext.define('Valence.util.Helper', {
             }
         }
 
-        if (Ext.isEmpty(lang)){
+        if (Ext.isEmpty(lang)) {
             lang = 'en';
         }
 
@@ -526,10 +526,10 @@ Ext.define('Valence.util.Helper', {
      * ##Example - Valence.util.Helper.getMultiLingual()
      *
      */
-    getMultiLingual    : function (o) {
+    getMultiLingual: function (o) {
         var me = this;
         if (!Valence.mobile.Access.isNativePortal()) {
-            var settings     = me.getValenceSettings(),
+            var settings = me.getValenceSettings(),
                 multiLingual = (!Ext.isEmpty(settings)) ? settings.getMultiLingual() : null;
             return multiLingual;
         } else {
@@ -537,8 +537,8 @@ Ext.define('Valence.util.Helper', {
             return;
             //todo - this needs to be added to the mobile natvie portal
             var config = {
-                responseId : 'multiLingual',
-                requestId  : 'getMultiLingual'
+                responseId: 'multiLingual',
+                requestId: 'getMultiLingual'
             };
             Ext.apply(config, o);
             Valence.mobile.Access.initiate(config);
@@ -549,9 +549,9 @@ Ext.define('Valence.util.Helper', {
      * @since Version 5.0
      * @return {String} Hex Color
      */
-    getRandomColor     : function () {
+    getRandomColor: function () {
         var letters = '0123456789ABCDEF'.split('');
-        var color   = '#';
+        var color = '#';
         for (var i = 0; i < 6; i++) {
             color += letters[Math.floor(Math.random() * 16)];
         }
@@ -562,7 +562,7 @@ Ext.define('Valence.util.Helper', {
      * @since Version 5.0
      * @return {String} SID
      */
-    getSid             : function () {
+    getSid: function () {
         var sid = Ext.getUrlParam('sid');
 
         if (sid) {
@@ -601,16 +601,16 @@ Ext.define('Valence.util.Helper', {
      *         }
      *     });
      */
-    getUserName        : function (obj) {
+    getUserName: function (obj) {
         var me = this;
         if (!Valence.mobile.Access.isNativePortal()) {
             var runtime = me.getValenceRuntime(),
-                user    = (!Ext.isEmpty(runtime)) ? runtime.getUser() : null;
+                user = (!Ext.isEmpty(runtime)) ? runtime.getUser() : null;
             return user;
         } else {
             var config = {
-                responseId : 'currentUser',
-                requestId  : 'getUser'
+                responseId: 'currentUser',
+                requestId: 'getUser'
             };
             Ext.apply(config, obj);
             Valence.mobile.Access.initiate(config);
@@ -622,7 +622,7 @@ Ext.define('Valence.util.Helper', {
      * Returns the active Valence settings
      * @return {object}
      */
-    getValenceRuntime  : function () {
+    getValenceRuntime: function () {
         var me = this;
 
         //get the valence runtime for Desktop or Mobile
@@ -644,7 +644,7 @@ Ext.define('Valence.util.Helper', {
      * Returns the active Valence settings
      * @return {object}
      */
-    getValenceSettings : function () {
+    getValenceSettings: function () {
         var me = this;
 
         //get the valence settings for Desktop or Mobile
@@ -670,19 +670,19 @@ Ext.define('Valence.util.Helper', {
      * ##Example - Valence.util.Helper.getVersion()
      *
      */
-    getVersion         : function (o) {
+    getVersion: function (o) {
         var me = this;
         if (!Valence.mobile.Access.isNativePortal()) {
             var settings = me.getValenceSettings(),
-                version  = (!Ext.isEmpty(settings)) ? settings.getVersion() : null;
+                version = (!Ext.isEmpty(settings)) ? settings.getVersion() : null;
             return version;
         } else {
             Ext.global.console.warn('Valence.util.Helper.getValenceRuntime only available for Classic/Desktop Applications');
             return;
             //todo - this needs to be added to the mobile native portal
             var config = {
-                responseId : 'version',
-                requestId  : 'getVersion'
+                responseId: 'version',
+                requestId: 'getVersion'
             };
             Ext.apply(config, o);
             Valence.mobile.Access.initiate(config);
@@ -696,23 +696,23 @@ Ext.define('Valence.util.Helper', {
      *  - `urls`: (required) An array of url pathnames that specify the location of JavaScript files to load and execute into the page. At least one url must be specified.
      *  - `callback`: (optional) Function to call once all script files have been loaded and executed.
      */
-    execScriptFiles    : function (config) {
+    execScriptFiles: function (config) {
         var scriptIndex = 0,
-            scope       = config.scope || window,
-            callback    = config.callback || null;
-        var getFiles    = function (scriptIndex) {
+            scope = config.scope || window,
+            callback = config.callback || null;
+        var getFiles = function (scriptIndex) {
             config = config ||
                 {};
             Ext.apply(this, config);
             Ext.Ajax.request({
-                method                : 'GET',
-                omitPortalCredentials : true,
-                disableCaching        : false,
-                url                   : this.urls[scriptIndex],
-                callback              : function (options, success, response) {
+                method: 'GET',
+                omitPortalCredentials: true,
+                disableCaching: false,
+                url: this.urls[scriptIndex],
+                callback: function (options, success, response) {
                     try {
                         var responseString = '';
-                        responseString     = response.responseText;
+                        responseString = response.responseText;
                         eval.call(window, response.responseText);
                     } catch (e) {
                     }
@@ -755,14 +755,14 @@ Ext.define('Valence.util.Helper', {
      *           });
      *         };
      */
-    encodeUTF16        : function (textString) {
+    encodeUTF16: function (textString) {
         //<if nodejs>
         return textString;
         //</if>
-        var haut     = 0;
-        var n        = 0;
+        var haut = 0;
+        var n = 0;
         var CPstring = '';
-        var dec2hex  = function (textString) {
+        var dec2hex = function (textString) {
             return (textString + 0).toString(16).toUpperCase();
         };
         try {
@@ -844,14 +844,14 @@ Ext.define('Valence.util.Helper', {
      *         };
      *
      */
-    decodeUTF16        : function (inStr) {
+    decodeUTF16: function (inStr) {
         //<if nodejs>
         return inStr;
         //</if>
         try {
             inStr = inStr.replace(/([A-Fa-f0-9]{4})/g, function (matchstr, hex) {
                 var result = '';
-                var n      = parseInt(hex, 16);
+                var n = parseInt(hex, 16);
                 if (n <= 0xFFFF) {
                     result += String.fromCharCode(n);
                 } else {
@@ -869,11 +869,11 @@ Ext.define('Valence.util.Helper', {
             return inStr;
         }
     },
-    getIsDb2i          : function(){
+    getIsDb2i: function () {
         var me = Valence.util.Helper;
-        if (Ext.isEmpty(me.isDb2i)){
+        if (Ext.isEmpty(me.isDb2i)) {
             var settings = me.getValenceSettings();
-            if (!Ext.isEmpty(settings) && typeof settings.getDatabase === 'function' && settings.getDatabase() !== 'db2i'){
+            if (!Ext.isEmpty(settings) && typeof settings.getDatabase === 'function' && settings.getDatabase() !== 'db2i') {
                 me.isDb2i = false;
             } else {
                 me.isDb2i = true;
@@ -881,8 +881,8 @@ Ext.define('Valence.util.Helper', {
         }
         return me.isDb2i;
     },
-    isLocked           : function () {
-        var me       = this,
+    isLocked: function () {
+        var me = this,
             isLocked = null;
         if (!Valence.mobile.Access.isNativePortal()) {
             var runtime = me.getValenceRuntime();
@@ -897,7 +897,7 @@ Ext.define('Valence.util.Helper', {
     /**
      * Depreicated - use showSnackbar
      */
-    msg : function (parm1, parm2, parm3) {
+    msg: function (parm1, parm2, parm3) {
         var me = this,
             text;
 
@@ -952,36 +952,36 @@ Ext.define('Valence.util.Helper', {
      *         src    : '/pdfDocuments/ABC.pdf',
      *     });
      */
-    popupUrl : function (config) {
+    popupUrl: function (config) {
         var me = this,
             wdw;
 
         if (!Valence.mobile.Access.isNativePortal()) {
             var wdwConfig = {
-                width  : 400,
-                height : 400,
-                title  : null,
-                src    : null
+                width: 400,
+                height: 400,
+                title: null,
+                src: null
             };
 
             Ext.apply(wdwConfig, config);
 
             if (!Ext.isEmpty(wdwConfig.src)) {
                 wdw = Ext.widget('window', {
-                    layout  : 'fit',
-                    height  : wdwConfig.height,
-                    width   : wdwConfig.width,
-                    title   : wdwConfig.title,
-                    header  : (Ext.isEmpty(wdwConfig.title)) ? false : null,
-                    html    : {
-                        'tag'    : 'iframe',
-                        'height' : '100%',
-                        'width'  : '100%',
-                        'src'    : wdwConfig.src
+                    layout: 'fit',
+                    height: wdwConfig.height,
+                    width: wdwConfig.width,
+                    title: wdwConfig.title,
+                    header: (Ext.isEmpty(wdwConfig.title)) ? false : null,
+                    html: {
+                        'tag': 'iframe',
+                        'height': '100%',
+                        'width': '100%',
+                        'src': wdwConfig.src
                     },
-                    buttons : [{
-                        text    : Valence.lang.lit.close,
-                        handler : function (btn) {
+                    buttons: [{
+                        text: Valence.lang.lit.close,
+                        handler: function (btn) {
                             var pdfWin = btn.up('window');
                             if (!Ext.isEmpty(pdfWin) && typeof pdfWin.destroy === 'function') {
                                 pdfWin.destroy();
@@ -992,13 +992,13 @@ Ext.define('Valence.util.Helper', {
             }
         } else {
             if (!Ext.isEmpty(config.src)) {
-                var url      = config.src,
+                var url = config.src,
                     validUrl = function (str) {
                         return /^(http(s)?:\/\/)?(www\.)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/.test(str);
                     };
 
                 Valence.mobile.InAppBrowser.show({
-                    url : (validUrl(url)) ? url : window.location.origin + url
+                    url: (validUrl(url)) ? url : window.location.origin + url
                 });
             }
         }
@@ -1015,8 +1015,8 @@ Ext.define('Valence.util.Helper', {
      * @param {String} value Value to filter by.
      * @param {String} [filterId=typedinput] If passed will be the filter identifier.
      */
-    processTypedInputFilter : function (str, flds, val, filterId) {
-        var me    = this,
+    processTypedInputFilter: function (str, flds, val, filterId) {
+        var me = this,
             regEx = new RegExp(val, 'i');
 
         if (Ext.isEmpty(filterId)) {
@@ -1027,8 +1027,8 @@ Ext.define('Valence.util.Helper', {
             str.removeFilter(filterId);
             if (!Ext.isEmpty(val)) {
                 str.addFilter({
-                    id       : filterId,
-                    filterFn : function (item) {
+                    id: filterId,
+                    filterFn: function (item) {
                         for (var i = 0; i < flds.length; i++) {
                             if (regEx.test(item.data[flds[i]])) {
                                 return true;
@@ -1069,19 +1069,19 @@ Ext.define('Valence.util.Helper', {
      *     });
      *
      */
-    showSnackbar : function (config) {
+    showSnackbar: function (config) {
         var me = this;
 
         if (Ext.isString(config)) {
             config = {
-                text : config
+                text: config
             };
         }
 
         if (!Valence.mobile.Access.isNativePortal() && !Ext.isEmpty(config.text)) {
-            var portal      = parent.Portal,
+            var portal = parent.Portal,
                 snackConfig = {
-                    text : config.text
+                    text: config.text
                 };
 
             if (!Ext.isEmpty(portal)) {
@@ -1089,13 +1089,13 @@ Ext.define('Valence.util.Helper', {
                 //
                 if (!Ext.isEmpty(config.buttonText)) {
                     Ext.apply(snackConfig, {
-                        buttonText : config.buttonText,
-                        handler    : config.handler
+                        buttonText: config.buttonText,
+                        handler: config.handler
                     });
 
                     if (!Ext.isEmpty(config.scope)) {
                         Ext.apply(snackConfig, {
-                            scope : config.scope
+                            scope: config.scope
                         });
                     }
                 }
@@ -1104,7 +1104,7 @@ Ext.define('Valence.util.Helper', {
                 //
                 if (!Ext.isEmpty(config.duration)) {
                     Ext.apply(snackConfig, {
-                        duration : config.duration
+                        duration: config.duration
                     });
                 }
                 portal.util.Helper.showSnackbar(snackConfig);
@@ -1114,16 +1114,16 @@ Ext.define('Valence.util.Helper', {
         return false;
     },
 
-    swapTheme : function (o) {
-        var me   = this,
+    swapTheme: function (o) {
+        var me = this,
             head = document.head,
             link = document.createElement('link'),
             path = (!Ext.isEmpty(Ext.isClassic) && Ext.isClassic) ? 'resources/themes/classic/' : 'resources/themes/modern/';
 
         Ext.util.CSS.removeStyleSheet('portaltheme');
-        link.id   = 'portaltheme';
+        link.id = 'portaltheme';
         link.type = 'text/css';
-        link.rel  = 'stylesheet';
+        link.rel = 'stylesheet';
         link.href = path + o.theme + '.css';
         head.appendChild(link);
     },
@@ -1134,7 +1134,7 @@ Ext.define('Valence.util.Helper', {
      * @param {string} DB2timeStamp String formatted as a timestamp in the format yyyy-mm-dd hh:mn:ss
      *
      */
-    timestampToDate : function (v) {
+    timestampToDate: function (v) {
         return new Date(v.substr(0, 4), parseInt(v.substr(5, 2) - 1, 10), v.substr(8, 2), v.substr(11, 2), v.substr(14, 2), v.substr(17, 2));
     }
 });

@@ -54,7 +54,17 @@ Ext.define('Shopping.model.CartItem', {
             name: 'orderLineNO'
         },
         {
-            name: 'OBPRMCOD'
+            name: 'OBPRMCOD',
+            //defaultValue: '',
+            convert: function (v, rec) {
+                console.info(v);
+                console.info(rec);
+                if (v == '') {
+                    return null;
+                } else {
+                    return v;
+                }
+            }
         },
 
 

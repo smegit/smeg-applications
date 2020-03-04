@@ -101,7 +101,7 @@
       display: block;
       float: right;
       position: relative;
-      top: -17px;
+      top: -34px;
       height: 120px;
       width: 120px;
     }
@@ -193,7 +193,7 @@
       text-align: right;
       right: 0px;
     }
-    .stock-lvl-g,.stock-lvl-o,.stock-lvl-r{
+    .stock-lvl-g,.stock-lvl-o,.stock-lvl-r,.stock-lvl-b{
       width:100%;
       position:absolute;
       bottom:0;
@@ -208,6 +208,9 @@
     }
     .stock-lvl-r{
       background-color:#E57373;
+    }
+    .stock-lvl-b{
+      background-color: #87CEFA;
     }
   }
 }

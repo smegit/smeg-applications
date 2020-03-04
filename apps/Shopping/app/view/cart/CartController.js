@@ -370,7 +370,7 @@ Ext.define('Shopping.view.cart.CartController', {
                     ALWORDQ: product.orderQtyEditable,
                     ALWRLSQ: product.releaseQtyEditable,
                     OBORDLNO: product.orderLineNO,
-                    OBPRMCOD: product.OBPRMCOD,
+                    OBPRMCOD: product.OBPRMCOD == null ? '' : product.OBPRMCOD,
                     OBDCRT: product.OBDCRT,
                     ALWPROM: product.ALWPROM,
 
@@ -450,7 +450,7 @@ Ext.define('Shopping.view.cart.CartController', {
                 ALWORDQ: product.orderQtyEditable,
                 ALWRLSQ: product.releaseQtyEditable,
                 OBORDLNO: product.orderLineNO,
-                OBPRMCOD: product.OBPRMCOD,
+                OBPRMCOD: product.OBPRMCOD == null ? '' : product.OBPRMCOD,
                 OBDCRT: product.OBDCRT,
                 ALWPROM: product.ALWPROM,
 
@@ -635,6 +635,13 @@ Ext.define('Shopping.view.cart.CartController', {
                     return vm.get('listFooterText');
                 }
             });
+            // Ext.apply(paymentGrid.getColumns()[0], {
+            //     summaryRenderer: function () {
+            //         //var total = Ext.util.Format.number(totalPaid, '0,0.00');
+            //         //return Ext.String.format('<b>PAID: {0}</b>', total);
+            //         return vm.get('listCommentText');
+            //     }
+            // });
             paymentGrid.getView().getFeature('paymentSummary').toggleSummaryRow(true);
 
         }, 200);
@@ -695,7 +702,11 @@ Ext.define('Shopping.view.cart.CartController', {
             field = context.field,
             rec = context.record,
             outstanding = Shopping.util.Helper.getOutstanding(rec),
-            checkoutButton = me.lookupReference('checkoutButton');
+            checkoutButton = me.lookupReference('checkoutButton'),
+            vm = me.getViewModel(),
+            promoCodeListStore = vm.getStore('promoCodeList');
+        console.info(promoCodeListStore);
+
         console.info(editor);
         console.info(context);
 
@@ -730,6 +741,7 @@ Ext.define('Shopping.view.cart.CartController', {
             return false;
         }
 
+        return true;
         //checkoutButton.disable();
     },
 
@@ -870,24 +882,59 @@ Ext.define('Shopping.view.cart.CartController', {
             cartInfo = me.getCartInformation(),
             vm = me.getViewModel(),
             orderNumber = vm.get('activeCartNumber');
-        if (!Ext.isEmpty(cartInfo)) {
-            Valence.common.util.Helper.loadMask('Loading');
+        // if (!Ext.isEmpty(cartInfo)) {
+        //     Valence.common.util.Helper.loadMask('Loading');
+        // }
+
+
+        // onItemClick: function (cmp, rec) {
+        //     var me = this,
+        //         app = rec.get('appId');
+
+        //     //launch or focus the application
+        //     //
+        //     if (!Valence.util.App.isRunning(app)) {
+        //         //launch the application
+        //         //
+        //         Valence.util.App.launch({
+        //             app: app
+        //         });
+        //     } else {
+        //         //since the application is already running set it as active
+        //         //
+        //         Valence.util.App.setActive({
+        //             app: app
+        //         });
+        //     }
+        // }
+
+        //window.open('https://sys.smeg.com.au:6052/SmegApps/build/production/order-enquiry/#/order-list/' + orderNumber + '?action=goToNotes');
+        console.info(window.location);
+        var orderEqueryAppId;
+        if (window.location.port == '6052') {
+            orderEqueryAppId = 1012;
+        } else {
+            orderEqueryAppId = 1011;
         }
-
-
-        me.requestNotes(orderNumber)
-            .then(function (content) {
-                if (!Ext.isEmpty(content) && content.success) {
-                    Valence.common.util.Helper.destroyLoadMask();
-                    me.showNotes(content);
-                } else {
-                    Valence.common.util.Helper.destroyLoadMask();
-                    me.showError({ msg: 'Failed to get notes' });
-                }
-            }, function (content) {
-                Valence.common.util.Helper.destroyLoadMask();
-                me.showError({ msg: 'Failed to get notes' });
-            });
+        Valence.util.App.close(orderEqueryAppId);
+        Valence.util.App.launch({
+            app: orderEqueryAppId,
+            params: '/' + orderNumber + '?action=goToNotes',
+            forceNew: false,
+        });
+        // me.requestNotes(orderNumber)
+        //     .then(function (content) {
+        //         if (!Ext.isEmpty(content) && content.success) {
+        //             Valence.common.util.Helper.destroyLoadMask();
+        //             me.showNotes(content);
+        //         } else {
+        //             Valence.common.util.Helper.destroyLoadMask();
+        //             me.showError({ msg: 'Failed to get notes' });
+        //         }
+        //     }, function (content) {
+        //         Valence.common.util.Helper.destroyLoadMask();
+        //         me.showError({ msg: 'Failed to get notes' });
+        //     });
         // me.requestCalcualte()
         //     .then(function (res) {
 
@@ -2318,6 +2365,11 @@ Ext.define('Shopping.view.cart.CartController', {
         if (!Ext.isEmpty(resp.TOTALPAID)) {
             vm.set('totalPaid', resp.TOTALPAID)
         }
+
+        // add payment status
+        vm.set('comment', resp.COMMENT);
+        vm.set('payStatus', resp.PAYSTATUS);
+
         paymentHistoryStore.removeAll();
         vm.set('hidePaymentHistory', true);
         if (!Ext.isEmpty(payments)) {
@@ -2762,5 +2814,29 @@ Ext.define('Shopping.view.cart.CartController', {
 
     onToolBarAfterRender: function () {
         console.info('onToolbarAfterRender called');
-    }
+    },
+    onPromoCodeColumnRenderer: function (v, meta, record, rowIndex, colIndex, store, view) {
+        var me = this,
+            vm = me.getViewModel(),
+            promoCodeListStore = vm.getStore('promoCodeList');
+
+        meta.tdCls += ' editable-column';
+        console.info(v);
+        console.info(meta);
+        console.info(record);
+        console.info(rowIndex);
+        console.info(store);
+        console.info(view);
+        console.info(promoCodeListStore);
+        var idx = promoCodeListStore.find('PAPRMCOD', v);
+        console.info(idx);
+        // var displayValue = promoCodeListStore.getAt(idx).PAPRMDSC;
+        if (idx != -1) {
+            console.info(promoCodeListStore.getAt(idx).getData().PAPRMDSC);
+            return promoCodeListStore.getAt(idx).getData().PAPRMDSC;
+        } else {
+            return v;
+        }
+
+    },
 });

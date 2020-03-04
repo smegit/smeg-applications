@@ -55,7 +55,10 @@ Ext.define('Shopping.view.products.Heading', {
             },
             {
                 xtype: 'component',
-                html: 'Shopping',
+                bind: {
+                    html: 'Shopping - ' + '{agentName}'
+                },
+                //html: 'Shopping',
                 style: {
                     'font-size': '18px',
                     'color': 'white',
@@ -92,77 +95,166 @@ Ext.define('Shopping.view.products.Heading', {
 
                 }
             },
+            // {
+            //     xtype: 'combo',
+            //     //cls: 'smeg-agency-sel',
+            //     height: 32,
+            //     width: 300,
+            //     itemId: 'smegAgencySelector',
+            //     store: Ext.data.StoreManager.lookup('Agency'),
+            //     bind: {
+            //         value: '{agent}'
+            //     },
+            //     grow: true,
+            //     hideLabel: true,
+            //     valueField: 'ACCOUNT',
+            //     displayField: 'NAME',
+            //     queryMode: 'local',
+            //     allowBlank: false,
+            //     forceSelection: true,
+            //     anyMatch: true,
+            //     caseSensitive: false,
+            //     readOnly: (agencyStore.getCount() === 1) ? true : false,
+            //     hidden: (agencyStore.getCount() === 0) ? true : false,
+            //     enableKeyEvents: true,
+            //     //disableKeyFilter: true,
+            //     // value: me.activeAgent,
+            //     listConfig: {
+            //         cls: 'smeg-agency-sel-list'
+            //     },
+            //     // beforeQuery: function (plan) {
+            //     //     //overriding the query plan so we can filter agents by words entered
+            //     //     //
+            //     //     var originalQuery = plan.query;
+            //     //     if (!Ext.isEmpty(originalQuery)) {
+            //     //         var items = Ext.Array.clean(originalQuery.split(' '));
+            //     //         plan.query = new RegExp('(?=.*' + items.join(')(?=.*') + ')', 'gi');
+            //     //         // plan.query = new RegExp('(.*' + items.join(')(.*') + ')', 'gi');
+            //     //     }
+            //     //     return plan;
+            //     // },
+            //     listeners: {
+            //         afterrender: 'onAfterRenderAgencySel',
+            //         focus: function (cmp, evt) {
+            //             console.info('focus called');
+            //             cmp.selectText();
+            //         },
+            //         // scope: me,
+            //         afterrender: function (cmp) {
+            //             cmp.agentTip = Ext.create('Ext.tip.ToolTip', {
+            //                 showDelay: 800,
+            //                 target: cmp.el,
+            //                 html: '',
+            //                 listeners: {
+            //                     scope: me,
+            //                     beforeshow: function (cmp) {
+            //                         var sel = Ext.ComponentQuery.query('#smegAgencySelector')[0],
+            //                             selectedRec = (!Ext.isEmpty(sel)) ? sel.getSelection() : null;
+            //                         if (!Ext.isEmpty(selectedRec)) {
+            //                             cmp.setHtml('<div class="smeg-agency-sel-tip"><span class="label">Agent #: </span><span class="code">' + selectedRec.get('ACCOUNT') + '</span></div>')
+            //                             return true;
+            //                         }
+            //                         return false;
+            //                     }
+            //                 }
+            //             });
+            //         },
+            //         // change: function (cmp, value) {
+            //         //     console.info(cmp);
+            //         //     console.info(value);
+            //         //     console.info(Ext.data.StoreManager.lookup('Agency'));
+            //         //     //var agentStore = Ext.data.StoreManager.lookup('Agency');
+            //         //     var agentStore = cmp.getStore();
+            //         //     agentStore.clearFilter();
+            //         //     // if (value != null) {
+            //         //     //     if (value.length > 0) {
+            //         //     //         agentStore.filter({
+            //         //     //             property: 'ACCOUNT',
+            //         //     //             anyMatch: true,
+            //         //     //             value: cmp.getValue()
+            //         //     //         })
+            //         //     //     }
+            //         //     // }
+            //         //     if (value != null) {
+            //         //         if (value.length > 0) {
+            //         //             Shopping.util.Helper.processTypedInputFilter2(Ext.data.StoreManager.lookup('Agency'), ['NAME', 'ACCOUNT', 'SEARCH'], value, 'agentComboFilter');
+            //         //         }
+            //         //     }
+
+            //         //     console.info(agentStore);
+            //         //     // if (value == null) {
+            //         //     //     agentStore.removeFilter('agentComboFilter');
+            //         //     // }
+            //         //     // Shopping.util.Helper.processTypedInputFilter2(Ext.data.StoreManager.lookup('Agency'), ['NAME', 'ACCOUNT'], value, 'agentComboFilter');
+            //         //     setTimeout(function () {
+            //         //         // cmp.expand();
+            //         //         // cmp.expand();
+            //         //         // cmp.expand();
+            //         //         //agentStore.reload();
+            //         //     }, 1500);
+            //         // },
+            //         // beforequery: function (queryPlan) {
+            //         //     console.info('beforequery called');
+            //         //     console.info(queryPlan);
+            //         //     //return false;
+            //         // },
+            //         // keyup: {
+            //         //     buffer: 350,
+            //         //     fn: function (cmp, event) {
+            //         //         console.info(cmp)
+            //         //         console.info(event);
+            //         //         //Shopping.util.Helper.processTypedInputFilter2(agencyStore, ['NAME', 'ACCOUNT'], value, 'smegAgentFilter');
+
+            //         //     }
+            //         // },
+            //         // expand: function () {
+            //         //     console.info('expand called');
+            //         //     var agentStore = Ext.data.StoreManager.lookup('Agency');
+            //         //     // agentStore.removeFilter('agentComboFilter');
+            //         //     console.info(agentStore);
+            //         // },
+            //         // keydown: function (cmp, event) {
+            //         //     console.info(cmp)
+            //         //     console.info(event);
+            //         // },
+            //         // keypress: function (cmp, event) {
+            //         //     console.info(cmp)
+            //         //     console.info(event);
+            //         // },
+            //         // change: {
+            //         //     buffer: 350,
+            //         //     fn: function (cmp, value) {
+            //         //         //Valence.util.Helper.processTypedInputFilter2(agencyStore, ['ACCOUNT', 'NAME'], value, 'smegAgentFilter');
+            //         //         Shopping.util.Helper.processTypedInputFilter2(agencyStore, ['NAME', 'ACCOUNT'], value, 'smegAgentFilter');
+
+            //         //     }
+            //         // },
+            //         // select: function (cmp, rec) {
+            //         //     var me = this;
+            //         //     if (rec.get('ACCOUNT') !== me.activeAgent) {
+            //         //         me.setAgent(rec);
+            //         //         cmp.blur();
+            //         //     }
+            //         // },
+            //         select: 'setAgent'
+            //     }
+            // },
             {
-                xtype: 'combo',
-                //cls: 'smeg-agency-sel',
-                height: 32,
-                width: 300,
-                itemId: 'smegAgencySelector',
-                store: Ext.data.StoreManager.lookup('Agency'),
+                xtype: 'button',
+                handler: 'showAgentListModal',
+                // text: 'Saved Orders',
+                cls: 'toolbar-btn',
+                text: 'Agency',
+                iconCls: 'x-fa fa-home',
                 bind: {
-                    value: '{agent}'
+                    hidden: (agencyStore.getCount() === 1) ? true : false,
                 },
-                grow: true,
-                hideLabel: true,
-                valueField: 'ACCOUNT',
-                displayField: 'NAME',
-                queryMode: 'local',
-                allowBlank: false,
-                forceSelection: true,
-                anyMatch: true,
-                caseSensitive: false,
-                readOnly: (agencyStore.getCount() === 1) ? true : false,
-                hidden: (agencyStore.getCount() === 0) ? true : false,
-                // value: me.activeAgent,
-                listConfig: {
-                    cls: 'smeg-agency-sel-list'
-                },
-                // beforeQuery: function (plan) {
-                //     //overriding the query plan so we can filter agents by words entered
-                //     //
-                //     var originalQuery = plan.query;
-                //     if (!Ext.isEmpty(originalQuery)) {
-                //         var items = Ext.Array.clean(originalQuery.split(' '));
-                //         plan.query = new RegExp('(?=.*' + items.join(')(?=.*') + ')', 'gi');
-                //         // plan.query = new RegExp('(.*' + items.join(')(.*') + ')', 'gi');
+                // listeners: {
+                //     afterrender: function (cmp) {
+                //         console.info(cmp);
+                //         cmp.text = 'Saved Orders';
                 //     }
-                //     return plan;
-                // },
-                listeners: {
-                    afterrender: 'onAfterRenderAgencySel',
-                    focus: function (cmp, evt) {
-                        console.info('focus called');
-                        cmp.selectText();
-                    },
-                    // scope: me,
-                    afterrender: function (cmp) {
-                        cmp.agentTip = Ext.create('Ext.tip.ToolTip', {
-                            showDelay: 800,
-                            target: cmp.el,
-                            html: '',
-                            listeners: {
-                                scope: me,
-                                beforeshow: function (cmp) {
-                                    var sel = Ext.ComponentQuery.query('#smegAgencySelector')[0],
-                                        selectedRec = (!Ext.isEmpty(sel)) ? sel.getSelection() : null;
-                                    if (!Ext.isEmpty(selectedRec)) {
-                                        cmp.setHtml('<div class="smeg-agency-sel-tip"><span class="label">Agent #: </span><span class="code">' + selectedRec.get('ACCOUNT') + '</span></div>')
-                                        return true;
-                                    }
-                                    return false;
-                                }
-                            }
-                        });
-                    },
-                    // select: function (cmp, rec) {
-                    //     var me = this;
-                    //     if (rec.get('ACCOUNT') !== me.activeAgent) {
-                    //         me.setAgent(rec);
-                    //         cmp.blur();
-                    //     }
-                    // },
-                    select: 'setAgent'
-                }
+                // }
             },
             {
                 xtype: 'button',

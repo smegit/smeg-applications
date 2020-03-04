@@ -282,13 +282,80 @@ Ext.define('Shopping.util.Helper', {
             '</div>',
             '</div>',
             "</div>", {
-                replaceBreaks: function (values) {
-                    var instr = values.OASPI;
-                    if (Ext.isEmpty(instr)) {
-                        return '';
-                    }
-                    return (instr.replace(new RegExp('\\n', 'g'), '<br>'));
+            replaceBreaks: function (values) {
+                var instr = values.OASPI;
+                if (Ext.isEmpty(instr)) {
+                    return '';
                 }
-            })
-    }
+                return (instr.replace(new RegExp('\\n', 'g'), '<br>'));
+            }
+        })
+    },
+    /**
+     * @method processTypedInputFilter2
+     * @since Version 5.0
+     * Utility function to filter a store based off a value the user typed in.
+     * @param {Ext.data.Store} store Store you would like filtered.
+     * @param {Array} fields Array of fields to filter on.
+     * @param {String} value Value to filter by.
+     * @param {String} [filterId=typedinput] If passed will be the filter identifier.
+     */
+    processTypedInputFilter2: function (str, flds, val, filterId) {
+        var me = this,
+            regEx = new RegExp(val, 'i'),
+            regExArray = [],
+            valArray = val.split(' ').filter(function (v) {
+                if (v.length > 0) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+        //console.info(valArray);
+        if (valArray.length > 0) {
+            for (var i = 0; i < valArray.length; i++) {
+                regExArray[i] = new RegExp(valArray[i], 'i');
+            }
+        }
+
+        //console.info(regExArray);
+        if (Ext.isEmpty(filterId)) {
+            filterId = 'typedinput';
+        }
+
+        if (!Ext.isEmpty(str)) {
+            str.removeFilter(filterId);
+            if (!Ext.isEmpty(val)) {
+                str.addFilter({
+                    id: filterId,
+                    filterFn: function (item) {
+                        var testArray = []
+                        //console.info(item);
+                        for (var i = 0; i < flds.length; i++) {
+                            //console.info(flds[i]);
+                            for (var q = 0; q < regExArray.length; q++) {
+                                //console.info(regExArray[q].test(item.data[flds[i]]));
+                                if (regExArray[q].test(item.data[flds[i]])) {
+                                    // return true;
+                                    testArray[q] = true;
+                                } else {
+                                    if (testArray[q] != true) {
+                                        testArray[q] = false;
+                                    }
+                                }
+                            }
+                        }
+                        //console.info(testArray);
+                        // for (var t = 0; t < testArray.length; t++) {
+                        //     if (!testArray[t]) {
+                        //         return false
+                        //     }
+                        // }
+                        // return true;
+                        return testArray.every(function (e) { return e == true; })
+                    }
+                });
+            }
+        }
+    },
 });

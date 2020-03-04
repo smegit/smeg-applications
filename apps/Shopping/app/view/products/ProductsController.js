@@ -458,6 +458,78 @@ Ext.define('Shopping.view.products.ProductsController', {
 
 
 
+    },
+
+    showAgentListModal: function () {
+        console.info('showAgentListModal called');
+        var agencyStore = Ext.data.StoreManager.lookup('Agency');
+        agencyStore.clearFilter();
+        var agencyWindow = Ext.create('Ext.window.Window', {
+            title: 'Select Agency',
+            renderTo: Ext.getBody(),
+            closable: true,
+            modal: true,
+            width: 500,
+            height: 400,
+            allowEsc: true,
+            cls: 'smeg-agency-sel-win',
+            layout: 'fit',
+            // maskClickAction: 'method-destroy',
+            items: [{
+                xtype: 'grid',
+                store: agencyStore,
+                dockedItems: [{
+                    xtype: 'toolbar',
+                    cls: 'smeg-agency-sel-win-sch-tb',
+                    dock: 'top',
+                    style: {
+                        'z-index': 11
+                    },
+                    layout: 'fit',
+                    items: [{
+                        xtype: 'textfield',
+                        emptyText: 'Search',
+                        listeners: {
+                            //scope: me,
+                            afterrender: function (cmp) {
+                                setTimeout(function () {
+                                    cmp.focus();
+                                }, 100);
+                            },
+                            change: {
+                                buffer: 350,
+                                fn: function (cmp, value) {
+                                    //Valence.util.Helper.processTypedInputFilter2(agencyStore, ['ACCOUNT', 'NAME'], value, 'smegAgentFilter');
+                                    Shopping.util.Helper.processTypedInputFilter2(agencyStore, ['NAME', 'ACCOUNT', 'SEARCH'], value, 'smegAgentFilter');
+
+                                }
+                            },
+                        }
+                    }]
+                }],
+                hideHeaders: true,
+                columns: [{
+                    flex: 3,
+                    dataIndex: 'NAME'
+                }, {
+                    flex: 1,
+                    dataIndex: 'ACCOUNT',
+                    align: 'right'
+                }],
+                listeners: {
+                    scope: this,
+                    itemclick: function (cmp, rec) {
+                        //console.info(rec);
+                        this.setAgent(cmp, rec);
+                        agencyWindow.destroy();
+                    }
+                },
+                onEsc: function () {
+                    return;
+                }
+            }]
+        }).show();
+
     }
 
 });

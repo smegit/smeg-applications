@@ -1,6 +1,6 @@
 Ext.define('Shopping.model.Product', {
     extend: 'Ext.data.Model',
-    fields: ['STOCKTIP', 'PRODDSC', 'MODEL', 'PRICEOLD', 'PRICE', {
+    fields: ['STOCKTIP', 'PRODDSC', 'MODEL', 'PRICEOLD', 'PRICE', 'COMMENT', {
         name: 'EXPIRY',
         type: 'date',
         dateFormat: 'Y-m-d',

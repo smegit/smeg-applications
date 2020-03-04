@@ -61,6 +61,8 @@ Ext.define('Shopping.view.products.View', {
                 '<div class="inner {[this.getProductSpecialCls(values,xindex)]}">',
                 '<div class="prd-desc">{PRODDESC}</div>',
                 '<div class="prd-model">Model: {MODEL}</div>',
+                '<div class="prd-comment">{COMMENT}<span style="color: white">1</span></div>',
+                // '<span>{COMMENT}</span>',
                 '<div class="prd-info-group">',
                 '{[this.getPriceText(values,xindex)]}',
                 '{[this.getExpirationText(values,xindex)]}',

@@ -27,7 +27,7 @@ Ext.define('Showroom.Application', {
 
             //if (options.params.pgm === 'EC1010') {
             Ext.apply(options.params, {
-                function: 'showroom'
+                function: 'SHW'
             });
             //}
         });

@@ -65,9 +65,37 @@ Ext.define('Shopping.view.shoppingstore.ShoppingStoreModel', {
         },
         listFooterText: function (get) {
             var ordTot = get('orderTotal'),
-                totalPaid = get('totalPaid');
+                totalPaid = get('totalPaid'),
+                comment = get('comment'),
+                payStatus = get('payStatus'),
+                commentText;
+
             var balance = ordTot - totalPaid;
-            return '<b>BALANCE: ' + Ext.util.Format.number(balance, '0,0.00') + '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' + 'PAID: ' + Ext.util.Format.number(get('totalPaid'), '0,0.00') + '</b>';
+            //return '<b>BALANCE: ' + Ext.util.Format.number(balance, '0,0.00') + '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' + 'PAID: ' + Ext.util.Format.number(get('totalPaid'), '0,0.00') + '</b>';
+            var amountText = '<b>BALANCE: ' + Ext.util.Format.number(balance, '0,0.00') + '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' + 'PAID: ' + Ext.util.Format.number(get('totalPaid'), '0,0.00') + '</b>';
+
+
+            if (payStatus == 0) {
+                commentText = '<b style="color: red">' + comment + '</b>';
+            } else {
+                commentText = '<b style="color: green">' + comment + '</b>';
+            }
+            return commentText + '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' + amountText;
+
+
+        },
+        listCommentText: function (get) {
+            var comment = get('comment'),
+                payStatus = get('payStatus');
+            console.info(comment);
+            console.info(payStatus);
+            if (payStatus == 0) {
+                return '<b style="color: red">COMMENT: ' + comment + '</b>';
+            }
+            if (payStatus == 1) {
+                return '<b style="color: green">COMMENT: ' + comment + '</b>';
+            }
+
         },
         currentStockLoc: {
             get: function (get) {

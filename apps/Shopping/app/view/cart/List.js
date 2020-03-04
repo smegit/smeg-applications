@@ -178,7 +178,7 @@ Ext.define('Shopping.view.cart.List', {
         if (!me.release) {
             cols = Ext.Array.merge(cols, [{
                 text: 'Order',
-                width: 70,
+                width: 60,
                 align: 'right',
                 dataIndex: 'quantity',
                 sortable: false,
@@ -201,7 +201,7 @@ Ext.define('Shopping.view.cart.List', {
                 text: 'Delivered',
                 dataIndex: 'delivered',
                 sortable: false,
-                width: 75,
+                width: 65,
                 align: 'right',
                 summaryType: 'sum',
                 summaryRenderer: function (value) {
@@ -211,7 +211,7 @@ Ext.define('Shopping.view.cart.List', {
                 text: 'Outstanding',
                 dataIndex: 'outstanding',
                 sortable: false,
-                width: 90,
+                width: 80,
                 align: 'right',
                 renderer: function (v, meta, rec) {
                     return Shopping.util.Helper.getOutstanding(rec);
@@ -224,7 +224,7 @@ Ext.define('Shopping.view.cart.List', {
                 text: '<div data-qtip="Enter partial delivery.">Release</div>',
                 dataIndex: 'release',
                 sortable: false,
-                width: 70,
+                width: 58,
                 align: 'right',
                 editor: {
                     xtype: 'numberfield'
@@ -243,7 +243,7 @@ Ext.define('Shopping.view.cart.List', {
                 }
             }, {
                 text: 'Allocated',
-                width: 70,
+                width: 50,
                 align: 'right',
                 dataIndex: 'allocated',
                 sortable: false,
@@ -323,12 +323,15 @@ Ext.define('Shopping.view.cart.List', {
                     valueField: 'PAPRMCOD',
                     matchFieldWidth: false,
                     editable: false,
+                    //margin: '0 0 0 20',
                     bind: {
                         store: '{promoCodeList}'
                     },
                     listeners: {
-                        focus: function (cmp) {
+                        focus: function (cmp, evt) {
                             console.info('onfocus');
+                            // console.info(cmp);
+                            // console.info(evt);
                             cmp.expand();
                         }
                     },
@@ -338,10 +341,18 @@ Ext.define('Shopping.view.cart.List', {
                     hidden: '{!(cartValues.SHWPRMCOL == "Y" ? true: false)}'
                 },
 
-                renderer: function (v, meta) {
-                    meta.tdCls += ' editable-column';
-                    return v;
-                },
+                // renderer: function (v, meta, record, rowIndex, colIndex, store, view) {
+                //     meta.tdCls += ' editable-column';
+                //     console.info(v);
+                //     console.info(meta);
+                //     console.info(record);
+                //     console.info(rowIndex);
+                //     console.info(store);
+                //     console.info(view);
+                //     console.info(this);
+                //     return v;
+                // },
+                renderer: 'onPromoCodeColumnRenderer',
                 // renderer: function (value, meta, rec, rowIndex, colIndex, store) {
                 //     // console.info(meta);
                 //     // console.info(rec);
@@ -390,7 +401,7 @@ Ext.define('Shopping.view.cart.List', {
         } else {
             cols = Ext.Array.merge(cols, [{
                 text: 'Release',
-                width: 75,
+                width: 50,
                 align: 'right',
                 dataIndex: 'viewReleaseQty',
                 summaryType: 'sum',

@@ -149,7 +149,8 @@ Ext.define('Shopping.view.cart.Form', {
                             //flex: 0,
                             maxWidth: 220,
                             // minValue: new Date(),
-                            minValue: getMinDate(),
+                            // minValue: getMinDate(),
+                            editable: false,
                             maxValue: Ext.Date.add(new Date(), Ext.Date.YEAR, 1), //1 Year from the current date
                             format: 'd/m/Y',
                             submitFormat: 'Y-m-d',
@@ -162,6 +163,16 @@ Ext.define('Shopping.view.cart.Form', {
                                     single: me.release,
                                     bindTo: '{cartValues.OADELD}'
                                     //bindTo: '{requestDate}'
+                                }
+                            },
+                            listeners: {
+                                expand: function (field) {
+                                    console.info('expand called');
+                                    field.setMinValue(getMinDate());
+                                },
+                                collapse: function (field) {
+                                    console.info('collapse called');
+                                    field.setMinValue(null);
                                 }
                             }
                         },

@@ -914,7 +914,7 @@ Ext.define('Shopping.view.cart.notes.NotesController', {
         noteAction.setDisabled(true);
         noteFollowUpDate.setDisabled(true);
         noteDetail.setDisabled(true);
-        noteText.setDisabled(true);
+        // noteText.setDisabled(true);
         noteComplete.setDisabled(true);
         //me.lookupReference('noteDetail').setDisabled(false);
 
